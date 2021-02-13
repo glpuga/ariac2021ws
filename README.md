@@ -5,19 +5,25 @@
 In the host system, clone the repo:
 
 > git clone --recursive git@github.com:glpuga/ariac2021ws.git
+
 > cd ariac2021ws
+
 > git checkout devel
 
 Build the container:
 
 > cd docker
+
 > ./build
+
 > ./run
 
 In the container, build the worspace and launch the sample environment:
 
 > catkin_make
+
 > source devel/setup.bash
+
 > roslaunch nist_gear sample_environment.launch
 
 ## Links and documents
@@ -40,7 +46,9 @@ ARIAC 2021:
 Notice that this repository uses submodules. To clone the repository use:
 
 > git clone --recursive git@github.com:glpuga/ariac2021ws.git
+
 > cd ariac2021ws
+
 > git checkout devel
 
 ### Development container
@@ -70,6 +78,7 @@ Also, the default ROS environment is preloaded by the container entry configurat
 To build the workspace just call `catkin_make`.
 
 > catkin_make
+
 > source devel/setup.bash
 
 ### Launching the sample environment
