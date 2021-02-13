@@ -1,0 +1,3 @@
+[submodule "project/ARIAC"]
+	path = project/ARIAC
+	url = git@github.com:glpuga/ARIAC.git
