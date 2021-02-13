@@ -17,44 +17,9 @@
 #
 #
 
-# Runs a docker container with the image created by build.bash
-# Requires:
-#   docker
-#   nvidia-docker
-#   an X server
-# Recommended:
-#   A joystick mounted to /dev/input/js0 or /dev/input/js1
+IMAGE_NAME="ariac2021_devel_env"
 
 RUNTIME="runc"
-
-POSITIONAL=()
-while [[ $# -gt 0 ]]
-do
-key="$1"
-
-case $key in
-    -n|--nvidia)
-    RUNTIME="nvidia"
-    shift
-    ;;
-    *)    # unknown option
-    POSITIONAL+=("$1")
-    shift
-    ;;
-esac
-done
-
-set -- "${POSITIONAL[@]}"
-
-if [ $# -lt 1 ]
-then
-    echo "Usage: $0 [-n --nvidia] <docker image> [<dir with workspace> ...]"
-    exit 1
-fi
-
-
-
-IMG=$1
 
 ARGS=("$@")
 WORKSPACES=("${ARGS[@]:1}")
@@ -74,22 +39,13 @@ then
     chmod a+r $XAUTH
 fi
 
-REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+LOCAL_REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
 
-#DOCKER_OPTS=
-# Example: Bind mount a local repository on the host machine:
-DOCKER_OPTS="--mount type=bind,source=${REPO_PATH},target=/home/developer/challenge_ws/src/workspace"
-
-
-# Share your vim settings.
-# VIMRC=~/.vimrc
-# if [ -f $VIMRC ]
-# then
-#   DOCKER_OPTS="$DOCKER_OPTS -v $VIMRC:/home/developer/.vimrc:ro"
-# fi
+DOCKER_OPTIONS="--mount type=bind,source=${LOCAL_REPO_PATH},target=/home/developer/ws/src/workspace"
 
 USERID=$(id -u)
 GROUPID=$(id -g)
+
 docker run -it \
   -e DISPLAY \
   -e QT_X11_NO_MITSHM=1 \
@@ -98,10 +54,11 @@ docker run -it \
   -v "/tmp/.X11-unix:/tmp/.X11-unix" \
   -v "/etc/localtime:/etc/localtime:ro" \
   -v "/dev/input:/dev/input" \
+  --network host \
   --privileged \
   --rm \
   --runtime=$RUNTIME \
   --security-opt seccomp=unconfined \
   -u $USERID:$GROUPID \
-  $DOCKER_OPTS \
-  $IMG
+  $DOCKER_OPTIONS \
+  $IMAGE_NAME

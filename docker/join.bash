@@ -17,26 +17,9 @@
 #
 #
 
-# Builds a Docker image.
-BUILD_BASE=""
-BUILD_ROS_GAZ=""
-image_name="vrx"
+IMAGE_NAME="ariac2021_devel_env"
 
-if [ $# -lt 1 ]
-then
-    echo "Usage: $0 <root of vrx repo>"
-    exit 1
-fi
-
-if [ ! -f $1/Dockerfile ]
-then
-    echo "Err: Directory does not contain a Dockerfile to build."
-    exit 1
-fi
-
-image_plus_tag=$image_name:$(export LC_ALL=C; date +%Y_%m_%d_%H%M)
-echo ".*" > "${1}"/.dockerignore
-docker build --rm -t $image_plus_tag -f "${1}"/Dockerfile "${1}" $BUILD_BASE $BUILD_ROS_GAZ && \
-docker tag $image_plus_tag $image_name:latest && \
-echo "Built $image_plus_tag and tagged as $image_name:latest"
-rm "${1}"/.dockerignore
+xhost +
+CONTAINER_ID=$(docker ps -aqf "ancestor=${IMAGE_NAME}")
+docker exec --privileged -e DISPLAY=${DISPLAY} -e LINES=`tput lines` -it ${CONTAINER_ID} bash
+xhost -
