@@ -32,6 +32,7 @@ ARIAC 2021:
 
 * [ARIAC main site](https://www.nist.gov/el/intelligent-systems-division-73500/agile-robotics-industrial-automation-competition).
 * [ARIAC code repository](https://github.com/usnistgov/ARIAC/tree/ariac2021).
+* [ARIAC competition server code](https://github.com/zeidk/ariac-docker). This might be old, since it hasn't been updated in a couple of years.
 
 
 ## Important Dates
