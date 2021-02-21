@@ -58,15 +58,21 @@ RUN /bin/sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) 
     ros-${DIST}-industrial-core \
     ros-${DIST}-joint-state-publisher \
     ros-${DIST}-joint-state-publisher-gui \
+    ros-${DIST}-joint-state-controller \
+    ros-${DIST}-joint-trajectory-action \
+    ros-${DIST}-joint-trajectory-action-tools \
+    ros-${DIST}-joint-trajectory-controller \
     ros-${DIST}-joy \
     ros-${DIST}-joy-teleop \
     ros-${DIST}-key-teleop \
     ros-${DIST}-moveit-fake-controller-manager \
-    ros-${DIST}-moveit-kinematics \ 
+    ros-${DIST}-moveit-kinematics \
+    ros-${DIST}-moveit-opw-kinematics-plugin \
     ros-${DIST}-moveit-planners-ompl \
     ros-${DIST}-moveit-ros-move-group \
     ros-${DIST}-moveit-ros-visualization \
     ros-${DIST}-moveit-setup-assistant \
+    ros-${DIST}-moveit-simple-controller-manager \
     ros-${DIST}-robot-localization \
     ros-${DIST}-robot-state-publisher \
     ros-${DIST}-ros-base \
@@ -75,7 +81,7 @@ RUN /bin/sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) 
     ros-${DIST}-rviz \
     ros-${DIST}-teleop-tools \
     ros-${DIST}-teleop-twist-keyboard \
-    ros-${DIST}-moveit-opw-kinematics-plugin \
+    ros-${DIST}-topic-tools \
     ros-${DIST}-trac-ik \
     ros-${DIST}-industrial-core \
     ros-${DIST}-trac-ik-kinematics-plugin \
@@ -129,15 +135,6 @@ RUN apt update \
     python-rosdep \
     ros-${DIST}-image-proc \
     ros-${DIST}-vision-opencv \
-    ros-${DIST}-joint-state-controller \
-    ros-${DIST}-joint-state-publisher \
-    ros-${DIST}-joint-state-publisher-gui \
-    ros-${DIST}-moveit-simple-controller-manager \
-    ros-${DIST}-joint-trajectory-action \
-    ros-${DIST}-joint-trajectory-action-tools \
-    ros-${DIST}-joint-trajectory-controller \
-    ros-${DIST}-topic-tools \
-    ros-${DIST}-xacro \
  && apt clean
 
 # Install extra tools tools
