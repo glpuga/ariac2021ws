@@ -26,6 +26,10 @@ In the container, build the worspace and launch the sample environment:
 
 > roslaunch nist_gear sample_environment.launch
 
+**Note:** To step around the long load time mentioned in [Issue #3](https://github.com/glpuga/ariac2021ws/issues/3), use the alternative launch file:
+
+> roslaunch devutils sample_environment.launch
+
 ## Links and documents
 
 ARIAC 2021:
@@ -88,3 +92,34 @@ There's a sample environment within the `nist_gear` package in the ARIAC reposit
 
 > roslaunch nist_gear sample_environment.launch
 
+### Controlling the gantry/kitting using RViz
+
+It's possible to dos some basic control of the robot arms using RViz.
+
+**Note:** Note that this environment is affeced by a bug, detailed in [Issue #3](https://github.com/glpuga/ariac2021ws/issues/3), which causes the joint controllers to crash and the arms to be come not responsive to planning and control. The following instructions are therefore _how it should be done_ if not for the bug. Keep reading and you'll find below instructions to step around the issue while it gets addressed upstream.
+
+Start by launching the sample environment with **moveit**, using the following launch file:
+
+> roslaunch nist_gear sample_environment.launch load_moveit:=true
+
+then in a separate terminal launch either
+
+> roslaunch devutils rviz_control_gantry.launch
+
+to control the gantry, or for the manipulator in the kitting launch:
+
+> roslaunch devutils rviz_control_kitting.launch
+
+#### To overcome Issue #3
+
+To step around the problem described in [Issue #3](https://github.com/glpuga/ariac2021ws/issues/3), replace
+
+> roslaunch nist_gear sample_environment.launch load_moveit:=true
+
+in the previous instructions with this alternative launch file:
+
+> roslaunch devutils devutils sample_environment.launch
+
+Notice that the alternative launch file does not require the `load_moveit` parameter, since it defaults to `true`, unlike the original launch file which defaults to false.
+
+This should result in a much speedier load time, and the possiblity to plan and move the manipulators using RViz.
