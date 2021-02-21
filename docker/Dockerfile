@@ -126,6 +126,11 @@ RUN apt update \
     ros-${DIST}-image-proc \
     ros-${DIST}-vision-opencv \
     ros-${DIST}-joint-state-controller \
+    ros-${DIST}-joint-state-publisher \
+    ros-${DIST}-moveit-simple-controller-manager \
+    ros-${DIST}-joint-trajectory-action \
+    ros-${DIST}-joint-trajectory-action-tools \
+    ros-${DIST}-joint-trajectory-controller \
  && apt clean
 
 # Install extra tools tools
