@@ -55,6 +55,7 @@ RUN /bin/sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) 
     python-rosdep \
     ros-${DIST}-controller-manager \
     ros-${DIST}-effort-controllers \
+    ros-${DIST}-industrial-core \
     ros-${DIST}-joint-state-publisher \
     ros-${DIST}-joint-state-publisher-gui \
     ros-${DIST}-joy \
@@ -74,11 +75,13 @@ RUN /bin/sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) 
     ros-${DIST}-rviz \
     ros-${DIST}-teleop-tools \
     ros-${DIST}-teleop-twist-keyboard \
+    ros-${DIST}-moveit-opw-kinematics-plugin \
+    ros-${DIST}-trac-ik \
+    ros-${DIST}-industrial-core \
+    ros-${DIST}-trac-ik-kinematics-plugin \
     ros-${DIST}-velodyne-simulator \
  && rosdep init \
  && apt clean
-
-RUN rosdep update
 
 # Get Gazebo 9.
 COPY keys/gazebo.key /tmp/gazebo.key
@@ -92,6 +95,7 @@ RUN /bin/sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable
     lib${GAZ}-dev \
     ros-${DIST}-gazebo-plugins \
     ros-${DIST}-gazebo-ros \
+    ros-${DIST}-gazebo-ros-control \
     ros-${DIST}-xacro \
  && apt clean
 # This seems to be needed to launch Gazebo on this setup
@@ -127,10 +131,13 @@ RUN apt update \
     ros-${DIST}-vision-opencv \
     ros-${DIST}-joint-state-controller \
     ros-${DIST}-joint-state-publisher \
+    ros-${DIST}-joint-state-publisher-gui \
     ros-${DIST}-moveit-simple-controller-manager \
     ros-${DIST}-joint-trajectory-action \
     ros-${DIST}-joint-trajectory-action-tools \
     ros-${DIST}-joint-trajectory-controller \
+    ros-${DIST}-topic-tools \
+    ros-${DIST}-xacro \
  && apt clean
 
 # Install extra tools tools
