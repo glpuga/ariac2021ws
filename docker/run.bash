@@ -21,15 +21,12 @@ IMAGE_NAME="ariac2021_devel_env"
 
 RUNTIME="runc"
 
-ARGS=("$@")
-WORKSPACES=("${ARGS[@]:1}")
-
 # Make sure processes in the container can connect to the x server
 # Necessary so gazebo can create a context for OpenGL rendering (even headless)
 XAUTH=/tmp/.docker.xauth
 if [ ! -f $XAUTH ]
 then
-    xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
+    xauth_list=$(xauth nlist $DISPLAY | sed -e 's/^..../ffff/')
     if [ ! -z "$xauth_list" ]
     then
         echo $xauth_list | xauth -f $XAUTH nmerge -
@@ -38,7 +35,6 @@ then
     fi
     chmod a+r $XAUTH
 fi
-
 LOCAL_REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
 
 DOCKER_OPTIONS="--mount type=bind,source=${LOCAL_REPO_PATH},target=/home/developer/ws/src/workspace"
