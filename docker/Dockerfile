@@ -11,25 +11,29 @@ ARG GAZ=gazebo9
 # Base system tools
 RUN apt update \
  && apt install -y \
-        build-essential \
-        cppcheck \
-        curl \
-        cmake \
-        lsb-release \
-        gdb \
-        git \
-        mercurial \
-        python3-dbg \
-        python3-pip \
-        python3-venv \
-        ruby \
-        software-properties-common \
-        sudo \
-        vim \
-        wget \
-        libeigen3-dev \
-        pkg-config \
-        protobuf-compiler \
+    build-essential \
+    cppcheck \
+    curl \
+    cmake \
+    lsb-release \
+    gdb \
+    git \
+    mercurial \
+    python3-dbg \
+    python3-pip \
+    python3-venv \
+    ruby \
+    software-properties-common \
+    sudo \
+    vim \
+    wget \
+    libeigen3-dev \
+    pkg-config \
+    protobuf-compiler \
+    mc \
+    locate \
+    xterm \
+    clang-format \
  && apt clean
 
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -132,17 +136,15 @@ RUN mkdir -p /home/$USER/ws/src \
 # Add extra ROS packages here
 RUN apt update \
  && apt install -y \
-    python-rosdep \
     ros-${DIST}-image-proc \
     ros-${DIST}-vision-opencv \
+    ros-melodic-moveit \
+    ros-melodic-moveit-visual-tools \
  && apt clean
 
 # Install extra tools tools
 RUN apt update \
  && apt install -y \
-    mc \
-    locate \
-    xterm \
     tmux \
  && apt clean 
 
