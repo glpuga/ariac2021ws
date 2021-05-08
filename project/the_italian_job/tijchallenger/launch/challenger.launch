@@ -29,7 +29,7 @@
           $(arg load_prebuilt_moveit_args)
           --visualize-sensor-views
           -f $(find tijchallenger)/config/trial_config/$(arg trial_config)
-          $(find tijchallenger)/config/user_config/tij_conf.yaml
+          $(find tijchallenger)/config/submission/team_config.yaml
           " required="true" output="screen" />
 
   <group ns="ariac/gantry">
