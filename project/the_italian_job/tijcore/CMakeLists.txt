@@ -9,7 +9,7 @@ add_compile_options(-std=c++17)
 find_package(catkin REQUIRED COMPONENTS roscpp rospy)
 
 find_package(cmake_modules REQUIRED)
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 # System dependencies are found with CMake's conventions find_package(Boost
 # REQUIRED COMPONENTS system)
