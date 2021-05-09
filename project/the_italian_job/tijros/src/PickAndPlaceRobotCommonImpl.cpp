@@ -41,7 +41,7 @@ static const double place_drop_height = 0.11;
 static const double pickup_displacement_jump_threshold = 10.0;
 static const double pickup_displacement_step = 0.0025;
 static const double pickup_displacement_step_div = 15;
-static const double max_planning_time = 30.0;
+static const double max_planning_time = 90.0;
 static const int max_planning_attempts = 5;
 static const double goal_position_tolerance = 0.05;
 static const double goal_orientation_tolerance =
@@ -504,14 +504,18 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
     collision_objects.push_back(createCollisionBox(item.name, "briefcase_side",
                                                    item.frame_id, 0.6, 0.05,
                                                    0.16, 0.0, -0.3, 0.08));
-    collision_objects.push_back(createCollisionBox(
-        item.name, "table_left", item.frame_id, 1.6, 0.4, 1.0, -0.3, 0.5, 0.5));
     collision_objects.push_back(createCollisionBox(item.name, "table_right",
                                                    item.frame_id, 1.0, 0.10,
                                                    1.0, -0.70, -0.75, 0.5));
     collision_objects.push_back(createCollisionBox(item.name, "table_back",
                                                    item.frame_id, 0.8, 1.2, 1.0,
                                                    -0.7, -0.1, 0.5));
+    collision_objects.push_back(createCollisionBox(
+        item.name, "table_left", item.frame_id, 1.6, 0.1, 1.0, -0.45, 0.5, 0.5));
+    collision_objects.push_back(createCollisionBox(
+        item.name, "briefcase_top_1", item.frame_id, 0.1, 0.1, 0.80, 0.3, 0.35, 0.40));
+    collision_objects.push_back(createCollisionBox(
+        item.name, "briefcase_top_2", item.frame_id, 0.7, 0.1, 0.1, 0.0, 0.35, 0.75));
   }
 
   INFO(" - adding bin representatives");
