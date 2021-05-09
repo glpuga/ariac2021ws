@@ -278,6 +278,16 @@ OrderProcessingStrategy::processUniversalShipment(
       [this](const RelativePose3 &reference_pose,
              const ResourceManagerInterface::ManagedLocusHandle &lhs,
              const ResourceManagerInterface::ManagedLocusHandle &rhs) {
+        // TODO(glpuga) update name of the lambda to account for this
+        // additional check.
+        // if difficulties are different, then prioritize placing easy parts
+        // at the end of the list (from where we grab them)
+        if (lhs.resource()->difficulty() != rhs.resource()->difficulty()) {
+          return lhs.resource()->difficulty() > rhs.resource()->difficulty();
+        }
+
+        // if they are the same difficulty, then order by distance to reference
+
         const auto &lhs_pose = lhs.resource()->pose();
         const auto &rhs_pose = rhs.resource()->pose();
         // get all the poses in the same reference frame

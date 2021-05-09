@@ -510,12 +510,15 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
     collision_objects.push_back(createCollisionBox(item.name, "table_back",
                                                    item.frame_id, 0.8, 1.2, 1.0,
                                                    -0.7, -0.1, 0.5));
-    collision_objects.push_back(createCollisionBox(
-        item.name, "table_left", item.frame_id, 1.6, 0.1, 1.0, -0.45, 0.5, 0.5));
-    collision_objects.push_back(createCollisionBox(
-        item.name, "briefcase_top_1", item.frame_id, 0.1, 0.1, 0.80, 0.3, 0.35, 0.40));
-    collision_objects.push_back(createCollisionBox(
-        item.name, "briefcase_top_2", item.frame_id, 0.7, 0.1, 0.1, 0.0, 0.35, 0.75));
+    collision_objects.push_back(createCollisionBox(item.name, "table_left",
+                                                   item.frame_id, 1.6, 0.1, 1.0,
+                                                   -0.45, 0.5, 0.5));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_1",
+                                                   item.frame_id, 0.1, 0.1,
+                                                   0.80, 0.3, 0.35, 0.40));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_2",
+                                                   item.frame_id, 0.7, 0.1, 0.1,
+                                                   0.0, 0.35, 0.75));
   }
 
   INFO(" - adding bin representatives");

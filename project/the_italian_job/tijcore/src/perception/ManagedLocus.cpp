@@ -10,6 +10,8 @@
 
 namespace tijcore {
 
+int32_t ManagedLocus::unique_id_counter_;
+
 ManagedLocus ManagedLocus::CreateEmptySpace(const std::string &parent_container,
                                             const RelativePose3 &pose) {
   // can't use make shared because constructor is private
@@ -35,6 +37,8 @@ void ManagedLocus::TransferPartFromHereToThere(ManagedLocus &here,
   std::swap(here.part_id_, there.part_id_);
   std::swap(here.is_model_, there.is_model_);
   std::swap(here.is_broken_, there.is_broken_);
+  // note that the difficulty attribute does not get swapped, because its tied
+  // to the pose
 }
 
 ManagedLocus::ManagedLocus(const std::string &parent_container,
