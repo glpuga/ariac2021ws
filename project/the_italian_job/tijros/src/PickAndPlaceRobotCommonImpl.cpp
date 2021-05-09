@@ -92,7 +92,7 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
 
   // TODO(glpuga) for some reason, keeping state in this object causes
   // errors in one of the joints, in both robots(!)
-  const auto base_namespace = "/ariac/" + name();
+  const auto base_namespace = "/ariac/custom/" + name();
 
   move_group_ptr_.reset();
   if (!move_group_ptr_) {
