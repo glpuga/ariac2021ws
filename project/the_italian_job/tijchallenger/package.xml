@@ -20,4 +20,6 @@
   <build_export_depend>tijros</build_export_depend>
   <exec_depend>tijros</exec_depend>
 
+  <exec_depend>xacro</exec_depend>
+
 </package>

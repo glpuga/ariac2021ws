@@ -27,7 +27,7 @@ catkin_package(
   CATKIN_DEPENDS
   roscpp
   rospy
-  DEPENDS Eigen
+  DEPENDS Eigen3
 )
 
 # ##############################################################################

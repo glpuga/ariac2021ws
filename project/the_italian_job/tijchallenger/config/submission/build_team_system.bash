@@ -80,6 +80,7 @@ apt update \
     ros-${DIST}-industrial-core \
     ros-${DIST}-trac-ik-kinematics-plugin \
     ros-${DIST}-velodyne-simulator \
+    ros-${DIST}-xacro \
  && rosdep init \
  && apt clean
 
@@ -108,22 +109,12 @@ rosdep update
 # Create a catkin workspace
 mkdir -p ~/tij_team_ws/src/
 
-# Grab the public key of github.com
-ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-
 # Fetch the competition code
 mkdir -p ~/tij_team_ws/src
 cd ~/tij_team_ws/src
 git clone https://github.com/glpuga/ariac2021ws.git
 cd ariac2021ws
 git checkout devel
-
-# Download the extra code (using submodules for this is a pain)
-mkdir -p ~/tij_team_ws/src/ariac2021ws/external
-cd ~/tij_team_ws/src/ariac2021ws/external
-git clone https://github.com/glpuga/ARIAC.git
-cd ARIAC
-git checkout moveit_config_tuning
 
 # Build the competition code
 cd ~/tij_team_ws

@@ -92,14 +92,14 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
 
   // TODO(glpuga) for some reason, keeping state in this object causes
   // errors in one of the joints, in both robots(!)
-  const auto base_namespace = "/ariac/" + name();
+  const auto custom_moveit_namespace = "/ariac/custom/" + name();
 
   move_group_ptr_.reset();
   if (!move_group_ptr_) {
 
     moveit::planning_interface::MoveGroupInterface::Options options{
-        getRobotPlanningGroup(), base_namespace + "/robot_description",
-        ros::NodeHandle(base_namespace)};
+        getRobotPlanningGroup(), custom_moveit_namespace + "/robot_description",
+        ros::NodeHandle(custom_moveit_namespace)};
     move_group_ptr_ =
         std::make_unique<moveit::planning_interface::MoveGroupInterface>(
             options);
@@ -112,7 +112,7 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
   if (!planning_scene_ptr_) {
     planning_scene_ptr_ =
         std::make_unique<moveit::planning_interface::PlanningSceneInterface>(
-            base_namespace);
+            custom_moveit_namespace);
     setupObjectConstraints();
   }
 
