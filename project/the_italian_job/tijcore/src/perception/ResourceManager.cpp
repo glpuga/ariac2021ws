@@ -583,7 +583,7 @@ void ResourceManager::updateSensorData(
         model.broken));
   }
 
-  std::vector<ManagedLocusHandle> combined_model_loci_;
+  std::set<int32_t> loci_to_keep;
 
   //
   // move over the known loci in allocated containers, since we'll have
@@ -591,7 +591,7 @@ void ResourceManager::updateSensorData(
   for (auto &known_model_locus_handle : model_loci_) {
     // allocated objects need to be carried over, both empty and non-empty ones
     if (known_model_locus_handle.allocated()) {
-      combined_model_loci_.push_back(known_model_locus_handle);
+      loci_to_keep.insert(known_model_locus_handle.resource()->uniqueId());
       continue;
     }
 
@@ -600,13 +600,10 @@ void ResourceManager::updateSensorData(
     auto &known_model_locus = *known_model_locus_handle.resource();
     auto parent_container = findLociContainer(known_model_locus);
     if (parent_container->allocated()) {
-      combined_model_loci_.push_back(known_model_locus_handle);
+      loci_to_keep.insert(known_model_locus_handle.resource()->uniqueId());
       continue;
     }
   }
-
-  // remove references to the handles in the old vector
-  model_loci_.clear();
 
   //
   // find matches between observed camera models and known model loci. Add new
@@ -614,7 +611,7 @@ void ResourceManager::updateSensorData(
   for (const auto &new_model_locus : new_model_loci) {
     bool found{false};
 
-    for (auto &known_model_locus_handle : combined_model_loci_) {
+    for (auto &known_model_locus_handle : model_loci_) {
       auto &known_model_locus = *known_model_locus_handle.resource();
 
       // make sure both poses are known in the same frame
@@ -658,6 +655,8 @@ void ResourceManager::updateSensorData(
           // option.
           known_broken = known_broken || new_broken;
 
+          const auto difficulty_value = known_model_locus.difficulty();
+
           // we always update the pose information with the new information.
           // We know that position is the same, but rotation might have
           // changed.
@@ -666,6 +665,11 @@ void ResourceManager::updateSensorData(
           known_model_locus = ManagedLocus::CreateOccupiedSpace(
               new_model_locus.parentName(), known_pose, known_part_id,
               known_broken);
+
+          // TODO(glpuga) this is hackish, fix
+          known_model_locus.correctDifficulty(difficulty_value);
+
+          loci_to_keep.emplace(known_model_locus.uniqueId());
         }
 
         // one way or the other, we already had information on this locus that
@@ -676,20 +680,32 @@ void ResourceManager::updateSensorData(
     }
 
     if (!found) {
-      combined_model_loci_.emplace_back(
+      auto it = model_loci_.emplace_back(
           std::make_shared<ManagedLocus>(new_model_locus));
+      loci_to_keep.emplace(it.resource()->uniqueId());
     }
   }
 
+  auto filter = [&loci_to_keep](const ManagedLocusHandle &locus) {
+    // remove it if it's not currently in use and it represents
+    // an empty locus
+    return loci_to_keep.count(locus.resource()->uniqueId()) == 0;
+  };
+
+  // erase the loci that have not been updated or that have no special
+  // reason to be kept (empty loci)
+  model_loci_.erase(
+      std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
+      model_loci_.end());
+
   //
-  // Replace old information with new one. combined_model_loci_ has now:
+  // model_loci_ has now:
   // - Known models located in allocated containers.
   // - New models in non-allocated containers.
   // - known models in non-allocated containers visible in camera.
   // this leaves behind
   // - known models not visible in camera in non-allocated containers
   // - new models in allocated containers
-  model_loci_ = std::move(combined_model_loci_);
 }
 
 const ResourceManager::ModelContainerHandle *
@@ -708,7 +724,9 @@ void ResourceManager::clearEmptyLoci() {
     // an empty locus
     return !locus.allocated() && locus.resource()->isEmpty();
   };
-  std::remove_if(model_loci_.begin(), model_loci_.end(), filter);
+  model_loci_.erase(
+      std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
+      model_loci_.end());
 }
 
 Pose3 ResourceManager::transformPoseToContainerLocalPose(
@@ -765,14 +783,16 @@ void ResourceManager::logKnownLoci() {
         RelativePose3{parent_frame, transformPoseToContainerLocalPose(
                                         known_model_locus_pose, parent_frame)};
     if (known_model_locus.isEmpty()) {
-      INFO(" - empty at {} (allocated: {})", pose_in_parent,
-           known_model_locus_handle.allocated());
+      INFO(" - empty at {} (allocated: {}, diff: {}, uid: {})", pose_in_parent,
+           known_model_locus_handle.allocated(), known_model_locus.difficulty(),
+           known_model_locus.uniqueId());
     } else {
       auto [known_model_part_id, broken] = known_model_locus.model();
       (void)broken;
-      INFO(" - {} at {} (broken: {} , allocated: {})",
+      INFO(" - {} at {} (broken: {} , allocated: {}, diff: {}, uid: {})",
            known_model_part_id.codedString(), pose_in_parent, broken,
-           known_model_locus_handle.allocated());
+           known_model_locus_handle.allocated(), known_model_locus.difficulty(),
+           known_model_locus.uniqueId());
     }
   }
   INFO("---");

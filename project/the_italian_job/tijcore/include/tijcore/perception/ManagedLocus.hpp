@@ -43,6 +43,11 @@ public:
 
   std::string parentName() const;
 
+  // TODO(glpuga) test these functions
+  int32_t difficulty() const { return difficulty_; };
+  void correctDifficulty(const int32_t delta) { difficulty_ += delta; }
+  int32_t uniqueId() const { return unique_id_; }
+
 private:
   ManagedLocus(const std::string &parent_container, const RelativePose3 &pose);
   ManagedLocus(const std::string &parent_container, const RelativePose3 &pose,
@@ -54,6 +59,13 @@ private:
   PartId part_id_;
   bool is_model_;
   bool is_broken_;
+
+  int32_t difficulty_{0};
+  int32_t unique_id_{generateUniqueId()};
+
+  static int32_t unique_id_counter_;
+
+  static int32_t generateUniqueId() { return ++unique_id_counter_; }
 };
 
 } // namespace tijcore
