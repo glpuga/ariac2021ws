@@ -161,13 +161,13 @@ SceneConfigReader::getListOfGantryPlanningHints() const {
       {world_frame_id_, tijcore::Position::fromVector(-3.0, -3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125))},
       // ---
-      {world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
-      {world_frame_id_, tijcore::Position::fromVector(-5, -3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-5, -3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
-      {world_frame_id_, tijcore::Position::fromVector(-10, 3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-10, 3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
-      {world_frame_id_, tijcore::Position::fromVector(-10, -3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-10, -3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
 
   };
@@ -186,13 +186,13 @@ SceneConfigReader::getListOfSafeWaitingSpotHints() const {
       {world_frame_id_, tijcore::Position::fromVector(-4.0, -2.9, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-5))},
       // ---
-      {world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
-      {world_frame_id_, tijcore::Position::fromVector(-5, -3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-5, -3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
-      {world_frame_id_, tijcore::Position::fromVector(-10, 3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-10, 3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
-      {world_frame_id_, tijcore::Position::fromVector(-10, -3.0, 10),
+      {world_frame_id_, tijcore::Position::fromVector(-10, -3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},
   };
   return data;
