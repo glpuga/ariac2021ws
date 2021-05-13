@@ -37,6 +37,12 @@ bool PickAndPlaceAssemblyRobot::enabled() const {
 
 std::set<tijcore::WorkRegionId>
 PickAndPlaceAssemblyRobot::supportedRegions() const {
+  auto health_status = robot_actuator_->getRobotHealthStatus();
+  // gantry is much slower to get in and out the from kitting zone. If
+  // kitting is enabled, dont' bother.
+  if (health_status.kitting_robot_enabled) {
+    return {tijcore::WorkRegionId::assembly};
+  }
   return {tijcore::WorkRegionId::kitting, tijcore::WorkRegionId::assembly};
 }
 
