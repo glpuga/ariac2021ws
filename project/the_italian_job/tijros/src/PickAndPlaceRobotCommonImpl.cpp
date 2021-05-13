@@ -41,7 +41,7 @@ static const double place_drop_height = 0.11;
 static const double pickup_displacement_jump_threshold = 10.0;
 static const double pickup_displacement_step = 0.0025;
 static const double pickup_displacement_step_div = 15;
-static const double max_planning_time = 90.0;
+static const double max_planning_time = 20.0;
 static const int max_planning_attempts = 5;
 static const double goal_position_tolerance = 0.05;
 static const double goal_orientation_tolerance =
@@ -490,7 +490,9 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
     collision_objects.push_back(createCollisionBox(
         item.name, "surface", item.frame_id, 0.5, 0.7, z_offset));
     collision_objects.push_back(createCollisionBox(
-        item.name, "tower", item.frame_id, 0.25, 0.25, 0.8, 0.0, -0.45, 0.4));
+        item.name, "tower_foot", item.frame_id, 0.23, 0.23, 0.24, 0.0, -0.45, 0.12));
+    collision_objects.push_back(createCollisionBox(
+        item.name, "tower_head", item.frame_id, 0.15, 0.15, 0.7, 0.0, -0.45, 0.35));
   }
 
   INFO(" - adding assembly station representatives");
