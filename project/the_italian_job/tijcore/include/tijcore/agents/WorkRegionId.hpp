@@ -9,7 +9,13 @@
 
 namespace tijcore {
 
-enum class WorkRegionId { kitting, assembly, conveyor_belt };
+enum class WorkRegionId {
+  conveyor_belt,
+  kitting_agvs,
+  kitting_near_bins,
+  kitting_far_bins,
+  assembly
+};
 
 namespace work_region {
 

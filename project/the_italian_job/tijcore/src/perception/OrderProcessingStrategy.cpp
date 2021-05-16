@@ -261,8 +261,11 @@ OrderProcessingStrategy::processUniversalShipment(
     // to do it.
     for (auto &part : broken_parts) {
       auto region = resource_manager_->getWorkRegionId(part);
+      // the kitting near_bin will force the use of the kitting robot unless
+      // the kitting robot is disabled. It's all part of a big hack to bias
+      // the control software towards using kitting when possible.
       auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle(
-          std::set<WorkRegionId>{region});
+          std::set<WorkRegionId>{region, WorkRegionId::kitting_near_bins});
 
       if (robot_handle_opt) {
         WARNING("Creating a RemoveBrokenPartTask for {} for {}",
@@ -305,12 +308,6 @@ OrderProcessingStrategy::processUniversalShipment(
         return lhs_distance > rhs_distance;
       };
 
-  auto not_in_kitting_work_region =
-      [this](
-          const ResourceManagerInterface::ManagedLocusHandle &handle) -> bool {
-    return resource_manager_->getWorkRegionId(handle) != WorkRegionId::kitting;
-  };
-
   // next deal with unwanted pieces present in the container. Relocate them
   // somewhere else.
   if (unwanted_parts.size()) {
@@ -324,13 +321,6 @@ OrderProcessingStrategy::processUniversalShipment(
         // remove loci in agvs that are currently targeted by orders
         empty_loci.erase(std::remove_if(empty_loci.begin(), empty_loci.end(),
                                         active_agv_filter),
-                         empty_loci.end());
-
-        // TODO(glpuga) if the closest part is not reachable by kitting, one of
-        // the robots is unable to do this and it won't get done. This will need
-        // to remain like this during testing.
-        empty_loci.erase(std::remove_if(empty_loci.begin(), empty_loci.end(),
-                                        not_in_kitting_work_region),
                          empty_loci.end());
 
         if (empty_loci.empty()) {
@@ -352,26 +342,30 @@ OrderProcessingStrategy::processUniversalShipment(
       // nearest spot from the list)
       std::sort(empty_loci.begin(), empty_loci.end(), sort_farthest_first);
 
-      auto last_it = empty_loci.end() - 1;
-      auto closest_empty_spot = std::move(*last_it);
-      empty_loci.erase(last_it);
+      while (empty_loci.size()) {
+        auto last_it = empty_loci.end() - 1;
+        auto closest_empty_spot = std::move(*last_it);
+        empty_loci.erase(last_it);
 
-      std::set<WorkRegionId> work_regions;
-      work_regions.emplace(resource_manager_->getWorkRegionId(part));
-      work_regions.emplace(
-          resource_manager_->getWorkRegionId(closest_empty_spot));
+        std::set<WorkRegionId> work_regions;
+        work_regions.emplace(resource_manager_->getWorkRegionId(part));
+        work_regions.emplace(
+            resource_manager_->getWorkRegionId(closest_empty_spot));
 
-      auto robot_handle_opt =
-          resource_manager_->getPickAndPlaceRobotHandle(work_regions);
+        auto robot_handle_opt =
+            resource_manager_->getPickAndPlaceRobotHandle(work_regions);
 
-      if (robot_handle_opt) {
-        WARNING("Creating a PickAndPlaceTask for {} to move an unwanted piece "
-                "from {} to {}",
-                robot_handle_opt->resource()->name(), part.resource()->pose(),
-                closest_empty_spot.resource()->pose());
-        output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
-            std::move(part), std::move(closest_empty_spot),
-            std::move(*robot_handle_opt)));
+        if (robot_handle_opt) {
+          WARNING(
+              "Creating a PickAndPlaceTask for {} to move an unwanted piece "
+              "from {} to {}",
+              robot_handle_opt->resource()->name(), part.resource()->pose(),
+              closest_empty_spot.resource()->pose());
+          output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
+              std::move(part), std::move(closest_empty_spot),
+              std::move(*robot_handle_opt)));
+          break;
+        }
       }
     }
   }

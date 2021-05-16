@@ -35,22 +35,22 @@ const tijcore::RelativePose3 &SceneConfigReader::getDropBucketPose() const {
 const std::vector<SceneConfigReader::BinData> &
 SceneConfigReader::getListOfBins() const {
   static const std::vector<BinData> data{
-      {"bin1", "bin1_frame", "agv12_access_space",
-       tijcore::WorkRegionId::kitting},
-      {"bin2", "bin2_frame", "agv12_access_space",
-       tijcore::WorkRegionId::kitting},
-      {"bin3", "bin3_frame", "agv12_access_space",
-       tijcore::WorkRegionId::assembly},
-      {"bin4", "bin4_frame", "agv12_access_space",
-       tijcore::WorkRegionId::assembly},
-      {"bin5", "bin5_frame", "agv34_access_space",
-       tijcore::WorkRegionId::kitting},
-      {"bin6", "bin6_frame", "agv34_access_space",
-       tijcore::WorkRegionId::kitting},
-      {"bin7", "bin7_frame", "agv34_access_space",
-       tijcore::WorkRegionId::assembly},
-      {"bin8", "bin8_frame", "agv34_access_space",
-       tijcore::WorkRegionId::assembly},
+      {"bin1", "bin1_frame", "agv12_near_kitting_access_space",
+       tijcore::WorkRegionId::kitting_near_bins},
+      {"bin2", "bin2_frame", "agv12_near_kitting_access_space",
+       tijcore::WorkRegionId::kitting_near_bins},
+      {"bin3", "bin3_frame", "agv12_far_kitting_access_space",
+       tijcore::WorkRegionId::kitting_far_bins},
+      {"bin4", "bin4_frame", "agv12_far_kitting_access_space",
+       tijcore::WorkRegionId::kitting_far_bins},
+      {"bin5", "bin5_frame", "agv34_near_kitting_access_space",
+       tijcore::WorkRegionId::kitting_near_bins},
+      {"bin6", "bin6_frame", "agv34_near_kitting_access_space",
+       tijcore::WorkRegionId::kitting_near_bins},
+      {"bin7", "bin7_frame", "agv34_far_kitting_access_space",
+       tijcore::WorkRegionId::kitting_far_bins},
+      {"bin8", "bin8_frame", "agv34_far_kitting_access_space",
+       tijcore::WorkRegionId::kitting_far_bins},
   };
   return data;
 }
@@ -92,10 +92,10 @@ SceneConfigReader::getListOfQualityControlSensors() const {
 const std::vector<SceneConfigReader::DeviceData> &
 SceneConfigReader::getListOfAgvs() const {
   static const std::vector<SceneConfigReader::DeviceData> data{
-      {"agv1", "kit_tray_1", "agv12_access_space"},
-      {"agv2", "kit_tray_2", "agv12_access_space"},
-      {"agv3", "kit_tray_3", "agv34_access_space"},
-      {"agv4", "kit_tray_4", "agv34_access_space"},
+      {"agv1", "kit_tray_1", "agv12_near_kitting_access_space"},
+      {"agv2", "kit_tray_2", "agv12_near_kitting_access_space"},
+      {"agv3", "kit_tray_3", "agv34_near_kitting_access_space"},
+      {"agv4", "kit_tray_4", "agv34_near_kitting_access_space"},
   };
   return data;
 }
@@ -114,19 +114,30 @@ SceneConfigReader::getListOfAssemblyStations() const {
 const std::vector<tijcore::ModelTraySharedAccessSpaceDescription> &
 SceneConfigReader::getListOfSharedAccessSpaceDescriptions() const {
   static const std::vector<tijcore::ModelTraySharedAccessSpaceDescription> data{
-      {"agv12_access_space",
+      {"agv12_near_kitting_access_space",
        tijcore::RelativePose3{
            world_frame_id_,
-           tijcore::Position::fromVector(-2.286283, 3.0, 1.35),
+           tijcore::Position::fromVector(-1.986283, 3.0, 1.35),
            {}},
-       1.2, 4, 2.7},
-      {"agv34_access_space",
+       0.6, 2, 2.7},
+      {"agv12_far_kitting_access_space",
        tijcore::RelativePose3{
            world_frame_id_,
-           tijcore::Position::fromVector(-2.286283, -3.0, 1.35),
+           tijcore::Position::fromVector(-2.586283, 3.0, 0.5),
            {}},
-       1.2, 4, 2.7},
-
+       0.6, 1.4, 1.0},
+      {"agv34_near_kitting_access_space",
+       tijcore::RelativePose3{
+           world_frame_id_,
+           tijcore::Position::fromVector(-1.986283, -3.0, 1.35),
+           {}},
+       0.6, 2, 2.7},
+      {"agv34_far_kitting_access_space",
+       tijcore::RelativePose3{
+           world_frame_id_,
+           tijcore::Position::fromVector(-2.586283, -3.0, 0.5),
+           {}},
+       0.6, 1.4, 1.0},
       {"as1_access_space",
        tijcore::RelativePose3{
            "briefcase_1", tijcore::Position::fromVector(0.0, 0.0, 0.0), {}},
@@ -151,14 +162,14 @@ SceneConfigReader::getListOfSharedAccessSpaceDescriptions() const {
 const std::vector<tijcore::RelativePose3> &
 SceneConfigReader::getListOfGantryPlanningHints() const {
   static const std::vector<tijcore::RelativePose3> data{
-      {world_frame_id_, tijcore::Position::fromVector(-3.0, 3.1, 0),
+      {world_frame_id_, tijcore::Position::fromVector(-3.5, 3.1, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45))},
-      {world_frame_id_, tijcore::Position::fromVector(-3.0, 2.9, 0),
+      {world_frame_id_, tijcore::Position::fromVector(-3.5, 2.9, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125))},
       // ---
-      {world_frame_id_, tijcore::Position::fromVector(-3.0, -2.9, 0),
+      {world_frame_id_, tijcore::Position::fromVector(-3.5, -2.9, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45))},
-      {world_frame_id_, tijcore::Position::fromVector(-3.0, -3.0, 0),
+      {world_frame_id_, tijcore::Position::fromVector(-3.5, -3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125))},
       // ---
       {world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 0),
@@ -178,13 +189,13 @@ const std::vector<tijcore::RelativePose3> &
 SceneConfigReader::getListOfSafeWaitingSpotHints() const {
   static const std::vector<tijcore::RelativePose3> data{
       {world_frame_id_, tijcore::Position::fromVector(-4.0, 3.1, 0),
-       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-5))},
+       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45))},
       {world_frame_id_, tijcore::Position::fromVector(-4.0, 2.9, 0),
-       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-175))},
-      {world_frame_id_, tijcore::Position::fromVector(-4.0, -3.1, 0),
-       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-175))},
+       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125))},
       {world_frame_id_, tijcore::Position::fromVector(-4.0, -2.9, 0),
-       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-5))},
+       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45))},
+      {world_frame_id_, tijcore::Position::fromVector(-4.0, -3.1, 0),
+       tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125))},
       // ---
       {world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 0),
        tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90))},

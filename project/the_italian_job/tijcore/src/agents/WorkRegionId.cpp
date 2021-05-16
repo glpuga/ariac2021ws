@@ -16,7 +16,9 @@ namespace work_region {
 
 WorkRegionId fromString(const std::string &sid) {
   static std::unordered_map<std::string, WorkRegionId> id_map = {
-      {"kitting", WorkRegionId::kitting},
+      {"kitting_agvs", WorkRegionId::kitting_agvs},
+      {"kitting_near_bins", WorkRegionId::kitting_near_bins},
+      {"kitting_far_bins", WorkRegionId::kitting_far_bins},
       {"assembly", WorkRegionId::assembly},
       {"conveyor_belt", WorkRegionId::conveyor_belt},
   };
@@ -31,7 +33,9 @@ WorkRegionId fromString(const std::string &sid) {
 
 std::string toString(const WorkRegionId &id) {
   static const std::unordered_map<WorkRegionId, std::string> id_map = {
-      {WorkRegionId::kitting, "kitting"},
+      {WorkRegionId::kitting_agvs, "kitting_agvs"},
+      {WorkRegionId::kitting_near_bins, "kitting_near_bins"},
+      {WorkRegionId::kitting_far_bins, "kitting_far_bins"},
       {WorkRegionId::assembly, "assembly"},
       {WorkRegionId::conveyor_belt, "conveyor_belt"},
   };

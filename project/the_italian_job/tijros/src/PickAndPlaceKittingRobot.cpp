@@ -27,7 +27,9 @@ bool PickAndPlaceKittingRobot::enabled() const {
 
 std::set<tijcore::WorkRegionId>
 PickAndPlaceKittingRobot::supportedRegions() const {
-  return {tijcore::WorkRegionId::kitting, tijcore::WorkRegionId::conveyor_belt};
+  return {tijcore::WorkRegionId::kitting_agvs,
+          tijcore::WorkRegionId::kitting_near_bins,
+          tijcore::WorkRegionId::conveyor_belt};
 }
 
 std::string PickAndPlaceKittingRobot::name() const { return "kitting"; }

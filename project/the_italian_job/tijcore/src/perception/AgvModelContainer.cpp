@@ -52,7 +52,7 @@ WorkRegionId AgvModelContainer::region() const {
       process_manager->getAgvStation(agv::fromString(name()));
 
   if (station_id::isKittingStation(current_station)) {
-    return WorkRegionId::kitting;
+    return WorkRegionId::kitting_agvs;
   }
   return WorkRegionId::assembly;
 }

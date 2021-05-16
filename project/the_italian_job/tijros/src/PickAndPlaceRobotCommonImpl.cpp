@@ -36,7 +36,7 @@ static const double landing_pose_height = 0.25;
 static const double pick_search_length = 0.20;
 // TODO(glpuga) this should be 10, but needs to be higher since cartesian
 // placement seems to ignore nearby objects
-static const double place_drop_height = 0.11;
+static const double place_drop_height = 0.13;
 
 static const double pickup_displacement_jump_threshold = 10.0;
 static const double pickup_displacement_step = 0.0025;
@@ -489,10 +489,12 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
   for (const auto &item : scene_configuration->getListOfAgvs()) {
     collision_objects.push_back(createCollisionBox(
         item.name, "surface", item.frame_id, 0.5, 0.7, z_offset));
-    collision_objects.push_back(createCollisionBox(
-        item.name, "tower_foot", item.frame_id, 0.23, 0.23, 0.24, 0.0, -0.45, 0.12));
-    collision_objects.push_back(createCollisionBox(
-        item.name, "tower_head", item.frame_id, 0.15, 0.15, 0.7, 0.0, -0.45, 0.35));
+    collision_objects.push_back(createCollisionBox(item.name, "tower_foot",
+                                                   item.frame_id, 0.23, 0.23,
+                                                   0.24, 0.0, -0.45, 0.12));
+    collision_objects.push_back(createCollisionBox(item.name, "tower_head",
+                                                   item.frame_id, 0.15, 0.15,
+                                                   0.7, 0.0, -0.45, 0.35));
   }
 
   INFO(" - adding assembly station representatives");
