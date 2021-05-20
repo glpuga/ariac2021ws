@@ -76,6 +76,7 @@ add_library(
   src/perception/TaskDriver.cpp
   src/perception/StaticFrameTransformer.cpp
   src/tasks/PickAndPlaceTask.cpp
+  src/tasks/PickAndTwistPartTask.cpp
   src/tasks/RemoveBrokenPartTask.cpp
   src/tasks/RobotTaskGroupRunner.cpp
   src/tasks/SubmitAssemblyShipmentTask.cpp

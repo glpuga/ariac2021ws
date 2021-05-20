@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -31,6 +31,9 @@ public:
 
   MOCK_CONST_METHOD0(placePartFromAbove, bool());
 
+  MOCK_CONST_METHOD1(twistPartInPlace, bool(tijcore::RelativePose3 &target,
+                                            const TwistDirection &direction));
+
   MOCK_CONST_METHOD0(enabled, bool());
 
   MOCK_CONST_METHOD0(supportedRegions, std::set<WorkRegionId>());
@@ -53,6 +56,9 @@ public:
   MOCK_CONST_METHOD2(patchJointStateValuesGraspingHingPoseNearTarget,
                      void(std::vector<double> &joint_states,
                           const tijcore::RelativePose3 &target));
+
+  MOCK_CONST_METHOD1(patchJointStateValuesForAlignedZeroWrist,
+                     void(std::vector<double> &));
 
   MOCK_METHOD0(cancelAction, void());
 

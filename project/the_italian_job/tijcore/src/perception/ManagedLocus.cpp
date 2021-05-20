@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -71,7 +71,9 @@ std::tuple<PartId, bool> ManagedLocus::model() const {
   return std::make_tuple(part_id_, is_broken_);
 }
 
-RelativePose3 ManagedLocus::pose() const { return pose_; }
+const RelativePose3 &ManagedLocus::pose() const { return pose_; }
+
+RelativePose3 &ManagedLocus::pose() { return pose_; }
 
 std::string ManagedLocus::parentName() const { return parent_container_; }
 

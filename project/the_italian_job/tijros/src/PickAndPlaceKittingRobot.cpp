@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -10,9 +10,12 @@
 
 // tijcore
 #include <logger/logger.hpp>
+#include <tijcore/utils/angles.hpp>
 #include <tijros/PickAndPlaceKittingRobot.hpp>
 
 namespace tijros {
+
+using tijcore::utils::angles::degreesToRadians;
 
 PickAndPlaceKittingRobot::PickAndPlaceKittingRobot(
     const tijcore::Toolbox::SharedPtr &toolbox)
@@ -96,6 +99,15 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(
   const auto sign = (joint_states[0] < 0) ? -1.0 : 1.0;
   joint_states[0] -= 1.0 * sign;
   joint_states[1] = 1.57 * sign;
+}
+
+void PickAndPlaceKittingRobot::patchJointStateValuesForAlignedZeroWrist(
+    std::vector<double> &joint_states) const {
+  if (joint_states.size() != 7) {
+    WARNING("The size ({}) of the joint vector for {} is unexpected...",
+            joint_states.size(), name());
+  }
+  joint_states[6] = degreesToRadians(0);
 }
 
 } // namespace tijros

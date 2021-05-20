@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -20,6 +20,8 @@ public:
   using Ptr = std::unique_ptr<PickAndPlaceRobotInterface>;
   using SharedPtr = std::shared_ptr<PickAndPlaceRobotInterface>;
 
+  enum class TwistDirection { left, right };
+
   virtual ~PickAndPlaceRobotInterface() = default;
 
   virtual bool getInSafePose() const = 0;
@@ -37,6 +39,9 @@ public:
 
   virtual bool
   placePartFromAbove(const tijcore::RelativePose3 &target) const = 0;
+
+  virtual bool twistPartInPlace(RelativePose3 &target,
+                                const TwistDirection &direction) const = 0;
 
   virtual bool dropPartWhereYouStand() const = 0;
 
@@ -75,6 +80,9 @@ protected:
   virtual void patchJointStateValuesGraspingHingPoseNearTarget(
       std::vector<double> &joint_states,
       const tijcore::RelativePose3 &target) const = 0;
+
+  virtual void patchJointStateValuesForAlignedZeroWrist(
+      std::vector<double> &joint_states) const = 0;
 };
 
 } // namespace tijcore

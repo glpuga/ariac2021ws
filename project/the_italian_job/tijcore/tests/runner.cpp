@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Matrix Algebra
  * Author: Gerardo Puga
  */

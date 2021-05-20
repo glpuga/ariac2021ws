@@ -40,7 +40,7 @@ orders:
       destinations: [as1]
       products:
         part_0:
-          type: assembly_battery_blue
+          type: assembly_pump_blue
           pose:
             xyz: [0.05, 0.1, 0]
             rpy: [0, 0, 0]
@@ -58,7 +58,7 @@ orders:
 models_over_bins:
    bin1:
      models:
-       assembly_regulator_red:
+       assembly_pump_blue:
          xyz_start: [0.2, 0.2, 0.0]
          xyz_end: [0.4, 0.4, 0.0]
          rpy: [0, 0, 0]
@@ -66,7 +66,7 @@ models_over_bins:
          num_models_y: 2
    bin8:
      models:
-       assembly_battery_blue:
+       assembly_regulator_red:
          xyz_start: [0.2, 0.2, 0.0]
          xyz_end: [0.4, 0.4, 0.0]
          rpy: [0, 0, 'pi/4']

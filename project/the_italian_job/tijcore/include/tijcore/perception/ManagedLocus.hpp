@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -39,7 +39,8 @@ public:
 
   std::tuple<PartId, bool> model() const;
 
-  RelativePose3 pose() const;
+  RelativePose3 &pose();
+  const RelativePose3 &pose() const;
 
   std::string parentName() const;
 

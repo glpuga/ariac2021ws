@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -28,6 +28,11 @@ public:
 
   virtual RobotTaskInterface::Ptr getPickAndPlaceTask(
       ResourceManagerInterface::ManagedLocusHandle &&source,
+      ResourceManagerInterface::ManagedLocusHandle &&destination,
+      ResourceManagerInterface::PickAndPlaceRobotHandle &&robot) const = 0;
+
+  virtual RobotTaskInterface::Ptr getPickAndTwistPartTask(
+      ResourceManagerInterface::ManagedLocusHandle &&target,
       ResourceManagerInterface::ManagedLocusHandle &&destination,
       ResourceManagerInterface::PickAndPlaceRobotHandle &&robot) const = 0;
 

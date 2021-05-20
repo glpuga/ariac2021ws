@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -36,7 +36,7 @@ static const double landing_pose_height = 0.25;
 static const double pick_search_length = 0.20;
 // TODO(glpuga) this should be 10, but needs to be higher since cartesian
 // placement seems to ignore nearby objects
-static const double place_drop_height = 0.13;
+static const double place_drop_height = 0.15;
 
 static const double pickup_displacement_jump_threshold = 10.0;
 static const double pickup_displacement_step = 0.0025;
@@ -71,6 +71,37 @@ createCollisionBox(const std::string &id, const std::string &sub_id,
   box_pose.position.x = xoffset;
   box_pose.position.y = yoffset;
   box_pose.position.z = zoffset;
+
+  collision_object.primitives.push_back(primitive);
+  collision_object.primitive_poses.push_back(box_pose);
+  collision_object.operation = operation;
+
+  return collision_object;
+}
+
+moveit_msgs::CollisionObject createEndEffectorGuard(
+    const std::string &object_id, const std::string &frame_id,
+    const int operation = moveit_msgs::CollisionObject::ADD) {
+  moveit_msgs::CollisionObject collision_object;
+  collision_object.header.frame_id = frame_id;
+  collision_object.id = object_id;
+
+  shape_msgs::SolidPrimitive primitive;
+
+  primitive.type = primitive.CYLINDER;
+  primitive.dimensions.resize(2);
+  primitive.dimensions[0] = 0.01;
+  primitive.dimensions[1] = 0.12;
+
+  geometry_msgs::Pose box_pose;
+  box_pose.orientation.x = 0.0;
+  box_pose.orientation.y = 0.6841955;
+  box_pose.orientation.z = 0.0;
+  box_pose.orientation.w = 0.7292987;
+
+  box_pose.position.x = 0.03;
+  box_pose.position.y = 0.0;
+  box_pose.position.z = 0.0;
 
   collision_object.primitives.push_back(primitive);
   collision_object.primitive_poses.push_back(box_pose);
@@ -114,6 +145,7 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
         std::make_unique<moveit::planning_interface::PlanningSceneInterface>(
             custom_moveit_namespace);
     setupObjectConstraints();
+    // move_group_ptr_->attachObject("end_effector_guard");
   }
 
   return move_group_ptr_.get();
@@ -466,6 +498,169 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(
   return true;
 }
 
+bool PickAndPlaceRobotCommonImpl::twistPartInPlace(
+    tijcore::RelativePose3 &target, const TwistDirection &direction) const {
+  using tijcore::utils::angles::degreesToRadians;
+
+  if (!enabled()) {
+    return false;
+  }
+
+  auto move_group_ptr = getMoveItGroupHandlePtr();
+
+  move_group_ptr->setPoseReferenceFrame(world_frame);
+
+  const robot_state::JointModelGroup *joint_model_group =
+      move_group_ptr->getCurrentState()->getJointModelGroup(
+          getRobotPlanningGroup());
+
+  auto frame_transformer = toolbox_->getFrameTransformer();
+
+  // we determine the rotation that goes from the end effector frame rotation to
+  // the target rotation, to update the rotation of the part once we have
+  // changed the orientation of the gripper
+  tijcore::Matrix3 target_in_end_effector_rotation;
+  {
+    const auto rotated_target_rotation_matrix =
+        target.rotation().rotationMatrix();
+
+    const auto end_effector_pose_in_world =
+        utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
+    const auto end_effector_pose_in_target_frame =
+        frame_transformer->transformPoseToFrame(
+            tijcore::RelativePose3{world_frame, end_effector_pose_in_world},
+            target.frameId());
+    const auto end_effector_rotation_matrix_in_target_frame =
+        end_effector_pose_in_target_frame.rotation().rotationMatrix();
+
+    target_in_end_effector_rotation =
+        end_effector_rotation_matrix_in_target_frame.inv() *
+        rotated_target_rotation_matrix;
+  }
+
+  INFO("Twist-part-in-place movement: {} is planning to align the end efector "
+       "with the arm articulations",
+       name());
+  {
+    {
+      moveit::core::RobotStatePtr current_state =
+          move_group_ptr->getCurrentState();
+      std::vector<double> joint_group_positions;
+      current_state->copyJointGroupPositions(joint_model_group,
+                                             joint_group_positions);
+      patchJointStateValuesForAlignedZeroWrist(joint_group_positions);
+      move_group_ptr->setJointValueTarget(joint_group_positions);
+      move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
+    }
+
+    moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
+    {
+      auto success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      if (!success) {
+        ERROR("{} failed to execute the plan", name());
+        return false;
+      }
+    }
+
+    INFO("Twist-part-in-place movement: {} is executing the movement to align "
+         "the end efector with the arm articulations",
+         name());
+    {
+      auto success = (move_group_ptr->execute(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      if (!success) {
+        ERROR("{} failed to execute end effector twist", name());
+        return false;
+      }
+    }
+  }
+
+  {
+    INFO("Twist-part-in-place movement:: {} is planning to twist the end "
+         "effector",
+         name());
+
+    auto rotated_end_effector_in_world =
+        utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
+
+    moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
+    {
+      {
+        auto rotated_target_rotation_matrix =
+            rotated_end_effector_in_world.rotation().rotationMatrix();
+        if (direction == TwistDirection::left) {
+          rotated_target_rotation_matrix *=
+              tijcore::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(89))
+                  .rotationMatrix();
+        } else {
+          rotated_target_rotation_matrix *=
+              tijcore::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(-89))
+                  .rotationMatrix();
+        }
+        rotated_end_effector_in_world.rotation() =
+            tijcore::Rotation(rotated_target_rotation_matrix);
+        rotated_end_effector_in_world.position().vector() +=
+            rotated_target_rotation_matrix.col(1) * (-0.12) +
+            rotated_target_rotation_matrix.col(0) * (-0.07);
+      }
+
+      move_group_ptr->setPoseTarget(
+          utils::convertCorePoseToGeoPose(rotated_end_effector_in_world));
+      move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
+
+      bool success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      if (!success) {
+        ERROR("{} failed to generate a plan to twist the end effector", name());
+        return false;
+      }
+    }
+
+    INFO("Twist-part-in-place movement: {} is executing the twist movement",
+         name());
+    {
+      auto success = (move_group_ptr->execute(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      if (!success) {
+        ERROR("{} failed to execute end effecto twist", name());
+        return false;
+      }
+    }
+
+    // update the target locus orientation based on the orientation of the
+    // gripper
+    {
+      INFO("Twist-part-in-place movement: {} is updating the locus orientation",
+           name());
+
+      // get the current pose of the end effector in the frame of the target
+      // pose
+      auto end_effector_pose_in_target_frame =
+          frame_transformer->transformPoseToFrame(
+              tijcore::RelativePose3{world_frame,
+                                     rotated_end_effector_in_world},
+              target.frameId());
+
+      // get the rotation matrix
+      auto end_effector_rotation_matrix_in_target_frame =
+          end_effector_pose_in_target_frame.rotation().rotationMatrix();
+
+      // given that we know the rotation between the end effector and the part,
+      // use that to infer the rotation part now.
+      auto new_target_orientation =
+          end_effector_rotation_matrix_in_target_frame *
+          target_in_end_effector_rotation;
+
+      target.rotation() = tijcore::Rotation{new_target_orientation};
+    }
+  }
+
+  INFO("{} completed the twist movement at the approximation pose for ",
+       name());
+  return true;
+}
+
 bool PickAndPlaceRobotCommonImpl::dropPartWhereYouStand() const {
   setSuctionGripper(false);
   INFO("{} turned the suction gripper off", name());
@@ -491,7 +686,7 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
         item.name, "surface", item.frame_id, 0.5, 0.7, z_offset));
     collision_objects.push_back(createCollisionBox(item.name, "tower_foot",
                                                    item.frame_id, 0.23, 0.23,
-                                                   0.24, 0.0, -0.45, 0.12));
+                                                   0.22, 0.0, -0.45, 0.11));
     collision_objects.push_back(createCollisionBox(item.name, "tower_head",
                                                    item.frame_id, 0.15, 0.15,
                                                    0.7, 0.0, -0.45, 0.35));
@@ -554,6 +749,10 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
   collision_objects.push_back(createCollisionBox(
       "kitting", "belt", "world", 0.8, 9.0, 0.2, -0.5, 0.0, 0.9));
 
+  // Create end-effector guard
+  collision_objects.push_back(
+      createEndEffectorGuard("end_effector_guard", "ee_link"));
+
   planning_scene_ptr_->applyCollisionObjects(collision_objects);
 }
 
@@ -595,16 +794,35 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
   const auto orientation = end_effector_target_pose.rotation().rotationMatrix();
   const auto x_director = tijcore::Vector3{0, 0, -1};
 
-  // I add both the x and y axes, because if the part is on the side, one of
-  // them might be aligned with the Z axis of the world frame.
-  auto y_director = orientation.col(0) + orientation.col(1);
-  // don't assume the target will have it's axes normal to the Z axis
-  y_director -= x_director * y_director.dot(x_director);
-  y_director = y_director / y_director.norm();
-  auto z_director = x_director.cross(y_director);
+  auto original_x_director = orientation.col(0);
+  auto original_y_director = orientation.col(1);
+  auto original_z_director = orientation.col(2);
+
+  // to try to consistently align with the same axis, which is important for
+  // part flipping, try to use always the same vector, unless that's the one
+  // that's pointing up.
+  tijcore::Vector3 z_director;
+  if ((std::abs(x_director.dot(original_x_director)) >
+       std::abs(x_director.dot(original_y_director))) &&
+      (std::abs(x_director.dot(original_x_director)) >
+       std::abs(x_director.dot(original_z_director)))) {
+    // x is pointing up
+    z_director = orientation.col(2);
+  } else {
+    // is horizontal, always choose x
+    z_director = orientation.col(0);
+  }
+
+  // Don't assume the target will be perfectly normal to the world Z axis
+  z_director -= x_director * z_director.dot(x_director);
   z_director = z_director / z_director.norm();
+
+  auto y_director = z_director.cross(x_director);
+  y_director = y_director / y_director.norm();
+
   const auto end_effector_orientation =
       tijcore::Matrix3{x_director, y_director, z_director}.trans();
+
   end_effector_target_pose.rotation() =
       tijcore::Rotation{end_effector_orientation};
 }

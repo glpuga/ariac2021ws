@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -37,6 +37,9 @@ public:
   bool graspPartFromAbove(const tijcore::RelativePose3 &target) const override;
 
   bool placePartFromAbove(const tijcore::RelativePose3 &target) const override;
+
+  bool twistPartInPlace(tijcore::RelativePose3 &target,
+                        const TwistDirection &direction) const override;
 
   bool dropPartWhereYouStand() const override;
 

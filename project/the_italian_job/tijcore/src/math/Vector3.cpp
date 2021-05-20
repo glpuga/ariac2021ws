@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -26,8 +26,8 @@ double Vector3::norm() const { return std::sqrt(dot(*this)); }
 Vector3 Vector3::cross(const Vector3 &rhs) const {
   return Vector3{
       y_ * rhs.z_ - z_ * rhs.y_,
-      z_ * rhs.x_ - x_ * rhs.x_,
-      x_ * rhs.y_ - y_ * rhs.y_,
+      z_ * rhs.x_ - x_ * rhs.z_,
+      x_ * rhs.y_ - y_ * rhs.x_,
   };
 }
 

@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -16,7 +16,7 @@ constexpr std::chrono::seconds agv_status_report_interval_{5};
 
 const CuboidVolume agv_container_volume_{
     Vector3(-0.20, -0.30, -0.1),
-    Vector3(0.20, 0.30, 0.15),
+    Vector3(0.20, 0.30, 0.20),
 };
 
 } // namespace

@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -9,6 +9,7 @@
 #include <logger/logger.hpp>
 #include <tijcore/perception/RobotTaskFactory.hpp>
 #include <tijcore/tasks/PickAndPlaceTask.hpp>
+#include <tijcore/tasks/PickAndTwistPartTask.hpp>
 #include <tijcore/tasks/RemoveBrokenPartTask.hpp>
 #include <tijcore/tasks/SubmitAssemblyShipmentTask.hpp>
 #include <tijcore/tasks/SubmitKittingShipmentTask.hpp>
@@ -33,6 +34,15 @@ RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlaceTask(
     ResourceManagerInterface::PickAndPlaceRobotHandle &&robot) const {
   return std::make_unique<PickAndPlaceTask>(
       resource_manager_, std::move(source), std::move(destination),
+      std::move(robot));
+}
+
+RobotTaskInterface::Ptr RobotTaskFactory::getPickAndTwistPartTask(
+    ResourceManagerInterface::ManagedLocusHandle &&target,
+    ResourceManagerInterface::ManagedLocusHandle &&destination,
+    ResourceManagerInterface::PickAndPlaceRobotHandle &&robot) const {
+  return std::make_unique<PickAndTwistPartTask>(
+      resource_manager_, std::move(target), std::move(destination),
       std::move(robot));
 }
 

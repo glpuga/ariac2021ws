@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -45,6 +45,9 @@ private:
   void patchJointStateValuesToGetNearPose(
       std::vector<double> &joint_states, const tijcore::RelativePose3 &target,
       const std::vector<tijcore::RelativePose3> &pose_hints) const;
+
+  void patchJointStateValuesForAlignedZeroWrist(
+      std::vector<double> &joint_states) const override;
 };
 
 } // namespace tijros

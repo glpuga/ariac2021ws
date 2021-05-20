@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -159,6 +159,15 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
     joint_states[7] = degreesToRadians(90);
     joint_states[8] = degreesToRadians(0);
   }
+}
+
+void PickAndPlaceAssemblyRobot::patchJointStateValuesForAlignedZeroWrist(
+    std::vector<double> &joint_states) const {
+  if (joint_states.size() != 9) {
+    WARNING("The size ({}) of the joint vector for {} is unexpected...",
+            joint_states.size(), name());
+  }
+  joint_states[8] = degreesToRadians(0);
 }
 
 } // namespace tijros

@@ -1,4 +1,4 @@
-/* Copyright [2021] <Ekumen>
+/* Copyright [2021] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -14,6 +14,17 @@
 #include <tijcore/perception/OrderProcessingStrategy.hpp>
 
 namespace tijcore {
+
+namespace {
+
+// this is the threshold for the value of the
+// dot product between the z vectors of a mising piece
+// and the target locus to decide that flipping is necessary.
+// -0.5 basically ask that the part is 180 degrees flipped
+// compared with the target locus.
+const double part_flipping_threshold_ = -0.5;
+
+} // namespace
 
 OrderProcessingStrategy::OrderProcessingStrategy(
     const ResourceManagerInterface::SharedPtr &resource_manager,
@@ -397,7 +408,7 @@ OrderProcessingStrategy::processUniversalShipment(
       std::sort(potential_sources.begin(), potential_sources.end(),
                 sort_farthest_first);
 
-      // Chose the first one of the remaining lot, if any
+      // Choose the first one of the remaining lot, if any
       if (potential_sources.empty()) {
         ++unavailable_part_count;
       } else {
@@ -413,14 +424,41 @@ OrderProcessingStrategy::processUniversalShipment(
             resource_manager_->getPickAndPlaceRobotHandle(work_regions);
 
         if (robot_handle_opt) {
-          WARNING("Creating a PickAndPlaceTask for {} to provide a part from "
-                  "{} and into {}",
-                  robot_handle_opt->resource()->name(),
-                  selected_source_part.resource()->pose(),
-                  missing_part_locus.resource()->pose());
-          output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
-              std::move(selected_source_part), std::move(missing_part_locus),
-              std::move(*robot_handle_opt)));
+
+          auto selected_source_part_orientation =
+              selected_source_part.resource()
+                  ->pose()
+                  .rotation()
+                  .rotationMatrix();
+          auto missing_part_locus_orientation =
+              missing_part_locus.resource()->pose().rotation().rotationMatrix();
+
+          // do we need to flip the part?
+          if (selected_source_part_orientation.col(2).dot(
+                  missing_part_locus_orientation.col(2)) <
+              part_flipping_threshold_) {
+
+            WARNING("Creating a PickAndTwist for {} for a part at {}",
+                    robot_handle_opt->resource()->name(),
+                    selected_source_part.resource()->pose(),
+                    missing_part_locus.resource()->pose());
+            output_actions.emplace_back(
+                robot_task_factory_->getPickAndTwistPartTask(
+                    std::move(selected_source_part),
+                    std::move(missing_part_locus),
+                    std::move(*robot_handle_opt)));
+          } else {
+            WARNING("Creating a PickAndPlaceTask for {} to provide a part from "
+                    "{} and into {}",
+                    robot_handle_opt->resource()->name(),
+                    selected_source_part.resource()->pose(),
+                    missing_part_locus.resource()->pose());
+            output_actions.emplace_back(
+                robot_task_factory_->getPickAndPlaceTask(
+                    std::move(selected_source_part),
+                    std::move(missing_part_locus),
+                    std::move(*robot_handle_opt)));
+          }
         }
       }
     }
