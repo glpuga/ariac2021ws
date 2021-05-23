@@ -31,6 +31,13 @@ RobotTaskOutcome PickAndTwistPartTask::run() {
   auto &robot = *robot_.resource();
   RobotTaskOutcome result{RobotTaskOutcome::TASK_FAILURE};
 
+  tijcore::PartTypeId part_type_id;
+  {
+    auto [part_type, broken] = part_.resource()->model();
+    (void)broken;
+    part_type_id = part_type.type();
+  }
+
   ModelTrayAccessSpaceManager model_tray_access_manager(*resource_manager_,
                                                         robot);
 
@@ -84,7 +91,8 @@ RobotTaskOutcome PickAndTwistPartTask::run() {
     ERROR("{} failed to get in graping hint pose", robot.name());
   } else if (!robot.getInLandingSpot(part_.resource()->pose())) {
     ERROR("{} failed to get in the landing pose (first twist)", robot.name());
-  } else if (!robot.graspPartFromAbove(part_.resource()->pose())) {
+  } else if (!robot.graspPartFromAbove(part_.resource()->pose(),
+                                       part_type_id)) {
     ERROR("{} failed to grasp the part form the surface (first twist)",
           robot.name());
   } else if ((!robot.getInLandingSpot(part_.resource()->pose()) ||
@@ -99,8 +107,8 @@ RobotTaskOutcome PickAndTwistPartTask::run() {
   } else if (do_second_twist &&
              (!robot.getInLandingSpot(part_.resource()->pose()))) {
     ERROR("{} failed to get in the landing pose (second twist)", robot.name());
-  } else if (do_second_twist &&
-             (!robot.graspPartFromAbove(part_.resource()->pose()))) {
+  } else if (do_second_twist && (!robot.graspPartFromAbove(
+                                    part_.resource()->pose(), part_type_id))) {
     ERROR("{} failed to grasp the part form the surface (second twist)",
           robot.name());
   } else if (do_second_twist &&

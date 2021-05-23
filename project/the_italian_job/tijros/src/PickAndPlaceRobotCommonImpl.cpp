@@ -4,6 +4,7 @@
 
 // Standard library
 #include <chrono>
+#include <cmath>
 #include <future>
 #include <string>
 #include <thread>
@@ -33,17 +34,15 @@ namespace {
 static char world_frame[] = "world";
 
 static const double landing_pose_height = 0.25;
-static const double pick_search_length = 0.20;
-// TODO(glpuga) this should be 10, but needs to be higher since cartesian
-// placement seems to ignore nearby objects
-static const double place_drop_height = 0.15;
+static const double pick_search_length = 0.06;
+static const double part_drop_height = 0.04;
 
 static const double pickup_displacement_jump_threshold = 10.0;
 static const double pickup_displacement_step = 0.0025;
 static const double pickup_displacement_step_div = 15;
 static const double max_planning_time = 20.0;
 static const int max_planning_attempts = 5;
-static const double goal_position_tolerance = 0.05;
+static const double goal_position_tolerance = 0.015;
 static const double goal_orientation_tolerance =
     tijcore::utils::angles::degreesToRadians(2.5);
 
@@ -108,6 +107,18 @@ moveit_msgs::CollisionObject createEndEffectorGuard(
   collision_object.operation = operation;
 
   return collision_object;
+}
+
+double estimatePartHeight(const tijcore::Matrix3 &orientation_in_world,
+                          const tijcore::PartTypeId &id) {
+  const auto part_dimensions = tijcore::part_type::dimensions(id);
+
+  const double estimated_height = std::abs(tijcore::Vector3{0, 0, 1}.dot(
+      part_dimensions[0] * orientation_in_world.col(0) +
+      part_dimensions[1] * orientation_in_world.col(1) +
+      part_dimensions[2] * orientation_in_world.col(2)));
+  ERROR("Estimated part height for {} is {}", id, estimated_height);
+  return estimated_height;
 }
 
 } // namespace
@@ -363,7 +374,8 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(
 }
 
 bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
-    const tijcore::RelativePose3 &target) const {
+    const tijcore::RelativePose3 &target,
+    const tijcore::PartTypeId &part_type_id) const {
   if (!enabled()) {
     return false;
   }
@@ -376,17 +388,27 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
   setSuctionGripper(true);
 
   auto frame_transformer = toolbox_->getFrameTransformer();
-  auto end_effector_target_pose =
+
+  const auto target_in_world_pose =
       frame_transformer->transformPoseToFrame(target, world_frame);
+
+  // TODO(glpuga) this should better be an function that given the part pose,
+  // returns the estimated gripper pose
+  auto end_effector_target_pose = target_in_world_pose;
   alignEndEffectorWithTarget(end_effector_target_pose);
+
   auto end_effector_target_pose_in_world = end_effector_target_pose.pose();
 
   const auto run_top =
       end_effector_target_pose_in_world.position().vector().z() +
-      pick_search_length * 0.5;
+      +estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
+                          part_type_id) +
+      pick_search_length * 0.33;
   const auto run_bottom =
-      end_effector_target_pose_in_world.position().vector().z() -
-      pick_search_length * 0.5;
+      end_effector_target_pose_in_world.position().vector().z() +
+      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
+                         part_type_id) -
+      pick_search_length * 0.66;
   end_effector_target_pose_in_world.position().vector().z() = run_top;
 
   while (!gripperHasPartAttached() &&
@@ -434,7 +456,8 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
 }
 
 bool PickAndPlaceRobotCommonImpl::placePartFromAbove(
-    const tijcore::RelativePose3 &target) const {
+    const tijcore::RelativePose3 &target,
+    const tijcore::PartTypeId &part_type_id) const {
   if (!enabled()) {
     return false;
   }
@@ -446,14 +469,21 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(
   move_group_ptr->setPoseReferenceFrame(world_frame);
 
   auto frame_transformer = toolbox_->getFrameTransformer();
-  auto end_effector_target_pose =
+
+  auto target_in_world_pose =
       frame_transformer->transformPoseToFrame(target, world_frame);
+
+  // TODO(glpuga) this should better be a function that given the part pose,
+  // retursns the estimated grasping pose
+  auto end_effector_target_pose = target_in_world_pose;
   alignEndEffectorWithTarget(end_effector_target_pose);
 
   auto end_effector_target_pose_in_world = end_effector_target_pose.pose();
 
   end_effector_target_pose_in_world.position().vector().z() +=
-      place_drop_height;
+      part_drop_height +
+      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
+                         part_type_id);
 
   {
     std::vector<geometry_msgs::Pose> waypoints;
@@ -467,11 +497,11 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(
     moveit_msgs::RobotTrajectory trajectory;
     {
       const double fraction = move_group_ptr->computeCartesianPath(
-          waypoints, pickup_displacement_step / pickup_displacement_step_div,
+          waypoints, pickup_displacement_step,
           pickup_displacement_jump_threshold, trajectory);
       DEBUG("Place movement: cartesian planner plan fraction for {}: {}",
             name(), fraction);
-      bool success = (fraction > 0.8);
+      bool success = (fraction > 0.95);
       if (!success) {
         ERROR("{} failed to generate a plan to the drop point "
               "(fraction: {})",
@@ -482,15 +512,10 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(
       }
     }
 
+    // we don't check the return value because it's going to return failure once
+    // we hit the table
     INFO("Place movement: {} is executing the movement", name());
-    auto success = (move_group_ptr->execute(trajectory) ==
-                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
-    if (!success) {
-      ERROR("{} failed to move arm to the drop point.", name());
-      WARNING("{} will release the part here");
-      setSuctionGripper(false);
-      return false;
-    }
+    move_group_ptr->execute(trajectory);
   }
 
   setSuctionGripper(false);

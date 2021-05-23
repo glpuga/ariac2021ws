@@ -30,6 +30,13 @@ RobotTaskOutcome RemoveBrokenPartTask::run() {
   auto scene = toolbox_->getSceneConfigReader();
   RobotTaskOutcome result{RobotTaskOutcome::TASK_FAILURE};
 
+  tijcore::PartTypeId part_type_id;
+  {
+    auto [part_type, broken] = target_.resource()->model();
+    (void)broken;
+    part_type_id = part_type.type();
+  }
+
   const auto target_parent_name = target_.resource()->parentName();
 
   ModelTrayAccessSpaceManager model_tray_access_manager(*resource_manager_,
@@ -51,7 +58,8 @@ RobotTaskOutcome RemoveBrokenPartTask::run() {
     ERROR(
         "{} failed to get into the approximation pose to remove a broken part",
         robot.name());
-  } else if (!robot.graspPartFromAbove(target_.resource()->pose())) {
+  } else if (!robot.graspPartFromAbove(target_.resource()->pose(),
+                                       part_type_id)) {
     ERROR("{} failed to pick up the broken part while trying to remove it",
           robot.name());
   } else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||

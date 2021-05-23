@@ -55,6 +55,21 @@ bool isValid(const std::string &sid) {
   return true;
 }
 
+Vector3 dimensions(const PartTypeId &id) {
+  static const std::unordered_map<PartTypeId, Vector3> id_map = {
+      {PartTypeId::battery, Vector3{0.136, 0.06, 0.05}},
+      {PartTypeId::sensor, Vector3{0.125, 0.105, 0.06}},
+      {PartTypeId::regulator, Vector3{0.085, 0.115, 0.06}},
+      {PartTypeId::pump, Vector3{0.10, 0.10, 0.10}},
+  };
+  auto it = id_map.find(id);
+  if (it == id_map.end()) {
+    throw std::invalid_argument{"Invalid part type id"};
+  }
+
+  return it->second;
+}
+
 }; // namespace part_type
 
 std::ostream &operator<<(std::ostream &os, PartTypeId id) {

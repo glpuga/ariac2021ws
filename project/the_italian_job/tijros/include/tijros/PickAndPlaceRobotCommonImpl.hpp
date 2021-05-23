@@ -34,9 +34,13 @@ public:
 
   bool getInLandingSpot(const tijcore::RelativePose3 &target) const override;
 
-  bool graspPartFromAbove(const tijcore::RelativePose3 &target) const override;
+  bool
+  graspPartFromAbove(const tijcore::RelativePose3 &target,
+                     const tijcore::PartTypeId &part_type_id) const override;
 
-  bool placePartFromAbove(const tijcore::RelativePose3 &target) const override;
+  bool
+  placePartFromAbove(const tijcore::RelativePose3 &target,
+                     const tijcore::PartTypeId &part_type_id) const override;
 
   bool twistPartInPlace(tijcore::RelativePose3 &target,
                         const TwistDirection &direction) const override;

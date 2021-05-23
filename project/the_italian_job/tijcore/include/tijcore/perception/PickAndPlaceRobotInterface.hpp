@@ -9,6 +9,7 @@
 #include <set>
 
 // tijcore
+#include <tijcore/agents/PartTypeId.hpp>
 #include <tijcore/agents/WorkRegionId.hpp>
 #include <tijcore/localization/RelativePose3.hpp>
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
@@ -35,10 +36,12 @@ public:
   virtual bool getInLandingSpot(const tijcore::RelativePose3 &target) const = 0;
 
   virtual bool
-  graspPartFromAbove(const tijcore::RelativePose3 &target) const = 0;
+  graspPartFromAbove(const tijcore::RelativePose3 &target,
+                     const tijcore::PartTypeId &part_type_id) const = 0;
 
   virtual bool
-  placePartFromAbove(const tijcore::RelativePose3 &target) const = 0;
+  placePartFromAbove(const tijcore::RelativePose3 &target,
+                     const tijcore::PartTypeId &part_type_id) const = 0;
 
   virtual bool twistPartInPlace(RelativePose3 &target,
                                 const TwistDirection &direction) const = 0;

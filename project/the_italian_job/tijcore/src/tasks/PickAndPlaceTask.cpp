@@ -31,6 +31,12 @@ RobotTaskOutcome PickAndPlaceTask::run() {
 
   ModelTrayAccessSpaceManager model_tray_access_manager(*resource_manager_,
                                                         robot);
+  tijcore::PartTypeId part_type_id;
+  {
+    auto [part_type, broken] = source_.resource()->model();
+    (void)broken;
+    part_type_id = part_type.type();
+  }
 
   // clear exclusion zones to enable movement to a safe spot regardless of where
   // we are located
@@ -59,7 +65,8 @@ RobotTaskOutcome PickAndPlaceTask::run() {
   } else if (!robot.getInLandingSpot(source_.resource()->pose())) {
     ERROR("{} failed to get into the landing pose prior to grasping",
           robot.name());
-  } else if (!robot.graspPartFromAbove(source_.resource()->pose())) {
+  } else if (!robot.graspPartFromAbove(source_.resource()->pose(),
+                                       part_type_id)) {
     ERROR("{} failed to grasp the part form the surface", robot.name());
   } else if (!robot.getInLandingSpot(source_.resource()->pose()) ||
              !robot.gripperHasPartAttached()) {
@@ -84,7 +91,8 @@ RobotTaskOutcome PickAndPlaceTask::run() {
     ERROR("{} failed to get to the destination landing pose with the part "
           "grasped",
           robot.name());
-  } else if (!robot.placePartFromAbove(destination_.resource()->pose())) {
+  } else if (!robot.placePartFromAbove(destination_.resource()->pose(),
+                                       part_type_id)) {
     ERROR("{} failed to place the part in the destination pose", robot.name());
   } else {
     result = RobotTaskOutcome::TASK_SUCCESS;

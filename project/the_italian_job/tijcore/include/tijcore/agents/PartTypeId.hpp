@@ -7,6 +7,9 @@
 // standard library
 #include <string>
 
+// project
+#include <tijcore/math/Vector3.hpp>
+
 namespace tijcore {
 
 enum class PartTypeId { battery, sensor, regulator, pump };
@@ -18,6 +21,9 @@ PartTypeId fromString(const std::string &sid);
 std::string toString(const PartTypeId &id);
 
 bool isValid(const std::string &sid);
+
+// TODO(glpuga) add tests for this function
+Vector3 dimensions(const PartTypeId &id);
 
 } // namespace part_type
 
