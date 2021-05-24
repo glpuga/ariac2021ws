@@ -77,7 +77,7 @@ models_over_bins:
        assembly_sensor_blue:
          xyz_start: [0.2, 0.2, 0.0]
          xyz_end: [0.4, 0.4, 0.0]
-         rpy: ['pi/2', 0, 'pi/4']
+         rpy: [0, 0, 'pi/4']
          num_models_x: 2
          num_models_y: 1
 
