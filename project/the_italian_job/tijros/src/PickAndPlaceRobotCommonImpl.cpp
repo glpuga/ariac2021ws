@@ -117,7 +117,6 @@ double estimatePartHeight(const tijcore::Matrix3 &orientation_in_world,
       part_dimensions[0] * orientation_in_world.col(0) +
       part_dimensions[1] * orientation_in_world.col(1) +
       part_dimensions[2] * orientation_in_world.col(2)));
-  ERROR("Estimated part height for {} is {}", id, estimated_height);
   return estimated_height;
 }
 
@@ -401,8 +400,8 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
 
   const auto run_top =
       end_effector_target_pose_in_world.position().vector().z() +
-      +estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
-                          part_type_id) +
+      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
+                         part_type_id) +
       pick_search_length * 0.33;
   const auto run_bottom =
       end_effector_target_pose_in_world.position().vector().z() +
@@ -470,7 +469,7 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(
 
   auto frame_transformer = toolbox_->getFrameTransformer();
 
-  auto target_in_world_pose =
+  const auto target_in_world_pose =
       frame_transformer->transformPoseToFrame(target, world_frame);
 
   // TODO(glpuga) this should better be a function that given the part pose,
