@@ -615,17 +615,17 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(
             rotated_end_effector_in_world.rotation().rotationMatrix();
         if (direction == TwistDirection::left) {
           rotated_target_rotation_matrix *=
-              tijcore::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(89))
+              tijcore::Rotation::fromRollPitchYaw(0, degreesToRadians(85), 0)
                   .rotationMatrix();
         } else {
           rotated_target_rotation_matrix *=
-              tijcore::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(-89))
+              tijcore::Rotation::fromRollPitchYaw(0, degreesToRadians(-85), 0)
                   .rotationMatrix();
         }
         rotated_end_effector_in_world.rotation() =
             tijcore::Rotation(rotated_target_rotation_matrix);
         rotated_end_effector_in_world.position().vector() +=
-            rotated_target_rotation_matrix.col(1) * (-0.12) +
+            rotated_target_rotation_matrix.col(2) * (0.12) +
             rotated_target_rotation_matrix.col(0) * (-0.07);
       }
 
@@ -825,27 +825,32 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
   // to try to consistently align with the same axis, which is important for
   // part flipping, try to use always the same vector, unless that's the one
   // that's pointing up.
-  tijcore::Vector3 z_director;
+  tijcore::Vector3 y_director;
   if ((std::abs(x_director.dot(original_x_director)) >
        std::abs(x_director.dot(original_y_director))) &&
       (std::abs(x_director.dot(original_x_director)) >
        std::abs(x_director.dot(original_z_director)))) {
     // x is pointing up
-    z_director = orientation.col(2);
+    y_director = orientation.col(2);
   } else {
     // is horizontal, always choose x
-    z_director = orientation.col(0);
+    y_director = orientation.col(0);
   }
 
   // Don't assume the target will be perfectly normal to the world Z axis
-  z_director -= x_director * z_director.dot(x_director);
-  z_director = z_director / z_director.norm();
-
-  auto y_director = z_director.cross(x_director);
+  y_director -= x_director * y_director.dot(x_director);
   y_director = y_director / y_director.norm();
 
+  auto z_director = x_director.cross(y_director);
+  z_director = z_director / z_director.norm();
+
   const auto end_effector_orientation =
-      tijcore::Matrix3{x_director, y_director, z_director}.trans();
+      tijcore::Matrix3{
+          x_director,
+          y_director,
+          z_director,
+      }
+          .trans();
 
   end_effector_target_pose.rotation() =
       tijcore::Rotation{end_effector_orientation};
