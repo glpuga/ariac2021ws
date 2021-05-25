@@ -4,6 +4,8 @@
   <param name="/ariac/custom/gantry/robot_description_semantic" command="rosparam get -p /ariac/gantry/robot_description_semantic" />
   <param name="/ariac/custom/kitting/robot_description_semantic" command="rosparam get -p /ariac/kitting/robot_description_semantic" />
 
+  <node pkg="tf" type="static_transform_publisher" name="corrected_belt_frame_publisher" args="-0.57 0.0 0.91 0 0 0 1 world corrected_belt_frame 100" />
+
   <node name="the_italian_job_challenger" pkg="tijchallenger" type="tijchallenger_node" required="true" output="screen">
     <remap from="/ariac/custom/gantry/joint_states" to="/ariac/gantry/joint_states" />
     <remap from="/ariac/custom/kitting/joint_states" to="/ariac/kitting/joint_states" />

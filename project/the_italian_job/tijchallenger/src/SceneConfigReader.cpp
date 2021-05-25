@@ -115,7 +115,7 @@ SceneConfigReader::getListOfAssemblyStations() const {
 const std::vector<SceneConfigReader::ConveyorBeltData> &
 SceneConfigReader::getListOfConveyorBelts() const {
   static const std::vector<ConveyorBeltData> data{
-      {"conveyor_belt", "belt_frame", "belt_frame_surface",
+      {"conveyor_belt", "corrected_belt_frame", "belt_frame_surface",
        "conveyor_belt_access_space", 0.2},
   };
   return data;
@@ -165,8 +165,9 @@ SceneConfigReader::getListOfSharedAccessSpaceDescriptions() const {
            "briefcase_4", tijcore::Position::fromVector(0.0, 0.0, 0.0), {}},
        0.6, 0.6, 0.3},
       {"conveyor_belt_access_space",
-       tijcore::RelativePose3{
-           "belt_frame", tijcore::Position::fromVector(0.0, 0.0, 0.0), {}},
+       tijcore::RelativePose3{"corrected_belt_frame",
+                              tijcore::Position::fromVector(0.0, 0.0, 0.0),
+                              {}},
        0.63, 9.0, 0.4},
   };
   return data;
