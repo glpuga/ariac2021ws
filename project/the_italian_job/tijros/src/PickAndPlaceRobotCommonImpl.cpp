@@ -464,10 +464,6 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
         end_effector_target_pose_in_world.position().vector().y() -
         current_target_pose.position().vector().y();
 
-    ERROR("target {}", target);
-    ERROR("target_w {}", current_target_pose);
-    ERROR("displacement {}", part_displacement);
-
     auto t0 = trajectory.joint_trajectory.points[0].time_from_start.toSec();
 
     const auto &joint_names = trajectory.joint_trajectory.joint_names;
