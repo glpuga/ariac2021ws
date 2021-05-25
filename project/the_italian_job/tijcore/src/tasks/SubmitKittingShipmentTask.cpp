@@ -3,6 +3,8 @@
  */
 
 // standard library
+#include <chrono>
+#include <thread>
 #include <utility>
 
 // tijcore
@@ -10,6 +12,10 @@
 #include <tijcore/tasks/SubmitKittingShipmentTask.hpp>
 
 namespace tijcore {
+
+namespace {
+std::chrono::seconds anti_ghosting_delay{5};
+}
 
 SubmitKittingShipmentTask::SubmitKittingShipmentTask(
     const Toolbox::SharedPtr &toolbox,
@@ -26,6 +32,11 @@ RobotTaskOutcome SubmitKittingShipmentTask::run() {
   proces_manager->submitAgvToAssemblyStation(
       agv::fromString(tray_.resource()->name()), destination_station_,
       shipment_type_);
+
+  INFO("The kitting shipment is on the move...");
+
+  std::this_thread::sleep_for(anti_ghosting_delay);
+
   return RobotTaskOutcome::TASK_SUCCESS;
 }
 
