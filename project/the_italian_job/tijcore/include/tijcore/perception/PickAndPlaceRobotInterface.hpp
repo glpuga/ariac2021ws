@@ -21,8 +21,6 @@ public:
   using Ptr = std::unique_ptr<PickAndPlaceRobotInterface>;
   using SharedPtr = std::shared_ptr<PickAndPlaceRobotInterface>;
 
-  enum class TwistDirection { left, right };
-
   virtual ~PickAndPlaceRobotInterface() = default;
 
   virtual bool getInSafePose() const = 0;
@@ -43,8 +41,9 @@ public:
   placePartFromAbove(const tijcore::RelativePose3 &target,
                      const tijcore::PartTypeId &part_type_id) const = 0;
 
-  virtual bool twistPartInPlace(RelativePose3 &target,
-                                const TwistDirection &direction) const = 0;
+  virtual bool
+  twistPartInPlace(RelativePose3 &target,
+                   const tijcore::PartTypeId &part_type_id) const = 0;
 
   virtual bool dropPartWhereYouStand() const = 0;
 

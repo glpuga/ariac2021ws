@@ -31,8 +31,10 @@ public:
 
   MOCK_CONST_METHOD0(placePartFromAbove, bool());
 
-  MOCK_CONST_METHOD1(twistPartInPlace, bool(tijcore::RelativePose3 &target,
-                                            const TwistDirection &direction));
+  MOCK_CONST_METHOD1(twistPartInPlace,
+                     bool(tijcore::RelativePose3 &target,
+
+                          const tijcore::PartTypeId &part_type_id));
 
   MOCK_CONST_METHOD0(enabled, bool());
 

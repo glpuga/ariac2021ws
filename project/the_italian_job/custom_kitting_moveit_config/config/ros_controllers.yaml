@@ -37,41 +37,41 @@ controller_list:
     - wrist_2_joint
     - wrist_3_joint
     constraints:
-      goal_time: 3
-    stop_trajectory_duration: 3
+      goal_time: 5
+    stop_trajectory_duration: 5
     gains:
       linear_arm_actuator_joint:
-        p: 10000
+        p: 100000
         d: 0
-        i: 10
-        i_clamp: 1
+        i: 1000
+        i_clamp: 10000
       shoulder_pan_joint:
-        p: 10000
+        p: 100000
         d: 0
-        i: 10
-        i_clamp: 1
+        i: 1000
+        i_clamp: 10000
       shoulder_lift_joint:
-        p: 10000
+        p: 100000
         d: 0
-        i: 10
-        i_clamp: 50
+        i: 1000
+        i_clamp: 10000
       elbow_joint:
-        p: 10000
+        p: 100000
         d: 0
-        i: 10
-        i_clamp: 25
+        i: 1000
+        i_clamp: 10000
       wrist_1_joint:
-        p: 10000
+        p: 100000
         d: 0
-        i: 10
-        i_clamp: 1
+        i: 1000
+        i_clamp: 10000
       wrist_2_joint:
-        p: 10000
+        p: 100000
         d: 0
-        i: 10
-        i_clamp: 1
+        i: 1000
+        i_clamp: 10000
       wrist_3_joint:
-        p: 10000
+        p: 100000
         d: 0
-        i: 10
-        i_clamp: 1
+        i: 1000
+        i_clamp: 10000

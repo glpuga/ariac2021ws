@@ -43,7 +43,8 @@ public:
                      const tijcore::PartTypeId &part_type_id) const override;
 
   bool twistPartInPlace(tijcore::RelativePose3 &target,
-                        const TwistDirection &direction) const override;
+
+                        const tijcore::PartTypeId &part_type_id) const override;
 
   bool dropPartWhereYouStand() const override;
 
@@ -77,6 +78,8 @@ private:
 
   void
   alignEndEffectorWithTarget(tijcore::RelativePose3 &target_in_world) const;
+
+  void configureGoalTolerances() const;
 };
 
 } // namespace tijros
