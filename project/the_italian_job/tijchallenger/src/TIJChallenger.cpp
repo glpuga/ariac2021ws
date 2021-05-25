@@ -19,12 +19,14 @@
 #include <tijcore/perception/AgvModelContainer.hpp>
 #include <tijcore/perception/AssemblyStationModelContainer.hpp>
 #include <tijcore/perception/BinModelContainer.hpp>
+#include <tijcore/perception/ConveyorBeltModelContainer.hpp>
 #include <tijcore/perception/ModelPerceptionMixer.hpp>
 #include <tijcore/perception/ResourceManager.hpp>
 #include <tijcore/perception/RobotTaskFactory.hpp>
 #include <tijcore/perception/TaskDriver.hpp>
 #include <tijcore/perception/TaskMaster.hpp>
 #include <tijcore/tasks/RobotTaskGroupRunner.hpp>
+#include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
 #include <tijros/PickAndPlaceAssemblyRobot.hpp>
 #include <tijros/PickAndPlaceKittingRobot.hpp>
@@ -44,6 +46,9 @@ TIJChallenger::TIJChallenger() {
 
   INFO(" - Instantiating scene configuration");
   config_ = std::make_shared<SceneConfigReader>();
+
+  INFO(" - Creating conveyor belt frame broadcasters");
+  containers_ = createConveyorBeltTransformBroadcasters();
 
   INFO(" - Creating Toolbox");
   toolbox_ = createToolbox();
@@ -140,6 +145,32 @@ TIJChallenger::createModelContainers(
     containers.emplace_back(std::make_unique<tijcore::BinModelContainer>(
         item.name, item.frame_id, item.work_region,
         item.shared_access_space_id));
+  }
+
+  INFO(" - Loading conveyor belts data");
+  for (const auto &item : config_->getListOfConveyorBelts()) {
+    INFO("   - {} @ {}/{} (speed {})", item.name, item.container_frame_id,
+         item.surface_frame_id, item.meters_per_second);
+    containers.emplace_back(
+        std::make_unique<tijcore::ConveyorBeltModelContainer>(
+            item.name, item.container_frame_id, item.surface_frame_id,
+            item.shared_access_space_id));
+  }
+
+  return containers;
+}
+
+std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr>
+TIJChallenger::createConveyorBeltTransformBroadcasters() const {
+  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr> containers;
+  INFO(" - Loading conveyor belts surface transform broadcaster");
+  for (const auto &item : config_->getListOfConveyorBelts()) {
+    INFO("   - {} @ {}/{} (speed {})", item.name, item.container_frame_id,
+         item.surface_frame_id, item.meters_per_second);
+    containers.emplace_back(
+        std::make_unique<tijros::ConveyorBeltSurfaceFrameBroadcaster>(
+            nh_, item.container_frame_id, item.surface_frame_id,
+            item.meters_per_second));
   }
 
   return containers;

@@ -103,8 +103,9 @@ ResourceManager::findEmptyLoci() {
           model_containers_.at(container_name).resource()->pose();
       auto [x, y] = region_opt.value();
 
-      auto parent_ref_frame =
-          model_containers_.at(container_name).resource()->localFrameId();
+      auto parent_ref_frame = model_containers_.at(container_name)
+                                  .resource()
+                                  ->containerReferenceFrameId();
 
       RelativePose3 pose{parent_ref_frame, Position::fromVector(x, y, 0),
                          Rotation::Identity};
@@ -381,7 +382,9 @@ std::string ResourceManager::getContainerFrameId(
     throw std::invalid_argument{"There's no container filed with the name " +
                                 model_container_name};
   }
-  return model_containers_.at(model_container_name).resource()->localFrameId();
+  return model_containers_.at(model_container_name)
+      .resource()
+      ->containerReferenceFrameId();
 }
 
 std::string ResourceManager::getContainerExclusionZoneId(
@@ -483,7 +486,8 @@ ResourceManager::getManagedLocusHandleForPose(const RelativePose3 &pose) {
   }
 
   auto parent_name = parent_container->resource()->name();
-  auto parent_frame_id = parent_container->resource()->localFrameId();
+  auto parent_frame_id =
+      parent_container->resource()->containerReferenceFrameId();
 
   // check if we have surface real state to allocate this
   auto surface_manager = buildContainerSurfaceManager(parent_name);
@@ -528,7 +532,7 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(
 
   for (const auto &model_locus : model_loci_) {
     auto [x, y, r] = poseToOccupancy(model_locus.resource()->pose(),
-                                     handle_ptr->localFrameId());
+                                     handle_ptr->containerReferenceFrameId());
     surface_manager.markAsOccupied(x, y, r);
   }
 
@@ -570,8 +574,10 @@ void ResourceManager::updateSensorData(
       continue;
     }
 
-    // this transformation is not needed, but makes debugging issues far easier
-    const auto parent_frame_id = parent_container->resource()->localFrameId();
+    // this transformation makes all objects relative to the surface. This is
+    // the same as the relative to the container, except for the conveyor belt.
+    const auto parent_frame_id =
+        parent_container->resource()->surfaceReferenceFrameId();
     const auto local_frame_pose =
         transformPoseToContainerLocalPose(model.pose, parent_frame_id);
 
@@ -750,7 +756,8 @@ ResourceManager::poseToOccupancy(const RelativePose3 &relative_pose,
 bool ResourceManager::locusWithinVolume(
     const ManagedLocus &locus, const ModelContainerHandle &container) const {
   const auto &container_volume = container.resource()->containerVolume();
-  const auto &local_frame_id = container.resource()->localFrameId();
+  const auto &local_frame_id =
+      container.resource()->containerReferenceFrameId();
   const auto local_pose =
       transformPoseToContainerLocalPose(locus.pose(), local_frame_id);
   return container_volume.contains(local_pose.position());
@@ -778,7 +785,7 @@ void ResourceManager::logKnownLoci() {
     auto known_model_locus_pose = known_model_locus.pose();
     auto parent_frame = model_containers_.at(known_model_locus.parentName())
                             .resource()
-                            ->localFrameId();
+                            ->containerReferenceFrameId();
     auto pose_in_parent =
         RelativePose3{parent_frame, transformPoseToContainerLocalPose(
                                         known_model_locus_pose, parent_frame)};

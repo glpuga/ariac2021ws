@@ -65,6 +65,7 @@ add_library(
   src/perception/AgvModelContainer.cpp
   src/perception/AssemblyStationModelContainer.cpp
   src/perception/BinModelContainer.cpp
+  src/perception/ConveyorBeltModelContainer.cpp
   src/perception/ManagedLocus.cpp
   src/perception/ModelContainerInterface.cpp
   src/perception/ModelPerceptionMixer.cpp

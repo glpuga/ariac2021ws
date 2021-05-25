@@ -17,6 +17,7 @@
 #include <tijcore/perception/SceneConfigReaderInterface.hpp>
 #include <tijcore/perception/TaskDriver.hpp>
 #include <tijcore/perception/Toolbox.hpp>
+#include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 
 namespace tijchallenger {
 
@@ -30,6 +31,8 @@ private:
   ros::NodeHandle nh_;
   tijcore::SceneConfigReaderInterface::SharedPtr config_;
 
+  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr> containers_;
+
   tijcore::Toolbox::SharedPtr toolbox_;
   tijcore::TaskDriver::Ptr task_driver_;
 
@@ -39,6 +42,9 @@ private:
 
   std::vector<tijcore::ModelContainerInterface::Ptr>
   createModelContainers(const tijcore::Toolbox::SharedPtr &toolbox) const;
+
+  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr>
+  createConveyorBeltTransformBroadcasters() const;
 
   std::vector<tijcore::PickAndPlaceRobotInterface::Ptr>
   createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr &toolbox) const;

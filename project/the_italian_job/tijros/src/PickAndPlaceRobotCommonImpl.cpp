@@ -417,10 +417,19 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
       pick_search_length * 0.66;
   end_effector_target_pose_in_world.position().vector().z() = run_top;
 
+  double part_displacement = 0.0;
+
   while (!gripperHasPartAttached() &&
          (end_effector_target_pose_in_world.position().vector().z() >
           run_bottom)) {
     std::vector<geometry_msgs::Pose> waypoints;
+
+    {
+      auto current_target_pose =
+          frame_transformer->transformPoseToFrame(target, world_frame);
+      end_effector_target_pose_in_world.position().vector().y() =
+          current_target_pose.position().vector().y();
+    }
 
     // make sure we are pointing down in the end pose
     end_effector_target_pose_in_world.position().vector().z() -=
@@ -445,6 +454,36 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
               "(fraction: {})",
               name(), fraction);
         break;
+      }
+    }
+
+    auto current_target_pose =
+        frame_transformer->transformPoseToFrame(target, world_frame);
+
+    part_displacement +=
+        end_effector_target_pose_in_world.position().vector().y() -
+        current_target_pose.position().vector().y();
+
+    ERROR("target {}", target);
+    ERROR("target_w {}", current_target_pose);
+    ERROR("displacement {}", part_displacement);
+
+    auto t0 = trajectory.joint_trajectory.points[0].time_from_start.toSec();
+
+    const auto &joint_names = trajectory.joint_trajectory.joint_names;
+    for (uint32_t j = 0; j < joint_names.size(); ++j) {
+      if (joint_names[j] != "linear_arm_actuator_joint") {
+        continue;
+      }
+      auto &points = trajectory.joint_trajectory.points;
+      for (uint32_t i = 1; i < points.size(); ++i) {
+        points[i].positions[j] -= part_displacement;
+
+        if (end_effector_target_pose_in_world.position().vector().x() > -1) {
+          auto t1 =
+              trajectory.joint_trajectory.points[i].time_from_start.toSec();
+          points[i].positions[j] -= 0.2 * (t1 - t0);
+        }
       }
     }
 
@@ -723,8 +762,8 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
   auto scene_configuration = toolbox_->getSceneConfigReader();
   const double z_offset{0.025};
 
-  INFO(" Generating collision scene");
-  INFO(" - adding AGV tray representatives");
+  DEBUG(" Generating collision scene");
+  DEBUG(" - adding AGV tray representatives");
   for (const auto &item : scene_configuration->getListOfAgvs()) {
     collision_objects.push_back(createCollisionBox(
         item.name, "surface", item.frame_id, 0.5, 0.7, z_offset));
@@ -736,7 +775,7 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
                                                    0.7, 0.0, -0.45, 0.35));
   }
 
-  INFO(" - adding assembly station representatives");
+  DEBUG(" - adding assembly station representatives");
   for (const auto &item : scene_configuration->getListOfAssemblyStations()) {
     collision_objects.push_back(createCollisionBox(item.name, "briefcase_table",
                                                    item.frame_id, 1.6, 1.2,
@@ -764,7 +803,7 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
                                                    0.0, 0.35, 0.75));
   }
 
-  INFO(" - adding bin representatives");
+  DEBUG(" - adding bin representatives");
   for (const auto &item : scene_configuration->getListOfBins()) {
     collision_objects.push_back(createCollisionBox(
         item.name, "surface", item.frame_id, 0.6, 0.6, z_offset));
@@ -781,6 +820,12 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
                                                    0.08, -0.31, 0.0, 0.04));
   }
 
+  DEBUG(" - adding conveyor belt representatives");
+  for (const auto &item : scene_configuration->getListOfConveyorBelts()) {
+    collision_objects.push_back(createCollisionBox(
+        item.name, "surface", item.container_frame_id, 0.63, 9, z_offset));
+  }
+
   // kitting rail
   collision_objects.push_back(createCollisionBox(
       "kitting", "rail", "world", 0.4, 10.0, 0.10, -1.3, 0.0, 0.93));
@@ -788,10 +833,6 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
   // Imaginary divider
   collision_objects.push_back(createCollisionBox(
       "divider", "rail", "world", 0.05, 10.0, 0.1, -1.4, 0.0, 2.7));
-
-  // conveyor belt
-  collision_objects.push_back(createCollisionBox(
-      "kitting", "belt", "world", 0.8, 9.0, 0.2, -0.5, 0.0, 0.9));
 
   // Create end-effector guard
   collision_objects.push_back(

@@ -22,7 +22,8 @@ public:
   using SharedPtr = std::shared_ptr<ModelContainerInterface>;
 
   ModelContainerInterface(const std::string &name,
-                          const std::string &local_frame_id,
+                          const std::string &container_reference_frame_id_,
+                          const std::string &surface_reference_frame_id_,
                           const RelativePose3 &pose,
                           const CuboidVolume &container_volume,
                           const std::string &shared_workspace_id);
@@ -42,7 +43,9 @@ public:
 
   std::string name() const;
 
-  std::string localFrameId() const;
+  std::string containerReferenceFrameId() const;
+
+  std::string surfaceReferenceFrameId() const;
 
   RelativePose3 pose() const;
 
@@ -52,7 +55,8 @@ public:
 
 private:
   std::string name_;
-  std::string local_frame_id_;
+  std::string container_reference_frame_id_;
+  std::string surface_reference_frame_id_;
   RelativePose3 pose_;
   CuboidVolume container_volume_;
   std::string shared_workspace_id_;

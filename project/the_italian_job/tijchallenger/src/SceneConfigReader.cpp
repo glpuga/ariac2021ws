@@ -74,6 +74,7 @@ SceneConfigReader::getListOfLogicalCameras() const {
       {"logical_camera_agv3_as4", "logical_camera_agv3_as4_frame"},
       {"logical_camera_agv4_as3", "logical_camera_agv4_as3_frame"},
       {"logical_camera_agv4_as4", "logical_camera_agv4_as4_frame"},
+      {"logical_camera_conveyor_belt", "logical_camera_conveyor_belt_frame"},
   };
   return data;
 }
@@ -107,6 +108,15 @@ SceneConfigReader::getListOfAssemblyStations() const {
       {"as2", "briefcase_2", "as2_access_space"},
       {"as3", "briefcase_3", "as3_access_space"},
       {"as4", "briefcase_4", "as4_access_space"},
+  };
+  return data;
+}
+
+const std::vector<SceneConfigReader::ConveyorBeltData> &
+SceneConfigReader::getListOfConveyorBelts() const {
+  static const std::vector<ConveyorBeltData> data{
+      {"conveyor_belt", "belt_frame", "belt_frame_surface",
+       "conveyor_belt_access_space", 0.2},
   };
   return data;
 }
@@ -154,7 +164,10 @@ SceneConfigReader::getListOfSharedAccessSpaceDescriptions() const {
        tijcore::RelativePose3{
            "briefcase_4", tijcore::Position::fromVector(0.0, 0.0, 0.0), {}},
        0.6, 0.6, 0.3},
-
+      {"conveyor_belt_access_space",
+       tijcore::RelativePose3{
+           "belt_frame", tijcore::Position::fromVector(0.0, 0.0, 0.0), {}},
+       0.63, 9.0, 0.4},
   };
   return data;
 }

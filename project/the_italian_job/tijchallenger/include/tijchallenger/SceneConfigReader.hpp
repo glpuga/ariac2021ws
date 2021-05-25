@@ -30,6 +30,8 @@ public:
 
   const std::vector<DeviceData> &getListOfAssemblyStations() const override;
 
+  const std::vector<ConveyorBeltData> &getListOfConveyorBelts() const override;
+
   const std::vector<tijcore::ModelTraySharedAccessSpaceDescription> &
   getListOfSharedAccessSpaceDescriptions() const override;
 

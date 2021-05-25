@@ -112,3 +112,13 @@ sensors:
     pose:
       xyz: [-10.5, -4.5, 1.7]
       rpy: [0, 'pi/2', 'pi/2']
+
+  #
+  # Conveyor belt cameras
+  #
+
+  logical_camera_conveyor_belt:
+    type: logical_camera
+    pose:
+      xyz: [-0.57, 2.0, 1.80]
+      rpy: [0, 'pi/2', 'pi/4']

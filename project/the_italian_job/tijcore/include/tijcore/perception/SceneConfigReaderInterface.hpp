@@ -27,6 +27,14 @@ public:
     std::string shared_access_space_id;
   };
 
+  struct ConveyorBeltData {
+    std::string name;
+    std::string container_frame_id;
+    std::string surface_frame_id;
+    std::string shared_access_space_id;
+    double meters_per_second{0.0};
+  };
+
   struct BinData {
     std::string name;
     std::string frame_id;
@@ -48,6 +56,9 @@ public:
   virtual const std::vector<DeviceData> &getListOfAgvs() const = 0;
 
   virtual const std::vector<DeviceData> &getListOfAssemblyStations() const = 0;
+
+  virtual const std::vector<ConveyorBeltData> &
+  getListOfConveyorBelts() const = 0;
 
   virtual const std::vector<ModelTraySharedAccessSpaceDescription> &
   getListOfSharedAccessSpaceDescriptions() const = 0;
