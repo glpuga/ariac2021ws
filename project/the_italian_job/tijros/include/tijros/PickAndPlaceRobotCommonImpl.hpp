@@ -79,7 +79,7 @@ private:
   void
   alignEndEffectorWithTarget(tijcore::RelativePose3 &target_in_world) const;
 
-  void configureGoalTolerances() const;
+  void configureGoalTolerances(const bool tight_mode) const;
 };
 
 } // namespace tijros

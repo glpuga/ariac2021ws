@@ -33,10 +33,10 @@ namespace {
 // can be get through the scene configuration in  the toolbox
 static char world_frame[] = "world";
 
-static const double landing_pose_height = 0.25;
+static const double landing_pose_height = 0.30;
 static const double pick_search_length = 0.06;
 static const double part_drop_height = 0.04;
-static const double twist_height_correction = 0.12;
+static const double twist_height_correction = 0.17;
 
 static const double pickup_displacement_jump_threshold = 10.0;
 static const double pickup_displacement_step = 0.0025;
@@ -44,8 +44,12 @@ static const double pickup_displacement_step_div = 15;
 static const double max_planning_time = 20.0;
 static const int max_planning_attempts = 5;
 
-static const double tight_goal_position_tolerance = 0.015;
+static const double tight_goal_position_tolerance = 0.001;
 static const double tight_goal_orientation_tolerance =
+    tijcore::utils::angles::degreesToRadians(0.2);
+
+static const double coarse_goal_position_tolerance = 0.015;
+static const double coarse_goal_orientation_tolerance =
     tijcore::utils::angles::degreesToRadians(2.5);
 
 moveit_msgs::CollisionObject
@@ -128,10 +132,17 @@ PickAndPlaceRobotCommonImpl::PickAndPlaceRobotCommonImpl(
     const tijcore::Toolbox::SharedPtr &toolbox)
     : toolbox_{toolbox} {}
 
-void PickAndPlaceRobotCommonImpl::configureGoalTolerances() const {
-  move_group_ptr_->setGoalPositionTolerance(tight_goal_position_tolerance);
-  move_group_ptr_->setGoalOrientationTolerance(
-      tight_goal_orientation_tolerance);
+void PickAndPlaceRobotCommonImpl::configureGoalTolerances(
+    const bool tight_mode) const {
+  if (tight_mode) {
+    move_group_ptr_->setGoalPositionTolerance(tight_goal_position_tolerance);
+    move_group_ptr_->setGoalOrientationTolerance(
+        tight_goal_orientation_tolerance);
+  } else {
+    move_group_ptr_->setGoalPositionTolerance(coarse_goal_position_tolerance);
+    move_group_ptr_->setGoalOrientationTolerance(
+        coarse_goal_orientation_tolerance);
+  }
 }
 
 moveit::planning_interface::MoveGroupInterface *
@@ -154,7 +165,8 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
     move_group_ptr_->setPlanningTime(max_planning_time);
     move_group_ptr_->setNumPlanningAttempts(max_planning_attempts);
 
-    configureGoalTolerances();
+    // default to coarse tolerances
+    configureGoalTolerances(false);
   }
 
   if (!planning_scene_ptr_) {
@@ -325,7 +337,9 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(
   if (!enabled()) {
     return false;
   }
+
   auto move_group_ptr = getMoveItGroupHandlePtr();
+  move_group_ptr->setPoseReferenceFrame(world_frame);
 
   // Convert the target pose to the world reference frame, and set the
   // orientation pointing to the part
@@ -334,14 +348,9 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(
       frame_transformer->transformPoseToFrame(target, world_frame);
   alignEndEffectorWithTarget(end_effector_target_pose);
 
-  INFO("Approximation movement: {} is calculating the approximation pose",
-       name());
   auto approximation_pose_in_world = end_effector_target_pose;
-  // add the approximation height, assumes now zunit points up in world.
   approximation_pose_in_world.position().vector().z() += landing_pose_height;
 
-  DEBUG("Target in original frame at {}", target);
-  DEBUG("Target in world frame at {}", end_effector_target_pose);
   INFO("Approximation pose at {}: {} ", world_frame,
        approximation_pose_in_world);
 
@@ -351,9 +360,6 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(
     auto target_geo_pose =
         utils::convertCorePoseToGeoPose(approximation_pose_in_world.pose());
     move_group_ptr->setPoseTarget(target_geo_pose);
-    move_group_ptr->setPoseReferenceFrame(
-        approximation_pose_in_world.frameId());
-
     move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
     bool success = (move_group_ptr->plan(movement_plan) ==
@@ -385,9 +391,13 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
   if (!enabled()) {
     return false;
   }
+
   auto move_group_ptr = getMoveItGroupHandlePtr();
 
   INFO("Pick-up movement: {} is calculating the pickup trajectory", name());
+
+  // configure tighter tolerances for this
+  configureGoalTolerances(true);
 
   // make sure we trade in world poses only
   move_group_ptr->setPoseReferenceFrame(world_frame);
@@ -425,37 +435,39 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
     std::vector<geometry_msgs::Pose> waypoints;
 
     {
+      // TODO(glpuga) conveyor belt hack
+      // update the y coordinate because the target may be moving on a
+      // conveyor belt
       auto current_target_pose =
           frame_transformer->transformPoseToFrame(target, world_frame);
       end_effector_target_pose_in_world.position().vector().y() =
           current_target_pose.position().vector().y();
     }
 
-    // make sure we are pointing down in the end pose
+    // decrease the gripper one step
     end_effector_target_pose_in_world.position().vector().z() -=
         pickup_displacement_step;
-    waypoints.push_back(
-        utils::convertCorePoseToGeoPose(end_effector_target_pose_in_world));
-
-    INFO("Pick-up trajectory going to pose {} in {} frame",
-         utils::convertGeoPoseToCorePose(waypoints.at(0)), world_frame);
 
     INFO("Pick-up movement: {} is generating the moveit plan", name());
-    moveit_msgs::RobotTrajectory trajectory;
+    moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
     {
-      const double fraction = move_group_ptr->computeCartesianPath(
-          waypoints, pickup_displacement_step / pickup_displacement_step_div,
-          pickup_displacement_jump_threshold, trajectory);
-      DEBUG("Pick-up movement: cartesian planner plan fraction for {}: {}",
-            name(), fraction);
-      bool success = (fraction > 0.8);
+      auto target_geo_pose_in_world =
+          utils::convertCorePoseToGeoPose(end_effector_target_pose_in_world);
+      move_group_ptr->setPoseTarget(target_geo_pose_in_world);
+      move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
+
+      bool success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
       if (!success) {
-        ERROR("{} failed to generate a plan for the pick up trajectory "
-              "(fraction: {})",
-              name(), fraction);
-        break;
+        ERROR("{} failed to generate a plan", name());
+        return false;
       }
     }
+
+    INFO("Pick-up movement: {} is executing the moveit plan", name());
+
+    // TODO(glpuga) conveyor belt hack
+    // adjust trajectory to account for planning time and part speed
 
     auto current_target_pose =
         frame_transformer->transformPoseToFrame(target, world_frame);
@@ -464,6 +476,7 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
         end_effector_target_pose_in_world.position().vector().y() -
         current_target_pose.position().vector().y();
 
+    auto &trajectory = movement_plan.trajectory_;
     auto t0 = trajectory.joint_trajectory.points[0].time_from_start.toSec();
 
     const auto &joint_names = trajectory.joint_trajectory.joint_names;
@@ -790,10 +803,10 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
                                                    -0.7, -0.1, 0.5));
     collision_objects.push_back(createCollisionBox(item.name, "table_left",
                                                    item.frame_id, 1.6, 0.1, 1.0,
-                                                   -0.45, 0.5, 0.5));
+                                                   -0.45, 0.54, 0.5));
     collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_1",
-                                                   item.frame_id, 0.1, 0.1,
-                                                   0.80, 0.3, 0.35, 0.40));
+                                                   item.frame_id, 0.04, 0.1,
+                                                   0.80, 0.33, 0.35, 0.40));
     collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_2",
                                                    item.frame_id, 0.7, 0.1, 0.1,
                                                    0.0, 0.35, 0.75));
@@ -888,10 +901,20 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
       (std::abs(x_director.dot(original_x_director)) >
        std::abs(x_director.dot(original_z_director)))) {
     // x is pointing up
-    y_director = orientation.col(2);
+    // TODO(glpuga) the sign inversion is because without this accessing the
+    // briefcases to remove a battery fails because the full body of the robot
+    // is oriented to try to match the orientation of the piece, resulting in
+    // unfeasable plans. It's likely related to the end of range of the wrist
+    // articulations.
+    y_director = orientation.col(2) * (-1);
   } else {
     // is horizontal, always choose x
-    y_director = orientation.col(0);
+    // TODO(glpuga) the sign inversion is because without this accessing the
+    // briefcases to remove a battery fails because the full body of the robot
+    // is oriented to try to match the orientation of the piece, resulting in
+    // unfeasable plans. It's likely related to the end of range of the wrist
+    // articulations.
+    y_director = orientation.col(0) * (-1);
   }
 
   // Don't assume the target will be perfectly normal to the world Z axis
