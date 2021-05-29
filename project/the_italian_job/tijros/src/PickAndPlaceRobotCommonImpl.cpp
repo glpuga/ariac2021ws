@@ -282,6 +282,9 @@ bool PickAndPlaceRobotCommonImpl::getToGraspingPoseHint(
   if (!enabled()) {
     return false;
   }
+
+  return true;
+
   auto move_group_ptr = getMoveItGroupHandlePtr();
 
   const robot_state::JointModelGroup *joint_model_group =

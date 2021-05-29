@@ -103,9 +103,15 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(
   joint_states[0] = target_in_world.position().vector().y();
 
   // bias the location so that the robot is in a slight angle to grasp
-  const auto sign = (joint_states[0] < 0) ? -1.0 : 1.0;
-  joint_states[0] -= 1.0 * sign;
-  joint_states[1] = 1.57 * sign;
+  const auto part_in_belt = target_in_world.position().vector().x() > -1;
+  if (part_in_belt) {
+    joint_states[0] += 0.25;
+    joint_states[1] = degreesToRadians(-90);
+  } else {
+    const auto sign = (joint_states[0] < 0) ? -1.0 : 1.0;
+    joint_states[0] -= 1.0 * sign;
+    joint_states[1] = degreesToRadians(90) * sign;
+  }
 }
 
 void PickAndPlaceKittingRobot::patchJointStateValuesForAlignedZeroWrist(
