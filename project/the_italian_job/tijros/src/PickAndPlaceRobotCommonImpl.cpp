@@ -415,15 +415,19 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
 
   auto end_effector_target_pose_in_world = end_effector_target_pose.pose();
 
+  // notice that part poses get detected with a height equal to about half the
+  // height of the piece
   const auto run_top =
       end_effector_target_pose_in_world.position().vector().z() +
       estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
-                         part_type_id) +
+                         part_type_id) *
+          0.5 +
       pick_search_length * 0.33;
   const auto run_bottom =
       end_effector_target_pose_in_world.position().vector().z() +
       estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
-                         part_type_id) -
+                         part_type_id) *
+          0.5 -
       pick_search_length * 0.66;
   end_effector_target_pose_in_world.position().vector().z() = run_top;
 

@@ -60,7 +60,7 @@ Vector3 dimensions(const PartTypeId &id) {
       {PartTypeId::battery, Vector3{0.136, 0.06, 0.05}},
       {PartTypeId::sensor, Vector3{0.125, 0.105, 0.06}},
       {PartTypeId::regulator, Vector3{0.085, 0.115, 0.06}},
-      {PartTypeId::pump, Vector3{0.10, 0.10, 0.10}},
+      {PartTypeId::pump, Vector3{0.12, 0.12, 0.12}},
   };
   auto it = id_map.find(id);
   if (it == id_map.end()) {
