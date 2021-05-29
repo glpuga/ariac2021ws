@@ -252,13 +252,17 @@ OrderProcessingStrategy::processUniversalShipment(
        parts_in_place.size(), broken_parts.size(), missing_parts.size(),
        unwanted_parts.size());
 
-  auto active_agv_filter =
-      [agvs_in_use](
+  auto active_agv_and_assemblies_filter =
+      [agvs_in_use, assemblies_in_use](
           const ResourceManagerInterface::ManagedLocusHandle &handle) -> bool {
     auto parent_container_name = handle.resource()->parentName();
     if (agv::isValid(parent_container_name)) {
       auto agv_id = agv::fromString(parent_container_name);
       return agvs_in_use.count(agv_id);
+    }
+    if (station_id::isValid(parent_container_name)) {
+      auto station_id = station_id::fromString(parent_container_name);
+      return assemblies_in_use.count(station_id);
     }
     return false;
   };
@@ -331,7 +335,7 @@ OrderProcessingStrategy::processUniversalShipment(
 
         // remove loci in agvs that are currently targeted by orders
         empty_loci.erase(std::remove_if(empty_loci.begin(), empty_loci.end(),
-                                        active_agv_filter),
+                                        active_agv_and_assemblies_filter),
                          empty_loci.end());
 
         if (empty_loci.empty()) {
@@ -392,7 +396,7 @@ OrderProcessingStrategy::processUniversalShipment(
       // remove parts in agvs that are currently targeted by orders
       potential_sources.erase(std::remove_if(potential_sources.begin(),
                                              potential_sources.end(),
-                                             active_agv_filter),
+                                             active_agv_and_assemblies_filter),
                               potential_sources.end());
 
       auto sort_farthest_first =
