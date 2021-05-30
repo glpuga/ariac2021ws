@@ -13,8 +13,8 @@ options:
   insert_models_over_bins: false
   insert_models_over_stations: false
   belt_population_cycles: 15
-  enable_robot_camera: true
-  time_limit: -1
+  gazebo_state_logging: true
+time_limit: -1
 
 agv_infos:
   agv1:
@@ -40,9 +40,9 @@ orders:
       destinations: [as1]
       products:
         part_0:
-          type: assembly_pump_blue
+          type: assembly_battery_blue
           pose:
-            xyz: [0.05, 0.1, 0]
+            xyz: [0.0, 0.1, 0]
             rpy: [0, 0, 0]
         part_1:
           type: assembly_regulator_red
@@ -58,7 +58,7 @@ orders:
 models_over_bins:
    bin1:
      models:
-       assembly_pump_blue:
+       assembly_regulator_red:
          xyz_start: [0.2, 0.2, 0.0]
          xyz_end: [0.4, 0.4, 0.0]
          rpy: [0, 0, 0]
@@ -66,7 +66,7 @@ models_over_bins:
          num_models_y: 2
    bin8:
      models:
-       assembly_regulator_red:
+       assembly_battery_blue:
          xyz_start: [0.2, 0.2, 0.0]
          xyz_end: [0.4, 0.4, 0.0]
          rpy: [0, 0, 'pi/4']
