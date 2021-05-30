@@ -21,7 +21,9 @@ namespace tijcore {
 
 namespace {
 constexpr std::chrono::milliseconds blocking_methods_sleep_interval_{200};
-}
+
+constexpr int32_t conveyor_belt_start_difficulty_ = 3;
+} // namespace
 
 ResourceManager::ResourceManager(
     const Toolbox::SharedPtr &toolbox,
@@ -576,17 +578,28 @@ void ResourceManager::updateSensorData(
 
     // this transformation makes all objects relative to the surface. This is
     // the same as the relative to the container, except for the conveyor belt.
-    const auto parent_frame_id =
+    const auto surface_frame_id =
         parent_container->resource()->surfaceReferenceFrameId();
     const auto local_frame_pose =
-        transformPoseToContainerLocalPose(model.pose, parent_frame_id);
+        transformPoseToContainerLocalPose(model.pose, surface_frame_id);
+
+    auto new_model_locus = ManagedLocus::CreateOccupiedSpace(
+        parent_container->resource()->name(),
+        RelativePose3{surface_frame_id, local_frame_pose}, model.type,
+        model.broken);
+
+    // TODO(glpuga) Conveyor belt hack. I artificially increase the difficulty
+    // of parts on conveyor belts to reduce their chances to be picked if there
+    // are static parts.
+    const auto parent_frame_id =
+        parent_container->resource()->containerReferenceFrameId();
+    if (parent_frame_id != surface_frame_id) {
+      new_model_locus.correctDifficulty(conveyor_belt_start_difficulty_);
+    }
 
     // notice that I discard the previously created ManagedLocus instance
     // because it had no parent name.
-    new_model_loci.emplace_back(ManagedLocus::CreateOccupiedSpace(
-        parent_container->resource()->name(),
-        RelativePose3{parent_frame_id, local_frame_pose}, model.type,
-        model.broken));
+    auto it = new_model_loci.emplace_back(std::move(new_model_locus));
   }
 
   std::set<int32_t> loci_to_keep;

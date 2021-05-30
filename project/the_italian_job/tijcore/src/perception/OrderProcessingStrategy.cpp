@@ -419,11 +419,13 @@ OrderProcessingStrategy::processUniversalShipment(
         // select the closest part
         auto &selected_source_part = *(potential_sources.end() - 1);
 
+        const auto missing_part_region =
+            resource_manager_->getWorkRegionId(missing_part_locus);
+        const auto selected_part_region =
+            resource_manager_->getWorkRegionId(selected_source_part);
         std::set<WorkRegionId> work_regions;
-        work_regions.emplace(
-            resource_manager_->getWorkRegionId(missing_part_locus));
-        work_regions.emplace(
-            resource_manager_->getWorkRegionId(selected_source_part));
+        work_regions.emplace(missing_part_region);
+        work_regions.emplace(selected_part_region);
         auto robot_handle_opt =
             resource_manager_->getPickAndPlaceRobotHandle(work_regions);
 
@@ -438,9 +440,13 @@ OrderProcessingStrategy::processUniversalShipment(
               missing_part_locus.resource()->pose().rotation().rotationMatrix();
 
           // do we need to flip the part?
-          if (selected_source_part_orientation.col(2).dot(
-                  missing_part_locus_orientation.col(2)) <
-              part_flipping_threshold_) {
+          // TODO(glpuga) Conveyor belt hack. Don't flip the part if it comes
+          // from the conveyor belt, or if it requires less than a 180 degrees
+          // flip.
+          if ((selected_part_region != WorkRegionId::conveyor_belt) &&
+              (selected_source_part_orientation.col(2).dot(
+                   missing_part_locus_orientation.col(2)) <
+               part_flipping_threshold_)) {
 
             WARNING("Creating a PickAndTwist for {} for a part at {}",
                     robot_handle_opt->resource()->name(),
