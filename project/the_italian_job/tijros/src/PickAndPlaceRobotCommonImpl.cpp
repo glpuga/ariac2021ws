@@ -52,6 +52,8 @@ static const double coarse_goal_position_tolerance = 0.015;
 static const double coarse_goal_orientation_tolerance =
     tijcore::utils::angles::degreesToRadians(2.5);
 
+static const std::chrono::seconds connection_handshake_delay{2};
+
 moveit_msgs::CollisionObject
 createCollisionBox(const std::string &id, const std::string &sub_id,
                    const std::string &frame_id, const double width,
@@ -162,20 +164,25 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
     move_group_ptr_ =
         std::make_unique<moveit::planning_interface::MoveGroupInterface>(
             options);
-    move_group_ptr_->setPlanningTime(max_planning_time);
-    move_group_ptr_->setNumPlanningAttempts(max_planning_attempts);
-
-    // default to coarse tolerances
-    configureGoalTolerances(false);
   }
 
   if (!planning_scene_ptr_) {
     planning_scene_ptr_ =
         std::make_unique<moveit::planning_interface::PlanningSceneInterface>(
             custom_moveit_namespace);
-    setupObjectConstraints();
-    // move_group_ptr_->attachObject("end_effector_guard");
   }
+
+  INFO("Pausing to make sure handshakes get completed...")
+  std::this_thread::sleep_for(connection_handshake_delay);
+  INFO("Assuming handshakes are over and moving on")
+
+  move_group_ptr_->setPlanningTime(max_planning_time);
+  move_group_ptr_->setNumPlanningAttempts(max_planning_attempts);
+
+  configureGoalTolerances(false);
+
+  setupObjectConstraints();
+  // move_group_ptr_->attachObject("end_effector_guard");
 
   return move_group_ptr_.get();
 }
