@@ -56,8 +56,8 @@ moveit_msgs::CollisionObject
 createCollisionBox(const std::string &id, const std::string &sub_id,
                    const std::string &frame_id, const double width,
                    const double height, const double depth,
-                   const double xoffset = 0.0, const double yoffset = 0.0,
-                   const double zoffset = 0.0,
+                   const double xoffset, const double yoffset,
+                   const double zoffset,
                    const int operation = moveit_msgs::CollisionObject::ADD) {
   // do the hard part
   moveit_msgs::CollisionObject collision_object;
@@ -76,37 +76,6 @@ createCollisionBox(const std::string &id, const std::string &sub_id,
   box_pose.position.x = xoffset;
   box_pose.position.y = yoffset;
   box_pose.position.z = zoffset;
-
-  collision_object.primitives.push_back(primitive);
-  collision_object.primitive_poses.push_back(box_pose);
-  collision_object.operation = operation;
-
-  return collision_object;
-}
-
-moveit_msgs::CollisionObject createEndEffectorGuard(
-    const std::string &object_id, const std::string &frame_id,
-    const int operation = moveit_msgs::CollisionObject::ADD) {
-  moveit_msgs::CollisionObject collision_object;
-  collision_object.header.frame_id = frame_id;
-  collision_object.id = object_id;
-
-  shape_msgs::SolidPrimitive primitive;
-
-  primitive.type = primitive.CYLINDER;
-  primitive.dimensions.resize(2);
-  primitive.dimensions[0] = 0.01;
-  primitive.dimensions[1] = 0.12;
-
-  geometry_msgs::Pose box_pose;
-  box_pose.orientation.x = 0.0;
-  box_pose.orientation.y = 0.6841955;
-  box_pose.orientation.z = 0.0;
-  box_pose.orientation.w = 0.7292987;
-
-  box_pose.position.x = 0.03;
-  box_pose.position.y = 0.0;
-  box_pose.position.z = 0.0;
 
   collision_object.primitives.push_back(primitive);
   collision_object.primitive_poses.push_back(box_pose);
@@ -174,7 +143,6 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
         std::make_unique<moveit::planning_interface::PlanningSceneInterface>(
             custom_moveit_namespace);
     setupObjectConstraints();
-    // move_group_ptr_->attachObject("end_effector_guard");
   }
 
   return move_group_ptr_.get();
@@ -775,84 +743,87 @@ void PickAndPlaceRobotCommonImpl::cancelAction() {
 void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const {
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
+  const int operation = moveit_msgs::CollisionObject::ADD;
+
   auto scene_configuration = toolbox_->getSceneConfigReader();
   const double z_offset{0.025};
 
   DEBUG(" Generating collision scene");
   DEBUG(" - adding AGV tray representatives");
   for (const auto &item : scene_configuration->getListOfAgvs()) {
-    collision_objects.push_back(createCollisionBox(
-        item.name, "surface", item.frame_id, 0.5, 0.7, z_offset));
-    collision_objects.push_back(createCollisionBox(item.name, "tower_foot",
-                                                   item.frame_id, 0.23, 0.23,
-                                                   0.22, 0.0, -0.45, 0.11));
-    collision_objects.push_back(createCollisionBox(item.name, "tower_head",
-                                                   item.frame_id, 0.15, 0.15,
-                                                   0.7, 0.0, -0.45, 0.35));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "surface", item.frame_id, 0.5, 0.7,
+                           z_offset, 0, 0, 0, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "tower_foot", item.frame_id, 0.23, 0.23,
+                           0.22, 0.0, -0.45, 0.11, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "tower_head", item.frame_id, 0.15, 0.15,
+                           0.7, 0.0, -0.45, 0.35, operation));
   }
 
   DEBUG(" - adding assembly station representatives");
   for (const auto &item : scene_configuration->getListOfAssemblyStations()) {
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_table",
-                                                   item.frame_id, 1.6, 1.2,
-                                                   z_offset, -0.3, -0.1, 0.0));
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_front",
-                                                   item.frame_id, 0.05, 0.6,
-                                                   0.16, 0.3, 0.0, 0.08));
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_side",
-                                                   item.frame_id, 0.6, 0.05,
-                                                   0.16, 0.0, -0.3, 0.08));
-    collision_objects.push_back(createCollisionBox(item.name, "table_right",
-                                                   item.frame_id, 1.0, 0.10,
-                                                   1.0, -0.70, -0.75, 0.5));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "briefcase_table", item.frame_id, 1.6,
+                           1.2, z_offset, -0.3, -0.1, 0.0, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "briefcase_front", item.frame_id, 0.05,
+                           0.6, 0.16, 0.3, 0.0, 0.08, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "briefcase_side", item.frame_id, 0.6,
+                           0.05, 0.16, 0.0, -0.3, 0.08, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "table_right", item.frame_id, 1.0, 0.10,
+                           1.0, -0.70, -0.75, 0.5, operation));
     collision_objects.push_back(createCollisionBox(item.name, "table_back",
                                                    item.frame_id, 0.8, 1.2, 1.0,
-                                                   -0.7, -0.1, 0.5));
-    collision_objects.push_back(createCollisionBox(item.name, "table_left",
-                                                   item.frame_id, 1.6, 0.1, 1.0,
-                                                   -0.45, 0.54, 0.5));
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_1",
-                                                   item.frame_id, 0.04, 0.1,
-                                                   0.80, 0.33, 0.35, 0.40));
+                                                   -0.7, -0.1, 0.5, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "table_left", item.frame_id, 1.6, 0.1,
+                           1.0, -0.45, 0.54, 0.5, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "briefcase_top_1", item.frame_id, 0.04,
+                           0.1, 0.80, 0.33, 0.35, 0.40, operation));
     collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_2",
                                                    item.frame_id, 0.7, 0.1, 0.1,
-                                                   0.0, 0.35, 0.75));
+                                                   0.0, 0.35, 0.75, operation));
   }
 
   DEBUG(" - adding bin representatives");
   for (const auto &item : scene_configuration->getListOfBins()) {
-    collision_objects.push_back(createCollisionBox(
-        item.name, "surface", item.frame_id, 0.6, 0.6, z_offset));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "surface", item.frame_id, 0.6, 0.6,
+                           z_offset, 0, 0, 0, operation));
 
-    collision_objects.push_back(createCollisionBox(
-        item.name, "wall_1", item.frame_id, 0.64, 0.06, 0.08, 0.0, 0.31, 0.04));
-    collision_objects.push_back(createCollisionBox(item.name, "wall_2",
-                                                   item.frame_id, 0.64, 0.06,
-                                                   0.08, 0.0, -0.31, 0.04));
-    collision_objects.push_back(createCollisionBox(
-        item.name, "wall_3", item.frame_id, 0.06, 0.64, 0.08, 0.31, 0.0, 0.04));
-    collision_objects.push_back(createCollisionBox(item.name, "wall_4",
-                                                   item.frame_id, 0.06, 0.64,
-                                                   0.08, -0.31, 0.0, 0.04));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "wall_1", item.frame_id, 0.64, 0.06, 0.08,
+                           0.0, 0.31, 0.04, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "wall_2", item.frame_id, 0.64, 0.06, 0.08,
+                           0.0, -0.31, 0.04, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "wall_3", item.frame_id, 0.06, 0.64, 0.08,
+                           0.31, 0.0, 0.04, operation));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "wall_4", item.frame_id, 0.06, 0.64, 0.08,
+                           -0.31, 0.0, 0.04, operation));
   }
 
   DEBUG(" - adding conveyor belt representatives");
   for (const auto &item : scene_configuration->getListOfConveyorBelts()) {
-    collision_objects.push_back(createCollisionBox(
-        item.name, "surface", item.container_frame_id, 0.63, 9, z_offset));
+    collision_objects.push_back(
+        createCollisionBox(item.name, "surface", item.container_frame_id, 0.63,
+                           9, z_offset, 0, 0, 0, operation));
   }
 
   // kitting rail
   collision_objects.push_back(createCollisionBox(
-      "kitting", "rail", "world", 0.4, 10.0, 0.10, -1.3, 0.0, 0.93));
+      "kitting", "rail", "world", 0.4, 10.0, 0.10, -1.3, 0.0, 0.93, operation));
 
   // Imaginary divider
   collision_objects.push_back(createCollisionBox(
-      "divider", "rail", "world", 0.05, 10.0, 0.1, -1.4, 0.0, 2.7));
-
-  // Create end-effector guard
-  collision_objects.push_back(
-      createEndEffectorGuard("end_effector_guard", "ee_link"));
+      "divider", "rail", "world", 0.05, 10.0, 0.1, -1.4, 0.0, 2.7, operation));
 
   planning_scene_ptr_->applyCollisionObjects(collision_objects);
 }
