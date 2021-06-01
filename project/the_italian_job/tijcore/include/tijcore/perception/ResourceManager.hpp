@@ -30,7 +30,8 @@ public:
       std::vector<ModelContainerInterface::Ptr> &&model_containers,
       std::vector<PickAndPlaceRobotInterface::Ptr> &&pick_and_place_robots);
 
-  std::vector<ManagedLocusHandle> findEmptyLoci() override;
+  std::vector<ManagedLocusHandle>
+  findEmptyLoci(const double free_radius) override;
 
   std::vector<ManagedLocusHandle>
   findManagedLociByPartId(const PartId &part_id) override;

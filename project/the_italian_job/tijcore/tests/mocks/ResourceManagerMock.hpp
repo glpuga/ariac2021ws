@@ -14,7 +14,8 @@ namespace tijcore {
 
 class ResourceManagerMock : public ResourceManagerInterface {
 public:
-  MOCK_METHOD0(findEmptyLoci, std::vector<ManagedLocusHandle>());
+  MOCK_METHOD0(findEmptyLoci,
+               std::vector<ManagedLocusHandle>(const double free_radius));
 
   MOCK_METHOD1(findManagedLociByPartId,
                std::vector<ManagedLocusHandle>(const PartId &part_id));

@@ -74,7 +74,7 @@ ResourceManager::ResourceManager(
 }
 
 std::vector<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::findEmptyLoci() {
+ResourceManager::findEmptyLoci(const double free_radius) {
   std::lock_guard<std::mutex> lock{mutex_};
   clearNonAllocatedEmptyLoci();
 
@@ -98,8 +98,7 @@ ResourceManager::findEmptyLoci() {
   for (const auto &surface_map_entry : surface_occupancy_maps) {
     auto &[container_name, container_surface] = surface_map_entry;
 
-    auto region_opt =
-        container_surface.findFreeRegion(default_occupancy_radius_);
+    auto region_opt = container_surface.findFreeRegion(free_radius);
     if (region_opt) {
       auto parent_pose =
           model_containers_.at(container_name).resource()->pose();
@@ -580,8 +579,12 @@ void ResourceManager::updateSensorData(
     // the same as the relative to the container, except for the conveyor belt.
     const auto surface_frame_id =
         parent_container->resource()->surfaceReferenceFrameId();
-    const auto local_frame_pose =
+    auto local_frame_pose =
         transformPoseToContainerLocalPose(model.pose, surface_frame_id);
+
+    // cameras detect about half height of the models. Uniform detection height
+    // so that poses match the projection of the model on the surface.
+    local_frame_pose.position().vector().z() = 0.0;
 
     auto new_model_locus = ManagedLocus::CreateOccupiedSpace(
         parent_container->resource()->name(),
@@ -599,7 +602,7 @@ void ResourceManager::updateSensorData(
 
     // notice that I discard the previously created ManagedLocus instance
     // because it had no parent name.
-    auto it = new_model_loci.emplace_back(std::move(new_model_locus));
+    new_model_loci.emplace_back(std::move(new_model_locus));
   }
 
   std::set<int32_t> loci_to_keep;

@@ -35,7 +35,8 @@ public:
 
   virtual ~ResourceManagerInterface() = default;
 
-  virtual std::vector<ManagedLocusHandle> findEmptyLoci() = 0;
+  virtual std::vector<ManagedLocusHandle>
+  findEmptyLoci(const double free_radius) = 0;
 
   virtual std::vector<ManagedLocusHandle>
   findManagedLociByPartId(const PartId &part_id) = 0;

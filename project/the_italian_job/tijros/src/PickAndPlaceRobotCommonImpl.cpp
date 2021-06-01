@@ -391,14 +391,12 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(
   const auto run_top =
       end_effector_target_pose_in_world.position().vector().z() +
       estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
-                         part_type_id) *
-          0.5 +
+                         part_type_id) +
       pick_search_length * 0.5;
   const auto run_bottom =
       end_effector_target_pose_in_world.position().vector().z() +
       estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(),
-                         part_type_id) *
-          0.5 -
+                         part_type_id) -
       pick_search_length * 0.5;
   end_effector_target_pose_in_world.position().vector().z() = run_top;
 
@@ -655,7 +653,7 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(
             rotated_end_effector_in_world.rotation().rotationMatrix();
 
         rotated_target_rotation_matrix *=
-            tijcore::Rotation::fromRollPitchYaw(0, degreesToRadians(95), 0)
+            tijcore::Rotation::fromRollPitchYaw(0, degreesToRadians(90), 0)
                 .rotationMatrix();
 
         rotated_end_effector_in_world.rotation() =

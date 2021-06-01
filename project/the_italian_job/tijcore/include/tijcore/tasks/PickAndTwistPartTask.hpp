@@ -14,7 +14,7 @@ class PickAndTwistPartTask : public RobotTaskInterface {
 public:
   PickAndTwistPartTask(
       const ResourceManagerInterface::SharedPtr &resource_manager,
-      ResourceManagerInterface::ManagedLocusHandle &&part,
+      ResourceManagerInterface::ManagedLocusHandle &&target,
       ResourceManagerInterface::ManagedLocusHandle &&destination,
       ResourceManagerInterface::PickAndPlaceRobotHandle &&robot);
 
@@ -25,7 +25,7 @@ public:
 private:
   ResourceManagerInterface::SharedPtr resource_manager_;
 
-  ResourceManagerInterface::ManagedLocusHandle part_;
+  ResourceManagerInterface::ManagedLocusHandle target_;
   // notice that we don't need the destination, since we flip the part in place,
   // but keep the managed locus around to avoid some other robot getting the
   // task to move part into that place, resulting in two robots flipping parts

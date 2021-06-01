@@ -24,6 +24,10 @@ namespace {
 // compared with the target locus.
 const double part_flipping_threshold_ = -0.5;
 
+const double free_radious_for_unwanted_pieces{0.02};
+
+const double free_radious_for_flippable_pieces{0.2};
+
 } // namespace
 
 OrderProcessingStrategy::OrderProcessingStrategy(
@@ -304,7 +308,8 @@ OrderProcessingStrategy::processUniversalShipment(
           return lhs.resource()->difficulty() > rhs.resource()->difficulty();
         }
 
-        // if they are the same difficulty, then order by distance to reference
+        // if they are the same difficulty, the as a second criteria order
+        // giving preference to those that are aligned with the reference
 
         const auto &lhs_pose = lhs.resource()->pose();
         const auto &rhs_pose = rhs.resource()->pose();
@@ -313,6 +318,21 @@ OrderProcessingStrategy::processUniversalShipment(
             lhs_pose, reference_pose.frameId());
         const auto target_rhs_pose = frame_transformer_->transformPoseToFrame(
             rhs_pose, reference_pose.frameId());
+
+        const auto ref_z = reference_pose.rotation().rotationMatrix().col(2);
+        const auto lhs_z = lhs_pose.rotation().rotationMatrix().col(2);
+        const auto rhs_z = rhs_pose.rotation().rotationMatrix().col(2);
+        const auto lhs_proj = lhs_z.dot(ref_z);
+        const auto rhs_proj = rhs_z.dot(ref_z);
+        // if the projections have different signs, then order higher in
+        // priority the part that is aligned with the reference
+        if (lhs_proj * rhs_proj < 0) {
+          return lhs_proj < 0;
+        }
+
+        // finally, given all else equal, order by distance, giving preference
+        // to parts that are closer to the reference
+
         const auto lhs_distance = (reference_pose.position().vector() -
                                    target_lhs_pose.position().vector())
                                       .norm();
@@ -331,7 +351,8 @@ OrderProcessingStrategy::processUniversalShipment(
     for (auto &part : unwanted_parts) {
       if (empty_loci.empty()) {
         // try to get a new list of empty loci
-        empty_loci = resource_manager_->findEmptyLoci();
+        empty_loci =
+            resource_manager_->findEmptyLoci(free_radious_for_unwanted_pieces);
 
         // remove loci in agvs that are currently targeted by orders
         empty_loci.erase(std::remove_if(empty_loci.begin(), empty_loci.end(),
@@ -448,6 +469,47 @@ OrderProcessingStrategy::processUniversalShipment(
                    missing_part_locus_orientation.col(2)) <
                part_flipping_threshold_)) {
 
+            // try to find a place where to flip it
+            auto empty_loci = resource_manager_->findEmptyLoci(
+                free_radious_for_flippable_pieces);
+
+            // remove loci in agvs that are currently targeted by orders
+            empty_loci.erase(std::remove_if(empty_loci.begin(),
+                                            empty_loci.end(),
+                                            active_agv_and_assemblies_filter),
+                             empty_loci.end());
+
+            auto unreachable_empty_space =
+                [this, work_regions](
+                    const ResourceManagerInterface::ManagedLocusHandle &locus) {
+                  const auto locus_work_region =
+                      resource_manager_->getWorkRegionId(locus);
+                  return work_regions.count(locus_work_region) == 0;
+                };
+
+            // remove loci not reachable by the robot
+            empty_loci.erase(std::remove_if(empty_loci.begin(),
+                                            empty_loci.end(),
+                                            unreachable_empty_space),
+                             empty_loci.end());
+
+            auto sort_farthest_first =
+                [this, sort_farthest_first_generalized,
+                 reference_pose = missing_part_locus.resource()->pose()](
+                    const ResourceManagerInterface::ManagedLocusHandle &lhs,
+                    const ResourceManagerInterface::ManagedLocusHandle &rhs) {
+                  return sort_farthest_first_generalized(reference_pose, lhs,
+                                                         rhs);
+                };
+
+            // sort by distance to the target spot (larger distance first, to
+            // remove efficiently the nearest spot from the list)
+            std::sort(empty_loci.begin(), empty_loci.end(),
+                      sort_farthest_first);
+
+            auto last_it = empty_loci.end() - 1;
+            auto closest_empty_spot = std::move(*last_it);
+
             WARNING("Creating a PickAndTwist for {} for a part at {}",
                     robot_handle_opt->resource()->name(),
                     selected_source_part.resource()->pose(),
@@ -455,7 +517,7 @@ OrderProcessingStrategy::processUniversalShipment(
             output_actions.emplace_back(
                 robot_task_factory_->getPickAndTwistPartTask(
                     std::move(selected_source_part),
-                    std::move(missing_part_locus),
+                    std::move(closest_empty_spot),
                     std::move(*robot_handle_opt)));
           } else {
             WARNING("Creating a PickAndPlaceTask for {} to provide a part from "
