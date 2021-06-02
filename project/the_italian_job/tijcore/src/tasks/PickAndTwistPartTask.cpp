@@ -100,6 +100,13 @@ RobotTaskOutcome PickAndTwistPartTask::run() {
     ManagedLocus::TransferPartFromHereToThere(*target_.resource(),
                                               *destination_.resource());
 
+    // hackish way to compensate for the difference in which heights are handled
+    // for empty spaces (like destination) and parts (like target), because
+    // cameras report part height at about mid-height, while empty spaces
+    // have locations on the surface.
+    destination_.resource()->pose().position().vector().z() =
+        target_.resource()->pose().position().vector().z();
+
     if (!robot.twistPartInPlace(destination_.resource()->pose(),
                                 part_type_id) ||
         !robot.dropPartWhereYouStand()) {

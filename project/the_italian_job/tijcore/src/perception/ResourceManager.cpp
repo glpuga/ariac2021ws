@@ -582,10 +582,6 @@ void ResourceManager::updateSensorData(
     auto local_frame_pose =
         transformPoseToContainerLocalPose(model.pose, surface_frame_id);
 
-    // cameras detect about half height of the models. Uniform detection height
-    // so that poses match the projection of the model on the surface.
-    local_frame_pose.position().vector().z() = 0.0;
-
     auto new_model_locus = ManagedLocus::CreateOccupiedSpace(
         parent_container->resource()->name(),
         RelativePose3{surface_frame_id, local_frame_pose}, model.type,
