@@ -460,18 +460,21 @@ OrderProcessingStrategy::processUniversalShipment(
           auto missing_part_locus_orientation =
               missing_part_locus.resource()->pose().rotation().rotationMatrix();
 
-          // do we need to flip the part?
-          // TODO(glpuga) Conveyor belt hack. Don't flip the part if it comes
-          // from the conveyor belt, or if it requires less than a 180 degrees
-          // flip.
-          if ((selected_part_region != WorkRegionId::conveyor_belt) &&
+          // If we need to flip the part or if it comes from the conveyor belt,
+          // find an empty space to leave the part as an intermediate stage
+          // instead of carrying it to the destination.
+          const bool conveyor_belt_piece =
+              (selected_part_region == WorkRegionId::conveyor_belt);
+          const bool part_needs_flipping =
               (selected_source_part_orientation.col(2).dot(
                    missing_part_locus_orientation.col(2)) <
-               part_flipping_threshold_)) {
+               part_flipping_threshold_);
 
+          if (conveyor_belt_piece || part_needs_flipping) {
             // try to find a place where to flip it
             auto empty_loci = resource_manager_->findEmptyLoci(
-                free_radious_for_flippable_pieces);
+                conveyor_belt_piece ? free_radious_for_unwanted_pieces
+                                    : free_radious_for_flippable_pieces);
 
             // remove loci in agvs that are currently targeted by orders
             empty_loci.erase(std::remove_if(empty_loci.begin(),
@@ -510,15 +513,30 @@ OrderProcessingStrategy::processUniversalShipment(
             auto last_it = empty_loci.end() - 1;
             auto closest_empty_spot = std::move(*last_it);
 
-            WARNING("Creating a PickAndTwist for {} for a part at {}",
-                    robot_handle_opt->resource()->name(),
-                    selected_source_part.resource()->pose(),
-                    missing_part_locus.resource()->pose());
-            output_actions.emplace_back(
-                robot_task_factory_->getPickAndTwistPartTask(
-                    std::move(selected_source_part),
-                    std::move(closest_empty_spot),
-                    std::move(*robot_handle_opt)));
+            if (conveyor_belt_piece) {
+              WARNING("Creating a PickAndPlaceTask for {} to remove part "
+                      "from conveyor belt at {} and into {}",
+                      robot_handle_opt->resource()->name(),
+                      selected_source_part.resource()->pose(),
+                      closest_empty_spot.resource()->pose());
+              output_actions.emplace_back(
+                  robot_task_factory_->getPickAndPlaceTask(
+                      std::move(selected_source_part),
+                      std::move(closest_empty_spot),
+                      std::move(*robot_handle_opt)));
+
+            } else {
+              WARNING("Creating a PickAndTwist for {} for a part at {}, "
+                      "manipulating at {}",
+                      robot_handle_opt->resource()->name(),
+                      selected_source_part.resource()->pose(),
+                      closest_empty_spot.resource()->pose());
+              output_actions.emplace_back(
+                  robot_task_factory_->getPickAndTwistPartTask(
+                      std::move(selected_source_part),
+                      std::move(closest_empty_spot),
+                      std::move(*robot_handle_opt)));
+            }
           } else {
             WARNING("Creating a PickAndPlaceTask for {} to provide a part from "
                     "{} and into {}",
