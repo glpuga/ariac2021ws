@@ -24,7 +24,7 @@ namespace {
 // compared with the target locus.
 const double part_flipping_threshold_ = -0.5;
 
-const double free_radious_for_unwanted_pieces{0.02};
+const double free_radious_for_unwanted_pieces{0.1};
 
 const double free_radious_for_flippable_pieces{0.2};
 
