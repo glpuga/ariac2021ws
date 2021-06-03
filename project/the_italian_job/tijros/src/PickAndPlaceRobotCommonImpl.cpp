@@ -655,13 +655,13 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(
             rotated_end_effector_in_world.rotation().rotationMatrix();
 
         rotated_target_rotation_matrix *=
-            tijcore::Rotation::fromRollPitchYaw(0, degreesToRadians(90), 0)
+            tijcore::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(-90))
                 .rotationMatrix();
 
         rotated_end_effector_in_world.rotation() =
             tijcore::Rotation(rotated_target_rotation_matrix);
         rotated_end_effector_in_world.position().vector() +=
-            rotated_target_rotation_matrix.col(2) * twist_height_correction +
+            rotated_target_rotation_matrix.col(1) * twist_height_correction +
             rotated_target_rotation_matrix.col(0) *
                 (-estimated_part_height / 2.0);
       }
@@ -873,7 +873,7 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
   // to try to consistently align with the same axis, which is important for
   // part flipping, try to use always the same vector, unless that's the one
   // that's pointing up.
-  tijcore::Vector3 y_director;
+  tijcore::Vector3 z_director;
   if ((std::abs(x_director.dot(original_x_director)) >
        std::abs(x_director.dot(original_y_director))) &&
       (std::abs(x_director.dot(original_x_director)) >
@@ -884,7 +884,7 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
     // is oriented to try to match the orientation of the piece, resulting in
     // unfeasable plans. It's likely related to the end of range of the wrist
     // articulations.
-    y_director = orientation.col(2) * (-1);
+    z_director = orientation.col(2) * (-1);
   } else {
     // is horizontal, always choose x
     // TODO(glpuga) the sign inversion is because without this accessing the
@@ -892,15 +892,15 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
     // is oriented to try to match the orientation of the piece, resulting in
     // unfeasable plans. It's likely related to the end of range of the wrist
     // articulations.
-    y_director = orientation.col(0) * (-1);
+    z_director = orientation.col(0) * (-1);
   }
 
   // Don't assume the target will be perfectly normal to the world Z axis
-  y_director -= x_director * y_director.dot(x_director);
-  y_director = y_director / y_director.norm();
-
-  auto z_director = x_director.cross(y_director);
+  z_director -= x_director * z_director.dot(x_director);
   z_director = z_director / z_director.norm();
+
+  auto y_director = z_director.cross(x_director);
+  y_director = y_director / y_director.norm();
 
   const auto end_effector_orientation =
       tijcore::Matrix3{
