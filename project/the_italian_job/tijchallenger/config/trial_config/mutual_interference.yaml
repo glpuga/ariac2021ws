@@ -48,7 +48,7 @@ orders:
           type: assembly_regulator_red
           pose:
             xyz: [0.15, 0.1, 0]
-            rpy: [0, 0, 0]
+            rpy: ['-pi/2', 0, 0]
         part_2:
           type: assembly_sensor_blue
           pose:
@@ -61,7 +61,7 @@ models_over_bins:
        assembly_regulator_red:
          xyz_start: [0.2, 0.2, 0.0]
          xyz_end: [0.4, 0.4, 0.0]
-         rpy: [0, 0, 0]
+         rpy: ['-pi/2', 0, 0]
          num_models_x: 2
          num_models_y: 2
    bin3:
