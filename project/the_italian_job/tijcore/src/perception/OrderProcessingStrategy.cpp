@@ -460,12 +460,17 @@ OrderProcessingStrategy::processUniversalShipment(
           auto missing_part_locus_orientation =
               missing_part_locus.resource()->pose().rotation().rotationMatrix();
 
+          // dont flip parts that are not pumps
+          auto [part_id, broken] = selected_source_part.resource()->model();
+          (void)broken;
+
           // If we need to flip the part or if it comes from the conveyor belt,
           // find an empty space to leave the part as an intermediate stage
           // instead of carrying it to the destination.
           const bool conveyor_belt_piece =
               (selected_part_region == WorkRegionId::conveyor_belt);
           const bool part_needs_flipping =
+              (part_id.type() == PartTypeId::pump) &&
               (selected_source_part_orientation.col(2).dot(
                    missing_part_locus_orientation.col(2)) <
                part_flipping_threshold_);
