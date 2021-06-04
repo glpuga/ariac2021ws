@@ -63,9 +63,34 @@ private:
   ros::Subscriber feedback_sub_;
   ros::Subscriber result_sub_;
 
-  void
-  goalCallback(control_msgs::FollowJointTrajectoryActionGoal::ConstPtr msg) {
-    goal_pub_.publish(*msg);
+  void goalCallback(
+      control_msgs::FollowJointTrajectoryActionGoal::ConstPtr input_msg) {
+    auto output_msg = *input_msg;
+
+    auto &goal = output_msg.goal;
+
+    for (const auto &name : goal.trajectory.joint_names) {
+      {
+        control_msgs::JointTolerance joint_tolerance;
+        joint_tolerance.name = name;
+        joint_tolerance.position = -1.0;
+        joint_tolerance.velocity = -1.0;
+        joint_tolerance.acceleration = -1.0;
+        goal.path_tolerance.push_back(joint_tolerance);
+      }
+      {
+        control_msgs::JointTolerance joint_tolerance;
+        joint_tolerance.name = name;
+        joint_tolerance.position = -1.0;
+        joint_tolerance.velocity = -1.0;
+        joint_tolerance.acceleration = -1.0;
+        goal.goal_tolerance.push_back(joint_tolerance);
+      }
+    }
+
+    goal.goal_time_tolerance = ros::Duration(5.0);
+
+    goal_pub_.publish(output_msg);
   }
 
   void statusCallback(actionlib_msgs::GoalStatusArray::ConstPtr msg) {
