@@ -27,7 +27,7 @@ joint_state_controller:
   type: joint_state_controller/JointStateController
   publish_rate: 50
 controller_list:
-  - name: /ariac/gantry/gantry_arm_controller
+  - name: /ariac/custom/gantry/gantry_arm_controller
     action_ns: follow_joint_trajectory
     default: True
     type: FollowJointTrajectory
@@ -90,7 +90,7 @@ controller_list:
         d: 0
         i: 10
         i_clamp: 1
-  - name: /ariac/gantry/gantry_controller
+  - name: /ariac/custom/gantry/gantry_controller
     action_ns: follow_joint_trajectory
     default: True
     type: FollowJointTrajectory

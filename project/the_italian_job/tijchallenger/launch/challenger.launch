@@ -6,6 +6,7 @@
 
   <node pkg="tf" type="static_transform_publisher" name="corrected_belt_frame_publisher" args="-0.57 0.0 0.91 0 0 0 1 world corrected_belt_frame 100" />
 
+
   <node name="the_italian_job_challenger" pkg="tijchallenger" type="tijchallenger_node" required="true" output="screen">
     <remap from="/ariac/custom/gantry/joint_states" to="/ariac/gantry/joint_states" />
     <remap from="/ariac/custom/kitting/joint_states" to="/ariac/kitting/joint_states" />
@@ -16,6 +17,17 @@
     <include file="$(find custom_gantry_moveit_config)/launch/move_group.launch">
         <arg name="load_robot_description" value="False"/>
     </include>
+
+    <node pkg="tijchallenger" type="infinite_tolerance_node" name="gantry_actionlib_forwarder_node">
+      <param name="controller_facing_server" value="/ariac/gantry/gantry_controller/follow_joint_trajectory/" />
+      <param name="client_facing_server" value="/ariac/custom/gantry/gantry_controller/follow_joint_trajectory" />
+    </node>
+
+    <node pkg="tijchallenger" type="infinite_tolerance_node" name="gantry_arm_actionlib_forwarder_node">
+      <param name="controller_facing_server" value="/ariac/gantry/gantry_arm_controller/follow_joint_trajectory/" />
+      <param name="client_facing_server" value="/ariac/custom/gantry/gantry_arm_controller/follow_joint_trajectory" />
+    </node>
+
   </group>
 
   <group ns="/ariac/custom/kitting">
@@ -23,6 +35,11 @@
     <include file="$(find custom_kitting_moveit_config)/launch/move_group.launch">
         <arg name="load_robot_description" value="False"/>
     </include>
+
+    <node pkg="tijchallenger" type="infinite_tolerance_node" name="kitting_arm_actionlib_forwarder_node">
+      <param name="controller_facing_server" value="/ariac/kitting/kitting_arm_controller/follow_joint_trajectory/" />
+      <param name="client_facing_server" value="/ariac/custom/kitting/kitting_arm_controller/follow_joint_trajectory" />
+    </node>
   </group>
 </launch>
 

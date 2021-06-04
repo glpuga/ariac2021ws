@@ -12,6 +12,9 @@
 
   <depend>roscpp</depend>
 
+  <depend>actionlib_msgs</depend>
+  <depend>control_msgs</depend>
+
   <build_depend>tijcore</build_depend>
   <build_export_depend>tijcore</build_export_depend>
   <exec_depend>tijcore</exec_depend>
