@@ -44,6 +44,11 @@ export DEBIAN_FRONTEND=noninteractive \
  && dpkg-reconfigure --frontend noninteractive tzdata \
  && apt clean
 
+# install the updated ROS 1 key
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+# install the updated ROS 2 key
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
 apt update \
  && apt install -y \
     python-rosdep \
@@ -114,14 +119,14 @@ mkdir -p ~/tij_team_ws/src
 cd ~/tij_team_ws/src
 git clone https://github.com/glpuga/ariac2021ws.git
 cd ariac2021ws
-git checkout qualifier_branch
+git checkout final_branch
 
 # Download the extra code (using submodules for this is a pain)
 mkdir -p ~/tij_team_ws/src/ariac2021ws/external
 cd ~/tij_team_ws/src/ariac2021ws/external
 git clone https://github.com/glpuga/ARIAC.git
 cd ARIAC
-git checkout moveit_config_tuning
+git checkout final_branch
 
 # Build the competition code
 cd ~/tij_team_ws
