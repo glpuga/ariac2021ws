@@ -475,32 +475,34 @@ OrderProcessingStrategy::processUniversalShipment(
                    missing_part_locus_orientation.col(2)) <
                part_flipping_threshold_);
 
-          if (conveyor_belt_piece || part_needs_flipping) {
-            // try to find a place where to flip it
-            auto empty_loci = resource_manager_->findEmptyLoci(
-                conveyor_belt_piece ? free_radious_for_unwanted_pieces
-                                    : free_radious_for_flippable_pieces);
+          // try to find a place where to flip it
+          auto special_empty_loci = resource_manager_->findEmptyLoci(
+              conveyor_belt_piece ? free_radious_for_unwanted_pieces
+                                  : free_radious_for_flippable_pieces);
 
-            // remove loci in agvs that are currently targeted by orders
-            empty_loci.erase(std::remove_if(empty_loci.begin(),
-                                            empty_loci.end(),
-                                            active_agv_and_assemblies_filter),
-                             empty_loci.end());
+          // remove loci in agvs that are currently targeted by orders
+          special_empty_loci.erase(
+              std::remove_if(special_empty_loci.begin(),
+                             special_empty_loci.end(),
+                             active_agv_and_assemblies_filter),
+              special_empty_loci.end());
 
-            auto unreachable_empty_space =
-                [this, work_regions](
-                    const ResourceManagerInterface::ManagedLocusHandle &locus) {
-                  const auto locus_work_region =
-                      resource_manager_->getWorkRegionId(locus);
-                  return work_regions.count(locus_work_region) == 0;
-                };
+          auto unreachable_empty_space =
+              [this, work_regions](
+                  const ResourceManagerInterface::ManagedLocusHandle &locus) {
+                const auto locus_work_region =
+                    resource_manager_->getWorkRegionId(locus);
+                return work_regions.count(locus_work_region) == 0;
+              };
 
-            // remove loci not reachable by the robot
-            empty_loci.erase(std::remove_if(empty_loci.begin(),
-                                            empty_loci.end(),
-                                            unreachable_empty_space),
-                             empty_loci.end());
+          // remove loci not reachable by the robot
+          special_empty_loci.erase(std::remove_if(special_empty_loci.begin(),
+                                                  special_empty_loci.end(),
+                                                  unreachable_empty_space),
+                                   special_empty_loci.end());
 
+          if (!special_empty_loci.empty() &&
+              (conveyor_belt_piece || part_needs_flipping)) {
             auto sort_farthest_first =
                 [this, sort_farthest_first_generalized,
                  reference_pose = missing_part_locus.resource()->pose()](
@@ -512,10 +514,10 @@ OrderProcessingStrategy::processUniversalShipment(
 
             // sort by distance to the target spot (larger distance first, to
             // remove efficiently the nearest spot from the list)
-            std::sort(empty_loci.begin(), empty_loci.end(),
+            std::sort(special_empty_loci.begin(), special_empty_loci.end(),
                       sort_farthest_first);
 
-            auto last_it = empty_loci.end() - 1;
+            auto last_it = special_empty_loci.end() - 1;
             auto closest_empty_spot = std::move(*last_it);
 
             if (conveyor_belt_piece) {
