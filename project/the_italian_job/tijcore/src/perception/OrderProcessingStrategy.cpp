@@ -493,17 +493,32 @@ OrderProcessingStrategy::processUniversalShipment(
               special_empty_loci.end());
 
           auto unreachable_empty_space =
-              [this, work_regions](
+              [this, robot_reachable_regions =
+                         robot_handle_opt->resource()->supportedRegions()](
                   const ResourceManagerInterface::ManagedLocusHandle &locus) {
                 const auto locus_work_region =
                     resource_manager_->getWorkRegionId(locus);
-                return work_regions.count(locus_work_region) == 0;
+                return robot_reachable_regions.count(locus_work_region) == 0;
               };
 
           // remove loci not reachable by the robot
           special_empty_loci.erase(std::remove_if(special_empty_loci.begin(),
                                                   special_empty_loci.end(),
                                                   unreachable_empty_space),
+                                   special_empty_loci.end());
+
+          auto conveyor_belt_spaces =
+              [this](
+                  const ResourceManagerInterface::ManagedLocusHandle &locus) {
+                const auto locus_work_region =
+                    resource_manager_->getWorkRegionId(locus);
+                return locus_work_region == WorkRegionId::conveyor_belt;
+              };
+
+          // remove loci in the conveyor belt
+          special_empty_loci.erase(std::remove_if(special_empty_loci.begin(),
+                                                  special_empty_loci.end(),
+                                                  conveyor_belt_spaces),
                                    special_empty_loci.end());
 
           if (!special_empty_loci.empty() &&
