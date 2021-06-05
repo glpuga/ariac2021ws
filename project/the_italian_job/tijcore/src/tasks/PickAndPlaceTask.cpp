@@ -4,6 +4,8 @@
 
 // standard library
 #include <chrono>
+#include <thread>
+#include <utility>
 
 // tijcore
 #include <logger/logger.hpp>
@@ -15,7 +17,10 @@ namespace tijcore {
 namespace {
 
 constexpr std::chrono::seconds timeout_{120};
-}
+
+constexpr std::chrono::seconds sleep_interval_{1};
+
+} // namespace
 
 PickAndPlaceTask::PickAndPlaceTask(
     const ResourceManagerInterface::SharedPtr &resource_manager,
@@ -114,6 +119,21 @@ RobotTaskOutcome PickAndPlaceTask::run() {
   robot.dropPartWhereYouStand();
   robot.getInSafePose();
   model_tray_access_manager.releaseAccess();
+
+  if (result != RobotTaskOutcome::TASK_SUCCESS) {
+    // release the loci, but not the robot, to other robots
+    // the opportunity to give it a try.
+    {
+      auto destroy_src{std::move(source_)};
+      auto destroy_dst{std::move(destination_)};
+      (void)destroy_src;
+      (void)destroy_dst;
+    }
+    WARNING("Task failed, will release resource but hold the robot to allow "
+            "other robots to give the task a try");
+    std::this_thread::sleep_for(sleep_interval_);
+  }
+
   return result;
 }
 
