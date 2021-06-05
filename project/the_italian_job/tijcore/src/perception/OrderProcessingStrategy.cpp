@@ -119,24 +119,6 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::processOrder(
   std::vector<RobotTaskInterface::Ptr> output;
 
   {
-    auto execute_and_filter_terminated_assembly_shipments =
-        [&](auto &ashipment) {
-          auto [assembly_actions, shipment_completed] = processAssemblyShipment(
-              order.order_id, ashipment, agvs_in_use, stations_in_use);
-          std::move(assembly_actions.begin(), assembly_actions.end(),
-                    std::back_inserter(output));
-          return shipment_completed;
-        };
-
-    // process each shipment, removing those that get completed
-    order.assembly_shipments.erase(
-        std::remove_if(order.assembly_shipments.begin(),
-                       order.assembly_shipments.end(),
-                       execute_and_filter_terminated_assembly_shipments),
-        order.assembly_shipments.end());
-  }
-
-  {
     auto execute_and_filter_terminated_kitting_shipments =
         [&](auto &kshipment) {
           auto [shipment_actions, shipment_completed] = processKittingShipment(
@@ -152,6 +134,24 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::processOrder(
                        order.kitting_shipments.end(),
                        execute_and_filter_terminated_kitting_shipments),
         order.kitting_shipments.end());
+  }
+
+  {
+    auto execute_and_filter_terminated_assembly_shipments =
+        [&](auto &ashipment) {
+          auto [assembly_actions, shipment_completed] = processAssemblyShipment(
+              order.order_id, ashipment, agvs_in_use, stations_in_use);
+          std::move(assembly_actions.begin(), assembly_actions.end(),
+                    std::back_inserter(output));
+          return shipment_completed;
+        };
+
+    // process each shipment, removing those that get completed
+    order.assembly_shipments.erase(
+        std::remove_if(order.assembly_shipments.begin(),
+                       order.assembly_shipments.end(),
+                       execute_and_filter_terminated_assembly_shipments),
+        order.assembly_shipments.end());
   }
 
   return output;
