@@ -260,6 +260,11 @@ OrderProcessingStrategy::processUniversalShipment(
       [agvs_in_use, assemblies_in_use](
           const ResourceManagerInterface::ManagedLocusHandle &handle) -> bool {
     auto parent_container_name = handle.resource()->parentName();
+    // TODO(glpuga) last minute hack. Ignore all assembly stations, because it's
+    // using them to turn pumps around.
+    if (station_id::isValid(parent_container_name)) {
+      return true;
+    }
     if (agv::isValid(parent_container_name)) {
       auto agv_id = agv::fromString(parent_container_name);
       return agvs_in_use.count(agv_id);
