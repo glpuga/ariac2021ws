@@ -14,7 +14,7 @@
 namespace tijcore {
 
 namespace {
-std::chrono::seconds anti_ghosting_delay{5};
+std::chrono::seconds anti_ghosting_delay{10};
 }
 
 SubmitKittingShipmentTask::SubmitKittingShipmentTask(
