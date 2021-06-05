@@ -24,6 +24,8 @@ public:
 
   std::string codedString() const;
 
+  bool defined() const { return !undefined_; }
+
   bool operator==(const PartId &rhs) const;
   bool operator!=(const PartId &rhs) const;
 

@@ -470,7 +470,7 @@ OrderProcessingStrategy::processUniversalShipment(
           const bool conveyor_belt_piece =
               (selected_part_region == WorkRegionId::conveyor_belt);
           const bool part_needs_flipping =
-              (part_id.type() == PartTypeId::pump) &&
+              part_id.defined() && (part_id.type() == PartTypeId::pump) &&
               (selected_source_part_orientation.col(2).dot(
                    missing_part_locus_orientation.col(2)) <
                part_flipping_threshold_);
