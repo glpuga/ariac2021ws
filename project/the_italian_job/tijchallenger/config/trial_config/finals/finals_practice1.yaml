@@ -50,11 +50,11 @@ orders:
       destinations: [as3]
       products:
         part_0:
-        #   type: assembly_battery_blue
-        #   pose:
-        #     xyz: [0.1, 0.1, 0]
-        #     rpy: [0, 0, 0]
-        # part_1:
+          type: assembly_battery_blue
+          pose:
+            xyz: [0.1, 0.1, 0]
+            rpy: [0, 0, 0]
+        part_1:
           type: assembly_pump_blue
           pose:
             xyz: [-0.15, -0.1, 0]
