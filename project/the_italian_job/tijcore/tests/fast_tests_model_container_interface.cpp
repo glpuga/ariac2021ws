@@ -29,10 +29,10 @@ TEST_F(ModelContainerInterfaceTests, ConstructionTest) {
   const Vector3 lbr_corner{-2, -3, -1};
   const Vector3 ufl_corner{3, 4, 2};
   const CuboidVolume uut_container_volume{lbr_corner, ufl_corner};
-  const CuboidVolume uut_exclusion_volume{lbr_corner, ufl_corner};
 
-  const ModelContainerMock uut{"uut_name", "container_frame_id", uut_pose,
-                               uut_container_volume, uut_exclusion_volume};
+  const ModelContainerMock uut{
+      "uut_name", "container_reference_frame_id", "surface_reference_frame_id",
+      uut_pose,   uut_container_volume,           "exclusion_volume_id"};
 
   ASSERT_EQ("uut_name", uut.name());
   ASSERT_TRUE(RelativePose3::sameRelativePose3(

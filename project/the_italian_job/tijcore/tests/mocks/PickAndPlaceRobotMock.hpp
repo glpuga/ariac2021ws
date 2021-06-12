@@ -27,13 +27,16 @@ public:
   MOCK_CONST_METHOD1(getInLandingSpot,
                      bool(const tijcore::RelativePose3 &target));
 
-  MOCK_CONST_METHOD0(graspPartFromAbove, bool());
+  MOCK_CONST_METHOD2(graspPartFromAbove,
+                     bool(const tijcore::RelativePose3 &target,
+                          const tijcore::PartTypeId &part_type_id));
 
-  MOCK_CONST_METHOD0(placePartFromAbove, bool());
+  MOCK_CONST_METHOD2(placePartFromAbove,
+                     bool(const tijcore::RelativePose3 &target,
+                          const tijcore::PartTypeId &part_type_id));
 
-  MOCK_CONST_METHOD1(twistPartInPlace,
+  MOCK_CONST_METHOD2(twistPartInPlace,
                      bool(tijcore::RelativePose3 &target,
-
                           const tijcore::PartTypeId &part_type_id));
 
   MOCK_CONST_METHOD0(enabled, bool());
