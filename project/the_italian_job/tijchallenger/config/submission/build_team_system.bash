@@ -95,6 +95,7 @@ apt update \
     ros-${DIST}-image-proc \
     ros-${DIST}-vision-opencv \
     ros-melodic-moveit \
+    ros-melodic-moveit* \
     ros-melodic-moveit-visual-tools \
  && apt clean
 
