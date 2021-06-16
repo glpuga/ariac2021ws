@@ -136,6 +136,10 @@ PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const {
 
     // default to coarse tolerances
     configureGoalTolerances(false);
+
+    // moveit seems to be defaulting to a value less than one now...
+    move_group_ptr_->setMaxAccelerationScalingFactor(1.0);
+    move_group_ptr_->setMaxVelocityScalingFactor(1.0);
   }
 
   if (!planning_scene_ptr_) {
