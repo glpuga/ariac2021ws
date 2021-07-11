@@ -1,4 +1,4 @@
-# ARIAC 2021 Workspace
+# ARIAC 2021 TheItalianJob workspace
 
 ## Quick usage
 
@@ -8,7 +8,7 @@ In the host system, clone the repo:
 
 > cd ariac2021ws
 
-> git checkout devel
+> git checkout main
 
 Build the container:
 
@@ -16,26 +16,41 @@ Build the container:
 
 > ./build
 
-> ./run
+> ./run.sh
 
-In the container, build the worspace and launch the sample environment:
+Within the container build the worspace and launch the sample environment:
 
 > catkin_make
 
 > source devel/setup.bash
 
-> roslaunch nist_gear sample_environment.launch
+> roslaunch tijchallenger gear.launch trial_config:=sample_kitting.yaml
 
-## Links and documents
+That'll launch the simulated environment. It may take a bit to load the first time since Gazebo will download a number of models to prepare the environment.
 
-ARIAC 2021:
+Once the simulation is up, open a second terminal and join the same running container as before:
+
+> cd ariac2021ws/docker
+
+> ./join.sh
+
+> source devel/setup.bash
+
+Finally, launch the competition node.
+
+> roslaunch tijchallenger challenger.launch
+
+The node will start the competition mode and the robots will begin completing the orders in the trial configuration file.
+
+## ARIAC 2021
+
+Links and documents:
 
 * [ARIAC main site](https://www.nist.gov/el/intelligent-systems-division-73500/agile-robotics-industrial-automation-competition).
 * [ARIAC code repository](https://github.com/usnistgov/ARIAC/tree/ariac2021).
-* [ARIAC competition server code](https://github.com/zeidk/ariac-docker). This might be old, since it hasn't been updated in a couple of years.
+* [ARIAC competition server code](https://github.com/osrf/ariac-docker).
 
-
-## Important Dates
+Important Dates:
 
 * Qualifiers: April/26 - April/30
 * Finals: May/17 - May/28
@@ -82,24 +97,3 @@ To build the workspace just call `catkin_make`.
 
 > source devel/setup.bash
 
-### Launching the sample environment
-
-There's a sample environment within the `nist_gear` package in the ARIAC repository. To launch, run the container, build and launch as follows:
-
-> roslaunch nist_gear sample_environment.launch
-
-### Controlling the gantry/kitting using RViz
-
-It's possible to dos some basic control of the robot arms using RViz.
-
-Start by launching the sample environment with **moveit**, using the following launch file:
-
-> roslaunch nist_gear sample_environment.launch load_moveit:=true
-
-then in a separate terminal launch either
-
-> roslaunch devutils rviz_control_gantry.launch
-
-to control the gantry, or for the manipulator in the kitting launch:
-
-> roslaunch devutils rviz_control_kitting.launch
