@@ -1,0 +1,130 @@
+sensors:
+  #
+  # Cameras convering both 2 bins and an agv
+  #
+
+  # depth_camera_test:
+  #   type: depth_camera
+  #   pose:
+  #     xyz: [-7.5, 2.5, 1.801095]
+  #     rpy: ['pi/2', 0, 'pi/2']
+
+  logical_camera_bin_agv1:
+    type: logical_camera
+    pose:
+      xyz: [-2.25, 4.00, 1.80]
+      rpy: [0, 'pi/2', 0]
+
+  logical_camera_bin_agv2:
+    type: logical_camera
+    pose:
+      xyz: [-2.25, 2.00, 1.80]
+      rpy: [0, 'pi/2', 0]
+
+  logical_camera_bin_agv3:
+    type: logical_camera
+    pose:
+      xyz: [-2.25, -2.00, 1.80]
+      rpy: [0, 'pi/2', 0]
+
+  logical_camera_bin_agv4:
+    type: logical_camera
+    pose:
+      xyz: [-2.25, -4.00, 1.80]
+      rpy: [0, 'pi/2', 0]
+
+  #
+  # Cameras for briefcases
+  #
+
+  logical_camera_as1:
+    type: logical_camera
+    pose:
+      xyz: [-7.50, 3.00, 2.1]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_as2:
+    type: logical_camera
+    pose:
+      xyz: [-12.50, 3.00, 2.1]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_as3:
+    type: logical_camera
+    pose:
+      xyz: [-7.50, -3.00, 2.1]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_as4:
+    type: logical_camera
+    pose:
+      xyz: [-12.50, -3.00, 2.1]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  #
+  # Cameras for agvs at assembly stations
+  #
+
+  logical_camera_agv1_as1:
+    type: logical_camera
+    pose:
+      xyz: [-5.5, 4.5, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_agv1_as2:
+    type: logical_camera
+    pose:
+      xyz: [-10.5, 4.5, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_agv2_as1:
+    type: logical_camera
+    pose:
+      xyz: [-5.5, 1.4, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_agv2_as2:
+    type: logical_camera
+    pose:
+      xyz: [-10.5, 1.4, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_agv3_as3:
+    type: logical_camera
+    pose:
+      xyz: [-5.5, -1.4, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_agv3_as4:
+    type: logical_camera
+    pose:
+      xyz: [-10.5, -1.4, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_agv4_as3:
+    type: logical_camera
+    pose:
+      xyz: [-5.5, -4.5, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  logical_camera_agv4_as4:
+    type: logical_camera
+    pose:
+      xyz: [-10.5, -4.5, 1.7]
+      rpy: [0, 'pi/2', 'pi/2']
+
+  #
+  # Conveyor belt cameras
+  #
+
+  logical_camera_conveyor_belt_1:
+    type: logical_camera
+    pose:
+      xyz: [-0.57, 3.0, 1.80]
+      rpy: [0, 'pi/2', 'pi/4']
+
+  logical_camera_conveyor_belt_2:
+    type: logical_camera
+    pose:
+      xyz: [-0.57, 1.0, 1.80]
+      rpy: [0, 'pi/2', 'pi/4']
