@@ -1,65 +1,59 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(tijros)
 
 # Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++17)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  tijcore
-  geometry_msgs
-  moveit_core
-  moveit_visual_tools
-  moveit_ros_planning
-  moveit_ros_planning_interface
-  nist_gear
-  roscpp
-  rospy
-  std_msgs
-  std_srvs
-  tf2
-  tf2_geometry_msgs
-  tf2_ros
-)
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES tijros
-  CATKIN_DEPENDS 
-    tijcore
+find_package(
+  catkin REQUIRED
+  COMPONENTS
     geometry_msgs
     moveit_core
-    moveit_visual_tools
     moveit_ros_planning
     moveit_ros_planning_interface
+    moveit_visual_tools
+    nist_gear
     nist_gear
     roscpp
-    rospy
+    roslint
     std_msgs
     std_srvs
     tf2
     tf2_geometry_msgs
     tf2_ros
-#  DEPENDS system_lib
+    tijcore
 )
 
-###########
-## Build ##
-###########
+# ##############################################################################
+# catkin specific configuration ##
+# ##############################################################################
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
+catkin_package(
+  INCLUDE_DIRS
+    include
+  LIBRARIES
+    ${PROJECT_NAME}
+  CATKIN_DEPENDS
+    geometry_msgs
+    moveit_core
+    moveit_ros_planning
+    moveit_ros_planning_interface
+    moveit_visual_tools
+    nist_gear
+    roscpp
+    roslint
+    std_msgs
+    std_srvs
+    tf2
+    tf2_geometry_msgs
+    tf2_ros
+    tijcore
+)
+
+# ##############################################################################
+# Build ##
+# ##############################################################################
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -67,84 +61,56 @@ include_directories(
 
 add_compile_options(-Wall -Werror)
 
-## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/LogicalCameraModelPerception.cpp
-  src/QualitySensorModelPerception.cpp
-  src/PickAndPlaceRobotCommonImpl.cpp
   src/PickAndPlaceAssemblyRobot.cpp
   src/PickAndPlaceKittingRobot.cpp
+  src/PickAndPlaceRobotCommonImpl.cpp
+  src/QualitySensorModelPerception.cpp
   src/ROSFrameTransformer.cpp
   src/ROSProcessManagement.cpp
   src/ROSRobotActuators.cpp
   src/utils/utils.cpp
 )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
+add_dependencies(${PROJECT_NAME}
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
-## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
+# ##############################################################################
+# Install ##
+# ##############################################################################
 
-#############
-## Install ##
-#############
+# Mark libraries for installation See
+# http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
+# Mark cpp header files for installation
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING
+  PATTERN "*.hpp")
 
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+# ##############################################################################
+# Testing ##
+# ##############################################################################
 
-## Mark executables for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-# install(TARGETS ${PROJECT_NAME}_node
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+if(CATKIN_ENABLE_TESTING)
+  # catkin_add_gtest(${PROJECT_NAME}-test test/test_${PROJECT_NAME}.cpp)
+  # if(TARGET ${PROJECT_NAME}-test)
+  #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+  # endif()
 
-## Mark libraries for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-# )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_tijros.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+  # catkin_add_nosetests(test)
+endif()
