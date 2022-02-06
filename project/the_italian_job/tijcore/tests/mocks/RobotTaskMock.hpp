@@ -10,9 +10,10 @@
 // tijcore
 #include <tijcore/tasks/RobotTaskInterface.hpp>
 
-namespace tijcore {
-
-class RobotTaskMock : public RobotTaskInterface {
+namespace tijcore
+{
+class RobotTaskMock : public RobotTaskInterface
+{
 public:
   using Ptr = std::unique_ptr<RobotTaskMock>;
 
@@ -20,4 +21,4 @@ public:
   MOCK_METHOD0(halt, void());
 };
 
-} // namespace tijcore
+}  // namespace tijcore

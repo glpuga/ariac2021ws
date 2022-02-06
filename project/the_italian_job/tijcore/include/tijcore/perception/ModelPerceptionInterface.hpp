@@ -11,9 +11,10 @@
 // tijcore
 #include <tijcore/agents/ObservedModel.hpp>
 
-namespace tijcore {
-
-class ModelPerceptionInterface {
+namespace tijcore
+{
+class ModelPerceptionInterface
+{
 public:
   using Ptr = std::unique_ptr<ModelPerceptionInterface>;
   using SharedPtr = std::shared_ptr<ModelPerceptionInterface>;
@@ -22,4 +23,4 @@ public:
   virtual std::vector<ObservedModel> getObservedModels() const = 0;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

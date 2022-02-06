@@ -4,20 +4,24 @@
 
 #pragma once
 
-namespace tijcore {
+namespace tijcore
+{
+namespace utils
+{
+namespace angles
+{
+constexpr double pi()
+{
+  return 3.14159265358979323846;
+}
 
-namespace utils {
-
-namespace angles {
-
-constexpr double pi() { return 3.14159265358979323846; }
-
-constexpr double degreesToRadians(const double deg) {
+constexpr double degreesToRadians(const double deg)
+{
   return deg * pi() / 180.0;
 }
 
-} // namespace angles
+}  // namespace angles
 
-} // namespace utils
+}  // namespace utils
 
-} // namespace tijcore
+}  // namespace tijcore

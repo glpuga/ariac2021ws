@@ -13,15 +13,15 @@
 #include <tijcore/perception/Toolbox.hpp>
 #include <tijcore/utils/Timer.hpp>
 
-namespace tijcore {
-
+namespace tijcore
+{
 // TODO(glpuga) This class needs testing.
 
-class AgvModelContainer : public ModelContainerInterface {
+class AgvModelContainer : public ModelContainerInterface
+{
 public:
-  AgvModelContainer(const std::string &name, const std::string &local_frame_id,
-                    const std::string &model_tray_shared_access_space_id,
-                    const Toolbox::SharedPtr toolbox);
+  AgvModelContainer(const std::string& name, const std::string& local_frame_id,
+                    const std::string& model_tray_shared_access_space_id, const Toolbox::SharedPtr toolbox);
 
   bool enabled() const override;
 
@@ -36,11 +36,11 @@ private:
 
   Toolbox::SharedPtr toolbox_;
 
-  bool enabled_{true};
+  bool enabled_{ true };
 
   utils::Timer timer_;
 
   void timerCallback();
 };
 
-} // namespace tijcore
+}  // namespace tijcore

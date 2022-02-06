@@ -8,12 +8,14 @@
 // tijcore
 #include <tijcore/utils/angles.hpp>
 
-namespace tijcore {
+namespace tijcore
+{
+namespace utils
+{
+namespace angles
+{
+}  // namespace angles
 
-namespace utils {
+}  // namespace utils
 
-namespace angles {} // namespace angles
-
-} // namespace utils
-
-} // namespace tijcore
+}  // namespace tijcore

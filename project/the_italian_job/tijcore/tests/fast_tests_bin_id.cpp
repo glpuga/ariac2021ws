@@ -12,19 +12,21 @@
 // tijcore
 #include <tijcore/agents/BinId.hpp>
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class BinIdTests : public Test {
+class BinIdTests : public Test
+{
 public:
 };
 
-TEST_F(BinIdTests, TestFromString) {
+TEST_F(BinIdTests, TestFromString)
+{
   ASSERT_EQ(BinId::bin1, bin::fromString("bin1"));
   ASSERT_EQ(BinId::bin2, bin::fromString("bin2"));
   ASSERT_EQ(BinId::bin3, bin::fromString("bin3"));
@@ -36,7 +38,8 @@ TEST_F(BinIdTests, TestFromString) {
   ASSERT_THROW(bin::fromString("bongo"), std::invalid_argument);
 }
 
-TEST_F(BinIdTests, TestToString) {
+TEST_F(BinIdTests, TestToString)
+{
   ASSERT_EQ("bin1", bin::toString(BinId::bin1));
   ASSERT_EQ("bin2", bin::toString(BinId::bin2));
   ASSERT_EQ("bin3", bin::toString(BinId::bin3));
@@ -47,7 +50,8 @@ TEST_F(BinIdTests, TestToString) {
   ASSERT_EQ("bin8", bin::toString(BinId::bin8));
 }
 
-TEST_F(BinIdTests, TestStreamOperator) {
+TEST_F(BinIdTests, TestStreamOperator)
+{
   std::ostringstream os;
 
   os << BinId::bin1 << "\n"
@@ -59,18 +63,20 @@ TEST_F(BinIdTests, TestStreamOperator) {
      << BinId::bin7 << "\n"
      << BinId::bin8 << "\n";
 
-  ASSERT_EQ("bin1\n"
-            "bin2\n"
-            "bin3\n"
-            "bin4\n"
-            "bin5\n"
-            "bin6\n"
-            "bin7\n"
-            "bin8\n",
-            os.str());
+  ASSERT_EQ(
+      "bin1\n"
+      "bin2\n"
+      "bin3\n"
+      "bin4\n"
+      "bin5\n"
+      "bin6\n"
+      "bin7\n"
+      "bin8\n",
+      os.str());
 }
 
-TEST_F(BinIdTests, TestIsValid) {
+TEST_F(BinIdTests, TestIsValid)
+{
   ASSERT_TRUE(bin::isValid("bin1"));
   ASSERT_TRUE(bin::isValid("bin2"));
   ASSERT_TRUE(bin::isValid("bin3"));
@@ -86,8 +92,8 @@ TEST_F(BinIdTests, TestIsValid) {
   ASSERT_FALSE(bin::isValid("foo"));
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -17,16 +17,16 @@
 #include <tijcore/perception/TaskMasterInterface.hpp>
 #include <tijcore/perception/Toolbox.hpp>
 
-namespace tijcore {
-
-class TaskMaster : public TaskMasterInterface {
+namespace tijcore
+{
+class TaskMaster : public TaskMasterInterface
+{
 public:
-  TaskMaster(const ResourceManagerInterface::SharedPtr &resource_manager,
-             const RobotTaskFactoryInterface::SharedPtr &robot_task_factory,
-             const Toolbox::SharedPtr &toolbox,
-             OrderProcessingStrategyInterface::Ptr &&order_strategy = nullptr);
+  TaskMaster(const ResourceManagerInterface::SharedPtr& resource_manager,
+             const RobotTaskFactoryInterface::SharedPtr& robot_task_factory, const Toolbox::SharedPtr& toolbox,
+             OrderProcessingStrategyInterface::Ptr&& order_strategy = nullptr);
 
-  void registerOrder(const Order &order) override;
+  void registerOrder(const Order& order) override;
 
   std::vector<RobotTaskInterface::Ptr> run() override;
 
@@ -43,7 +43,7 @@ private:
 
   std::unordered_map<OrderKey, Order> orders_;
 
-  std::vector<RobotTaskInterface::Ptr> processOrder(const Order &order);
+  std::vector<RobotTaskInterface::Ptr> processOrder(const Order& order);
 };
 
-} // namespace tijcore
+}  // namespace tijcore

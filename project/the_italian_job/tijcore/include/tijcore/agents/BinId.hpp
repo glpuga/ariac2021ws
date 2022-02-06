@@ -7,20 +7,30 @@
 // standard library
 #include <string>
 
-namespace tijcore {
+namespace tijcore
+{
+enum class BinId
+{
+  bin1,
+  bin2,
+  bin3,
+  bin4,
+  bin5,
+  bin6,
+  bin7,
+  bin8
+};
 
-enum class BinId { bin1, bin2, bin3, bin4, bin5, bin6, bin7, bin8 };
+namespace bin
+{
+BinId fromString(const std::string& sid);
 
-namespace bin {
+std::string toString(const BinId& id);
 
-BinId fromString(const std::string &sid);
+bool isValid(const std::string& sid);
 
-std::string toString(const BinId &id);
+}  // namespace bin
 
-bool isValid(const std::string &sid);
+std::ostream& operator<<(std::ostream& os, BinId id);
 
-} // namespace bin
-
-std::ostream &operator<<(std::ostream &os, BinId id);
-
-} // namespace tijcore
+}  // namespace tijcore

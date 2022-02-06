@@ -8,24 +8,26 @@
 // tijcore
 #include <tijcore/math/CuboidVolume.hpp>
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class CuboidVolumeTests : public Test {
+class CuboidVolumeTests : public Test
+{
 protected:
-  const double tolerance_{1e-6};
+  const double tolerance_{ 1e-6 };
 
-  const Vector3 clrb_{-1, -2, -3};
-  const Vector3 culf_{1, 2, 3};
+  const Vector3 clrb_{ -1, -2, -3 };
+  const Vector3 culf_{ 1, 2, 3 };
 };
 
-TEST_F(CuboidVolumeTests, ConstructionTest) {
-  const CuboidVolume uut{clrb_, culf_};
+TEST_F(CuboidVolumeTests, ConstructionTest)
+{
+  const CuboidVolume uut{ clrb_, culf_ };
 
   EXPECT_NEAR(-1, uut.lowerRightBackCorner().vector().x(), tolerance_);
   EXPECT_NEAR(-2, uut.lowerRightBackCorner().vector().y(), tolerance_);
@@ -36,9 +38,10 @@ TEST_F(CuboidVolumeTests, ConstructionTest) {
   EXPECT_NEAR(3, uut.upperLeftFrontCorner().vector().z(), tolerance_);
 }
 
-TEST_F(CuboidVolumeTests, ContainsTestVector) {
-  const double delta{0.1};
-  CuboidVolume uut{clrb_, culf_};
+TEST_F(CuboidVolumeTests, ContainsTestVector)
+{
+  const double delta{ 0.1 };
+  CuboidVolume uut{ clrb_, culf_ };
 
   EXPECT_TRUE(uut.contains(clrb_ + Vector3(delta, delta, delta)));
   EXPECT_FALSE(uut.contains(clrb_ + Vector3(delta, delta, -delta)));
@@ -59,8 +62,8 @@ TEST_F(CuboidVolumeTests, ContainsTestVector) {
   EXPECT_TRUE(uut.contains(culf_ + Vector3(-delta, -delta, -delta)));
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -8,25 +8,27 @@
 // tijcore
 #include "mocks/RobotActuatorsMock.hpp"
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class RobotActuatorsMockTests : public Test {
+class RobotActuatorsMockTests : public Test
+{
 public:
 };
 
-TEST_F(RobotActuatorsMockTests, TheMockCanBeConstructed) {
+TEST_F(RobotActuatorsMockTests, TheMockCanBeConstructed)
+{
   // just testing that the mock builds
   RobotActuatorsMock uut;
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

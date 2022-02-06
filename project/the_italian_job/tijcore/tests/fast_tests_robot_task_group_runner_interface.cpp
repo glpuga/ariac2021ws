@@ -8,25 +8,27 @@
 // tijcore
 #include "mocks/RobotTaskGroupRunnerMock.hpp"
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class RobotTaskGroupRunnerMockTests : public Test {
+class RobotTaskGroupRunnerMockTests : public Test
+{
 public:
 };
 
-TEST_F(RobotTaskGroupRunnerMockTests, TheMockCanBeConstructed) {
+TEST_F(RobotTaskGroupRunnerMockTests, TheMockCanBeConstructed)
+{
   // just testing that the mock builds
   RobotTaskGroupRunnerMock uut;
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

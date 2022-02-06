@@ -10,9 +10,10 @@
 // tijcore
 #include <tijcore/agents/RobotTaskOutcome.hpp>
 
-namespace tijcore {
-
-class RobotTaskInterface {
+namespace tijcore
+{
+class RobotTaskInterface
+{
 public:
   using Ptr = std::unique_ptr<RobotTaskInterface>;
   using SharedPtr = std::shared_ptr<RobotTaskInterface>;
@@ -24,4 +25,4 @@ public:
   virtual void halt() = 0;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

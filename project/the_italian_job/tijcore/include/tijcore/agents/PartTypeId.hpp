@@ -10,23 +10,29 @@
 // project
 #include <tijcore/math/Vector3.hpp>
 
-namespace tijcore {
+namespace tijcore
+{
+enum class PartTypeId
+{
+  battery,
+  sensor,
+  regulator,
+  pump
+};
 
-enum class PartTypeId { battery, sensor, regulator, pump };
+namespace part_type
+{
+PartTypeId fromString(const std::string& sid);
 
-namespace part_type {
+std::string toString(const PartTypeId& id);
 
-PartTypeId fromString(const std::string &sid);
-
-std::string toString(const PartTypeId &id);
-
-bool isValid(const std::string &sid);
+bool isValid(const std::string& sid);
 
 // TODO(glpuga) add tests for this function
-Vector3 dimensions(const PartTypeId &id);
+Vector3 dimensions(const PartTypeId& id);
 
-} // namespace part_type
+}  // namespace part_type
 
-std::ostream &operator<<(std::ostream &os, PartTypeId id);
+std::ostream& operator<<(std::ostream& os, PartTypeId id);
 
-} // namespace tijcore
+}  // namespace tijcore

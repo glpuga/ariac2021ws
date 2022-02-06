@@ -13,13 +13,14 @@
 // tijcore
 #include <tijcore/perception/OrderProcessingStrategyInterface.hpp>
 
-namespace tijcore {
-
-class OrderProcessingStrategyFactoryInterface {
+namespace tijcore
+{
+class OrderProcessingStrategyFactoryInterface
+{
 public:
   using Ptr = std::unique_ptr<OrderProcessingStrategyFactoryInterface>;
 
   virtual OrderProcessingStrategyInterface::Ptr create() const = 0;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

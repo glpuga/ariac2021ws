@@ -7,23 +7,26 @@
 #include <spdlog/details/periodic_worker.h>
 #endif
 
-namespace spdlog {
-namespace details {
-
+namespace spdlog
+{
+namespace details
+{
 SPDLOG_INLINE
-periodic_worker::periodic_worker(const std::function<void()> &callback_fun,
-                                 std::chrono::seconds interval) {
+periodic_worker::periodic_worker(const std::function<void()>& callback_fun, std::chrono::seconds interval)
+{
   active_ = (interval > std::chrono::seconds::zero());
-  if (!active_) {
+  if (!active_)
+  {
     return;
   }
 
   worker_thread_ = std::thread([this, callback_fun, interval]() {
-    for (;;) {
+    for (;;)
+    {
       std::unique_lock<std::mutex> lock(this->mutex_);
-      if (this->cv_.wait_for(lock, interval,
-                             [this] { return !this->active_; })) {
-        return; // active_ == false, so exit this thread
+      if (this->cv_.wait_for(lock, interval, [this] { return !this->active_; }))
+      {
+        return;  // active_ == false, so exit this thread
       }
       callback_fun();
     }
@@ -31,8 +34,10 @@ periodic_worker::periodic_worker(const std::function<void()> &callback_fun,
 }
 
 // stop the worker thread and join it
-SPDLOG_INLINE periodic_worker::~periodic_worker() {
-  if (worker_thread_.joinable()) {
+SPDLOG_INLINE periodic_worker::~periodic_worker()
+{
+  if (worker_thread_.joinable())
+  {
     {
       std::lock_guard<std::mutex> lock(mutex_);
       active_ = false;
@@ -42,5 +47,5 @@ SPDLOG_INLINE periodic_worker::~periodic_worker() {
   }
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

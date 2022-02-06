@@ -7,4 +7,6 @@
 // tijcore
 #include <tijcore/localization/FrameId.hpp>
 
-namespace tijcore {} // namespace tijcore
+namespace tijcore
+{
+}  // namespace tijcore

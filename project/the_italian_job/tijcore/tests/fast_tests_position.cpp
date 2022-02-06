@@ -12,22 +12,24 @@
 // tijcore
 #include <tijcore/math/Position.hpp>
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class PositionTests : public Test {
+class PositionTests : public Test
+{
 protected:
-  const double position_tolerance_{1e-6};
-  const double increase_factor_{1.1};
-  const double decrease_factor_{0.9};
+  const double position_tolerance_{ 1e-6 };
+  const double increase_factor_{ 1.1 };
+  const double decrease_factor_{ 0.9 };
 };
 
-TEST_F(PositionTests, DefaultConstructor) {
+TEST_F(PositionTests, DefaultConstructor)
+{
   const Position uut = Position::fromVector(1, 2, 3);
   const auto dev_x = Vector3(position_tolerance_, 0, 0);
   const auto dev_y = Vector3(0, position_tolerance_, 0);
@@ -35,47 +37,23 @@ TEST_F(PositionTests, DefaultConstructor) {
 
   ASSERT_TRUE(Position::samePosition(uut, uut, position_tolerance_));
 
-  ASSERT_TRUE(Position::samePosition(
-      uut, Position{uut.vector() + decrease_factor_ * dev_x},
-      position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(
-      uut, Position{uut.vector() + decrease_factor_ * dev_y},
-      position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(
-      uut, Position{uut.vector() + decrease_factor_ * dev_z},
-      position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(
-      uut, Position{uut.vector() - decrease_factor_ * dev_x},
-      position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(
-      uut, Position{uut.vector() - decrease_factor_ * dev_y},
-      position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(
-      uut, Position{uut.vector() - decrease_factor_ * dev_z},
-      position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_x }, position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_y }, position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_z }, position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_x }, position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_y }, position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_z }, position_tolerance_));
 
-  ASSERT_FALSE(Position::samePosition(
-      uut, Position{uut.vector() + increase_factor_ * dev_x},
-      position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(
-      uut, Position{uut.vector() + increase_factor_ * dev_y},
-      position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(
-      uut, Position{uut.vector() + increase_factor_ * dev_z},
-      position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(
-      uut, Position{uut.vector() - increase_factor_ * dev_x},
-      position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(
-      uut, Position{uut.vector() - increase_factor_ * dev_y},
-      position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(
-      uut, Position{uut.vector() - increase_factor_ * dev_z},
-      position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_x }, position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_y }, position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_z }, position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_x }, position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_y }, position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_z }, position_tolerance_));
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

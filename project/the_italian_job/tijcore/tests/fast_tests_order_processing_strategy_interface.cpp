@@ -8,23 +8,26 @@
 // tijcore
 #include "mocks/OrderProcessingStrategyMock.hpp"
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class OrderProcessingStrategyInterfaceTests : public Test {};
+class OrderProcessingStrategyInterfaceTests : public Test
+{
+};
 
-TEST_F(OrderProcessingStrategyInterfaceTests, TheMockCanBeConstructed) {
+TEST_F(OrderProcessingStrategyInterfaceTests, TheMockCanBeConstructed)
+{
   // just testing that the mock builds
   OrderProcessingStrategyMock uut;
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

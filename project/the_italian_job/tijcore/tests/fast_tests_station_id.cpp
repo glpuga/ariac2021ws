@@ -12,19 +12,21 @@
 // tijcore
 #include <tijcore/agents/StationId.hpp>
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class StationIdTests : public Test {
+class StationIdTests : public Test
+{
 public:
 };
 
-TEST_F(StationIdTests, TestFromString) {
+TEST_F(StationIdTests, TestFromString)
+{
   ASSERT_EQ(StationId::as1, station_id::fromString("as1"));
   ASSERT_EQ(StationId::as2, station_id::fromString("as2"));
   ASSERT_EQ(StationId::as3, station_id::fromString("as3"));
@@ -37,7 +39,8 @@ TEST_F(StationIdTests, TestFromString) {
   ASSERT_THROW(station_id::fromString("bongo"), std::invalid_argument);
 }
 
-TEST_F(StationIdTests, TestToString) {
+TEST_F(StationIdTests, TestToString)
+{
   ASSERT_EQ("as1", station_id::toString(StationId::as1));
   ASSERT_EQ("as2", station_id::toString(StationId::as2));
   ASSERT_EQ("as3", station_id::toString(StationId::as3));
@@ -49,7 +52,8 @@ TEST_F(StationIdTests, TestToString) {
   ASSERT_EQ("any", station_id::toString(StationId::any));
 }
 
-TEST_F(StationIdTests, TestStreamOperator) {
+TEST_F(StationIdTests, TestStreamOperator)
+{
   std::ostringstream os;
 
   os << StationId::as1 << "\n"
@@ -62,19 +66,21 @@ TEST_F(StationIdTests, TestStreamOperator) {
      << StationId::ks4 << "\n"
      << StationId::any << "\n";
 
-  ASSERT_EQ("as1\n"
-            "as2\n"
-            "as3\n"
-            "as4\n"
-            "ks1\n"
-            "ks2\n"
-            "ks3\n"
-            "ks4\n"
-            "any\n",
-            os.str());
+  ASSERT_EQ(
+      "as1\n"
+      "as2\n"
+      "as3\n"
+      "as4\n"
+      "ks1\n"
+      "ks2\n"
+      "ks3\n"
+      "ks4\n"
+      "any\n",
+      os.str());
 }
 
-TEST_F(StationIdTests, TestIsAssembly) {
+TEST_F(StationIdTests, TestIsAssembly)
+{
   ASSERT_TRUE(station_id::isAssemblyStation(StationId::as1));
   ASSERT_TRUE(station_id::isAssemblyStation(StationId::as2));
   ASSERT_TRUE(station_id::isAssemblyStation(StationId::as3));
@@ -86,7 +92,8 @@ TEST_F(StationIdTests, TestIsAssembly) {
   ASSERT_FALSE(station_id::isAssemblyStation(StationId::any));
 }
 
-TEST_F(StationIdTests, TestIsKitting) {
+TEST_F(StationIdTests, TestIsKitting)
+{
   ASSERT_FALSE(station_id::isKittingStation(StationId::as1));
   ASSERT_FALSE(station_id::isKittingStation(StationId::as2));
   ASSERT_FALSE(station_id::isKittingStation(StationId::as3));
@@ -98,7 +105,8 @@ TEST_F(StationIdTests, TestIsKitting) {
   ASSERT_FALSE(station_id::isAssemblyStation(StationId::any));
 }
 
-TEST_F(StationIdTests, TestIsAny) {
+TEST_F(StationIdTests, TestIsAny)
+{
   ASSERT_FALSE(station_id::isAny(StationId::as1));
   ASSERT_FALSE(station_id::isAny(StationId::as2));
   ASSERT_FALSE(station_id::isAny(StationId::as3));
@@ -110,7 +118,8 @@ TEST_F(StationIdTests, TestIsAny) {
   ASSERT_TRUE(station_id::isAny(StationId::any));
 }
 
-TEST_F(StationIdTests, TestIsValid) {
+TEST_F(StationIdTests, TestIsValid)
+{
   ASSERT_TRUE(station_id::isValid("as1"));
   ASSERT_TRUE(station_id::isValid("as2"));
   ASSERT_TRUE(station_id::isValid("as3"));
@@ -128,8 +137,8 @@ TEST_F(StationIdTests, TestIsValid) {
   ASSERT_FALSE(station_id::isValid("foo"));
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

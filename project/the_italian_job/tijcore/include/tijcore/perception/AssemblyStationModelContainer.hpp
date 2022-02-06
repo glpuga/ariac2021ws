@@ -12,16 +12,15 @@
 #include <tijcore/perception/ModelContainerInterface.hpp>
 #include <tijcore/perception/Toolbox.hpp>
 
-namespace tijcore {
-
+namespace tijcore
+{
 // TODO(glpuga) This class needs testing.
 
-class AssemblyStationModelContainer : public ModelContainerInterface {
+class AssemblyStationModelContainer : public ModelContainerInterface
+{
 public:
-  AssemblyStationModelContainer(
-      const std::string &name, const std::string &local_frame_id,
-      const std::string &model_tray_shared_access_space_id,
-      const Toolbox::SharedPtr toolbox);
+  AssemblyStationModelContainer(const std::string& name, const std::string& local_frame_id,
+                                const std::string& model_tray_shared_access_space_id, const Toolbox::SharedPtr toolbox);
 
   bool enabled() const override;
 
@@ -36,7 +35,7 @@ private:
 
   Toolbox::SharedPtr toolbox_;
 
-  bool enabled_{true};
+  bool enabled_{ true };
 };
 
-} // namespace tijcore
+}  // namespace tijcore

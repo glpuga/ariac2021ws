@@ -8,15 +8,15 @@
 #include <tijcore/perception/ResourceManagerInterface.hpp>
 #include <tijcore/tasks/RobotTaskInterface.hpp>
 
-namespace tijcore {
-
-class PickAndTwistPartTask : public RobotTaskInterface {
+namespace tijcore
+{
+class PickAndTwistPartTask : public RobotTaskInterface
+{
 public:
-  PickAndTwistPartTask(
-      const ResourceManagerInterface::SharedPtr &resource_manager,
-      ResourceManagerInterface::ManagedLocusHandle &&target,
-      ResourceManagerInterface::ManagedLocusHandle &&destination,
-      ResourceManagerInterface::PickAndPlaceRobotHandle &&robot);
+  PickAndTwistPartTask(const ResourceManagerInterface::SharedPtr& resource_manager,
+                       ResourceManagerInterface::ManagedLocusHandle&& target,
+                       ResourceManagerInterface::ManagedLocusHandle&& destination,
+                       ResourceManagerInterface::PickAndPlaceRobotHandle&& robot);
 
   RobotTaskOutcome run() override;
 
@@ -35,4 +35,4 @@ private:
   ResourceManagerInterface::PickAndPlaceRobotHandle robot_;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

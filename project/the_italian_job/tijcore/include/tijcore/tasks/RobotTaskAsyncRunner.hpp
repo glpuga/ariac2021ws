@@ -14,18 +14,19 @@
 #include <logger/logger.hpp>
 #include <tijcore/tasks/RobotTaskInterface.hpp>
 
-namespace tijcore {
-
-class RobotTaskAsyncRunner {
+namespace tijcore
+{
+class RobotTaskAsyncRunner
+{
 public:
   using Ptr = std::unique_ptr<RobotTaskAsyncRunner>;
   using SharedPtr = std::shared_ptr<RobotTaskAsyncRunner>;
 
-  RobotTaskAsyncRunner(RobotTaskInterface::Ptr &&task)
-      : task_{std::move(task)} {
-    if (!task_) {
-      throw std::invalid_argument{
-          "Can't create a RobotTaskAsyncRunner from a null task ptr"};
+  RobotTaskAsyncRunner(RobotTaskInterface::Ptr&& task) : task_{ std::move(task) }
+  {
+    if (!task_)
+    {
+      throw std::invalid_argument{ "Can't create a RobotTaskAsyncRunner from a null task ptr" };
     }
     background_thread_ = std::make_unique<std::thread>([this]() {
       WARNING("Task initiated");
@@ -35,31 +36,39 @@ public:
     });
   }
 
-  ~RobotTaskAsyncRunner() {
-    if (background_thread_) {
+  ~RobotTaskAsyncRunner()
+  {
+    if (background_thread_)
+    {
       joinTask();
     }
   }
 
-  void halt() {
-    if (background_thread_) {
+  void halt()
+  {
+    if (background_thread_)
+    {
       task_->halt();
       joinTask();
     }
   }
 
-  bool terminated() const { return terminated_; }
+  bool terminated() const
+  {
+    return terminated_;
+  }
 
 private:
   RobotTaskInterface::Ptr task_;
   std::unique_ptr<std::thread> background_thread_;
-  std::atomic_bool terminated_{false};
+  std::atomic_bool terminated_{ false };
 
-  void joinTask() {
+  void joinTask()
+  {
     background_thread_->join();
     background_thread_.reset();
     task_.reset();
   }
 };
 
-} // namespace tijcore
+}  // namespace tijcore

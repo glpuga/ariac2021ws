@@ -16,14 +16,14 @@
 // tijcore
 #include <tijcore/perception/OrderProcessingStrategyFactoryInterface.hpp>
 
-namespace tijcore {
-
-class OrderProcessingStrategyFactoryMock
-    : public OrderProcessingStrategyFactoryInterface {
+namespace tijcore
+{
+class OrderProcessingStrategyFactoryMock : public OrderProcessingStrategyFactoryInterface
+{
 public:
   using Ptr = std::unique_ptr<OrderProcessingStrategyFactoryMock>;
 
   MOCK_CONST_METHOD0(create, OrderProcessingStrategyInterface::Ptr());
 };
 
-} // namespace tijcore
+}  // namespace tijcore

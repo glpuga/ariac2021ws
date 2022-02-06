@@ -8,11 +8,12 @@
 #include <tijcore/agents/PartId.hpp>
 #include <tijcore/localization/RelativePose3.hpp>
 
-namespace tijcore {
-
-struct ProductRequest {
+namespace tijcore
+{
+struct ProductRequest
+{
   PartId type;
   RelativePose3 pose;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

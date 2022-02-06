@@ -8,25 +8,27 @@
 // tijcore
 #include "mocks/PickAndPlaceRobotMock.hpp"
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class PickAndPlaceRobotInterfaceTests : public Test {
+class PickAndPlaceRobotInterfaceTests : public Test
+{
 public:
 };
 
-TEST_F(PickAndPlaceRobotInterfaceTests, TheMockCanBeConstructed) {
+TEST_F(PickAndPlaceRobotInterfaceTests, TheMockCanBeConstructed)
+{
   // just testing that the mock builds
   PickAndPlaceRobotMock uut;
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

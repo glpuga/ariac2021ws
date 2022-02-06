@@ -8,25 +8,27 @@
 // tijcore
 #include "mocks/ProcessManagementMock.hpp"
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class ProcessManagementMockTests : public Test {
+class ProcessManagementMockTests : public Test
+{
 public:
 };
 
-TEST_F(ProcessManagementMockTests, TheMockCanBeConstructed) {
+TEST_F(ProcessManagementMockTests, TheMockCanBeConstructed)
+{
   // just testing that the mock builds
   ProcessManagementMock uut;
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

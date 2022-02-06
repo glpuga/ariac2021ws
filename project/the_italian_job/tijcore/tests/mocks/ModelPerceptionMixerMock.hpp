@@ -10,11 +10,12 @@
 // tijcore
 #include <tijcore/perception/ModelPerceptionInterface.hpp>
 
-namespace tijcore {
-
-class ModelPerceptionMock : public ModelPerceptionInterface {
+namespace tijcore
+{
+class ModelPerceptionMock : public ModelPerceptionInterface
+{
 public:
   MOCK_CONST_METHOD0(getObservedModels, std::vector<ObservedModel>());
 };
 
-} // namespace tijcore
+}  // namespace tijcore

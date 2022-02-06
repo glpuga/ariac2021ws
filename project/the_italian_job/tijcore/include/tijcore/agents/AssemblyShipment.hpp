@@ -12,9 +12,10 @@
 #include <tijcore/agents/ShipmentType.hpp>
 #include <tijcore/agents/StationId.hpp>
 
-namespace tijcore {
-
-struct AssemblyShipment {
+namespace tijcore
+{
+struct AssemblyShipment
+{
   ShipmentType shipment_type;
 
   StationId station_id;
@@ -22,4 +23,4 @@ struct AssemblyShipment {
   std::vector<ProductRequest> products;
 };
 
-} // namespace tijcore
+}  // namespace tijcore
