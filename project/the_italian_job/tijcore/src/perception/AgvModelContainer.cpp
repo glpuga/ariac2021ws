@@ -7,7 +7,7 @@
 #include <string>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/perception/AgvModelContainer.hpp>
 
 namespace tijcore

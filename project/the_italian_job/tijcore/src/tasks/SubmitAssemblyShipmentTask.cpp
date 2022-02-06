@@ -6,7 +6,7 @@
 #include <utility>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/tasks/SubmitAssemblyShipmentTask.hpp>
 
 namespace tijcore

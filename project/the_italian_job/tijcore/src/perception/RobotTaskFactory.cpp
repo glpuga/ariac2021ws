@@ -8,7 +8,7 @@
 #include <utility>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/perception/RobotTaskFactory.hpp>
 #include <tijcore/tasks/PickAndPlaceTask.hpp>
 #include <tijcore/tasks/PickAndTwistPartTask.hpp>

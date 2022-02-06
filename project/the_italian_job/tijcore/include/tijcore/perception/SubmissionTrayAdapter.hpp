@@ -9,7 +9,7 @@
 #include <string>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/perception/ModelContainerInterface.hpp>
 #include <tijcore/perception/ResourceHandle.hpp>
 

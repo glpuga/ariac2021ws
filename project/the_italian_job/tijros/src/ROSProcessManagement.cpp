@@ -19,7 +19,7 @@
 #include <nist_gear/Order.h>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijros/ROSProcessManagement.hpp>
 #include <tijros/utils/utils.hpp>
 

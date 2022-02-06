@@ -6,7 +6,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 
 namespace logger
 {

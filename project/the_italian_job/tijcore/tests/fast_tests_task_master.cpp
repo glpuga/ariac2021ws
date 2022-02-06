@@ -17,7 +17,7 @@
 #include "mocks/PickAndPlaceRobotMock.hpp"
 #include "mocks/RobotTaskMock.hpp"
 #include "utils/ActionQueue.hpp"
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/perception/ResourceManager.hpp>
 #include <tijcore/perception/RobotTaskFactoryInterface.hpp>
 #include <tijcore/perception/StaticFrameTransformer.hpp>
