@@ -2,12 +2,19 @@
  * Author: Gerardo Puga
  */
 
+// standard library
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
+
 // gtest
 #include "gtest/gtest.h"
 
 // tijcore
-#include "mocks/ResourceManagerMock.hpp"
 #include <tijcore/perception/OrderProcessingStrategy.hpp>
+
+#include "mocks/ResourceManagerMock.hpp"
 
 namespace tijcore
 {

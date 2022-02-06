@@ -2,6 +2,9 @@
  * Author: Gerardo Puga
  */
 
+// standard library
+#include <memory>
+
 // gtest
 #include "gtest/gtest.h"
 

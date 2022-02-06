@@ -4,6 +4,11 @@
 
 #pragma once
 
+// standard library
+#include <set>
+#include <string>
+#include <vector>
+
 // gtest
 #include "gmock/gmock.h"
 

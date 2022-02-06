@@ -2,6 +2,11 @@
  * Author: Gerardo Puga
  */
 
+// standard library
+#include <memory>
+#include <utility>
+#include <vector>
+
 // gtest
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

@@ -2,6 +2,9 @@
  * Author: Gerardo Puga
  */
 
+// standard library
+#include <utility>
+
 // Standard library
 #include <cmath>
 
@@ -9,8 +12,9 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include "utils/test_utils.hpp"
 #include <tijcore/math/Isometry.hpp>
+
+#include "utils/test_utils.hpp"
 
 namespace tijcore
 {

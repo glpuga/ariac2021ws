@@ -5,6 +5,8 @@
 // Standard library
 #include <iostream>
 #include <sstream>
+#include <string>
+#include <vector>
 
 // gtest
 #include "gtest/gtest.h"
