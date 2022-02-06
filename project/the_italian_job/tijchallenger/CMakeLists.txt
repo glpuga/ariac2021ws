@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   custom_kitting_moveit_config
   nist_gear
   roscpp
+  roslint
   rostest
   tf
   tijros
@@ -79,3 +80,22 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING
   PATTERN "*.hpp")
+
+# ##############################################################################
+# Testing ##
+# ##############################################################################
+
+if(CATKIN_ENABLE_TESTING)
+  # catkin_add_gtest(${PROJECT_NAME}-test test/test_${PROJECT_NAME}.cpp)
+  # if(TARGET ${PROJECT_NAME}-test)
+  #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+  # endif()
+
+  # catkin_add_nosetests(test)
+
+  set(ROSLINT_CPP_OPTS --extensions=h,hpp,cpp)
+  roslint_cpp()
+  roslint_custom(catkin_lint --strict -W2 ${PROJECT_SOURCE_DIR})
+  roslint_add_test()
+
+endif()
