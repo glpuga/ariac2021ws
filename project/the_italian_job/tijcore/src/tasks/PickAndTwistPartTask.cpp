@@ -7,7 +7,7 @@
 #include <utility>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/tasks/ModelTrayAccessSpaceManager.hpp>
 #include <tijcore/tasks/PickAndTwistPartTask.hpp>
 

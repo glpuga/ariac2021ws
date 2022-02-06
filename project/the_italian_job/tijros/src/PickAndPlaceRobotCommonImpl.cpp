@@ -23,7 +23,7 @@
 #include <ros/ros.h>
 
 // project
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/utils/angles.hpp>
 #include <tijros/PickAndPlaceRobotCommonImpl.hpp>
 #include <tijros/utils/utils.hpp>

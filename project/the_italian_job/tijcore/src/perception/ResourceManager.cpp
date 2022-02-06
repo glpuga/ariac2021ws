@@ -16,7 +16,7 @@
 #include <vector>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/agents/SurfaceManager.hpp>
 #include <tijcore/math/CuboidVolume.hpp>
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>

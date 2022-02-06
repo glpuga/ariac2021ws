@@ -11,7 +11,7 @@
 #include <vector>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijcore/perception/TaskMaster.hpp>
 
 namespace tijcore

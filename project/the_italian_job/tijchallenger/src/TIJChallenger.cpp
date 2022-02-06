@@ -15,7 +15,7 @@
 #include <ros/ros.h>
 
 // project
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijchallenger/SceneConfigReader.hpp>
 #include <tijchallenger/TIJChallenger.hpp>
 #include <tijcore/perception/AgvModelContainer.hpp>

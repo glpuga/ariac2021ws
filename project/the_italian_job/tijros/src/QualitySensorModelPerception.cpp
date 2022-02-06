@@ -11,7 +11,7 @@
 #include <ros/ros.h>
 
 // tijcore
-#include <logger/logger.hpp>
+#include <tijcore/logger/logger.hpp>
 #include <tijros/QualityControlSensorModelPerception.hpp>
 #include <tijros/utils/utils.hpp>
 
