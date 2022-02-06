@@ -663,7 +663,7 @@ TEST_F(ResourceManagerTests, DISABLED_getManagedLocusHandleForPose)
   }
 }
 
-TEST_F(ResourceManagerTests, CreateTargetReturnsKnownLoci)
+TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
 {
   EXPECT_CALL(*table_1_container_mock_, enabled()).WillRepeatedly(Return(true));
   EXPECT_CALL(*table_2_container_mock_, enabled()).WillRepeatedly(Return(true));
