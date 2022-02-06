@@ -16,6 +16,7 @@ find_package(
     nist_gear
     roscpp
     roslint
+    rostest
     std_msgs
     std_srvs
     tf2
@@ -41,7 +42,6 @@ catkin_package(
     moveit_visual_tools
     nist_gear
     roscpp
-    roslint
     std_msgs
     std_srvs
     tf2
@@ -113,4 +113,10 @@ if(CATKIN_ENABLE_TESTING)
   # endif()
 
   # catkin_add_nosetests(test)
+
+  set(ROSLINT_CPP_OPTS --extensions=h,hpp,cpp)
+  roslint_cpp()
+  roslint_custom(catkin_lint --strict -W2 ${PROJECT_SOURCE_DIR})
+  roslint_add_test()
+
 endif()

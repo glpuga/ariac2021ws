@@ -5,7 +5,10 @@
 #pragma once
 
 // standard library
+#include <map>
 #include <mutex>
+#include <string>
+#include <utility>
 #include <vector>
 
 // roscpp
@@ -16,11 +19,12 @@
 // tijcore
 #include <tijcore/competition/ProcessManagementInterface.hpp>
 
-namespace tijros {
-
-class ROSProcessManagement : public tijcore::ProcessManagementInterface {
+namespace tijros
+{
+class ROSProcessManagement : public tijcore::ProcessManagementInterface
+{
 public:
-  ROSProcessManagement(const ros::NodeHandle &nh);
+  explicit ROSProcessManagement(const ros::NodeHandle& nh);
 
   ErrorWithReason startCompetition() const override;
 
@@ -30,18 +34,16 @@ public:
 
   std::vector<tijcore::Order> getOrders() override;
 
-  ErrorWithReason
-  submitAgvToAssemblyStation(const tijcore::AgvId &agv_id,
-                             const tijcore::StationId &destination_station,
-                             const std::string &shipment_type) const override;
+  ErrorWithReason submitAgvToAssemblyStation(const tijcore::AgvId& agv_id,
+                                             const tijcore::StationId& destination_station,
+                                             const std::string& shipment_type) const override;
 
-  std::string getAgvState(const tijcore::AgvId &agv_id) const override;
+  std::string getAgvState(const tijcore::AgvId& agv_id) const override;
 
-  ErrorWithReason
-  submitAssemblyStation(const tijcore::StationId &station,
-                        const std::string &shipment_type) const override;
+  ErrorWithReason submitAssemblyStation(const tijcore::StationId& station,
+                                        const std::string& shipment_type) const override;
 
-  tijcore::StationId getAgvStation(const tijcore::AgvId &agv_id) const override;
+  tijcore::StationId getAgvStation(const tijcore::AgvId& agv_id) const override;
 
 private:
   mutable std::mutex mutex_;
@@ -89,4 +91,4 @@ private:
   void agv4StationCallback(std_msgs::String::ConstPtr msg);
 };
 
-} // namespace tijros
+}  // namespace tijros
