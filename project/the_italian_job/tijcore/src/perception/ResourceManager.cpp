@@ -7,8 +7,13 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <memory>
 #include <mutex>
+#include <set>
 #include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 // tijcore
 #include <logger/logger.hpp>
@@ -562,7 +567,7 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
       continue;
     }
 
-    // TODO (glpuga) this may be more detrimental than not, now that robots take
+    // TODO(glpuga) this may be more detrimental than not, now that robots take
     // turns for the airspace above containers
     if (parent_container->allocated())
     {

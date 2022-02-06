@@ -5,6 +5,7 @@
 // Standard library
 #include <ostream>
 #include <stdexcept>
+#include <string>
 
 // tijcore
 #include <tijcore/agents/RobotTaskOutcome.hpp>

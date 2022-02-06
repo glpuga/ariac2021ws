@@ -16,7 +16,7 @@ public:
 
   RelativePose3();
 
-  RelativePose3(const FrameId& frame_id);
+  explicit RelativePose3(const FrameId& frame_id);
 
   RelativePose3(const FrameId& frame_id, const Pose3& pose);
 

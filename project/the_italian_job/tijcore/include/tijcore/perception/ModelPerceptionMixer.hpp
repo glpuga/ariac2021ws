@@ -16,7 +16,8 @@ namespace tijcore
 class ModelPerceptionMixer : public ModelPerceptionInterface
 {
 public:
-  ModelPerceptionMixer(std::vector<ModelPerceptionInterface::Ptr>&& children);
+  explicit ModelPerceptionMixer(std::vector<ModelPerceptionInterface::Ptr>&& children);
+
   std::vector<ObservedModel> getObservedModels() const override;
 
 private:

@@ -6,6 +6,8 @@
 
 // standard library
 #include <memory>
+#include <string>
+#include <vector>
 
 // tijcore
 #include <tijcore/agents/WorkRegionId.hpp>

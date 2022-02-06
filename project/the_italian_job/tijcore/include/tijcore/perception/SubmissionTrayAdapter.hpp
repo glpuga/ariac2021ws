@@ -6,6 +6,7 @@
 
 // standard library
 #include <memory>
+#include <string>
 
 // tijcore
 #include <logger/logger.hpp>
@@ -21,7 +22,7 @@ public:
 
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;
 
-  SubmissionTrayAdapter(const ModelContainerHandle& container_handle) : container_handle_{ container_handle }
+  explicit SubmissionTrayAdapter(const ModelContainerHandle& container_handle) : container_handle_{ container_handle }
   {
   }
 

@@ -7,6 +7,8 @@
 // standard library
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
 // tijcore
 #include <tijcore/agents/Order.hpp>

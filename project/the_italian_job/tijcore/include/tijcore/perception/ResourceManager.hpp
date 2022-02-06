@@ -10,6 +10,9 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <set>
+#include <string>
+#include <tuple>
 #include <vector>
 
 // tijcore

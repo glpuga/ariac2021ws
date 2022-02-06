@@ -5,6 +5,7 @@
 // Standard library
 #include <ostream>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 
 // tijcore

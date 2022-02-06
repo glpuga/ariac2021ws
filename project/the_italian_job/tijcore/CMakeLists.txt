@@ -133,15 +133,13 @@ if(CATKIN_ENABLE_TESTING)
   file(GLOB_RECURSE CPPFILES
     include/logger/*.h
     include/logger/*.hpp
-    include/tijcore/*.h
-    include/tijcore/*.hpp
+    include/${PROJECT_NAME}/*.h
+    include/${PROJECT_NAME}/*.hpp
     src/*.cpp)
 
   set(ROSLINT_CPP_OPTS --extensions=h,hpp,cpp)
-
   roslint_cpp(${CPPFILES})
 
-  roslint_python()
   roslint_custom(catkin_lint --strict -W2 ${PROJECT_SOURCE_DIR})
   roslint_add_test()
 
