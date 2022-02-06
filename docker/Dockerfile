@@ -146,6 +146,7 @@ RUN apt update \
 RUN apt update \
  && apt install -y \
     tmux \
+    python-catkin-lint \
  && apt clean 
 
 # Commands below run as the developer user.
