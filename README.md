@@ -1,3 +1,7 @@
+![License MIT](https://img.shields.io/github/license/BehaviorTree/BehaviorTree.CPP?color=blue)
+![Version](https://img.shields.io/badge/version-1.0-blue.svg)
+![Build status](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=devel)
+
 # ARIAC 2022 TheItalianJob workspace
 
 ## Quick usage
