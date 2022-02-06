@@ -13,24 +13,24 @@ on: # this determines when this workflow is run
 jobs:
   industrial_ci:
     name: ROS Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-runner-lima-1
     strategy:
       matrix: # matrix is the product of entries
         ROS_DISTRO: [melodic]
         ROS_REPO: [main]
     env:
-      CCACHE_DIR: "${{ github.workspace }}/.ccache"
+      # CCACHE_DIR: "${{ github.workspace }}/.ccache"
       ADDITIONAL_DEBS: python-catkin-lint
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
-          restore-keys: |
-            ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
+      # - uses: actions/cache@v2
+      #   with:
+      #     path: ${{ env.CCACHE_DIR }}
+      #     key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
+      #     restore-keys: |
+      #       ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
       - uses: 'ros-industrial/industrial_ci@master' # run industrial_ci
         env:
           ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
