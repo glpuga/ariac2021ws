@@ -13,15 +13,16 @@
 #include <tijcore/tasks/RobotTaskGroupRunnerInterface.hpp>
 #include <tijcore/utils/Timer.hpp>
 
-namespace tijcore {
-
-class RobotTaskGroupRunner : public RobotTaskGroupRunnerInterface {
+namespace tijcore
+{
+class RobotTaskGroupRunner : public RobotTaskGroupRunnerInterface
+{
 public:
   RobotTaskGroupRunner();
 
   ~RobotTaskGroupRunner();
 
-  void add(RobotTaskInterface::Ptr &task) override;
+  void add(RobotTaskInterface::Ptr& task) override;
 
 private:
   std::mutex mutex_;
@@ -36,4 +37,4 @@ private:
   void timerCallback();
 };
 
-} // namespace tijcore
+}  // namespace tijcore

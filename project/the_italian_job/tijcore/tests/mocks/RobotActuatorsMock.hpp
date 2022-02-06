@@ -10,9 +10,10 @@
 // tijcore
 #include <tijcore/competition/RobotActuatorsInterface.hpp>
 
-namespace tijcore {
-
-class RobotActuatorsMock : public RobotActuatorsInterface {
+namespace tijcore
+{
+class RobotActuatorsMock : public RobotActuatorsInterface
+{
 public:
   using Ptr = std::unique_ptr<RobotActuatorsMock>;
   using SharedPtr = std::shared_ptr<RobotActuatorsMock>;
@@ -32,4 +33,4 @@ public:
   MOCK_CONST_METHOD0(getRobotHealthStatus, RobotHealthStatus());
 };
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -14,19 +14,17 @@
 #include <tijcore/math/CuboidVolume.hpp>
 #include <tijcore/perception/ResourceHandle.hpp>
 
-namespace tijcore {
-
-class ModelContainerInterface {
+namespace tijcore
+{
+class ModelContainerInterface
+{
 public:
   using Ptr = std::unique_ptr<ModelContainerInterface>;
   using SharedPtr = std::shared_ptr<ModelContainerInterface>;
 
-  ModelContainerInterface(const std::string &name,
-                          const std::string &container_reference_frame_id_,
-                          const std::string &surface_reference_frame_id_,
-                          const RelativePose3 &pose,
-                          const CuboidVolume &container_volume,
-                          const std::string &shared_workspace_id);
+  ModelContainerInterface(const std::string& name, const std::string& container_reference_frame_id_,
+                          const std::string& surface_reference_frame_id_, const RelativePose3& pose,
+                          const CuboidVolume& container_volume, const std::string& shared_workspace_id);
 
   virtual ~ModelContainerInterface() = default;
 
@@ -62,4 +60,4 @@ private:
   std::string shared_workspace_id_;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

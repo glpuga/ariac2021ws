@@ -11,20 +11,22 @@
 #include <tijcore/perception/ModelContainerInterface.hpp>
 #include <tijcore/perception/ResourceHandle.hpp>
 
-namespace tijcore {
-
-class ModelTraySharedAccessSpaceResource {
+namespace tijcore
+{
+class ModelTraySharedAccessSpaceResource
+{
 public:
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;
   using SharedWorkspaceHandle = ResourceHandle<std::string>;
 
-  ModelTraySharedAccessSpaceResource(
-      const std::vector<ModelContainerHandle> &model_tray_handles,
-      const SharedWorkspaceHandle &shared_access_space_handle)
-      : model_tray_handles_{model_tray_handles},
-        shared_access_space_handle_{shared_access_space_handle} {}
+  ModelTraySharedAccessSpaceResource(const std::vector<ModelContainerHandle>& model_tray_handles,
+                                     const SharedWorkspaceHandle& shared_access_space_handle)
+    : model_tray_handles_{ model_tray_handles }, shared_access_space_handle_{ shared_access_space_handle }
+  {
+  }
 
-  std::string sharedSpaceId() const {
+  std::string sharedSpaceId() const
+  {
     // if there are multiple handles, they all share the same exlusion zone id
     return model_tray_handles_[0].resource()->exclusionZoneId();
   }
@@ -34,4 +36,4 @@ private:
   SharedWorkspaceHandle shared_access_space_handle_;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -7,18 +7,22 @@
 // standard library
 #include <string>
 
-namespace tijcore {
+namespace tijcore
+{
+enum class RobotTaskOutcome
+{
+  TASK_SUCCESS,
+  TASK_FAILURE
+};
 
-enum class RobotTaskOutcome { TASK_SUCCESS, TASK_FAILURE };
+namespace robot_task_outcome
+{
+RobotTaskOutcome fromString(const std::string& sid);
 
-namespace robot_task_outcome {
+std::string toString(const RobotTaskOutcome& id);
 
-RobotTaskOutcome fromString(const std::string &sid);
+}  // namespace robot_task_outcome
 
-std::string toString(const RobotTaskOutcome &id);
+std::ostream& operator<<(std::ostream& os, RobotTaskOutcome id);
 
-} // namespace robot_task_outcome
-
-std::ostream &operator<<(std::ostream &os, RobotTaskOutcome id);
-
-} // namespace tijcore
+}  // namespace tijcore

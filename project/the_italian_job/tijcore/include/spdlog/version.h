@@ -7,5 +7,4 @@
 #define SPDLOG_VER_MINOR 8
 #define SPDLOG_VER_PATCH 5
 
-#define SPDLOG_VERSION                                                         \
-  (SPDLOG_VER_MAJOR * 10000 + SPDLOG_VER_MINOR * 100 + SPDLOG_VER_PATCH)
+#define SPDLOG_VERSION (SPDLOG_VER_MAJOR * 10000 + SPDLOG_VER_MINOR * 100 + SPDLOG_VER_PATCH)

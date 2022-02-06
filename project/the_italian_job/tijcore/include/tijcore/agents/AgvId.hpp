@@ -7,22 +7,29 @@
 // standard library
 #include <string>
 
-namespace tijcore {
+namespace tijcore
+{
+enum class AgvId
+{
+  agv1,
+  agv2,
+  agv3,
+  agv4,
+  any
+};
 
-enum class AgvId { agv1, agv2, agv3, agv4, any };
+namespace agv
+{
+AgvId fromString(const std::string& sid);
 
-namespace agv {
+std::string toString(const AgvId& id);
 
-AgvId fromString(const std::string &sid);
+bool isAny(const AgvId& sid);
 
-std::string toString(const AgvId &id);
+bool isValid(const std::string& sid);
 
-bool isAny(const AgvId &sid);
+}  // namespace agv
 
-bool isValid(const std::string &sid);
+std::ostream& operator<<(std::ostream& os, AgvId id);
 
-} // namespace agv
-
-std::ostream &operator<<(std::ostream &os, AgvId id);
-
-} // namespace tijcore
+}  // namespace tijcore

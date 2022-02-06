@@ -8,24 +8,28 @@
 // tijcore
 #include <logger/logger.hpp>
 
-namespace logger {
-
-namespace test {
-
-namespace {
-
+namespace logger
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class WorkRegasdfaionIdTests : public Test {};
+class WorkRegasdfaionIdTests : public Test
+{
+};
 
-TEST_F(WorkRegasdfaionIdTests, TestFromString) {
+TEST_F(WorkRegasdfaionIdTests, TestFromString)
+{
   ERROR("{} {} {}", "hello world!", 1, 2);
   WARNING("{} {} {}", "hello world!", 1, 2);
   INFO("{} {} {}", "hello world!", 1, 2);
   DEBUG("{} {} {}", "hello world!", 1, 2);
 }
 
-TEST_F(WorkRegasdfaionIdTests, TestFroedmString) {
+TEST_F(WorkRegasdfaionIdTests, TestFroedmString)
+{
   logger::instance().setLevel(logger::Level::Debug);
   ERROR("{} {} {}", "hello world!", 1, 2);
   WARNING("{} {} {}", "hello world!", 1, 2);
@@ -33,8 +37,8 @@ TEST_F(WorkRegasdfaionIdTests, TestFroedmString) {
   DEBUG("{} {} {}", "hello world!", 1, 2);
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace logger
+}  // namespace logger

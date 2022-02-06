@@ -7,6 +7,7 @@ add_compile_options(-Wall -Werror)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  roslint
   rostest
 )
 
@@ -128,5 +129,20 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gmock(${slow_test_target_name} tests/runner.cpp ${slow_test_files_list})
   target_link_libraries(${slow_test_target_name} ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-endif()
+  # This is to exclude spdlog from getting checked
+  file(GLOB_RECURSE CPPFILES
+    include/logger/*.h
+    include/logger/*.hpp
+    include/tijcore/*.h
+    include/tijcore/*.hpp
+    src/*.cpp)
 
+  set(ROSLINT_CPP_OPTS --extensions=h,hpp,cpp)
+
+  roslint_cpp(${CPPFILES})
+
+  roslint_python()
+  roslint_custom(catkin_lint --strict -W2 ${PROJECT_SOURCE_DIR})
+  roslint_add_test()
+
+endif()

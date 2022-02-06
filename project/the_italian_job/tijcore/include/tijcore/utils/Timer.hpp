@@ -12,18 +12,18 @@
 #include <mutex>
 #include <thread>
 
-namespace tijcore {
-
-namespace utils {
-
-class Timer {
+namespace tijcore
+{
+namespace utils
+{
+class Timer
+{
 public:
   Timer(std::function<void()> callback);
 
   ~Timer();
 
-  void start(const std::chrono::microseconds &interval,
-             const bool repeat = true);
+  void start(const std::chrono::microseconds& interval, const bool repeat = true);
 
   void stop();
 
@@ -33,11 +33,11 @@ private:
   mutable std::mutex mutex_;
   std::condition_variable cv_;
   std::unique_ptr<std::thread> runner_;
-  bool halting_{false};
-  bool autoremove_{false};
+  bool halting_{ false };
+  bool autoremove_{ false };
 
   std::chrono::microseconds interval_;
-  bool repeat_{false};
+  bool repeat_{ false };
 
   std::function<void()> callback_;
 
@@ -47,6 +47,6 @@ private:
   void runnerBody();
 };
 
-} // namespace utils
+}  // namespace utils
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -7,20 +7,25 @@
 // standard library
 #include <string>
 
-namespace tijcore {
+namespace tijcore
+{
+enum class PartColorId
+{
+  red,
+  green,
+  blue
+};
 
-enum class PartColorId { red, green, blue };
+namespace part_color
+{
+PartColorId fromString(const std::string& sid);
 
-namespace part_color {
+std::string toString(const PartColorId& id);
 
-PartColorId fromString(const std::string &sid);
+bool isValid(const std::string& sid);
 
-std::string toString(const PartColorId &id);
+}  // namespace part_color
 
-bool isValid(const std::string &sid);
+std::ostream& operator<<(std::ostream& os, PartColorId id);
 
-} // namespace part_color
-
-std::ostream &operator<<(std::ostream &os, PartColorId id);
-
-} // namespace tijcore
+}  // namespace tijcore

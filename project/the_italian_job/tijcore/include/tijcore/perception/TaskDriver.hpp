@@ -19,23 +19,22 @@
 
 using namespace std::literals;
 
-namespace tijcore {
-
-class TaskDriver {
+namespace tijcore
+{
+class TaskDriver
+{
 public:
   using Ptr = std::unique_ptr<TaskDriver>;
   using SharedPtr = std::shared_ptr<TaskDriver>;
 
-  TaskDriver(TaskMasterInterface::Ptr &&task_master,
-             RobotTaskGroupRunnerInterface::Ptr &&task_group_runner,
-             const ResourceManagerInterface::SharedPtr &resource_manager,
-             const ModelPerceptionInterface::SharedPtr &perception_input,
-             const Toolbox::SharedPtr &toolbox,
+  TaskDriver(TaskMasterInterface::Ptr&& task_master, RobotTaskGroupRunnerInterface::Ptr&& task_group_runner,
+             const ResourceManagerInterface::SharedPtr& resource_manager,
+             const ModelPerceptionInterface::SharedPtr& perception_input, const Toolbox::SharedPtr& toolbox,
              const std::chrono::milliseconds perception_interval = 1s,
              const std::chrono::milliseconds processing_interval = 1s);
 
 private:
-  const std::chrono::milliseconds processing_interval_{1000};
+  const std::chrono::milliseconds processing_interval_{ 1000 };
 
   TaskMasterInterface::Ptr task_master_;
   RobotTaskGroupRunnerInterface::Ptr task_group_runner_;
@@ -52,4 +51,4 @@ private:
   void processingCallback();
 };
 
-} // namespace tijcore
+}  // namespace tijcore

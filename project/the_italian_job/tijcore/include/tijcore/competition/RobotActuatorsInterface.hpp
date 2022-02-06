@@ -7,24 +7,28 @@
 // standard library
 #include <memory>
 
-namespace tijcore {
-
-class RobotActuatorsInterface {
+namespace tijcore
+{
+class RobotActuatorsInterface
+{
 public:
   using Ptr = std::unique_ptr<RobotActuatorsInterface>;
   using SharedPtr = std::shared_ptr<RobotActuatorsInterface>;
 
-  struct ConveyorState {
+  struct ConveyorState
+  {
     double power;
     bool enabled;
   };
 
-  struct VacuumGripperState {
+  struct VacuumGripperState
+  {
     bool enabled;
     bool attached;
   };
 
-  struct RobotHealthStatus {
+  struct RobotHealthStatus
+  {
     bool kitting_robot_enabled;
     bool assembly_robot_enabled;
   };
@@ -46,4 +50,4 @@ public:
   virtual RobotHealthStatus getRobotHealthStatus() const = 0;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -12,16 +12,15 @@
 #include <tijcore/perception/ModelContainerInterface.hpp>
 #include <tijcore/perception/Toolbox.hpp>
 
-namespace tijcore {
-
+namespace tijcore
+{
 // TODO(glpuga) This class needs testing.
 
-class ConveyorBeltModelContainer : public ModelContainerInterface {
+class ConveyorBeltModelContainer : public ModelContainerInterface
+{
 public:
-  ConveyorBeltModelContainer(
-      const std::string &name, const std::string &container_frame_id,
-      const std::string &surface_frame_id,
-      const std::string &model_tray_shared_access_space_id);
+  ConveyorBeltModelContainer(const std::string& name, const std::string& container_frame_id,
+                             const std::string& surface_frame_id, const std::string& model_tray_shared_access_space_id);
 
   bool enabled() const override;
 
@@ -32,4 +31,4 @@ public:
   void setEnabled(const bool state) override;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

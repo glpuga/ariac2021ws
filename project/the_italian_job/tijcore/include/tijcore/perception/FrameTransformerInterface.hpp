@@ -10,17 +10,16 @@
 // tijcore
 #include <tijcore/localization/RelativePose3.hpp>
 
-namespace tijcore {
-
-class FrameTransformerInterface {
+namespace tijcore
+{
+class FrameTransformerInterface
+{
 public:
   using SharedPtr = std::shared_ptr<FrameTransformerInterface>;
 
   virtual ~FrameTransformerInterface() = default;
 
-  virtual RelativePose3
-  transformPoseToFrame(const RelativePose3 &pose,
-                       const std::string &new_frame_id) const = 0;
+  virtual RelativePose3 transformPoseToFrame(const RelativePose3& pose, const std::string& new_frame_id) const = 0;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -12,15 +12,14 @@
 #include <tijcore/perception/Toolbox.hpp>
 #include <tijcore/tasks/RobotTaskInterface.hpp>
 
-namespace tijcore {
-
-class RemoveBrokenPartTask : public RobotTaskInterface {
+namespace tijcore
+{
+class RemoveBrokenPartTask : public RobotTaskInterface
+{
 public:
-  RemoveBrokenPartTask(
-      const ResourceManagerInterface::SharedPtr &resource_manager,
-      const Toolbox::SharedPtr &toolbox,
-      ResourceManagerInterface::ManagedLocusHandle &&target,
-      ResourceManagerInterface::PickAndPlaceRobotHandle &&robot);
+  RemoveBrokenPartTask(const ResourceManagerInterface::SharedPtr& resource_manager, const Toolbox::SharedPtr& toolbox,
+                       ResourceManagerInterface::ManagedLocusHandle&& target,
+                       ResourceManagerInterface::PickAndPlaceRobotHandle&& robot);
 
   RobotTaskOutcome run() override;
 
@@ -33,4 +32,4 @@ private:
   ResourceManagerInterface::PickAndPlaceRobotHandle robot_;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

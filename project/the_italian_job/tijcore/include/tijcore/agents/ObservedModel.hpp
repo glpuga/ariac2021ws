@@ -8,14 +8,15 @@
 #include <tijcore/agents/PartId.hpp>
 #include <tijcore/localization/RelativePose3.hpp>
 
-namespace tijcore {
-
-struct ObservedModel {
+namespace tijcore
+{
+struct ObservedModel
+{
   PartId type;
 
   RelativePose3 pose;
 
-  bool broken{false};
+  bool broken{ false };
 };
 
-} // namespace tijcore
+}  // namespace tijcore

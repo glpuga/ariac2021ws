@@ -13,9 +13,10 @@
 #include <tijcore/agents/ShipmentType.hpp>
 #include <tijcore/agents/StationId.hpp>
 
-namespace tijcore {
-
-struct KittingShipment {
+namespace tijcore
+{
+struct KittingShipment
+{
   ShipmentType shipment_type;
 
   AgvId agv_id;
@@ -25,4 +26,4 @@ struct KittingShipment {
   std::vector<ProductRequest> products;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

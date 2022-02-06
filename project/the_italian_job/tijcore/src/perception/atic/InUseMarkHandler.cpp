@@ -5,4 +5,6 @@
 // tijcore
 #include <tijcore/perception/InUseMarkHandler.hpp>
 
-namespace tijcore {} // namespace tijcore
+namespace tijcore
+{
+}  // namespace tijcore

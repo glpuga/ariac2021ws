@@ -5,4 +5,6 @@
 // tijcore
 #include <tijcore/perception/ResourceHandle.hpp>
 
-namespace tijcore {} // namespace tijcore
+namespace tijcore
+{
+}  // namespace tijcore

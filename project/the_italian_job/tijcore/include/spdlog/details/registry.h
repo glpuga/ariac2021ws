@@ -17,22 +17,25 @@
 #include <string>
 #include <unordered_map>
 
-namespace spdlog {
+namespace spdlog
+{
 class logger;
 
-namespace details {
+namespace details
+{
 class thread_pool;
 class periodic_worker;
 
-class SPDLOG_API registry {
+class SPDLOG_API registry
+{
 public:
   using log_levels = std::unordered_map<std::string, level::level_enum>;
-  registry(const registry &) = delete;
-  registry &operator=(const registry &) = delete;
+  registry(const registry&) = delete;
+  registry& operator=(const registry&) = delete;
 
   void register_logger(std::shared_ptr<logger> new_logger);
   void initialize_logger(std::shared_ptr<logger> new_logger);
-  std::shared_ptr<logger> get(const std::string &logger_name);
+  std::shared_ptr<logger> get(const std::string& logger_name);
   std::shared_ptr<logger> default_logger();
 
   // Return raw ptr to the default logger.
@@ -40,7 +43,7 @@ public:
   // This make the default API faster, but cannot be used concurrently with
   // set_default_logger(). e.g do not call set_default_logger() from one thread
   // while calling spdlog::info() from another.
-  logger *get_default_raw();
+  logger* get_default_raw();
 
   // set default logger.
   // default logger is stored in default_logger_ (for faster retrieval) and in
@@ -65,36 +68,36 @@ public:
 
   void flush_every(std::chrono::seconds interval);
 
-  void set_error_handler(void (*handler)(const std::string &msg));
+  void set_error_handler(void (*handler)(const std::string& msg));
 
-  void apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun);
+  void apply_all(const std::function<void(const std::shared_ptr<logger>)>& fun);
 
   void flush_all();
 
-  void drop(const std::string &logger_name);
+  void drop(const std::string& logger_name);
 
   void drop_all();
 
   // clean all resources and threads started by the registry
   void shutdown();
 
-  std::recursive_mutex &tp_mutex();
+  std::recursive_mutex& tp_mutex();
 
   void set_automatic_registration(bool automatic_registration);
 
   // set levels for all existing/future loggers. global_level can be null if
   // should not set.
-  void set_levels(log_levels levels, level::level_enum *global_level);
+  void set_levels(log_levels levels, level::level_enum* global_level);
 
-  static registry &instance();
+  static registry& instance();
 
 private:
   registry();
   ~registry();
 
-  void throw_if_exists_(const std::string &logger_name);
+  void throw_if_exists_(const std::string& logger_name);
   void register_logger_(std::shared_ptr<logger> new_logger);
-  bool set_level_from_cfg_(logger *logger);
+  bool set_level_from_cfg_(logger* logger);
   std::mutex logger_map_mutex_, flusher_mutex_;
   std::recursive_mutex tp_mutex_;
   std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
@@ -102,7 +105,7 @@ private:
   std::unique_ptr<formatter> formatter_;
   spdlog::level::level_enum global_log_level_ = level::info;
   level::level_enum flush_level_ = level::off;
-  void (*err_handler_)(const std::string &msg) = nullptr;
+  void (*err_handler_)(const std::string& msg) = nullptr;
   std::shared_ptr<thread_pool> tp_;
   std::unique_ptr<periodic_worker> periodic_flusher_;
   std::shared_ptr<logger> default_logger_;
@@ -110,8 +113,8 @@ private:
   size_t backtrace_n_messages_ = 0;
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "registry-inl.h"

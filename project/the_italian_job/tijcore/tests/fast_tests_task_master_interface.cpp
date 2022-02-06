@@ -8,25 +8,27 @@
 // tijcore
 #include "mocks/TaskMasterMock.hpp"
 
-namespace tijcore {
-
-namespace test {
-
-namespace {
-
+namespace tijcore
+{
+namespace test
+{
+namespace
+{
 using ::testing::Test;
 
-class TaskMasterInterfaceTests : public Test {
+class TaskMasterInterfaceTests : public Test
+{
 public:
 };
 
-TEST_F(TaskMasterInterfaceTests, TheMockCanBeConstructed) {
+TEST_F(TaskMasterInterfaceTests, TheMockCanBeConstructed)
+{
   // just testing that the mock builds
   TaskMasterMock uut;
 }
 
-} // namespace
+}  // namespace
 
-} // namespace test
+}  // namespace test
 
-} // namespace tijcore
+}  // namespace tijcore

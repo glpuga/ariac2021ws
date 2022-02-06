@@ -7,9 +7,10 @@
 // standard library
 #include <string>
 
-namespace tijcore {
-
-enum class WorkRegionId {
+namespace tijcore
+{
+enum class WorkRegionId
+{
   conveyor_belt,
   kitting_agvs,
   kitting_near_bins,
@@ -17,16 +18,16 @@ enum class WorkRegionId {
   assembly
 };
 
-namespace work_region {
+namespace work_region
+{
+WorkRegionId fromString(const std::string& sid);
 
-WorkRegionId fromString(const std::string &sid);
+std::string toString(const WorkRegionId& id);
 
-std::string toString(const WorkRegionId &id);
+bool isValid(const std::string& sid);
 
-bool isValid(const std::string &sid);
+}  // namespace work_region
 
-} // namespace work_region
+std::ostream& operator<<(std::ostream& os, WorkRegionId id);
 
-std::ostream &operator<<(std::ostream &os, WorkRegionId id);
-
-} // namespace tijcore
+}  // namespace tijcore

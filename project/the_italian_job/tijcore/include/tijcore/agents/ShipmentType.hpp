@@ -7,8 +7,8 @@
 // standard library
 #include <string>
 
-namespace tijcore {
-
+namespace tijcore
+{
 using ShipmentType = std::string;
 
-} // namespace tijcore
+}  // namespace tijcore

@@ -9,14 +9,13 @@
 #include <tijcore/perception/Toolbox.hpp>
 #include <tijcore/tasks/RobotTaskInterface.hpp>
 
-namespace tijcore {
-
-class SubmitKittingShipmentTask : public RobotTaskInterface {
+namespace tijcore
+{
+class SubmitKittingShipmentTask : public RobotTaskInterface
+{
 public:
-  SubmitKittingShipmentTask(
-      const Toolbox::SharedPtr &toolbox,
-      ResourceManagerInterface::SubmissionTrayHandle &&tray,
-      const StationId &destination_station, const ShipmentType &shipment_type);
+  SubmitKittingShipmentTask(const Toolbox::SharedPtr& toolbox, ResourceManagerInterface::SubmissionTrayHandle&& tray,
+                            const StationId& destination_station, const ShipmentType& shipment_type);
 
   RobotTaskOutcome run() override;
 
@@ -29,4 +28,4 @@ private:
   ShipmentType shipment_type_;
 };
 
-} // namespace tijcore
+}  // namespace tijcore

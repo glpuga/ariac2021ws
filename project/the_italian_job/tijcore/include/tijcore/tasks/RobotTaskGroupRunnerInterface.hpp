@@ -10,9 +10,10 @@
 // tijcore
 #include <tijcore/tasks/RobotTaskInterface.hpp>
 
-namespace tijcore {
-
-class RobotTaskGroupRunnerInterface {
+namespace tijcore
+{
+class RobotTaskGroupRunnerInterface
+{
 public:
   using Ptr = std::unique_ptr<RobotTaskGroupRunnerInterface>;
   using SharedPtr = std::shared_ptr<RobotTaskGroupRunnerInterface>;
@@ -21,7 +22,7 @@ public:
 
   // the parameter should be and rvalue-ref, but this is a compromise solution
   // to be able to mock the class
-  virtual void add(RobotTaskInterface::Ptr &task) = 0;
+  virtual void add(RobotTaskInterface::Ptr& task) = 0;
 };
 
-} // namespace tijcore
+}  // namespace tijcore
