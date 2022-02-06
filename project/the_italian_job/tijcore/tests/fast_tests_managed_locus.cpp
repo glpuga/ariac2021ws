@@ -2,12 +2,16 @@
  * Author: Gerardo Puga
  */
 
+// standard library
+#include <string>
+
 // gtest
 #include "gtest/gtest.h"
 
 // tijcore
-#include "mocks/ModelContainerMock.hpp"
 #include <tijcore/perception/ManagedLocus.hpp>
+
+#include "mocks/ModelContainerMock.hpp"
 
 namespace tijcore
 {

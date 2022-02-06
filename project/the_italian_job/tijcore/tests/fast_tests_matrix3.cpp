@@ -4,13 +4,15 @@
 
 // Standard library
 #include <cmath>
+#include <utility>
 
 // gtest
 #include "gtest/gtest.h"
 
 // tijcore
-#include "utils/test_utils.hpp"
 #include <tijcore/math/Matrix3.hpp>
+
+#include "utils/test_utils.hpp"
 
 namespace tijcore
 {

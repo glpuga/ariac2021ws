@@ -6,18 +6,23 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <memory>
+#include <set>
+#include <string>
 #include <utility>
+#include <vector>
 
 // gtest
 #include "gtest/gtest.h"
 
 // tijcore
-#include "mocks/ModelContainerMock.hpp"
-#include "mocks/PickAndPlaceRobotMock.hpp"
-#include "utils/ActionQueue.hpp"
 #include <tijcore/perception/ResourceManager.hpp>
 #include <tijcore/perception/StaticFrameTransformer.hpp>
 #include <tijcore/perception/Toolbox.hpp>
+
+#include "mocks/ModelContainerMock.hpp"
+#include "mocks/PickAndPlaceRobotMock.hpp"
+#include "utils/ActionQueue.hpp"
 
 namespace tijcore
 {

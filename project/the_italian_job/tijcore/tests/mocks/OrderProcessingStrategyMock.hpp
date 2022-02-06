@@ -6,6 +6,8 @@
 
 // standard library
 #include <memory>
+#include <vector>
+#include <set>
 
 // gtest
 #include "gmock/gmock.h"

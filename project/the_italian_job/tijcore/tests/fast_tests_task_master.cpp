@@ -6,23 +6,28 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <memory>
+#include <set>
 #include <stdexcept>
+#include <string>
 #include <utility>
+#include <vector>
 
 // gtest
 #include "gtest/gtest.h"
 
 // tijcore
-#include "mocks/ModelContainerMock.hpp"
-#include "mocks/PickAndPlaceRobotMock.hpp"
-#include "mocks/RobotTaskMock.hpp"
-#include "utils/ActionQueue.hpp"
 #include <tijcore/logger/logger.hpp>
 #include <tijcore/perception/ResourceManager.hpp>
 #include <tijcore/perception/RobotTaskFactoryInterface.hpp>
 #include <tijcore/perception/StaticFrameTransformer.hpp>
 #include <tijcore/perception/TaskMaster.hpp>
 #include <tijcore/perception/Toolbox.hpp>
+
+#include "mocks/ModelContainerMock.hpp"
+#include "mocks/PickAndPlaceRobotMock.hpp"
+#include "mocks/RobotTaskMock.hpp"
+#include "utils/ActionQueue.hpp"
 
 namespace tijcore
 {
@@ -43,7 +48,8 @@ public:
 
   using SubmissionCallback = std::function<void(const std::string&)>;
 
-  RobotTaskFactoryFake(const SubmissionCallback& submission_callback) : submission_callback_{ submission_callback }
+  explicit RobotTaskFactoryFake(const SubmissionCallback& submission_callback)
+    : submission_callback_{ submission_callback }
   {
   }
 
