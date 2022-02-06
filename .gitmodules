@@ -1,3 +1,6 @@
 [submodule "project/ARIAC"]
 	path = project/ARIAC
 	url = git@github.com:glpuga/ARIAC.git
+[submodule "external/roslint"]
+	path = external/roslint
+	url = git@github.com:ros/roslint.git

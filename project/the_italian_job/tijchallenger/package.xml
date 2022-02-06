@@ -16,6 +16,8 @@
   <depend>custom_kitting_moveit_config</depend>
   <depend>nist_gear</depend>
   <depend>roscpp</depend>
+  <depend>roslint</depend>
+  <depend>rostest</depend>
   <depend>tijros</depend>
   <depend>tf</depend>
 

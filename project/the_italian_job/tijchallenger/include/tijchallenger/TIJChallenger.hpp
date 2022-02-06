@@ -5,6 +5,8 @@
 #pragma once
 
 // standard library
+#include <memory>
+#include <utility>
 #include <vector>
 
 // ros
@@ -19,9 +21,10 @@
 #include <tijcore/perception/Toolbox.hpp>
 #include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 
-namespace tijchallenger {
-
-class TIJChallenger {
+namespace tijchallenger
+{
+class TIJChallenger
+{
 public:
   TIJChallenger();
 
@@ -41,13 +44,12 @@ private:
   tijcore::Toolbox::SharedPtr createToolbox() const;
 
   std::vector<tijcore::ModelContainerInterface::Ptr>
-  createModelContainers(const tijcore::Toolbox::SharedPtr &toolbox) const;
+  createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox) const;
 
-  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr>
-  createConveyorBeltTransformBroadcasters() const;
+  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr> createConveyorBeltTransformBroadcasters() const;
 
   std::vector<tijcore::PickAndPlaceRobotInterface::Ptr>
-  createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr &toolbox) const;
+  createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr& toolbox) const;
 };
 
-} // namespace tijchallenger
+}  // namespace tijchallenger
