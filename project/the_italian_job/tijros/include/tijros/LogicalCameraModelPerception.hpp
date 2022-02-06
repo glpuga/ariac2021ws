@@ -6,6 +6,7 @@
 
 // standard library
 #include <mutex>
+#include <string>
 #include <vector>
 
 // ros
@@ -16,12 +17,12 @@
 #include <tijcore/perception/ModelPerceptionInterface.hpp>
 #include <tijcore/utils/Timer.hpp>
 
-namespace tijros {
-
-class LogicalCameraModelPerception : public tijcore::ModelPerceptionInterface {
+namespace tijros
+{
+class LogicalCameraModelPerception : public tijcore::ModelPerceptionInterface
+{
 public:
-  LogicalCameraModelPerception(const ros::NodeHandle &nh,
-                               const std::string &logical_sensor_name);
+  LogicalCameraModelPerception(const ros::NodeHandle& nh, const std::string& logical_sensor_name);
 
   std::vector<tijcore::ObservedModel> getObservedModels() const override;
 
@@ -31,7 +32,7 @@ private:
   ros::NodeHandle nh_;
   ros::Subscriber camera_sub_;
 
-  bool update_received_{false};
+  bool update_received_{ false };
   std::string logical_sensor_name_;
 
   tijcore::utils::Timer timer_;
@@ -43,4 +44,4 @@ private:
   void timerCallback();
 };
 
-} // namespace tijros
+}  // namespace tijros

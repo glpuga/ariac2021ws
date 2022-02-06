@@ -4,15 +4,22 @@
 
 #pragma once
 
+// standard library
+#include <algorithm>
+#include <set>
+#include <string>
+#include <vector>
+
 // tijcore
 #include <tijcore/perception/Toolbox.hpp>
 #include <tijros/PickAndPlaceRobotCommonImpl.hpp>
 
-namespace tijros {
-
-class PickAndPlaceAssemblyRobot : public PickAndPlaceRobotCommonImpl {
+namespace tijros
+{
+class PickAndPlaceAssemblyRobot : public PickAndPlaceRobotCommonImpl
+{
 public:
-  PickAndPlaceAssemblyRobot(const tijcore::Toolbox::SharedPtr &toolbox);
+  explicit PickAndPlaceAssemblyRobot(const tijcore::Toolbox::SharedPtr& toolbox);
 
   bool enabled() const override;
 
@@ -31,23 +38,18 @@ private:
 
   void setSuctionGripper(const bool state) const override;
 
-  void
-  patchJointStateValuesForRestingPose(std::vector<double> &) const override;
+  void patchJointStateValuesForRestingPose(std::vector<double>&) const override;
 
-  void patchJointStateValuesToGetCloseToTarget(
-      std::vector<double> &joint_states,
-      const tijcore::RelativePose3 &target) const override;
+  void patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
+                                               const tijcore::RelativePose3& target) const override;
 
-  void patchJointStateValuesGraspingHingPoseNearTarget(
-      std::vector<double> &joint_states,
-      const tijcore::RelativePose3 &target) const override;
+  void patchJointStateValuesGraspingHingPoseNearTarget(std::vector<double>& joint_states,
+                                                       const tijcore::RelativePose3& target) const override;
 
-  void patchJointStateValuesToGetNearPose(
-      std::vector<double> &joint_states, const tijcore::RelativePose3 &target,
-      const std::vector<tijcore::RelativePose3> &pose_hints) const;
+  void patchJointStateValuesToGetNearPose(std::vector<double>& joint_states, const tijcore::RelativePose3& target,
+                                          const std::vector<tijcore::RelativePose3>& pose_hints) const;
 
-  void patchJointStateValuesForAlignedZeroWrist(
-      std::vector<double> &joint_states) const override;
+  void patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const override;
 };
 
-} // namespace tijros
+}  // namespace tijros

@@ -4,15 +4,21 @@
 
 #pragma once
 
+// standard library
+#include <set>
+#include <string>
+#include <vector>
+
 // tijcore
 #include <tijcore/perception/Toolbox.hpp>
 #include <tijros/PickAndPlaceRobotCommonImpl.hpp>
 
-namespace tijros {
-
-class PickAndPlaceKittingRobot : public PickAndPlaceRobotCommonImpl {
+namespace tijros
+{
+class PickAndPlaceKittingRobot : public PickAndPlaceRobotCommonImpl
+{
 public:
-  PickAndPlaceKittingRobot(const tijcore::Toolbox::SharedPtr &toolbox);
+  explicit PickAndPlaceKittingRobot(const tijcore::Toolbox::SharedPtr& toolbox);
 
   bool enabled() const override;
 
@@ -30,19 +36,15 @@ private:
 
   void setSuctionGripper(const bool state) const override;
 
-  void
-  patchJointStateValuesForRestingPose(std::vector<double> &) const override;
+  void patchJointStateValuesForRestingPose(std::vector<double>&) const override;
 
-  void patchJointStateValuesToGetCloseToTarget(
-      std::vector<double> &joint_states,
-      const tijcore::RelativePose3 &target) const override;
+  void patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
+                                               const tijcore::RelativePose3& target) const override;
 
-  void patchJointStateValuesGraspingHingPoseNearTarget(
-      std::vector<double> &joint_states,
-      const tijcore::RelativePose3 &target) const override;
+  void patchJointStateValuesGraspingHingPoseNearTarget(std::vector<double>& joint_states,
+                                                       const tijcore::RelativePose3& target) const override;
 
-  void patchJointStateValuesForAlignedZeroWrist(
-      std::vector<double> &joint_states) const override;
+  void patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const override;
 };
 
-} // namespace tijros
+}  // namespace tijros

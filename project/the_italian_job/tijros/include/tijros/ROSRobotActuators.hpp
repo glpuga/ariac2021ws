@@ -18,11 +18,12 @@
 // tijcore
 #include <tijcore/competition/RobotActuatorsInterface.hpp>
 
-namespace tijros {
-
-class ROSRobotActuators : public tijcore::RobotActuatorsInterface {
+namespace tijros
+{
+class ROSRobotActuators : public tijcore::RobotActuatorsInterface
+{
 public:
-  ROSRobotActuators(const ros::NodeHandle nh);
+  explicit ROSRobotActuators(const ros::NodeHandle nh);
 
   ConveyorState getConveyorState() const override;
 
@@ -55,13 +56,11 @@ private:
 
   void conveyorStateCallback(nist_gear::ConveyorBeltState::ConstPtr msg);
 
-  void
-  gantryArmGripperStateCallback(nist_gear::VacuumGripperState::ConstPtr msg);
+  void gantryArmGripperStateCallback(nist_gear::VacuumGripperState::ConstPtr msg);
 
-  void
-  kittingArmGripperStateCallback(nist_gear::VacuumGripperState::ConstPtr msg);
+  void kittingArmGripperStateCallback(nist_gear::VacuumGripperState::ConstPtr msg);
 
   void robotHealthCallback(nist_gear::RobotHealth::ConstPtr msg);
 };
 
-} // namespace tijros
+}  // namespace tijros

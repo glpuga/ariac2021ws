@@ -5,7 +5,9 @@
 #pragma once
 
 // standard library
+#include <memory>
 #include <mutex>
+#include <vector>
 
 // roscpp
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -18,68 +20,53 @@
 #include <tijcore/perception/PickAndPlaceRobotInterface.hpp>
 #include <tijcore/perception/Toolbox.hpp>
 
-namespace tijros {
-
-class PickAndPlaceRobotCommonImpl : public tijcore::PickAndPlaceRobotInterface {
+namespace tijros
+{
+class PickAndPlaceRobotCommonImpl : public tijcore::PickAndPlaceRobotInterface
+{
 public:
-  PickAndPlaceRobotCommonImpl(const tijcore::Toolbox::SharedPtr &toolbox);
+  explicit PickAndPlaceRobotCommonImpl(const tijcore::Toolbox::SharedPtr& toolbox);
 
   bool getInSafePose() const override;
 
-  bool
-  getInSafePoseNearTarget(const tijcore::RelativePose3 &target) const override;
+  bool getInSafePoseNearTarget(const tijcore::RelativePose3& target) const override;
 
-  bool
-  getToGraspingPoseHint(const tijcore::RelativePose3 &target) const override;
+  bool getToGraspingPoseHint(const tijcore::RelativePose3& target) const override;
 
-  bool getInLandingSpot(const tijcore::RelativePose3 &target) const override;
+  bool getInLandingSpot(const tijcore::RelativePose3& target) const override;
 
-  bool
-  graspPartFromAbove(const tijcore::RelativePose3 &target,
-                     const tijcore::PartTypeId &part_type_id) const override;
+  bool graspPartFromAbove(const tijcore::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
 
-  bool
-  placePartFromAbove(const tijcore::RelativePose3 &target,
-                     const tijcore::PartTypeId &part_type_id) const override;
+  bool placePartFromAbove(const tijcore::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
 
-  bool twistPartInPlace(tijcore::RelativePose3 &target,
+  bool twistPartInPlace(tijcore::RelativePose3& target,
 
-                        const tijcore::PartTypeId &part_type_id) const override;
+                        const tijcore::PartTypeId& part_type_id) const override;
 
   bool dropPartWhereYouStand() const override;
 
   void cancelAction() override;
 
-  void markAsInaccessible(
-      const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>
-          &descriptors) override;
+  void markAsInaccessible(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
 
-  void markAsAccessible(
-      const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>
-          &descriptors) override;
+  void markAsAccessible(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
 
 private:
   tijcore::Toolbox::SharedPtr toolbox_;
 
-  mutable std::unique_ptr<moveit::planning_interface::MoveGroupInterface>
-      move_group_ptr_;
-  mutable std::unique_ptr<moveit::planning_interface::PlanningSceneInterface>
-      planning_scene_ptr_;
+  mutable std::unique_ptr<moveit::planning_interface::MoveGroupInterface> move_group_ptr_;
+  mutable std::unique_ptr<moveit::planning_interface::PlanningSceneInterface> planning_scene_ptr_;
 
-  moveit::planning_interface::MoveGroupInterface *
-  getMoveItGroupHandlePtr() const;
+  moveit::planning_interface::MoveGroupInterface* getMoveItGroupHandlePtr() const;
 
   void setupObjectConstraints() const;
 
-  void markAsCommanded(
-      const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>
-          &descriptors,
-      const int command);
+  void markAsCommanded(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors,
+                       const int command);
 
-  void
-  alignEndEffectorWithTarget(tijcore::RelativePose3 &target_in_world) const;
+  void alignEndEffectorWithTarget(tijcore::RelativePose3& target_in_world) const;
 
   void configureGoalTolerances(const bool tight_mode) const;
 };
 
-} // namespace tijros
+}  // namespace tijros
