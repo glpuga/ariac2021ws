@@ -3,6 +3,8 @@
  */
 
 // Standard library
+#include <string>
+#include <utility>
 
 // tijcore
 #include <tijcore/perception/StaticFrameTransformer.hpp>

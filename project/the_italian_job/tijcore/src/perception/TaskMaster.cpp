@@ -6,7 +6,9 @@
 #include <algorithm>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <utility>
+#include <vector>
 
 // tijcore
 #include <logger/logger.hpp>

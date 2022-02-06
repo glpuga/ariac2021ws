@@ -19,7 +19,7 @@ namespace utils
 class Timer
 {
 public:
-  Timer(std::function<void()> callback);
+  explicit Timer(std::function<void()> callback);
 
   ~Timer();
 

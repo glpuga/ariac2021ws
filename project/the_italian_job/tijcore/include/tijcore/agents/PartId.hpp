@@ -4,6 +4,9 @@
 
 #pragma once
 
+// standard library
+#include <string>
+
 // tijcore
 #include <tijcore/agents/PartColorId.hpp>
 #include <tijcore/agents/PartTypeId.hpp>
@@ -15,9 +18,9 @@ class PartId
 public:
   static const PartId UnkownPartId;
 
-  PartId(const std::string& coded_part_str);
+  explicit PartId(const std::string& coded_part_str);
 
-  PartId(const PartTypeId& type, const PartColorId& color);
+  explicit PartId(const PartTypeId& type, const PartColorId& color);
 
   PartTypeId type() const;
 

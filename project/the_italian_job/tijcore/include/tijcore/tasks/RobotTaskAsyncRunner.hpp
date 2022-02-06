@@ -22,7 +22,7 @@ public:
   using Ptr = std::unique_ptr<RobotTaskAsyncRunner>;
   using SharedPtr = std::shared_ptr<RobotTaskAsyncRunner>;
 
-  RobotTaskAsyncRunner(RobotTaskInterface::Ptr&& task) : task_{ std::move(task) }
+  explicit RobotTaskAsyncRunner(RobotTaskInterface::Ptr&& task) : task_{ std::move(task) }
   {
     if (!task_)
     {

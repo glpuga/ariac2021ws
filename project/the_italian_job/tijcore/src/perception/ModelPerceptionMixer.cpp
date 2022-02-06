@@ -4,6 +4,7 @@
 
 // Standard library
 #include <utility>
+#include <vector>
 
 // tijcore
 #include <tijcore/perception/ModelPerceptionMixer.hpp>

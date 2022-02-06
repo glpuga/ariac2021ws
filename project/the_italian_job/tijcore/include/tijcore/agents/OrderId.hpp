@@ -4,6 +4,9 @@
 
 #pragma once
 
+// standard library
+#include <string>
+
 // tijcore
 #include <tijcore/agents/PartColorId.hpp>
 #include <tijcore/agents/PartTypeId.hpp>
@@ -17,9 +20,9 @@ public:
 
   OrderId() = default;
 
-  OrderId(const std::string& coded_part_str);
+  explicit OrderId(const std::string& coded_part_str);
 
-  OrderId(const OrderIdType& id, const bool is_update = false);
+  explicit OrderId(const OrderIdType& id, const bool is_update = false);
 
   OrderIdType id() const
   {

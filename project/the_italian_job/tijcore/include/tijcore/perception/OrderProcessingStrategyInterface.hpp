@@ -5,6 +5,8 @@
 #pragma once
 
 // standard library
+#include <memory>
+#include <set>
 #include <vector>
 
 // tijcore

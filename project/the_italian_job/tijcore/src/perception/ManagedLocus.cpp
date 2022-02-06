@@ -3,7 +3,9 @@
  */
 
 // Standard library
+#include <string>
 #include <tuple>
+#include <utility>
 
 // tijcore
 #include <tijcore/perception/ManagedLocus.hpp>

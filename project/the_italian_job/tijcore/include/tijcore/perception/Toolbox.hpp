@@ -30,7 +30,7 @@ public:
     SceneConfigReaderInterface::SharedPtr scene_config_reader_instance;
   };
 
-  Toolbox(Contents&& contents) : contents_{ std::move(contents) }
+  explicit Toolbox(Contents&& contents) : contents_{ std::move(contents) }
   {
   }
 

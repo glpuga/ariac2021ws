@@ -5,7 +5,9 @@
 #pragma once
 
 // standard library
+#include <memory>
 #include <string>
+#include <vector>
 
 // tijcore
 #include <tijcore/perception/ModelContainerInterface.hpp>

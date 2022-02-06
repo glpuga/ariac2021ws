@@ -4,6 +4,8 @@
 
 // Standard library
 #include <chrono>
+#include <memory>
+#include <utility>
 
 // tijcore
 #include <logger/logger.hpp>

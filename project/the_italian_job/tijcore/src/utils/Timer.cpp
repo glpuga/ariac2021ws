@@ -3,16 +3,13 @@
  */
 
 // Standard library
+#include <chrono>
 #include <memory>
 #include <mutex>
 #include <thread>
 
 // tijcore
 #include <tijcore/utils/Timer.hpp>
-
-// standard library
-#include <chrono>
-#include <mutex>
 
 namespace tijcore
 {

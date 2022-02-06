@@ -7,6 +7,8 @@
 // standard library
 #include <memory>
 #include <set>
+#include <string>
+#include <vector>
 
 // tijcore
 #include <tijcore/agents/PartTypeId.hpp>

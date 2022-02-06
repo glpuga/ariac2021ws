@@ -6,6 +6,7 @@
 
 // standard library
 #include <memory>
+#include <string>
 
 // tijcore
 #include <tijcore/localization/RelativePose3.hpp>

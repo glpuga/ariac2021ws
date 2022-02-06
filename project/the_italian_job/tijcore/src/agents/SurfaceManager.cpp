@@ -5,6 +5,7 @@
 // Standard library
 #include <cmath>
 #include <iostream>
+#include <tuple>
 
 // tijcore
 #include <logger/logger.hpp>
