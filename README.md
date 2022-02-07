@@ -1,5 +1,5 @@
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
-![Build status](https://github.com/glpuga/ariac2021ws/actions/workflows/main.yml/badge.svg?branch=devel)
+![Build status](https://github.com/glpuga/ariac2021ws/actions/workflows/main.yaml/badge.svg?branch=devel)
 
 # ARIAC 2022 TheItalianJob workspace
 
