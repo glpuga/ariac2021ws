@@ -8,13 +8,13 @@
 #include <utility>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
 #include <tijcore/perception/RobotTaskFactory.hpp>
 #include <tijcore/tasks/PickAndPlaceTask.hpp>
 #include <tijcore/tasks/PickAndTwistPartTask.hpp>
 #include <tijcore/tasks/RemoveBrokenPartTask.hpp>
 #include <tijcore/tasks/SubmitAssemblyShipmentTask.hpp>
 #include <tijcore/tasks/SubmitKittingShipmentTask.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {

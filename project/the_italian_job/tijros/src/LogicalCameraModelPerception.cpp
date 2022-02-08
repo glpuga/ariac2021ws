@@ -13,7 +13,7 @@
 #include <ros/ros.h>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
 #include <tijros/utils/utils.hpp>
 

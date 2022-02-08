@@ -16,7 +16,7 @@
 #include <nist_gear/VacuumGripperState.h>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijros/ROSRobotActuators.hpp>
 
 namespace tijros

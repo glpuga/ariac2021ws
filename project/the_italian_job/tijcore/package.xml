@@ -15,5 +15,6 @@
   <depend>roslint</depend>
   <depend>eigen</depend>
   <depend>rostest</depend>
+  <depend>tijlogger</depend>
 
 </package>

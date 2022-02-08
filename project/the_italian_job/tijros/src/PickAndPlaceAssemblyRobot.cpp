@@ -14,7 +14,7 @@
 #include <ros/ros.h>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijcore/utils/angles.hpp>
 #include <tijros/PickAndPlaceAssemblyRobot.hpp>
 

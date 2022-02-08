@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslint
   rostest
+  tijlogger
 )
 
 find_package(cmake_modules REQUIRED)
@@ -21,6 +22,7 @@ catkin_package(
     ${PROJECT_NAME}
   CATKIN_DEPENDS
     roscpp
+    tijlogger
   DEPENDS
     EIGEN3
 )
@@ -128,17 +130,8 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gmock(${slow_test_target_name} tests/runner.cpp ${slow_test_files_list})
   target_link_libraries(${slow_test_target_name} ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-  # This is to exclude spdlog from getting checked
-  file(GLOB_RECURSE CPPFILES
-    include/${PROJECT_NAME}/*.h
-    include/${PROJECT_NAME}/*.hpp
-    src/*.cpp
-    tests/*.hpp
-    tests/*.cpp)
-  list(FILTER CPPFILES EXCLUDE REGEX ".*/spdlog/.*" )
-
   set(ROSLINT_CPP_OPTS --extensions=h,hpp,cpp)
-  roslint_cpp(${CPPFILES})
+  roslint_cpp()
   
   roslint_custom(catkin_lint --strict -W2 ${PROJECT_SOURCE_DIR})
   roslint_add_test()

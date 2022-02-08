@@ -26,5 +26,6 @@
   <depend>tf2_geometry_msgs</depend>
   <depend>tf2_ros</depend>
   <depend>tijcore</depend>
+  <depend>tijlogger</depend>
 
 </package>
