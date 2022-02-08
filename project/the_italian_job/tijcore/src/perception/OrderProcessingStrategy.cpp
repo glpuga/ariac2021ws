@@ -12,7 +12,7 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijcore/perception/OrderProcessingStrategy.hpp>
 
 namespace tijcore

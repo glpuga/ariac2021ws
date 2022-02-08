@@ -23,6 +23,7 @@ find_package(
     tf2_geometry_msgs
     tf2_ros
     tijcore
+    tijlogger
 )
 
 # ##############################################################################
@@ -48,6 +49,7 @@ catkin_package(
     tf2_geometry_msgs
     tf2_ros
     tijcore
+    tijlogger
 )
 
 # ##############################################################################

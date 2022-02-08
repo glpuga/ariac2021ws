@@ -11,7 +11,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijros/ROSFrameTransformer.hpp>
 #include <tijros/utils/utils.hpp>
 

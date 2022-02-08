@@ -11,7 +11,7 @@
 #include <utility>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijcore/tasks/RobotTaskInterface.hpp>
 
 namespace tijcore

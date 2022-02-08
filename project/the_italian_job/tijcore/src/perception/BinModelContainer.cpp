@@ -7,7 +7,7 @@
 #include <string>
 
 // tijcore
-#include <tijcore/logger/logger.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijcore/perception/BinModelContainer.hpp>
 
 namespace tijcore
