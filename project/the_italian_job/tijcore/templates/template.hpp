@@ -4,7 +4,6 @@
 
 #pragma once
 
-namespace tijcore {
-
-
+namespace tijcore
+{
 }  // namespace tijcore

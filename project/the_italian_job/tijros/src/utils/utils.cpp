@@ -14,19 +14,19 @@ namespace tijros
 {
 namespace utils
 {
-tijcore::Pose3 convertGeoPoseToCorePose(const geometry_msgs::Pose& geo_pose)
+tijmath::Pose3 convertGeoPoseToCorePose(const geometry_msgs::Pose& geo_pose)
 {
-  auto output_position = tijcore::Position::fromVector(geo_pose.position.x, geo_pose.position.y, geo_pose.position.z);
+  auto output_position = tijmath::Position::fromVector(geo_pose.position.x, geo_pose.position.y, geo_pose.position.z);
 
-  auto output_rotation = tijcore::Rotation::fromQuaternion(geo_pose.orientation.x, geo_pose.orientation.y,
+  auto output_rotation = tijmath::Rotation::fromQuaternion(geo_pose.orientation.x, geo_pose.orientation.y,
                                                            geo_pose.orientation.z, geo_pose.orientation.w);
 
-  tijcore::Pose3 output_pose{ output_position, output_rotation };
+  tijmath::Pose3 output_pose{ output_position, output_rotation };
 
   return output_pose;
 }
 
-geometry_msgs::Pose convertCorePoseToGeoPose(const tijcore::Pose3& core_pose)
+geometry_msgs::Pose convertCorePoseToGeoPose(const tijmath::Pose3& core_pose)
 {
   geometry_msgs::Pose geo_pose;
 

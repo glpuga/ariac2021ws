@@ -21,8 +21,8 @@ class CuboidVolumeTests : public Test
 protected:
   const double tolerance_{ 1e-6 };
 
-  const Vector3 clrb_{ -1, -2, -3 };
-  const Vector3 culf_{ 1, 2, 3 };
+  const tijmath::Vector3 clrb_{ -1, -2, -3 };
+  const tijmath::Vector3 culf_{ 1, 2, 3 };
 };
 
 TEST_F(CuboidVolumeTests, ConstructionTest)
@@ -43,23 +43,23 @@ TEST_F(CuboidVolumeTests, ContainsTestVector)
   const double delta{ 0.1 };
   CuboidVolume uut{ clrb_, culf_ };
 
-  EXPECT_TRUE(uut.contains(clrb_ + Vector3(delta, delta, delta)));
-  EXPECT_FALSE(uut.contains(clrb_ + Vector3(delta, delta, -delta)));
-  EXPECT_FALSE(uut.contains(clrb_ + Vector3(delta, -delta, delta)));
-  EXPECT_FALSE(uut.contains(clrb_ + Vector3(delta, -delta, -delta)));
-  EXPECT_FALSE(uut.contains(clrb_ + Vector3(-delta, delta, delta)));
-  EXPECT_FALSE(uut.contains(clrb_ + Vector3(-delta, delta, -delta)));
-  EXPECT_FALSE(uut.contains(clrb_ + Vector3(-delta, -delta, delta)));
-  EXPECT_FALSE(uut.contains(clrb_ + Vector3(-delta, -delta, -delta)));
+  EXPECT_TRUE(uut.contains(clrb_ + tijmath::Vector3(delta, delta, delta)));
+  EXPECT_FALSE(uut.contains(clrb_ + tijmath::Vector3(delta, delta, -delta)));
+  EXPECT_FALSE(uut.contains(clrb_ + tijmath::Vector3(delta, -delta, delta)));
+  EXPECT_FALSE(uut.contains(clrb_ + tijmath::Vector3(delta, -delta, -delta)));
+  EXPECT_FALSE(uut.contains(clrb_ + tijmath::Vector3(-delta, delta, delta)));
+  EXPECT_FALSE(uut.contains(clrb_ + tijmath::Vector3(-delta, delta, -delta)));
+  EXPECT_FALSE(uut.contains(clrb_ + tijmath::Vector3(-delta, -delta, delta)));
+  EXPECT_FALSE(uut.contains(clrb_ + tijmath::Vector3(-delta, -delta, -delta)));
 
-  EXPECT_FALSE(uut.contains(culf_ + Vector3(delta, delta, delta)));
-  EXPECT_FALSE(uut.contains(culf_ + Vector3(delta, delta, -delta)));
-  EXPECT_FALSE(uut.contains(culf_ + Vector3(delta, -delta, delta)));
-  EXPECT_FALSE(uut.contains(culf_ + Vector3(delta, -delta, -delta)));
-  EXPECT_FALSE(uut.contains(culf_ + Vector3(-delta, delta, delta)));
-  EXPECT_FALSE(uut.contains(culf_ + Vector3(-delta, delta, -delta)));
-  EXPECT_FALSE(uut.contains(culf_ + Vector3(-delta, -delta, delta)));
-  EXPECT_TRUE(uut.contains(culf_ + Vector3(-delta, -delta, -delta)));
+  EXPECT_FALSE(uut.contains(culf_ + tijmath::Vector3(delta, delta, delta)));
+  EXPECT_FALSE(uut.contains(culf_ + tijmath::Vector3(delta, delta, -delta)));
+  EXPECT_FALSE(uut.contains(culf_ + tijmath::Vector3(delta, -delta, delta)));
+  EXPECT_FALSE(uut.contains(culf_ + tijmath::Vector3(delta, -delta, -delta)));
+  EXPECT_FALSE(uut.contains(culf_ + tijmath::Vector3(-delta, delta, delta)));
+  EXPECT_FALSE(uut.contains(culf_ + tijmath::Vector3(-delta, delta, -delta)));
+  EXPECT_FALSE(uut.contains(culf_ + tijmath::Vector3(-delta, -delta, delta)));
+  EXPECT_TRUE(uut.contains(culf_ + tijmath::Vector3(-delta, -delta, -delta)));
 }
 
 }  // namespace

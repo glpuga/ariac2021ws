@@ -25,19 +25,19 @@ public:
 
   MOCK_CONST_METHOD0(getInSafePose, bool());
 
-  MOCK_CONST_METHOD1(getInSafePoseNearTarget, bool(const tijcore::RelativePose3& target));
+  MOCK_CONST_METHOD1(getInSafePoseNearTarget, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD1(getToGraspingPoseHint, bool(const tijcore::RelativePose3& target));
+  MOCK_CONST_METHOD1(getToGraspingPoseHint, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD1(getInLandingSpot, bool(const tijcore::RelativePose3& target));
+  MOCK_CONST_METHOD1(getInLandingSpot, bool(const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD2(graspPartFromAbove,
-                     bool(const tijcore::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
+                     bool(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
 
   MOCK_CONST_METHOD2(placePartFromAbove,
-                     bool(const tijcore::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
+                     bool(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
 
-  MOCK_CONST_METHOD2(twistPartInPlace, bool(tijcore::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
+  MOCK_CONST_METHOD2(twistPartInPlace, bool(tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
 
   MOCK_CONST_METHOD0(enabled, bool());
 
@@ -54,10 +54,10 @@ public:
   MOCK_CONST_METHOD1(patchJointStateValuesForRestingPose, void(std::vector<double>&));
 
   MOCK_CONST_METHOD2(patchJointStateValuesToGetCloseToTarget,
-                     void(std::vector<double>& joint_states, const tijcore::RelativePose3& target));
+                     void(std::vector<double>& joint_states, const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD2(patchJointStateValuesGraspingHingPoseNearTarget,
-                     void(std::vector<double>& joint_states, const tijcore::RelativePose3& target));
+                     void(std::vector<double>& joint_states, const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD1(patchJointStateValuesForAlignedZeroWrist, void(std::vector<double>&));
 

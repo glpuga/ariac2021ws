@@ -27,5 +27,6 @@
   <depend>tf2_ros</depend>
   <depend>tijcore</depend>
   <depend>tijlogger</depend>
+  <depend>tijmath</depend>
 
 </package>

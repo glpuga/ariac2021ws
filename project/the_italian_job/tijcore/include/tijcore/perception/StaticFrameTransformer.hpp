@@ -11,8 +11,8 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/math/Isometry.hpp>
 #include <tijcore/perception/FrameTransformerInterface.hpp>
+#include <tijmath/math/Isometry.hpp>
 
 namespace tijcore
 {
@@ -22,25 +22,26 @@ public:
   struct TransformTreeLink
   {
     std::string child_frame_id;
-    RelativePose3 PoseInParent;
+    tijmath::RelativePose3 PoseInParent;
   };
 
   StaticFrameTransformer(const std::initializer_list<TransformTreeLink> links);
 
-  RelativePose3 transformPoseToFrame(const RelativePose3& pose, const std::string& new_frame_id) const override;
+  tijmath::RelativePose3 transformPoseToFrame(const tijmath::RelativePose3& pose,
+                                              const std::string& new_frame_id) const override;
 
 private:
   const std::string root_frame_{ "world" };
   const int32_t max_nesting_{ 10 };
 
-  std::map<std::string, RelativePose3> transform_to_parent_;
-  mutable std::map<std::string, Isometry> transform_to_root_cache_;
+  std::map<std::string, tijmath::RelativePose3> transform_to_parent_;
+  mutable std::map<std::string, tijmath::Isometry> transform_to_root_cache_;
 
-  Isometry findTransformToRoot(const std::string&, const int32_t nesting = 0) const;
+  tijmath::Isometry findTransformToRoot(const std::string&, const int32_t nesting = 0) const;
 
-  Isometry poseToIsometry(const Pose3& pose) const;
+  tijmath::Isometry poseToIsometry(const tijmath::Pose3& pose) const;
 
-  RelativePose3 TransformToRelativePose(const Isometry& tr, const std::string& parent_frame_id) const;
+  tijmath::RelativePose3 TransformToRelativePose(const tijmath::Isometry& tr, const std::string& parent_frame_id) const;
 };
 
 }  // namespace tijcore

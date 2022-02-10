@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roslint
   rostest
   tijlogger
+  tijmath
 )
 
 find_package(cmake_modules REQUIRED)
@@ -48,16 +49,7 @@ add_library(${PROJECT_NAME}
   src/agents/StationId.cpp
   src/agents/SurfaceManager.cpp
   src/agents/WorkRegionId.cpp
-  src/localization/FrameId.cpp
-  src/localization/Pose3.cpp
-  src/localization/RelativePose3.cpp
   src/math/CuboidVolume.cpp
-  src/math/Isometry.cpp
-  src/math/Matrix3.cpp
-  src/math/Position.cpp
-  src/math/Quaternion.cpp
-  src/math/Rotation.cpp
-  src/math/Vector3.cpp
   src/perception/AgvModelContainer.cpp
   src/perception/AssemblyStationModelContainer.cpp
   src/perception/BinModelContainer.cpp
@@ -79,7 +71,6 @@ add_library(${PROJECT_NAME}
   src/tasks/SubmitAssemblyShipmentTask.cpp
   src/tasks/SubmitKittingShipmentTask.cpp
   src/utils/Timer.cpp
-  src/utils/angles.cpp
   src/utils/string.cpp
 )
 

@@ -9,9 +9,9 @@
 #include <string>
 
 // tijcore
-#include <tijlogger/logger.hpp>
 #include <tijcore/perception/ModelContainerInterface.hpp>
 #include <tijcore/perception/ResourceHandle.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {
@@ -31,7 +31,7 @@ public:
     return container_handle_.resource()->name();
   }
 
-  RelativePose3 pose() const
+  tijmath::RelativePose3 pose() const
   {
     return container_handle_.resource()->pose();
   }

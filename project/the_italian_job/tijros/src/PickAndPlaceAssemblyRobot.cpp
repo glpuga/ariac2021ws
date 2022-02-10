@@ -15,7 +15,7 @@
 
 // tijcore
 #include <tijlogger/logger.hpp>
-#include <tijcore/utils/angles.hpp>
+#include <tijmath/utils/angles.hpp>
 #include <tijros/PickAndPlaceAssemblyRobot.hpp>
 
 namespace tijros
@@ -26,7 +26,7 @@ namespace
 constexpr char long_rail_frame_id_[] = "long_rail_1";
 }  // namespace
 
-using tijcore::utils::angles::degreesToRadians;
+using tijmath::utils::angles::degreesToRadians;
 
 PickAndPlaceAssemblyRobot::PickAndPlaceAssemblyRobot(const tijcore::Toolbox::SharedPtr& toolbox)
   : PickAndPlaceRobotCommonImpl(toolbox)
@@ -96,27 +96,27 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForRestingPose(std::vector<
   // reuse current_pose_estimation to get us to the closest safe pose from where
   // we are now. This requires recovering the coordinates in the rail frame from
   // the current rail values.
-  tijcore::RelativePose3 current_pose_estimation{ long_rail_frame_id_,
-                                                  tijcore::Position::fromVector(joint_states[1], joint_states[0], 0.0),
+  tijmath::RelativePose3 current_pose_estimation{ long_rail_frame_id_,
+                                                  tijmath::Position::fromVector(joint_states[1], joint_states[0], 0.0),
                                                   {} };
   patchJointStateValuesToGetCloseToTarget(joint_states, current_pose_estimation);
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
-                                                                        const tijcore::RelativePose3& target) const
+                                                                        const tijmath::RelativePose3& target) const
 {
   patchJointStateValuesToGetNearPose(joint_states, target, scene_config_->getListOfSafeWaitingSpotHints());
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesGraspingHingPoseNearTarget(
-    std::vector<double>& joint_states, const tijcore::RelativePose3& target) const
+    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
   patchJointStateValuesToGetNearPose(joint_states, target, scene_config_->getListOfGantryPlanningHints());
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
-    std::vector<double>& joint_states, const tijcore::RelativePose3& target,
-    const std::vector<tijcore::RelativePose3>& pose_hints) const
+    std::vector<double>& joint_states, const tijmath::RelativePose3& target,
+    const std::vector<tijmath::RelativePose3>& pose_hints) const
 {
   if (joint_states.size() != 9)
   {
@@ -124,8 +124,8 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
   }
   const auto target_in_world = frame_transformer_->transformPoseToFrame(target, scene_config_->getWorldFrameId());
 
-  auto shortest_distance_to_reference_sorter = [this, &reference = target_in_world](const tijcore::RelativePose3& lhs,
-                                                                                    const tijcore::RelativePose3& rhs) {
+  auto shortest_distance_to_reference_sorter = [this, &reference = target_in_world](const tijmath::RelativePose3& lhs,
+                                                                                    const tijmath::RelativePose3& rhs) {
     const auto lhs_in_world = frame_transformer_->transformPoseToFrame(lhs, scene_config_->getWorldFrameId());
     const auto rhs_in_world = frame_transformer_->transformPoseToFrame(rhs, scene_config_->getWorldFrameId());
     auto distance_vector_left = (reference.position().vector() - lhs_in_world.position().vector());

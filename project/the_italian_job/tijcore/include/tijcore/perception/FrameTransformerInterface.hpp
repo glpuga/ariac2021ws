@@ -9,7 +9,7 @@
 #include <string>
 
 // tijcore
-#include <tijcore/localization/RelativePose3.hpp>
+#include <tijmath/localization/RelativePose3.hpp>
 
 namespace tijcore
 {
@@ -20,7 +20,8 @@ public:
 
   virtual ~FrameTransformerInterface() = default;
 
-  virtual RelativePose3 transformPoseToFrame(const RelativePose3& pose, const std::string& new_frame_id) const = 0;
+  virtual tijmath::RelativePose3 transformPoseToFrame(const tijmath::RelativePose3& pose,
+                                                      const std::string& new_frame_id) const = 0;
 };
 
 }  // namespace tijcore

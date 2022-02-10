@@ -17,14 +17,15 @@
 
 namespace tijros
 {
-using tijcore::RelativePose3;
+using tijmath::RelativePose3;
 
 class ROSFrameTransformer : public tijcore::FrameTransformerInterface
 {
 public:
   ROSFrameTransformer();
 
-  RelativePose3 transformPoseToFrame(const RelativePose3& pose, const std::string& new_frame_id) const override;
+  tijmath::RelativePose3 transformPoseToFrame(const tijmath::RelativePose3& pose,
+                                              const std::string& new_frame_id) const override;
 
 private:
   const ros::Duration tf_timeout_{ 1.5 };

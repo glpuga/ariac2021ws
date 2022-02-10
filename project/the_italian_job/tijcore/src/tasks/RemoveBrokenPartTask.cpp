@@ -6,9 +6,9 @@
 #include <utility>
 
 // tijcore
-#include <tijlogger/logger.hpp>
 #include <tijcore/tasks/ModelTrayAccessSpaceManager.hpp>
 #include <tijcore/tasks/RemoveBrokenPartTask.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {

@@ -5,6 +5,6 @@
 #include <algebra/algebra.hpp>
 #include <algorithm>
 
-namespace tijcore {
-
+namespace tijcore
+{
 }  // namespace tijcore

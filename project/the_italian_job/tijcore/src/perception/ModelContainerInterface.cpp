@@ -13,7 +13,8 @@ namespace tijcore
 ModelContainerInterface::ModelContainerInterface(const std::string& name,
                                                  const std::string& container_reference_frame_id,
                                                  const std::string& surface_reference_frame_id,
-                                                 const RelativePose3& pose, const CuboidVolume& container_volume,
+                                                 const tijmath::RelativePose3& pose,
+                                                 const CuboidVolume& container_volume,
                                                  const std::string& shared_workspace_id)
   : name_{ name }
   , container_reference_frame_id_{ container_reference_frame_id }
@@ -39,7 +40,7 @@ std::string ModelContainerInterface::surfaceReferenceFrameId() const
   return surface_reference_frame_id_;
 }
 
-RelativePose3 ModelContainerInterface::pose() const
+tijmath::RelativePose3 ModelContainerInterface::pose() const
 {
   return pose_;
 };

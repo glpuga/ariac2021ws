@@ -39,10 +39,10 @@ private:
   void patchJointStateValuesForRestingPose(std::vector<double>&) const override;
 
   void patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
-                                               const tijcore::RelativePose3& target) const override;
+                                               const tijmath::RelativePose3& target) const override;
 
   void patchJointStateValuesGraspingHingPoseNearTarget(std::vector<double>& joint_states,
-                                                       const tijcore::RelativePose3& target) const override;
+                                                       const tijmath::RelativePose3& target) const override;
 
   void patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const override;
 };

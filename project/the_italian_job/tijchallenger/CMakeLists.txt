@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   roslint
   rostest
   tf
+  tijmath
   tijros
 )
 

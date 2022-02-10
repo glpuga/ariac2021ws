@@ -7,16 +7,16 @@
 #include <string>
 
 // tijcore
-#include <tijlogger/logger.hpp>
 #include <tijcore/perception/ConveyorBeltModelContainer.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {
 namespace
 {
 const CuboidVolume bin_container_volume_{
-  Vector3(-0.32, -100.0, -0.1),
-  Vector3(0.32, 100.0, 0.20),
+  tijmath::Vector3(-0.32, -100.0, -0.1),
+  tijmath::Vector3(0.32, 100.0, 0.20),
 };
 
 }  // namespace
@@ -24,8 +24,9 @@ const CuboidVolume bin_container_volume_{
 ConveyorBeltModelContainer::ConveyorBeltModelContainer(const std::string& name, const std::string& container_frame_id,
                                                        const std::string& surface_frame_id,
                                                        const std::string& model_tray_shared_access_space_id)
-  : ModelContainerInterface(name, container_frame_id, surface_frame_id, RelativePose3{ container_frame_id, {} },
-                            bin_container_volume_, model_tray_shared_access_space_id)
+  : ModelContainerInterface(name, container_frame_id, surface_frame_id,
+                            tijmath::RelativePose3{ container_frame_id, {} }, bin_container_volume_,
+                            model_tray_shared_access_space_id)
 {
 }
 

@@ -52,7 +52,7 @@ TEST_F(PlainOldDataTests, Order)
 
 TEST_F(PlainOldDataTests, ObservedModel)
 {
-  ObservedModel uut{ PartId::UnkownPartId, RelativePose3::Origin };
+  ObservedModel uut{ PartId::UnkownPartId, tijmath::RelativePose3::Origin };
 }
 
 }  // namespace

@@ -44,12 +44,16 @@ public:
 
   const std::chrono::seconds access_timeout_{ 1 };
 
-  const CuboidVolume table_container_volume{ Vector3{ 0, 0, -0.1 }, Vector3{ 0.9, 0.9, 0.1 } };
+  const CuboidVolume table_container_volume{ tijmath::Vector3{ 0, 0, -0.1 }, tijmath::Vector3{ 0.9, 0.9, 0.1 } };
 
-  const Pose3 table_rel_pose_11{ Position::fromVector(0.22, 0.22, 0), Rotation::fromQuaternion(0, 0, 0, 1) };
-  const Pose3 table_rel_pose_12{ Position::fromVector(0.68, 0.22, 0), Rotation::fromQuaternion(0, 0, 0, 1) };
-  const Pose3 table_rel_pose_21{ Position::fromVector(0.22, 0.68, 0), Rotation::fromQuaternion(0, 0, 0, 1) };
-  const Pose3 table_rel_pose_22{ Position::fromVector(0.68, 0.68, 0), Rotation::fromQuaternion(0, 0, 0, 1) };
+  const tijmath::Pose3 table_rel_pose_11{ tijmath::Position::fromVector(0.22, 0.22, 0),
+                                          tijmath::Rotation::fromQuaternion(0, 0, 0, 1) };
+  const tijmath::Pose3 table_rel_pose_12{ tijmath::Position::fromVector(0.68, 0.22, 0),
+                                          tijmath::Rotation::fromQuaternion(0, 0, 0, 1) };
+  const tijmath::Pose3 table_rel_pose_21{ tijmath::Position::fromVector(0.22, 0.68, 0),
+                                          tijmath::Rotation::fromQuaternion(0, 0, 0, 1) };
+  const tijmath::Pose3 table_rel_pose_22{ tijmath::Position::fromVector(0.68, 0.68, 0),
+                                          tijmath::Rotation::fromQuaternion(0, 0, 0, 1) };
 
   const PartId part_rpump_{ PartTypeId::pump, PartColorId::red };
   const PartId part_gpump_{ PartTypeId::pump, PartColorId::green };
@@ -61,7 +65,7 @@ public:
   // table 1
   const std::string table_1_name_{ "table1_name" };
   const std::string table_1_frame_id_{ "table1_frame" };
-  const RelativePose3 table_1_pose_{ "world", Position::fromVector(0, 0, 1), {} };
+  const tijmath::RelativePose3 table_1_pose_{ "world", tijmath::Position::fromVector(0, 0, 1), {} };
   ModelContainerMock::Ptr table_1_container_mock_;
   CuboidVolume table_1_container_volume_{ table_container_volume };
   const std::string table_1_exclusion_volume_{ "table1_exclusion_zone" };
@@ -69,7 +73,7 @@ public:
   // table 2
   const std::string table_2_name_{ "table2_name" };
   const std::string table_2_frame_id_{ "table2_frame" };
-  const RelativePose3 table_2_pose_{ "world", Position::fromVector(1, 0, 1), {} };
+  const tijmath::RelativePose3 table_2_pose_{ "world", tijmath::Position::fromVector(1, 0, 1), {} };
   ModelContainerMock::Ptr table_2_container_mock_;
   CuboidVolume table_2_container_volume_{ table_container_volume };
   const std::string table_2_exclusion_volume_{ "table2_exclusion_zone" };
@@ -77,7 +81,7 @@ public:
   // table 3
   const std::string table_3_name_{ "table3_name" };
   const std::string table_3_frame_id_{ "table3_frame" };
-  const RelativePose3 table_3_pose_{ "world", Position::fromVector(2, 0, 1), {} };
+  const tijmath::RelativePose3 table_3_pose_{ "world", tijmath::Position::fromVector(2, 0, 1), {} };
   ModelContainerMock::Ptr table_3_container_mock_;
   CuboidVolume table_3_container_volume_{ table_container_volume };
   const std::string table_3_exclusion_volume_{ "table3_exclusion_zone" };
@@ -184,10 +188,10 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataWithNoTablesInUse)
   }
 
   std::vector<ObservedModel> observed_models_ = {
-    { part_rpump_, RelativePose3(table_1_frame_id_, table_rel_pose_11) },
-    { part_rpump_, RelativePose3(table_2_frame_id_, table_rel_pose_11) },
-    { part_rpump_, RelativePose3(table_2_frame_id_, table_rel_pose_22) },
-    { part_rpump_, RelativePose3(table_3_frame_id_, table_rel_pose_22) },
+    { part_rpump_, tijmath::RelativePose3(table_1_frame_id_, table_rel_pose_11) },
+    { part_rpump_, tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_11) },
+    { part_rpump_, tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_22) },
+    { part_rpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_22) },
   };
   uut_->updateSensorData(observed_models_);
 
@@ -204,11 +208,11 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataWithNoTablesInUse)
   }
 
   observed_models_ = {
-    { part_bpump_, RelativePose3(table_1_frame_id_, table_rel_pose_11) },
-    { part_bpump_, RelativePose3(table_2_frame_id_, table_rel_pose_22) },
-    { part_gpump_, RelativePose3(table_3_frame_id_, table_rel_pose_11) },
-    { part_gpump_, RelativePose3(table_3_frame_id_, table_rel_pose_12) },
-    { part_gpump_, RelativePose3(table_3_frame_id_, table_rel_pose_22) },
+    { part_bpump_, tijmath::RelativePose3(table_1_frame_id_, table_rel_pose_11) },
+    { part_bpump_, tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_22) },
+    { part_gpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_11) },
+    { part_gpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_12) },
+    { part_gpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_22) },
   };
   uut_->updateSensorData(observed_models_);
 
@@ -234,10 +238,10 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
   const PartId part3{ part_rbatt_ };
   const PartId part4{ part_gbatt_ };
 
-  const RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
-  const RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
-  const RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
-  const RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
+  const tijmath::RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
+  const tijmath::RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
+  const tijmath::RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
 
   {
     std::vector<ObservedModel> observed_models_ = {
@@ -256,14 +260,14 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
     ASSERT_EQ(1u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 
   {
@@ -283,14 +287,14 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
     ASSERT_EQ(1u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose4, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part2_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose2, part3_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, part4_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part2_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, part3_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, part4_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 
   {
@@ -310,14 +314,14 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
     ASSERT_EQ(1u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose4, part2_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part3_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose2, part4_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, part2_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part3_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, part4_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 }
 
@@ -333,10 +337,10 @@ TEST_F(ResourceManagerTests, SensorDataMissingKnownModelGetPurged)
   const PartId part3{ part_rbatt_ };
   const PartId part4{ part_gbatt_ };
 
-  const RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
-  const RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
-  const RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
-  const RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
+  const tijmath::RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
+  const tijmath::RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
+  const tijmath::RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
 
   {
     std::vector<ObservedModel> observed_models_ = {
@@ -355,14 +359,14 @@ TEST_F(ResourceManagerTests, SensorDataMissingKnownModelGetPurged)
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
     ASSERT_EQ(1u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 
   {
@@ -381,12 +385,12 @@ TEST_F(ResourceManagerTests, SensorDataMissingKnownModelGetPurged)
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(0u, part3_handlers.size());
     ASSERT_EQ(1u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 }
 
@@ -405,10 +409,10 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataAllocatedTablesIgnoreSensorInput
   const PartId part3{ part_rbatt_ };
   const PartId part4{ part_gbatt_ };
 
-  const RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
-  const RelativePose3 pose2(table_2_frame_id_, table_rel_pose_12);
-  const RelativePose3 pose3(table_3_frame_id_, table_rel_pose_21);
-  const RelativePose3 pose4(table_2_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose2(table_2_frame_id_, table_rel_pose_12);
+  const tijmath::RelativePose3 pose3(table_3_frame_id_, table_rel_pose_21);
+  const tijmath::RelativePose3 pose4(table_2_frame_id_, table_rel_pose_11);
 
   {
     std::vector<ObservedModel> observed_models_ = {
@@ -426,12 +430,12 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataAllocatedTablesIgnoreSensorInput
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
     ASSERT_EQ(0u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 
   {
@@ -455,12 +459,12 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataAllocatedTablesIgnoreSensorInput
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
     ASSERT_EQ(0u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, part2_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 
   {
@@ -481,12 +485,12 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataAllocatedTablesIgnoreSensorInput
     EXPECT_EQ(0u, part2_handlers.size());
     EXPECT_EQ(1u, part3_handlers.size());
     EXPECT_EQ(1u, part4_handlers.size());
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, part1_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, part3_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, part4_handlers[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 }
 
@@ -517,7 +521,7 @@ TEST_F(ResourceManagerTests, DISABLED_AllocatingTraysWorks)
 {
   InSequence seq;
   const PartId part1{ part_rpump_ };
-  const RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
 
   action_queue_.queueTestActionQueue([&] {
     std::vector<ObservedModel> observed_models_ = {
@@ -633,10 +637,10 @@ TEST_F(ResourceManagerTests, DISABLED_getManagedLocusHandleForPose)
   buildUnitUnderTest();
 
   // All four position in a single table
-  const RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
-  const RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
-  const RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
-  const RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
+  const tijmath::RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
+  const tijmath::RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
+  const tijmath::RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
 
   // al three tables have free space
   {
@@ -680,10 +684,10 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
   const PartId part3{ part_rbatt_ };
   const PartId part4{ part_gbatt_ };
 
-  const RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
-  const RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
-  const RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
-  const RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
+  const tijmath::RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose2(table_1_frame_id_, table_rel_pose_12);
+  const tijmath::RelativePose3 pose3(table_1_frame_id_, table_rel_pose_21);
+  const tijmath::RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
 
   // Test we can allocate a target in empty space
   {
@@ -730,14 +734,14 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
     ASSERT_TRUE(handle3->resource()->isModel());
     ASSERT_TRUE(handle4->resource()->isModel());
 
-    ASSERT_TRUE(
-        RelativePose3::sameRelativePose3(pose1, handle1->resource()->pose(), position_tolerance_, rotation_tolerance_));
-    ASSERT_TRUE(
-        RelativePose3::sameRelativePose3(pose2, handle2->resource()->pose(), position_tolerance_, rotation_tolerance_));
-    ASSERT_TRUE(
-        RelativePose3::sameRelativePose3(pose3, handle3->resource()->pose(), position_tolerance_, rotation_tolerance_));
-    ASSERT_TRUE(
-        RelativePose3::sameRelativePose3(pose4, handle4->resource()->pose(), position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, handle1->resource()->pose(), position_tolerance_,
+                                                          rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, handle2->resource()->pose(), position_tolerance_,
+                                                          rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, handle3->resource()->pose(), position_tolerance_,
+                                                          rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, handle4->resource()->pose(), position_tolerance_,
+                                                          rotation_tolerance_));
   }
 
   // that that if the pose match that of a known model locus, but the
@@ -769,10 +773,10 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
     ASSERT_TRUE(handle2->resource()->isModel());
     ASSERT_TRUE(handle4->resource()->isModel());
 
-    ASSERT_TRUE(
-        RelativePose3::sameRelativePose3(pose2, handle2->resource()->pose(), position_tolerance_, rotation_tolerance_));
-    ASSERT_TRUE(
-        RelativePose3::sameRelativePose3(pose4, handle4->resource()->pose(), position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose2, handle2->resource()->pose(), position_tolerance_,
+                                                          rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose4, handle4->resource()->pose(), position_tolerance_,
+                                                          rotation_tolerance_));
   }
 }
 
@@ -944,8 +948,8 @@ TEST_F(ResourceManagerTests, GetWorkRegionWorks)
 {
   InSequence aux;
 
-  const RelativePose3 pose_at_table1(table_1_frame_id_, table_rel_pose_11);
-  const RelativePose3 pose_at_table2(table_2_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose_at_table1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose_at_table2(table_2_frame_id_, table_rel_pose_11);
 
   EXPECT_CALL(*table_1_container_mock_, enabled()).WillRepeatedly(Return(true));
   EXPECT_CALL(*table_2_container_mock_, enabled()).WillRepeatedly(Return(true));
@@ -987,10 +991,10 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
   const PartId table2_parts{ part_gpump_ };
   const PartId table3_parts{ part_rbatt_ };
 
-  const RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
-  const RelativePose3 pose2(table_2_frame_id_, table_rel_pose_12);
-  const RelativePose3 pose3(table_2_frame_id_, table_rel_pose_21);
-  const RelativePose3 pose4(table_3_frame_id_, table_rel_pose_22);
+  const tijmath::RelativePose3 pose1(table_1_frame_id_, table_rel_pose_11);
+  const tijmath::RelativePose3 pose2(table_2_frame_id_, table_rel_pose_12);
+  const tijmath::RelativePose3 pose3(table_2_frame_id_, table_rel_pose_21);
+  const tijmath::RelativePose3 pose4(table_3_frame_id_, table_rel_pose_22);
 
   std::vector<ObservedModel> observed_models_ = {
     { table1_parts, pose1 },
@@ -1043,10 +1047,10 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
     ASSERT_EQ(table1_parts, model_only(parts_in_table1[0].resource()));
     ASSERT_EQ(table2_parts, model_only(parts_in_table2[0].resource()));
 
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose1, parts_in_table1[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
-    ASSERT_TRUE(RelativePose3::sameRelativePose3(pose3, parts_in_table2[0].resource()->pose(), position_tolerance_,
-                                                 rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose1, parts_in_table1[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(pose3, parts_in_table2[0].resource()->pose(),
+                                                          position_tolerance_, rotation_tolerance_));
   }
 }
 

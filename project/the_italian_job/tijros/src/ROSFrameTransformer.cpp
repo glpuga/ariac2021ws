@@ -21,8 +21,8 @@ ROSFrameTransformer::ROSFrameTransformer()
 {
 }
 
-RelativePose3 ROSFrameTransformer::transformPoseToFrame(const RelativePose3& relative_pose,
-                                                        const std::string& new_frame_id) const
+tijmath::RelativePose3 ROSFrameTransformer::transformPoseToFrame(const tijmath::RelativePose3& relative_pose,
+                                                                 const std::string& new_frame_id) const
 {
   // TODO(glpuga) We should be able to use Pose instead of PoseStamped here.
   geometry_msgs::PoseStamped ros_input_pose;
@@ -54,7 +54,7 @@ RelativePose3 ROSFrameTransformer::transformPoseToFrame(const RelativePose3& rel
 
   auto output_frame_id = ros_output_pose.header.frame_id;
   auto local_output_pose = utils::convertGeoPoseToCorePose(ros_output_pose.pose);
-  tijcore::RelativePose3 output_pose{ output_frame_id, local_output_pose };
+  tijmath::RelativePose3 output_pose{ output_frame_id, local_output_pose };
 
   DEBUG("Transformed pose {} to frame {}, resulting in the pose {}", relative_pose, new_frame_id, output_pose);
 
