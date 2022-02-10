@@ -40,7 +40,7 @@ public:
 
   std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& regions) override;
 
-  std::optional<ManagedLocusHandle> getManagedLocusHandleForPose(const RelativePose3& pose) override;
+  std::optional<ManagedLocusHandle> getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) override;
 
   void updateSensorData(const std::vector<ObservedModel>& observed_models) override;
 
@@ -89,10 +89,10 @@ private:
 
   void clearEmptyLoci();
 
-  Pose3 transformPoseToContainerLocalPose(const RelativePose3& relative_pose,
-                                          const std::string& container_frame_id) const;
+  tijmath::Pose3 transformPoseToContainerLocalPose(const tijmath::RelativePose3& relative_pose,
+                                                   const std::string& container_frame_id) const;
 
-  std::tuple<double, double, double> poseToOccupancy(const RelativePose3& relative_pose,
+  std::tuple<double, double, double> poseToOccupancy(const tijmath::RelativePose3& relative_pose,
                                                      const std::string& container_frame_id) const;
 
   SurfaceManager buildContainerSurfaceManager(const std::string& parent_name) const;

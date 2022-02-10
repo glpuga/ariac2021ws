@@ -13,12 +13,12 @@
 
 // tijcore
 #include <tijlogger/logger.hpp>
-#include <tijcore/utils/angles.hpp>
+#include <tijmath/utils/angles.hpp>
 #include <tijros/PickAndPlaceKittingRobot.hpp>
 
 namespace tijros
 {
-using tijcore::utils::angles::degreesToRadians;
+using tijmath::utils::angles::degreesToRadians;
 
 PickAndPlaceKittingRobot::PickAndPlaceKittingRobot(const tijcore::Toolbox::SharedPtr& toolbox)
   : PickAndPlaceRobotCommonImpl(toolbox)
@@ -78,7 +78,7 @@ void PickAndPlaceKittingRobot::patchJointStateValuesForRestingPose(std::vector<d
 }
 
 void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
-    std::vector<double>& joint_states, const tijcore::RelativePose3& target) const
+    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
   if (joint_states.size() != 7)
   {
@@ -103,7 +103,7 @@ void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
 }
 
 void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
-                                                                       const tijcore::RelativePose3& target) const
+                                                                       const tijmath::RelativePose3& target) const
 {
   if (joint_states.size() != 7)
   {

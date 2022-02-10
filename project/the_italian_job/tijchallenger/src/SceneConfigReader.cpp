@@ -8,7 +8,7 @@
 
 // project
 #include <tijchallenger/SceneConfigReader.hpp>
-#include <tijcore/utils/angles.hpp>
+#include <tijmath/utils/angles.hpp>
 
 namespace tijchallenger
 {
@@ -18,7 +18,7 @@ constexpr char world_frame_id_[] = "world";
 
 }  // namespace
 
-using tijcore::utils::angles::degreesToRadians;
+using tijmath::utils::angles::degreesToRadians;
 
 const std::string& SceneConfigReader::getWorldFrameId() const
 {
@@ -26,10 +26,10 @@ const std::string& SceneConfigReader::getWorldFrameId() const
   return data;
 };
 
-const tijcore::RelativePose3& SceneConfigReader::getDropBucketPose() const
+const tijmath::RelativePose3& SceneConfigReader::getDropBucketPose() const
 {
-  static const tijcore::RelativePose3 data{ world_frame_id_,
-                                            tijcore::Pose3{ tijcore::Position::fromVector(-2.2, 0.0, 1.0), {} } };
+  static const tijmath::RelativePose3 data{ world_frame_id_,
+                                            tijmath::Pose3{ tijmath::Position::fromVector(-2.2, 0.0, 1.0), {} } };
   return data;
 }
 
@@ -119,76 +119,76 @@ SceneConfigReader::getListOfSharedAccessSpaceDescriptions() const
 {
   static const std::vector<tijcore::ModelTraySharedAccessSpaceDescription> data{
     { "agv12_near_kitting_access_space",
-      tijcore::RelativePose3{ world_frame_id_, tijcore::Position::fromVector(-1.986283, 3.0, 1.35), {} }, 0.6, 2, 2.7 },
+      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-1.986283, 3.0, 1.35), {} }, 0.6, 2, 2.7 },
     { "agv12_far_kitting_access_space",
-      tijcore::RelativePose3{ world_frame_id_, tijcore::Position::fromVector(-2.586283, 3.0, 0.5), {} }, 0.6, 1.4,
+      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-2.586283, 3.0, 0.5), {} }, 0.6, 1.4,
       1.0 },
     { "agv34_near_kitting_access_space",
-      tijcore::RelativePose3{ world_frame_id_, tijcore::Position::fromVector(-1.986283, -3.0, 1.35), {} }, 0.6, 2,
+      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-1.986283, -3.0, 1.35), {} }, 0.6, 2,
       2.7 },
     { "agv34_far_kitting_access_space",
-      tijcore::RelativePose3{ world_frame_id_, tijcore::Position::fromVector(-2.586283, -3.0, 0.5), {} }, 0.6, 1.4,
+      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-2.586283, -3.0, 0.5), {} }, 0.6, 1.4,
       1.0 },
-    { "as1_access_space", tijcore::RelativePose3{ "briefcase_1", tijcore::Position::fromVector(0.0, 0.0, 0.0), {} },
+    { "as1_access_space", tijmath::RelativePose3{ "briefcase_1", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
-    { "as2_access_space", tijcore::RelativePose3{ "briefcase_2", tijcore::Position::fromVector(0.0, 0.0, 0.0), {} },
+    { "as2_access_space", tijmath::RelativePose3{ "briefcase_2", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
-    { "as3_access_space", tijcore::RelativePose3{ "briefcase_3", tijcore::Position::fromVector(0.0, 0.0, 0.0), {} },
+    { "as3_access_space", tijmath::RelativePose3{ "briefcase_3", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
-    { "as4_access_space", tijcore::RelativePose3{ "briefcase_4", tijcore::Position::fromVector(0.0, 0.0, 0.0), {} },
+    { "as4_access_space", tijmath::RelativePose3{ "briefcase_4", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
     { "conveyor_belt_access_space",
-      tijcore::RelativePose3{ "corrected_belt_frame", tijcore::Position::fromVector(0.0, 0.0, 0.0), {} }, 0.63, 9.0,
+      tijmath::RelativePose3{ "corrected_belt_frame", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} }, 0.63, 9.0,
       0.4 },
   };
   return data;
 }
 
-const std::vector<tijcore::RelativePose3>& SceneConfigReader::getListOfGantryPlanningHints() const
+const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfGantryPlanningHints() const
 {
-  static const std::vector<tijcore::RelativePose3> data{
-    { world_frame_id_, tijcore::Position::fromVector(-3.5, 3.1, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
-    { world_frame_id_, tijcore::Position::fromVector(-3.5, 2.9, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
+  static const std::vector<tijmath::RelativePose3> data{
+    { world_frame_id_, tijmath::Position::fromVector(-3.5, 3.1, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
+    { world_frame_id_, tijmath::Position::fromVector(-3.5, 2.9, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
     // ---
-    { world_frame_id_, tijcore::Position::fromVector(-3.5, -2.9, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
-    { world_frame_id_, tijcore::Position::fromVector(-3.5, -3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
+    { world_frame_id_, tijmath::Position::fromVector(-3.5, -2.9, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
+    { world_frame_id_, tijmath::Position::fromVector(-3.5, -3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
     // ---
-    { world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijcore::Position::fromVector(-5, -3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijcore::Position::fromVector(-10, 3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijcore::Position::fromVector(-10, -3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-5, 3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-5, -3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-10, 3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-10, -3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
   };
   return data;
 }
 
-const std::vector<tijcore::RelativePose3>& SceneConfigReader::getListOfSafeWaitingSpotHints() const
+const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfSafeWaitingSpotHints() const
 {
-  static const std::vector<tijcore::RelativePose3> data{
-    { world_frame_id_, tijcore::Position::fromVector(-4.0, 3.1, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
-    { world_frame_id_, tijcore::Position::fromVector(-4.0, 2.9, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
-    { world_frame_id_, tijcore::Position::fromVector(-4.0, -2.9, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
-    { world_frame_id_, tijcore::Position::fromVector(-4.0, -3.1, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
+  static const std::vector<tijmath::RelativePose3> data{
+    { world_frame_id_, tijmath::Position::fromVector(-4.0, 3.1, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
+    { world_frame_id_, tijmath::Position::fromVector(-4.0, 2.9, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
+    { world_frame_id_, tijmath::Position::fromVector(-4.0, -2.9, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
+    { world_frame_id_, tijmath::Position::fromVector(-4.0, -3.1, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
     // ---
-    { world_frame_id_, tijcore::Position::fromVector(-5, 3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijcore::Position::fromVector(-5, -3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijcore::Position::fromVector(-10, 3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijcore::Position::fromVector(-10, -3.0, 0),
-      tijcore::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-5, 3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-5, -3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-10, 3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-10, -3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
   };
   return data;
 }

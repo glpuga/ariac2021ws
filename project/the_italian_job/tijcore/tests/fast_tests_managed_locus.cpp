@@ -27,7 +27,8 @@ class ManagedLocusTests : public Test
 {
 public:
   const double tolerance_{ 1e-3 };
-  const RelativePose3 pose_{ "", Position{ Vector3{ 1., 2., 3. } }, Rotation::Identity };
+  const tijmath::RelativePose3 pose_{ "", tijmath::Position{ tijmath::Vector3{ 1., 2., 3. } },
+                                      tijmath::Rotation::Identity };
   const PartId part_id_{ PartTypeId::pump, PartColorId::red };
   const std::string parent_{ "parent_name" };
 
@@ -119,7 +120,8 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
     return retval;
   };
 
-  auto is_the_same_pose = [](const RelativePose3& expected, const RelativePose3& actual, const double tolerance) {
+  auto is_the_same_pose = [](const tijmath::RelativePose3& expected, const tijmath::RelativePose3& actual,
+                             const double tolerance) {
     auto is_within_tolerance = [](const double a, const double b, const double tolerance) {
       return ((a - b) < tolerance) && ((b - a) < tolerance);
     };
@@ -137,8 +139,10 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
   auto src_parent{ "src_container" };
   auto dst_parent{ "dst_containar" };
 
-  const RelativePose3 src_pose{ "", Position{ Vector3{ 1., 2., 3. } }, Rotation::Identity };
-  const RelativePose3 dst_pose{ "", Position{ Vector3{ 10., 20., 30. } }, Rotation::Identity };
+  const tijmath::RelativePose3 src_pose{ "", tijmath::Position{ tijmath::Vector3{ 1., 2., 3. } },
+                                         tijmath::Rotation::Identity };
+  const tijmath::RelativePose3 dst_pose{ "", tijmath::Position{ tijmath::Vector3{ 10., 20., 30. } },
+                                         tijmath::Rotation::Identity };
 
   {
     // From occupied to emtpy, should work just fine

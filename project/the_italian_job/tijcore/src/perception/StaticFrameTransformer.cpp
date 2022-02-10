@@ -33,8 +33,8 @@ StaticFrameTransformer::StaticFrameTransformer(std::initializer_list<TransformTr
   }
 }
 
-RelativePose3 StaticFrameTransformer::transformPoseToFrame(const RelativePose3& relative_pose,
-                                                           const std::string& new_frame_id) const
+tijmath::RelativePose3 StaticFrameTransformer::transformPoseToFrame(const tijmath::RelativePose3& relative_pose,
+                                                                    const std::string& new_frame_id) const
 {
   auto transform_a_in_w = findTransformToRoot(relative_pose.frameId());
   auto transform_p_in_a = poseToIsometry(relative_pose.pose());
@@ -45,7 +45,7 @@ RelativePose3 StaticFrameTransformer::transformPoseToFrame(const RelativePose3& 
   return TransformToRelativePose(transform_p_in_b, new_frame_id);
 }
 
-Isometry StaticFrameTransformer::findTransformToRoot(const std::string& frame_id, const int32_t nesting) const
+tijmath::Isometry StaticFrameTransformer::findTransformToRoot(const std::string& frame_id, const int32_t nesting) const
 {
   if (nesting > max_nesting_)
   {
@@ -57,7 +57,7 @@ Isometry StaticFrameTransformer::findTransformToRoot(const std::string& frame_id
 
   if (frame_id == root_frame_)
   {
-    return Isometry::Identity;
+    return tijmath::Isometry::Identity;
   }
 
   if (transform_to_root_cache_.count(frame_id))
@@ -84,7 +84,7 @@ Isometry StaticFrameTransformer::findTransformToRoot(const std::string& frame_id
   }
 
   auto& pose_in_parent = transform_to_parent_.at(frame_id);
-  Isometry transform_to_root{ poseToIsometry(pose_in_parent.pose()) };
+  tijmath::Isometry transform_to_root{ poseToIsometry(pose_in_parent.pose()) };
 
   if (pose_in_parent.frameId() != root_frame_)
   {
@@ -95,15 +95,16 @@ Isometry StaticFrameTransformer::findTransformToRoot(const std::string& frame_id
   return transform_to_root;
 }
 
-Isometry StaticFrameTransformer::poseToIsometry(const Pose3& pose) const
+tijmath::Isometry StaticFrameTransformer::poseToIsometry(const tijmath::Pose3& pose) const
 {
-  return Isometry{ pose.rotation().rotationMatrix(), pose.position().vector() };
+  return tijmath::Isometry{ pose.rotation().rotationMatrix(), pose.position().vector() };
 }
 
-RelativePose3 StaticFrameTransformer::TransformToRelativePose(const Isometry& tr,
-                                                              const std::string& parent_frame_id) const
+tijmath::RelativePose3 StaticFrameTransformer::TransformToRelativePose(const tijmath::Isometry& tr,
+                                                                       const std::string& parent_frame_id) const
 {
-  return RelativePose3{ parent_frame_id, Position{ tr.translation() }, Rotation{ tr.rotation() } };
+  return tijmath::RelativePose3{ parent_frame_id, tijmath::Position{ tr.translation() },
+                                 tijmath::Rotation{ tr.rotation() } };
 }
 
 }  // namespace tijcore

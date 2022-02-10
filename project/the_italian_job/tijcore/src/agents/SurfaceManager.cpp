@@ -8,8 +8,8 @@
 #include <tuple>
 
 // tijcore
-#include <tijlogger/logger.hpp>
 #include <tijcore/agents/SurfaceManager.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {

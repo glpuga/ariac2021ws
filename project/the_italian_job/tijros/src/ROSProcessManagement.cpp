@@ -5,8 +5,8 @@
 // standard library
 #include <mutex>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 // roscpp
 #include <ros/ros.h>
@@ -284,7 +284,7 @@ void ROSProcessManagement::ordersCallback(nist_gear::Order::ConstPtr msg)
   auto convert_ros_product_to_core_product = [](const nist_gear::Product& ros_msg_product_description,
                                                 const std::string& tray_frame_id) {
     return tijcore::ProductRequest{ tijcore::PartId(ros_msg_product_description.type),
-                                    tijcore::RelativePose3{ tray_frame_id, utils::convertGeoPoseToCorePose(
+                                    tijmath::RelativePose3{ tray_frame_id, utils::convertGeoPoseToCorePose(
                                                                                ros_msg_product_description.pose) } };
   };
 

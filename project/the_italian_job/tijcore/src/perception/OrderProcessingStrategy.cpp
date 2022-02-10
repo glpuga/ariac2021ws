@@ -12,8 +12,8 @@
 #include <vector>
 
 // tijcore
-#include <tijlogger/logger.hpp>
 #include <tijcore/perception/OrderProcessingStrategy.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {
@@ -320,7 +320,7 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
     }
   }
 
-  auto sort_farthest_first_generalized = [this](const RelativePose3& reference_pose,
+  auto sort_farthest_first_generalized = [this](const tijmath::RelativePose3& reference_pose,
                                                 const ResourceManagerInterface::ManagedLocusHandle& lhs,
                                                 const ResourceManagerInterface::ManagedLocusHandle& rhs) {
     // TODO(glpuga) update name of the lambda to account for this

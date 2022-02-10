@@ -15,7 +15,6 @@
 #include <ros/ros.h>
 
 // project
-#include <tijlogger/logger.hpp>
 #include <tijchallenger/SceneConfigReader.hpp>
 #include <tijchallenger/TIJChallenger.hpp>
 #include <tijcore/perception/AgvModelContainer.hpp>
@@ -28,6 +27,7 @@
 #include <tijcore/perception/TaskDriver.hpp>
 #include <tijcore/perception/TaskMaster.hpp>
 #include <tijcore/tasks/RobotTaskGroupRunner.hpp>
+#include <tijlogger/logger.hpp>
 #include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
 #include <tijros/PickAndPlaceAssemblyRobot.hpp>

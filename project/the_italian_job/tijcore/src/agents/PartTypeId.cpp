@@ -64,13 +64,13 @@ bool isValid(const std::string& sid)
   return true;
 }
 
-Vector3 dimensions(const PartTypeId& id)
+tijmath::Vector3 dimensions(const PartTypeId& id)
 {
-  static const std::unordered_map<PartTypeId, Vector3> id_map = {
-    { PartTypeId::battery, Vector3{ 0.136, 0.06, 0.05 } },
-    { PartTypeId::sensor, Vector3{ 0.125, 0.105, 0.06 } * 1.1 },
-    { PartTypeId::regulator, Vector3{ 0.093, 0.126, 0.066 } },
-    { PartTypeId::pump, Vector3{ 0.12, 0.12, 0.12 } },
+  static const std::unordered_map<PartTypeId, tijmath::Vector3> id_map = {
+    { PartTypeId::battery, tijmath::Vector3{ 0.136, 0.06, 0.05 } },
+    { PartTypeId::sensor, tijmath::Vector3{ 0.125, 0.105, 0.06 } * 1.1 },
+    { PartTypeId::regulator, tijmath::Vector3{ 0.093, 0.126, 0.066 } },
+    { PartTypeId::pump, tijmath::Vector3{ 0.12, 0.12, 0.12 } },
   };
   auto it = id_map.find(id);
   if (it == id_map.end())

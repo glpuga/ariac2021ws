@@ -8,7 +8,7 @@
 #include <string>
 
 // project
-#include <tijcore/math/Vector3.hpp>
+#include <tijmath/math/Vector3.hpp>
 
 namespace tijcore
 {
@@ -29,7 +29,7 @@ std::string toString(const PartTypeId& id);
 bool isValid(const std::string& sid);
 
 // TODO(glpuga) add tests for this function
-Vector3 dimensions(const PartTypeId& id);
+tijmath::Vector3 dimensions(const PartTypeId& id);
 
 }  // namespace part_type
 

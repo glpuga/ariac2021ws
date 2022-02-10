@@ -15,10 +15,10 @@
 #include <ros/ros.h>
 
 // tijcore
-#include <tijcore/localization/RelativePose3.hpp>
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijcore/perception/PickAndPlaceRobotInterface.hpp>
 #include <tijcore/perception/Toolbox.hpp>
+#include <tijmath/localization/RelativePose3.hpp>
 
 namespace tijros
 {
@@ -29,17 +29,17 @@ public:
 
   bool getInSafePose() const override;
 
-  bool getInSafePoseNearTarget(const tijcore::RelativePose3& target) const override;
+  bool getInSafePoseNearTarget(const tijmath::RelativePose3& target) const override;
 
-  bool getToGraspingPoseHint(const tijcore::RelativePose3& target) const override;
+  bool getToGraspingPoseHint(const tijmath::RelativePose3& target) const override;
 
-  bool getInLandingSpot(const tijcore::RelativePose3& target) const override;
+  bool getInLandingSpot(const tijmath::RelativePose3& target) const override;
 
-  bool graspPartFromAbove(const tijcore::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
+  bool graspPartFromAbove(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
 
-  bool placePartFromAbove(const tijcore::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
+  bool placePartFromAbove(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
 
-  bool twistPartInPlace(tijcore::RelativePose3& target,
+  bool twistPartInPlace(tijmath::RelativePose3& target,
 
                         const tijcore::PartTypeId& part_type_id) const override;
 
@@ -64,7 +64,7 @@ private:
   void markAsCommanded(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors,
                        const int command);
 
-  void alignEndEffectorWithTarget(tijcore::RelativePose3& target_in_world) const;
+  void alignEndEffectorWithTarget(tijmath::RelativePose3& target_in_world) const;
 
   void configureGoalTolerances(const bool tight_mode) const;
 };

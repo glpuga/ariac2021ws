@@ -11,7 +11,7 @@
 
 // tijcore
 #include <tijcore/agents/PartId.hpp>
-#include <tijcore/localization/RelativePose3.hpp>
+#include <tijmath/localization/RelativePose3.hpp>
 
 namespace tijcore
 {
@@ -25,8 +25,8 @@ public:
 
   static void TransferPartFromHereToThere(ManagedLocus& here, ManagedLocus& there);
 
-  static ManagedLocus CreateEmptySpace(const std::string& parent_container, const RelativePose3& pose);
-  static ManagedLocus CreateOccupiedSpace(const std::string& parent_container, const RelativePose3& pose,
+  static ManagedLocus CreateEmptySpace(const std::string& parent_container, const tijmath::RelativePose3& pose);
+  static ManagedLocus CreateOccupiedSpace(const std::string& parent_container, const tijmath::RelativePose3& pose,
                                           const PartId& part_id, const bool broken);
 
   bool isEmpty() const;
@@ -36,8 +36,8 @@ public:
 
   std::tuple<PartId, bool> model() const;
 
-  RelativePose3& pose();
-  const RelativePose3& pose() const;
+  tijmath::RelativePose3& pose();
+  const tijmath::RelativePose3& pose() const;
 
   std::string parentName() const;
 
@@ -56,13 +56,13 @@ public:
   }
 
 private:
-  ManagedLocus(const std::string& parent_container, const RelativePose3& pose);
-  ManagedLocus(const std::string& parent_container, const RelativePose3& pose, const PartId& part_id,
+  ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose);
+  ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose, const PartId& part_id,
                const bool broken);
 
   std::string parent_container_;
 
-  RelativePose3 pose_;
+  tijmath::RelativePose3 pose_;
   PartId part_id_;
   bool is_model_;
   bool is_broken_;

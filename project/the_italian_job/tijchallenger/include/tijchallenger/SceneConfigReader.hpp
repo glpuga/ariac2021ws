@@ -18,7 +18,7 @@ class SceneConfigReader : public tijcore::SceneConfigReaderInterface
 public:
   const std::string& getWorldFrameId() const override;
 
-  const tijcore::RelativePose3& getDropBucketPose() const override;
+  const tijmath::RelativePose3& getDropBucketPose() const override;
 
   const std::vector<BinData>& getListOfBins() const override;
 
@@ -35,9 +35,9 @@ public:
   const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>&
   getListOfSharedAccessSpaceDescriptions() const override;
 
-  const std::vector<tijcore::RelativePose3>& getListOfGantryPlanningHints() const override;
+  const std::vector<tijmath::RelativePose3>& getListOfGantryPlanningHints() const override;
 
-  const std::vector<tijcore::RelativePose3>& getListOfSafeWaitingSpotHints() const override;
+  const std::vector<tijmath::RelativePose3>& getListOfSafeWaitingSpotHints() const override;
 };
 
 };  // namespace tijchallenger

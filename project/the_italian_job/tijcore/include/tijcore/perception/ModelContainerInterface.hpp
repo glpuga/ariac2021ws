@@ -10,9 +10,9 @@
 
 // tijcore
 #include <tijcore/agents/WorkRegionId.hpp>
-#include <tijcore/localization/RelativePose3.hpp>
 #include <tijcore/math/CuboidVolume.hpp>
 #include <tijcore/perception/ResourceHandle.hpp>
+#include <tijmath/localization/RelativePose3.hpp>
 
 namespace tijcore
 {
@@ -23,7 +23,7 @@ public:
   using SharedPtr = std::shared_ptr<ModelContainerInterface>;
 
   ModelContainerInterface(const std::string& name, const std::string& container_reference_frame_id_,
-                          const std::string& surface_reference_frame_id_, const RelativePose3& pose,
+                          const std::string& surface_reference_frame_id_, const tijmath::RelativePose3& pose,
                           const CuboidVolume& container_volume, const std::string& shared_workspace_id);
 
   virtual ~ModelContainerInterface() = default;
@@ -45,7 +45,7 @@ public:
 
   std::string surfaceReferenceFrameId() const;
 
-  RelativePose3 pose() const;
+  tijmath::RelativePose3 pose() const;
 
   CuboidVolume containerVolume() const;
 
@@ -55,7 +55,7 @@ private:
   std::string name_;
   std::string container_reference_frame_id_;
   std::string surface_reference_frame_id_;
-  RelativePose3 pose_;
+  tijmath::RelativePose3 pose_;
   CuboidVolume container_volume_;
   std::string shared_workspace_id_;
 };

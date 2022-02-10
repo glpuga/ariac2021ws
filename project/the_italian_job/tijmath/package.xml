@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tijmath</name>
+  <version>0.0.0</version>
+  <description>TheItalianJob's official ARIAC 2021 competition challenger core package</description>
+  <author email="glpuga@gmail.com">Gerardo Puga</author>
+  <maintainer email="glpuga@gmail.com">Gerardo Puga</maintainer>
+
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>cmake_modules</depend>
+  <depend>roscpp</depend>
+  <depend>roslint</depend>
+  <depend>eigen</depend>
+  <depend>rostest</depend>
+  <depend>tijlogger</depend>
+
+</package>

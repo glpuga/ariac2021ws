@@ -157,13 +157,17 @@ public:
   const double position_tolerance_{ 1e-3 };
   const double rotation_tolerance_{ 1e-3 };
 
-  const CuboidVolume table_container_volume{ Vector3{ 0, 0, -0.1 }, Vector3{ 0.9, 0.9, 0.1 } };
-  const CuboidVolume table_exclusion_volume{ Vector3{ 0, 0, 0.0 }, Vector3{ 0.9, 0.9, 1.0 } };
+  const CuboidVolume table_container_volume{ tijmath::Vector3{ 0, 0, -0.1 }, tijmath::Vector3{ 0.9, 0.9, 0.1 } };
+  const CuboidVolume table_exclusion_volume{ tijmath::Vector3{ 0, 0, 0.0 }, tijmath::Vector3{ 0.9, 0.9, 1.0 } };
 
-  const Pose3 table_rel_pose_11{ Position::fromVector(0.22, 0.22, 0), Rotation::fromQuaternion(0, 0, 0, 1) };
-  const Pose3 table_rel_pose_12{ Position::fromVector(0.68, 0.22, 0), Rotation::fromQuaternion(1, 0, 0, 1) };
-  const Pose3 table_rel_pose_21{ Position::fromVector(0.22, 0.68, 0), Rotation::fromQuaternion(0, 1, 0, 1) };
-  const Pose3 table_rel_pose_22{ Position::fromVector(0.68, 0.68, 0), Rotation::fromQuaternion(0, 0, 1, 1) };
+  const tijmath::Pose3 table_rel_pose_11{ tijmath::Position::fromVector(0.22, 0.22, 0),
+                                          tijmath::Rotation::fromQuaternion(0, 0, 0, 1) };
+  const tijmath::Pose3 table_rel_pose_12{ tijmath::Position::fromVector(0.68, 0.22, 0),
+                                          tijmath::Rotation::fromQuaternion(1, 0, 0, 1) };
+  const tijmath::Pose3 table_rel_pose_21{ tijmath::Position::fromVector(0.22, 0.68, 0),
+                                          tijmath::Rotation::fromQuaternion(0, 1, 0, 1) };
+  const tijmath::Pose3 table_rel_pose_22{ tijmath::Position::fromVector(0.68, 0.68, 0),
+                                          tijmath::Rotation::fromQuaternion(0, 0, 1, 1) };
 
   // pumps
   const PartId red_pump_{ PartTypeId::pump, PartColorId::red };
@@ -185,7 +189,7 @@ public:
   // agv1
   const std::string agv1_name_{ "agv1" };
   const std::string agv1_frame_id_{ "agv1_frame" };
-  const RelativePose3 agv1_pose_{ "world", Position::fromVector(10, 0, 1), {} };
+  const tijmath::RelativePose3 agv1_pose_{ "world", tijmath::Position::fromVector(10, 0, 1), {} };
   ModelContainerMock::Ptr agv1_container_mock_;
   CuboidVolume agv1_container_volume_{ table_container_volume };
   const std::string agv1_exclusion_volume_{ "agv1_exclusion_volume" };
@@ -193,7 +197,7 @@ public:
   // agv2
   const std::string agv2_name_{ "agv2" };
   const std::string agv2_frame_id_{ "agv2_frame" };
-  const RelativePose3 agv2_pose_{ "world", Position::fromVector(14, 0, 1), {} };
+  const tijmath::RelativePose3 agv2_pose_{ "world", tijmath::Position::fromVector(14, 0, 1), {} };
   ModelContainerMock::Ptr agv2_container_mock_;
   CuboidVolume agv2_container_volume_{ table_container_volume };
   const std::string agv2_exclusion_volume_{ "agv2_exclusion_volume" };
@@ -201,7 +205,7 @@ public:
   // as1
   const std::string as1_name_{ "as1" };
   const std::string as1_frame_id_{ "as1_frame" };
-  const RelativePose3 as1_pose_{ "world", Position::fromVector(10, 1, 1), {} };
+  const tijmath::RelativePose3 as1_pose_{ "world", tijmath::Position::fromVector(10, 1, 1), {} };
   ModelContainerMock::Ptr as1_container_mock_;
   CuboidVolume as1_container_volume_{ table_container_volume };
   const std::string as1_exclusion_volume_{ "as1_exclusion_volume" };
@@ -209,7 +213,7 @@ public:
   // as2
   const std::string as2_name_{ "as2" };
   const std::string as2_frame_id_{ "as2_frame" };
-  const RelativePose3 as2_pose_{ "world", Position::fromVector(14, 1, 1), {} };
+  const tijmath::RelativePose3 as2_pose_{ "world", tijmath::Position::fromVector(14, 1, 1), {} };
   ModelContainerMock::Ptr as2_container_mock_;
   CuboidVolume as2_container_volume_{ table_container_volume };
   const std::string as2_exclusion_volume_{ "as2_exclusion_volume" };
@@ -217,7 +221,7 @@ public:
   // bin1
   const std::string bin1_name_{ "bin1" };
   const std::string bin1_frame_id_{ "bin1_frame" };
-  const RelativePose3 bin1_pose_{ "world", Position::fromVector(12, 0, 1), {} };
+  const tijmath::RelativePose3 bin1_pose_{ "world", tijmath::Position::fromVector(12, 0, 1), {} };
   ModelContainerMock::Ptr bin1_container_mock_;
   CuboidVolume bin1_container_volume_{ table_container_volume };
   const std::string bin1_exclusion_volume_{ "bin1_exclusion_volume" };
@@ -225,7 +229,7 @@ public:
   // bin2
   const std::string bin2_name_{ "bin2" };
   const std::string bin2_frame_id_{ "bin2_frame" };
-  const RelativePose3 bin2_pose_{ "world", Position::fromVector(12, 1, 1), {} };
+  const tijmath::RelativePose3 bin2_pose_{ "world", tijmath::Position::fromVector(12, 1, 1), {} };
   ModelContainerMock::Ptr bin2_container_mock_;
   CuboidVolume bin2_container_volume_{ table_container_volume };
   const std::string bin2_exclusion_volume_{ "bin2_exclusion_volume" };
@@ -373,10 +377,10 @@ TEST_F(KittingOrders, SimpleOrder)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -386,8 +390,9 @@ TEST_F(KittingOrders, SimpleOrder)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -424,13 +429,15 @@ TEST_F(KittingOrders, SimpleOrder)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -447,12 +454,12 @@ TEST_F(KittingOrders, OrderWithUnwantedPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { green_regulator_, RelativePose3(agv1_frame_id_, table_rel_pose_11) },
-      { blue_battery_, RelativePose3(agv1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { green_regulator_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) },
+      { blue_battery_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -462,8 +469,9 @@ TEST_F(KittingOrders, OrderWithUnwantedPiecesOnAgv)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -510,13 +518,15 @@ TEST_F(KittingOrders, OrderWithUnwantedPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -533,13 +543,13 @@ TEST_F(KittingOrders, OrderWithBrokenPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { red_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_11), true },
-      { red_battery_, RelativePose3(agv1_frame_id_, table_rel_pose_12) },
-      { red_battery_, RelativePose3(agv1_frame_id_, table_rel_pose_22) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11), true },
+      { red_battery_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) },
+      { red_battery_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -549,8 +559,9 @@ TEST_F(KittingOrders, OrderWithBrokenPiecesOnAgv)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -604,13 +615,15 @@ TEST_F(KittingOrders, OrderWithBrokenPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -627,12 +640,12 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { green_regulator_, RelativePose3(agv1_frame_id_, table_rel_pose_11) },
-      { red_battery_, RelativePose3(agv1_frame_id_, table_rel_pose_22) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { green_regulator_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) },
+      { red_battery_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -642,8 +655,9 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -676,13 +690,15 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -696,8 +712,9 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv2;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(agv2_frame_id_, table_rel_pose_21) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(agv2_frame_id_, table_rel_pose_22) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_21) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22) });
 
     Order order_0_update;
     order_0_update.order_id = OrderId{ "order_0_update" };
@@ -734,13 +751,15 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv2_frame_id_, table_rel_pose_21));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv2_frame_id_, table_rel_pose_22));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -757,12 +776,12 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_12) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_11) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { red_sensor_, RelativePose3(agv1_frame_id_, table_rel_pose_21) },
-      { red_battery_, RelativePose3(agv1_frame_id_, table_rel_pose_22) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_12) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_11) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_sensor_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21) },
+      { red_battery_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -773,8 +792,10 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
       shipment.shipment_type = "shipment1";
       shipment.agv_id = AgvId::agv1;
       shipment.station_id = StationId::as1;
-      shipment.products.push_back(ProductRequest{ red_sensor_, RelativePose3(agv1_frame_id_, table_rel_pose_12) });
-      shipment.products.push_back(ProductRequest{ blue_sensor_, RelativePose3(agv1_frame_id_, table_rel_pose_21) });
+      shipment.products.push_back(
+          ProductRequest{ red_sensor_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
+      shipment.products.push_back(
+          ProductRequest{ blue_sensor_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21) });
 
       Order order_0;
       order_0.order_id = OrderId{ "order_0" };
@@ -787,8 +808,10 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
       shipment.shipment_type = "shipment1";
       shipment.agv_id = AgvId::agv2;
       shipment.station_id = StationId::as2;
-      shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(agv2_frame_id_, table_rel_pose_11) });
-      shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(agv2_frame_id_, table_rel_pose_22) });
+      shipment.products.push_back(
+          ProductRequest{ red_pump_, tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_11) });
+      shipment.products.push_back(
+          ProductRequest{ blue_pump_, tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22) });
 
       Order order_1;
       order_1.order_id = OrderId{ "order_1" };
@@ -830,13 +853,15 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv2_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv2_frame_id_, table_rel_pose_22));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -872,13 +897,15 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_sensor_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_21));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_sensor_, part_id);
       EXPECT_FALSE(broken);
@@ -895,9 +922,9 @@ TEST_F(KittingOrders, NotEnoughPartsToComplete)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -907,8 +934,9 @@ TEST_F(KittingOrders, NotEnoughPartsToComplete)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(agv1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -942,7 +970,8 @@ TEST_F(KittingOrders, NotEnoughPartsToComplete)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -970,10 +999,10 @@ TEST_F(AssemblyOrders, SimpleOrder)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -982,8 +1011,8 @@ TEST_F(AssemblyOrders, SimpleOrder)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1024,13 +1053,15 @@ TEST_F(AssemblyOrders, SimpleOrder)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1047,12 +1078,12 @@ TEST_F(AssemblyOrders, OrderWithUnwantedPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { green_regulator_, RelativePose3(as1_frame_id_, table_rel_pose_11) },
-      { blue_battery_, RelativePose3(as1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { green_regulator_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) },
+      { blue_battery_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -1061,8 +1092,8 @@ TEST_F(AssemblyOrders, OrderWithUnwantedPiecesOnAgv)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1117,13 +1148,15 @@ TEST_F(AssemblyOrders, OrderWithUnwantedPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1140,13 +1173,13 @@ TEST_F(AssemblyOrders, OrderWithBrokenPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { red_pump_, RelativePose3(as1_frame_id_, table_rel_pose_11), true },
-      { red_battery_, RelativePose3(as1_frame_id_, table_rel_pose_12) },
-      { red_battery_, RelativePose3(as1_frame_id_, table_rel_pose_22) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11), true },
+      { red_battery_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) },
+      { red_battery_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -1155,8 +1188,8 @@ TEST_F(AssemblyOrders, OrderWithBrokenPiecesOnAgv)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1218,13 +1251,15 @@ TEST_F(AssemblyOrders, OrderWithBrokenPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1244,12 +1279,12 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_12) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { green_regulator_, RelativePose3(as1_frame_id_, table_rel_pose_11) },
-      { red_battery_, RelativePose3(as1_frame_id_, table_rel_pose_22) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_12) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { green_regulator_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) },
+      { red_battery_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -1258,8 +1293,8 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1300,13 +1335,15 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1319,8 +1356,8 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as2;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(as2_frame_id_, table_rel_pose_21) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(as2_frame_id_, table_rel_pose_22) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_21) });
+    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22) });
 
     Order order_0_update;
     order_0_update.order_id = OrderId{ "order_0_update" };
@@ -1362,13 +1399,15 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as2_frame_id_, table_rel_pose_21));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as2_frame_id_, table_rel_pose_22));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1385,12 +1424,12 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_12) },
-      { blue_pump_, RelativePose3(bin2_frame_id_, table_rel_pose_11) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
-      { red_sensor_, RelativePose3(as1_frame_id_, table_rel_pose_21) },
-      { red_battery_, RelativePose3(as1_frame_id_, table_rel_pose_22) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_12) },
+      { blue_pump_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_11) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_sensor_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_21) },
+      { red_battery_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_22) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -1400,8 +1439,10 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
       AssemblyShipment shipment;
       shipment.shipment_type = "shipment1";
       shipment.station_id = StationId::as1;
-      shipment.products.push_back(ProductRequest{ red_sensor_, RelativePose3(as1_frame_id_, table_rel_pose_12) });
-      shipment.products.push_back(ProductRequest{ blue_sensor_, RelativePose3(as1_frame_id_, table_rel_pose_21) });
+      shipment.products.push_back(
+          ProductRequest{ red_sensor_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
+      shipment.products.push_back(
+          ProductRequest{ blue_sensor_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_21) });
 
       Order order_0;
       order_0.order_id = OrderId{ "order_0" };
@@ -1413,8 +1454,10 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
       AssemblyShipment shipment;
       shipment.shipment_type = "shipment1";
       shipment.station_id = StationId::as2;
-      shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(as2_frame_id_, table_rel_pose_11) });
-      shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(as2_frame_id_, table_rel_pose_22) });
+      shipment.products.push_back(
+          ProductRequest{ red_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_11) });
+      shipment.products.push_back(
+          ProductRequest{ blue_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22) });
 
       Order order_1;
       order_1.order_id = OrderId{ "order_1" };
@@ -1460,13 +1503,15 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as2_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as2_frame_id_, table_rel_pose_22));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1513,13 +1558,15 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_sensor_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_21));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_sensor_, part_id);
       EXPECT_FALSE(broken);
@@ -1536,9 +1583,9 @@ TEST_F(AssemblyOrders, NotEnoughPartsToComplete)
 
   action_queue_.queueTestActionQueue([&, this]() {
     std::vector<ObservedModel> observed_models_ = {
-      { red_pump_, RelativePose3(bin1_frame_id_, table_rel_pose_11) },
-      { red_sensor_, RelativePose3(bin1_frame_id_, table_rel_pose_22) },
-      { blue_sensor_, RelativePose3(bin2_frame_id_, table_rel_pose_21) },
+      { red_pump_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_11) },
+      { red_sensor_, tijmath::RelativePose3(bin1_frame_id_, table_rel_pose_22) },
+      { blue_sensor_, tijmath::RelativePose3(bin2_frame_id_, table_rel_pose_21) },
     };
     resource_manager_->updateSensorData(observed_models_);
   });
@@ -1547,8 +1594,8 @@ TEST_F(AssemblyOrders, NotEnoughPartsToComplete)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1582,7 +1629,8 @@ TEST_F(AssemblyOrders, NotEnoughPartsToComplete)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle = resource_manager_->getManagedLocusHandleForPose(RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle =
+          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);

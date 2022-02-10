@@ -16,5 +16,6 @@
   <depend>eigen</depend>
   <depend>rostest</depend>
   <depend>tijlogger</depend>
+  <depend>tijmath</depend>
 
 </package>

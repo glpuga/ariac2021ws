@@ -44,7 +44,7 @@ public:
 
   virtual std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& regions) = 0;
 
-  virtual std::optional<ManagedLocusHandle> getManagedLocusHandleForPose(const RelativePose3& pose) = 0;
+  virtual std::optional<ManagedLocusHandle> getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) = 0;
 
   virtual void updateSensorData(const std::vector<ObservedModel>& observed_models) = 0;
 

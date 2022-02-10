@@ -8,8 +8,8 @@
 #include <utility>
 
 // tijcore
-#include <tijlogger/logger.hpp>
 #include <tijcore/perception/TaskDriver.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {

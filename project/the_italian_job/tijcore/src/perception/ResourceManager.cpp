@@ -16,11 +16,11 @@
 #include <vector>
 
 // tijcore
-#include <tijlogger/logger.hpp>
 #include <tijcore/agents/SurfaceManager.hpp>
 #include <tijcore/math/CuboidVolume.hpp>
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijcore/perception/ResourceManager.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijcore
 {
@@ -110,7 +110,8 @@ std::vector<ResourceManagerInterface::ManagedLocusHandle> ResourceManager::findE
 
       auto parent_ref_frame = model_containers_.at(container_name).resource()->containerReferenceFrameId();
 
-      RelativePose3 pose{ parent_ref_frame, Position::fromVector(x, y, 0), Rotation::Identity };
+      tijmath::RelativePose3 pose{ parent_ref_frame, tijmath::Position::fromVector(x, y, 0),
+                                   tijmath::Rotation::Identity };
 
       // record it locally and add it to the list of free loci
       {
@@ -416,7 +417,7 @@ WorkRegionId ResourceManager::getWorkRegionId(const ManagedLocusHandle& handle) 
 }
 
 std::optional<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::getManagedLocusHandleForPose(const RelativePose3& pose)
+ResourceManager::getManagedLocusHandleForPose(const tijmath::RelativePose3& pose)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
@@ -455,7 +456,7 @@ ResourceManager::getManagedLocusHandleForPose(const RelativePose3& pose)
 
     // they get compared without rotation, because we may not know the
     // rotation value
-    if (Position::samePosition(reframed_closest_part_pose.position(), pose.position(), position_tolerance_))
+    if (tijmath::Position::samePosition(reframed_closest_part_pose.position(), pose.position(), position_tolerance_))
     {
       return *closest_part;
     }
@@ -581,9 +582,9 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
     const auto surface_frame_id = parent_container->resource()->surfaceReferenceFrameId();
     auto local_frame_pose = transformPoseToContainerLocalPose(model.pose, surface_frame_id);
 
-    auto new_model_locus = ManagedLocus::CreateOccupiedSpace(parent_container->resource()->name(),
-                                                             RelativePose3{ surface_frame_id, local_frame_pose },
-                                                             model.type, model.broken);
+    auto new_model_locus = ManagedLocus::CreateOccupiedSpace(
+        parent_container->resource()->name(), tijmath::RelativePose3{ surface_frame_id, local_frame_pose }, model.type,
+        model.broken);
 
     // TODO(glpuga) Conveyor belt hack. I artificially increase the difficulty
     // of parts on conveyor belts to reduce their chances to be picked if there
@@ -645,8 +646,8 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
 
       // they get compared without rotation, because we may not know the
       // rotation value
-      if (Position::samePosition(new_model_locus_pose.position(), known_model_locus_pose.position(),
-                                 position_tolerance_))
+      if (tijmath::Position::samePosition(new_model_locus_pose.position(), known_model_locus_pose.position(),
+                                          position_tolerance_))
       {
         // don't update parts that are involved in active tasks
         if (known_model_locus_handle.allocated())
@@ -752,18 +753,18 @@ void ResourceManager::clearEmptyLoci()
   model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter), model_loci_.end());
 }
 
-Pose3 ResourceManager::transformPoseToContainerLocalPose(const RelativePose3& pose,
-                                                         const std::string& container_frame_id) const
+tijmath::Pose3 ResourceManager::transformPoseToContainerLocalPose(const tijmath::RelativePose3& pose,
+                                                                  const std::string& container_frame_id) const
 {
   auto frame_transformer = toolbox_->getFrameTransformer();
   auto transformed_pose = frame_transformer->transformPoseToFrame(pose, container_frame_id);
   return transformed_pose.pose();
 }
 
-std::tuple<double, double, double> ResourceManager::poseToOccupancy(const RelativePose3& relative_pose,
+std::tuple<double, double, double> ResourceManager::poseToOccupancy(const tijmath::RelativePose3& relative_pose,
                                                                     const std::string& container_frame_id) const
 {
-  Pose3 local_pose = transformPoseToContainerLocalPose(relative_pose, container_frame_id);
+  tijmath::Pose3 local_pose = transformPoseToContainerLocalPose(relative_pose, container_frame_id);
   auto local_vector = local_pose.position().vector();
   return std::make_tuple(local_vector.x(), local_vector.y(), default_occupancy_radius_);
 }
@@ -797,7 +798,7 @@ void ResourceManager::logKnownLoci()
     auto known_model_locus_pose = known_model_locus.pose();
     auto parent_frame = model_containers_.at(known_model_locus.parentName()).resource()->containerReferenceFrameId();
     auto pose_in_parent =
-        RelativePose3{ parent_frame, transformPoseToContainerLocalPose(known_model_locus_pose, parent_frame) };
+        tijmath::RelativePose3{ parent_frame, transformPoseToContainerLocalPose(known_model_locus_pose, parent_frame) };
     if (known_model_locus.isEmpty())
     {
       INFO(" - empty at {} (allocated: {}, diff: {}, uid: {})", pose_in_parent, known_model_locus_handle.allocated(),

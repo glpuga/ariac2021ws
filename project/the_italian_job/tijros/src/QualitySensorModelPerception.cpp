@@ -49,7 +49,7 @@ void QualityControlSensorModelPerception::cameraCallback(nist_gear::LogicalCamer
   {
     const auto& geo_pose = ros_model.pose;
     const auto relative_core_pose =
-        tijcore::RelativePose3{ quality_sensor_name_ + "_frame", utils::convertGeoPoseToCorePose(geo_pose) };
+        tijmath::RelativePose3{ quality_sensor_name_ + "_frame", utils::convertGeoPoseToCorePose(geo_pose) };
     const auto part_id = tijcore::PartId::UnkownPartId;
     // quality sensor only report faulty parts
     const tijcore::ObservedModel core_model{ part_id, relative_core_pose, true };

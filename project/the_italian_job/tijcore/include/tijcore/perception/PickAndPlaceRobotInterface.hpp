@@ -13,8 +13,8 @@
 // tijcore
 #include <tijcore/agents/PartTypeId.hpp>
 #include <tijcore/agents/WorkRegionId.hpp>
-#include <tijcore/localization/RelativePose3.hpp>
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
+#include <tijmath/localization/RelativePose3.hpp>
 
 namespace tijcore
 {
@@ -28,19 +28,19 @@ public:
 
   virtual bool getInSafePose() const = 0;
 
-  virtual bool getInSafePoseNearTarget(const tijcore::RelativePose3& target) const = 0;
+  virtual bool getInSafePoseNearTarget(const tijmath::RelativePose3& target) const = 0;
 
-  virtual bool getToGraspingPoseHint(const tijcore::RelativePose3& target) const = 0;
+  virtual bool getToGraspingPoseHint(const tijmath::RelativePose3& target) const = 0;
 
-  virtual bool getInLandingSpot(const tijcore::RelativePose3& target) const = 0;
+  virtual bool getInLandingSpot(const tijmath::RelativePose3& target) const = 0;
 
-  virtual bool graspPartFromAbove(const tijcore::RelativePose3& target,
+  virtual bool graspPartFromAbove(const tijmath::RelativePose3& target,
                                   const tijcore::PartTypeId& part_type_id) const = 0;
 
-  virtual bool placePartFromAbove(const tijcore::RelativePose3& target,
+  virtual bool placePartFromAbove(const tijmath::RelativePose3& target,
                                   const tijcore::PartTypeId& part_type_id) const = 0;
 
-  virtual bool twistPartInPlace(RelativePose3& target, const tijcore::PartTypeId& part_type_id) const = 0;
+  virtual bool twistPartInPlace(tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const = 0;
 
   virtual bool dropPartWhereYouStand() const = 0;
 
@@ -68,10 +68,10 @@ protected:
   virtual void patchJointStateValuesForRestingPose(std::vector<double>&) const = 0;
 
   virtual void patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
-                                                       const tijcore::RelativePose3& target) const = 0;
+                                                       const tijmath::RelativePose3& target) const = 0;
 
   virtual void patchJointStateValuesGraspingHingPoseNearTarget(std::vector<double>& joint_states,
-                                                               const tijcore::RelativePose3& target) const = 0;
+                                                               const tijmath::RelativePose3& target) const = 0;
 
   virtual void patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const = 0;
 };

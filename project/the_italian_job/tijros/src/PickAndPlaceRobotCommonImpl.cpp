@@ -24,7 +24,7 @@
 
 // project
 #include <tijlogger/logger.hpp>
-#include <tijcore/utils/angles.hpp>
+#include <tijmath/utils/angles.hpp>
 #include <tijros/PickAndPlaceRobotCommonImpl.hpp>
 #include <tijros/utils/utils.hpp>
 
@@ -48,10 +48,10 @@ static const double max_planning_time = 20.0;
 static const int max_planning_attempts = 5;
 
 static const double tight_goal_position_tolerance = 0.001;
-static const double tight_goal_orientation_tolerance = tijcore::utils::angles::degreesToRadians(0.2);
+static const double tight_goal_orientation_tolerance = tijmath::utils::angles::degreesToRadians(0.2);
 
 static const double coarse_goal_position_tolerance = 0.015;
-static const double coarse_goal_orientation_tolerance = tijcore::utils::angles::degreesToRadians(2.5);
+static const double coarse_goal_orientation_tolerance = tijmath::utils::angles::degreesToRadians(2.5);
 
 moveit_msgs::CollisionObject createCollisionBox(const std::string& id, const std::string& sub_id,
                                                 const std::string& frame_id, const double width, const double height,
@@ -84,11 +84,11 @@ moveit_msgs::CollisionObject createCollisionBox(const std::string& id, const std
   return collision_object;
 }
 
-double estimatePartHeight(const tijcore::Matrix3& orientation_in_world, const tijcore::PartTypeId& id)
+double estimatePartHeight(const tijmath::Matrix3& orientation_in_world, const tijcore::PartTypeId& id)
 {
   const auto part_dimensions = tijcore::part_type::dimensions(id);
 
-  const double estimated_height = std::abs(tijcore::Vector3{ 0, 0, 1 }.dot(
+  const double estimated_height = std::abs(tijmath::Vector3{ 0, 0, 1 }.dot(
       part_dimensions[0] * orientation_in_world.col(0) + part_dimensions[1] * orientation_in_world.col(1) +
       part_dimensions[2] * orientation_in_world.col(2)));
   return estimated_height;
@@ -195,7 +195,7 @@ bool PickAndPlaceRobotCommonImpl::getInSafePose() const
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(const tijcore::RelativePose3& target) const
+bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(const tijmath::RelativePose3& target) const
 {
   if (!enabled())
   {
@@ -246,7 +246,7 @@ bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(const tijcore::Relativ
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::getToGraspingPoseHint(const tijcore::RelativePose3& target) const
+bool PickAndPlaceRobotCommonImpl::getToGraspingPoseHint(const tijmath::RelativePose3& target) const
 {
   if (!enabled())
   {
@@ -302,7 +302,7 @@ bool PickAndPlaceRobotCommonImpl::getToGraspingPoseHint(const tijcore::RelativeP
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijcore::RelativePose3& target) const
+bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3& target) const
 {
   if (!enabled())
   {
@@ -352,7 +352,7 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijcore::RelativePose3&
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(const tijcore::RelativePose3& target,
+bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(const tijmath::RelativePose3& target,
                                                      const tijcore::PartTypeId& part_type_id) const
 {
   if (!enabled())
@@ -471,7 +471,7 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(const tijcore::RelativePose
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::placePartFromAbove(const tijcore::RelativePose3& target,
+bool PickAndPlaceRobotCommonImpl::placePartFromAbove(const tijmath::RelativePose3& target,
                                                      const tijcore::PartTypeId& part_type_id) const
 {
   if (!enabled())
@@ -536,10 +536,10 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(const tijcore::RelativePose
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijcore::RelativePose3& target,
+bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& target,
                                                    const tijcore::PartTypeId& part_type_id) const
 {
-  using tijcore::utils::angles::degreesToRadians;
+  using tijmath::utils::angles::degreesToRadians;
 
   if (!enabled())
   {
@@ -565,13 +565,13 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijcore::RelativePose3& targe
   // we determine the rotation that goes from the end effector frame rotation to
   // the target rotation, to update the rotation of the part once we have
   // changed the orientation of the gripper
-  tijcore::Matrix3 target_in_end_effector_rotation;
+  tijmath::Matrix3 target_in_end_effector_rotation;
   {
     const auto rotated_target_rotation_matrix = target.rotation().rotationMatrix();
 
     const auto end_effector_pose_in_world = utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
     const auto end_effector_pose_in_target_frame = frame_transformer->transformPoseToFrame(
-        tijcore::RelativePose3{ world_frame, end_effector_pose_in_world }, target.frameId());
+        tijmath::RelativePose3{ world_frame, end_effector_pose_in_world }, target.frameId());
     const auto end_effector_rotation_matrix_in_target_frame =
         end_effector_pose_in_target_frame.rotation().rotationMatrix();
 
@@ -631,9 +631,9 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijcore::RelativePose3& targe
         auto rotated_target_rotation_matrix = rotated_end_effector_in_world.rotation().rotationMatrix();
 
         rotated_target_rotation_matrix *=
-            tijcore::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(-90)).rotationMatrix();
+            tijmath::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(-90)).rotationMatrix();
 
-        rotated_end_effector_in_world.rotation() = tijcore::Rotation(rotated_target_rotation_matrix);
+        rotated_end_effector_in_world.rotation() = tijmath::Rotation(rotated_target_rotation_matrix);
         rotated_end_effector_in_world.position().vector() +=
             rotated_target_rotation_matrix.col(1) * twist_height_correction +
             rotated_target_rotation_matrix.col(0) * (-estimated_part_height / 2.0);
@@ -674,7 +674,7 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijcore::RelativePose3& targe
       // get the current pose of the end effector in the frame of the target
       // pose
       auto end_effector_pose_in_target_frame = frame_transformer->transformPoseToFrame(
-          tijcore::RelativePose3{ world_frame, rotated_end_effector_in_world }, target.frameId());
+          tijmath::RelativePose3{ world_frame, rotated_end_effector_in_world }, target.frameId());
 
       // get the rotation matrix
       auto end_effector_rotation_matrix_in_target_frame = end_effector_pose_in_target_frame.rotation().rotationMatrix();
@@ -683,7 +683,7 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijcore::RelativePose3& targe
       // use that to infer the rotation part now.
       auto new_target_orientation = end_effector_rotation_matrix_in_target_frame * target_in_end_effector_rotation;
 
-      target.rotation() = tijcore::Rotation{ new_target_orientation };
+      target.rotation() = tijmath::Rotation{ new_target_orientation };
     }
   }
 
@@ -812,10 +812,10 @@ void PickAndPlaceRobotCommonImpl::markAsAccessible(
   markAsCommanded(descriptors, moveit_msgs::CollisionObject::REMOVE);
 }
 
-void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(tijcore::RelativePose3& end_effector_target_pose) const
+void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(tijmath::RelativePose3& end_effector_target_pose) const
 {
   const auto orientation = end_effector_target_pose.rotation().rotationMatrix();
-  const auto x_director = tijcore::Vector3{ 0, 0, -1 };
+  const auto x_director = tijmath::Vector3{ 0, 0, -1 };
 
   auto original_x_director = orientation.col(0);
   auto original_y_director = orientation.col(1);
@@ -824,7 +824,7 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(tijcore::RelativePo
   // to try to consistently align with the same axis, which is important for
   // part flipping, try to use always the same vector, unless that's the one
   // that's pointing up.
-  tijcore::Vector3 z_director;
+  tijmath::Vector3 z_director;
   if ((std::abs(x_director.dot(original_x_director)) > std::abs(x_director.dot(original_y_director))) &&
       (std::abs(x_director.dot(original_x_director)) > std::abs(x_director.dot(original_z_director))))
   {
@@ -855,14 +855,14 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(tijcore::RelativePo
   y_director = y_director / y_director.norm();
 
   const auto end_effector_orientation =
-      tijcore::Matrix3{
+      tijmath::Matrix3{
         x_director,
         y_director,
         z_director,
       }
           .trans();
 
-  end_effector_target_pose.rotation() = tijcore::Rotation{ end_effector_orientation };
+  end_effector_target_pose.rotation() = tijmath::Rotation{ end_effector_orientation };
 }
 
 }  // namespace tijros

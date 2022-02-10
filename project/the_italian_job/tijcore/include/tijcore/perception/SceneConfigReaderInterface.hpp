@@ -11,8 +11,8 @@
 
 // tijcore
 #include <tijcore/agents/WorkRegionId.hpp>
-#include <tijcore/localization/RelativePose3.hpp>
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
+#include <tijmath/localization/RelativePose3.hpp>
 
 namespace tijcore
 {
@@ -50,7 +50,7 @@ public:
 
   virtual const std::string& getWorldFrameId() const = 0;
 
-  virtual const tijcore::RelativePose3& getDropBucketPose() const = 0;
+  virtual const tijmath::RelativePose3& getDropBucketPose() const = 0;
 
   virtual const std::vector<BinData>& getListOfBins() const = 0;
 
@@ -66,9 +66,9 @@ public:
 
   virtual const std::vector<ModelTraySharedAccessSpaceDescription>& getListOfSharedAccessSpaceDescriptions() const = 0;
 
-  virtual const std::vector<RelativePose3>& getListOfGantryPlanningHints() const = 0;
+  virtual const std::vector<tijmath::RelativePose3>& getListOfGantryPlanningHints() const = 0;
 
-  virtual const std::vector<tijcore::RelativePose3>& getListOfSafeWaitingSpotHints() const = 0;
+  virtual const std::vector<tijmath::RelativePose3>& getListOfSafeWaitingSpotHints() const = 0;
 };
 
 }  // namespace tijcore
