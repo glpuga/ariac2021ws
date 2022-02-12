@@ -13,7 +13,7 @@
 // tijcore
 #include <tijcore/agents/AgvId.hpp>
 #include <tijcore/agents/StationId.hpp>
-#include <tijmath/localization/Pose3.hpp>
+#include <tijmath/Pose3.hpp>
 
 namespace tijros
 {

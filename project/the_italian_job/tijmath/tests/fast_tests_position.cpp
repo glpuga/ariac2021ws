@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijmath
-#include <tijmath/math/Position.hpp>
+#include <tijmath/Position.hpp>
 
 namespace tijmath
 {

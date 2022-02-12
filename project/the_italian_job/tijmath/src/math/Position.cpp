@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 // tijmath
-#include <tijmath/math/Position.hpp>
+#include <tijmath/Position.hpp>
 
 namespace tijmath
 {

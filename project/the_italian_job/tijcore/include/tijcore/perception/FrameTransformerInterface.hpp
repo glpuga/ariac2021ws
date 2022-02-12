@@ -9,7 +9,7 @@
 #include <string>
 
 // tijcore
-#include <tijmath/localization/RelativePose3.hpp>
+#include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
 {

@@ -5,7 +5,7 @@
 // Standard library
 
 // tijmath
-#include <tijmath/localization/Pose3.hpp>
+#include <tijmath/Pose3.hpp>
 
 namespace tijmath
 {

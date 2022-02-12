@@ -8,7 +8,7 @@
 
 // project
 #include <tijchallenger/SceneConfigReader.hpp>
-#include <tijmath/utils/angles.hpp>
+#include <tijmath/math_utilities.hpp>
 
 namespace tijchallenger
 {

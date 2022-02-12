@@ -10,7 +10,8 @@
 #include "gtest/gtest.h"
 
 // tijmath
-#include <tijmath/math/Rotation.hpp>
+#include <tijmath/Rotation.hpp>
+
 #include "utils/test_utils.hpp"
 
 namespace tijmath

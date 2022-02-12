@@ -5,7 +5,7 @@
 // Standard library
 
 // tijmath
-#include <tijmath/math/Quaternion.hpp>
+#include <tijmath/Quaternion.hpp>
 
 namespace tijmath
 {

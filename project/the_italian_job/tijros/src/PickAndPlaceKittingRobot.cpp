@@ -13,7 +13,7 @@
 
 // tijcore
 #include <tijlogger/logger.hpp>
-#include <tijmath/utils/angles.hpp>
+#include <tijmath/math_utilities.hpp>
 #include <tijros/PickAndPlaceKittingRobot.hpp>
 
 namespace tijros

@@ -9,7 +9,7 @@
 #include <eigen3/Eigen/Geometry>
 
 // tijmath
-#include <tijmath/math/Rotation.hpp>
+#include <tijmath/Rotation.hpp>
 
 namespace tijmath
 {

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <tijmath/math/Position.hpp>
-#include <tijmath/math/Rotation.hpp>
+#include <tijmath/Position.hpp>
+#include <tijmath/Rotation.hpp>
 
 namespace tijmath
 {

@@ -12,7 +12,7 @@
 #include "gtest/gtest.h"
 
 // tijmath
-#include <tijmath/math/Isometry.hpp>
+#include <tijmath/Isometry.hpp>
 
 #include "utils/test_utils.hpp"
 

@@ -5,8 +5,8 @@
 #pragma once
 
 // tijcore
-#include <tijmath/localization/Pose3.hpp>
-#include <tijmath/math/Vector3.hpp>
+#include <tijmath/Pose3.hpp>
+#include <tijmath/Vector3.hpp>
 
 namespace tijcore
 {

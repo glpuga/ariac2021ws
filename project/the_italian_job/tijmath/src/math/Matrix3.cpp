@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 // tijmath
-#include <tijmath/math/Matrix3.hpp>
+#include <tijmath/Matrix3.hpp>
 
 namespace tijmath
 {

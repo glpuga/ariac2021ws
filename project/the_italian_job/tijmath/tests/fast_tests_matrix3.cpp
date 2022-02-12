@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijmath
-#include <tijmath/math/Matrix3.hpp>
+#include <tijmath/Matrix3.hpp>
 
 #include "utils/test_utils.hpp"
 
