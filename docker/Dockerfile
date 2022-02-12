@@ -165,13 +165,15 @@ RUN /bin/sh -c 'echo ". /opt/ros/${DIST}/setup.bash" >> ~/.bashrc' \
  && /bin/sh -c 'echo "set-option -g default-shell /bin/bash" >> ~/.tmux.conf'
 
 #
+# Ccache
+
 # install ccache in the path
 RUN /bin/sh -c 'echo "export PATH=/usr/lib/ccache:\$PATH" >> ~/.bashrc'
-
-#
 # sen envvars so that catkin_make finds ccache instead of using absolute paths
 ENV CC=gcc
 ENV GXX=g++
+# Create .ccache cache dir to mount a volume there
+RUN mkdir -p /home/$USER/.ccache
 
 WORKDIR /home/$USER/ws
 

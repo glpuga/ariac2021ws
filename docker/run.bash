@@ -37,10 +37,11 @@ then
 fi
 LOCAL_REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
 
-DOCKER_OPTIONS="--mount type=bind,source=${LOCAL_REPO_PATH},target=/home/developer/ws/src/workspace"
 
 USERID=$(id -u)
 GROUPID=$(id -g)
+
+mkdir -p $HOME/.docker_ccache
 
 docker run -it \
   -e DISPLAY \
@@ -50,11 +51,12 @@ docker run -it \
   -v "/tmp/.X11-unix:/tmp/.X11-unix" \
   -v "/etc/localtime:/etc/localtime:ro" \
   -v "/dev/input:/dev/input" \
+  --mount type=bind,source=$HOME/.docker_ccache,target=/home/developer/.ccache \
+  --mount type=bind,source=${LOCAL_REPO_PATH},target=/home/developer/ws/src/workspace \
   --network host \
   --privileged \
   --rm \
   --runtime=$RUNTIME \
   --security-opt seccomp=unconfined \
   -u $USERID:$GROUPID \
-  $DOCKER_OPTIONS \
   $IMAGE_NAME
