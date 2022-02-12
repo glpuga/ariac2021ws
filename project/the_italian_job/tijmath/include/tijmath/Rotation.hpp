@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <tijmath/math/Matrix3.hpp>
-#include <tijmath/math/Quaternion.hpp>
+#include <tijmath/Matrix3.hpp>
+#include <tijmath/Quaternion.hpp>
 
 namespace tijmath
 {

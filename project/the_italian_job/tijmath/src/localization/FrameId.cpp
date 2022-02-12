@@ -5,7 +5,7 @@
 // Standard library
 
 // tijmath
-#include <tijmath/localization/FrameId.hpp>
+#include <tijmath/FrameId.hpp>
 
 namespace tijmath
 {

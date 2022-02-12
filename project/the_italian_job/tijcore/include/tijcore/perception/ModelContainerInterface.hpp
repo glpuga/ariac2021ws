@@ -12,7 +12,7 @@
 #include <tijcore/agents/WorkRegionId.hpp>
 #include <tijcore/math/CuboidVolume.hpp>
 #include <tijcore/perception/ResourceHandle.hpp>
-#include <tijmath/localization/RelativePose3.hpp>
+#include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
 {

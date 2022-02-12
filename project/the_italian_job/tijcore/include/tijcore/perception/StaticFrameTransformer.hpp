@@ -12,7 +12,7 @@
 
 // tijcore
 #include <tijcore/perception/FrameTransformerInterface.hpp>
-#include <tijmath/math/Isometry.hpp>
+#include <tijmath/Isometry.hpp>
 
 namespace tijcore
 {

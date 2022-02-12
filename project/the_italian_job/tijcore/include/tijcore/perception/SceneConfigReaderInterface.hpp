@@ -12,7 +12,7 @@
 // tijcore
 #include <tijcore/agents/WorkRegionId.hpp>
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
-#include <tijmath/localization/RelativePose3.hpp>
+#include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
 {

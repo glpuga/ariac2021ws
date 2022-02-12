@@ -10,9 +10,9 @@
 #include <ostream>
 
 // tijmath
-#include <tijmath/math/Matrix3.hpp>
-#include <tijmath/math/Quaternion.hpp>
-#include <tijmath/math/Vector3.hpp>
+#include <tijmath/Matrix3.hpp>
+#include <tijmath/Quaternion.hpp>
+#include <tijmath/Vector3.hpp>
 
 namespace tijmath
 {

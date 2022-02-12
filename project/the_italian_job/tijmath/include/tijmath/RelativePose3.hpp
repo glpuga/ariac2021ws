@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <tijmath/localization/FrameId.hpp>
-#include <tijmath/localization/Pose3.hpp>
+#include <tijmath/FrameId.hpp>
+#include <tijmath/Pose3.hpp>
 
 namespace tijmath
 {

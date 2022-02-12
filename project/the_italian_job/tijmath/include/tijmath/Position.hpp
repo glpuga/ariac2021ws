@@ -5,7 +5,7 @@
 #pragma once
 
 // tijmath
-#include <tijmath/math/Vector3.hpp>
+#include <tijmath/Vector3.hpp>
 
 namespace tijmath
 {

@@ -11,7 +11,7 @@
 
 // tijcore
 #include <tijcore/agents/PartId.hpp>
-#include <tijmath/localization/RelativePose3.hpp>
+#include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
 {

@@ -18,7 +18,7 @@
 #include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijcore/perception/PickAndPlaceRobotInterface.hpp>
 #include <tijcore/perception/Toolbox.hpp>
-#include <tijmath/localization/RelativePose3.hpp>
+#include <tijmath/RelativePose3.hpp>
 
 namespace tijros
 {

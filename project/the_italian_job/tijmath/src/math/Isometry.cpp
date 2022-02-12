@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 // tijmath
-#include <tijmath/math/Isometry.hpp>
+#include <tijmath/Isometry.hpp>
 
 namespace tijmath
 {
