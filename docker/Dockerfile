@@ -60,6 +60,7 @@ RUN /bin/sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) 
  && apt install -y \
     python-rosdep \
     python-catkin-lint \
+    python-catkin-tools \
     ros-${DIST}-controller-manager \
     ros-${DIST}-effort-controllers \
     ros-${DIST}-image-proc \
