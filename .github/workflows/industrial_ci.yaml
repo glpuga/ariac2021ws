@@ -1,19 +1,17 @@
 # This config uses industrial_ci (https://github.com/ros-industrial/industrial_ci.git).
 # For troubleshooting, see README (https://github.com/ros-industrial/industrial_ci/blob/master/README.rst)
 
-name: CI
+name: Industrial CI
 
-on: # this determines when this workflow is run
+on:
   push:
-     branches: [ main, devel ] #  when master or melodic-devel branch is pushed to
-  pull_request:
-     branches: [ main, devel ] # when there is a pull request against master
+     branches: [ main, devel ]
   workflow_dispatch: # allow manually starting this workflow
 
 jobs:
   industrial_ci:
     name: ROS Tests
-    runs-on: ubuntu-runner-lima-1
+    runs-on: ubuntu-runner-lima-2
     strategy:
       matrix: # matrix is the product of entries
         ROS_DISTRO: [melodic]
