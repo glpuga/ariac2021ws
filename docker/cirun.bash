@@ -14,10 +14,10 @@ LOCAL_REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 &&
 USERID=$(id -u)
 GROUPID=$(id -g)
 
-mkdir -p $HOME/.docker_ccache
+mkdir -p $HOME/.ci_docker_ccache
 
 docker run \
-  --mount type=bind,source=$HOME/.docker_ccache,target=/home/developer/.ccache \
+  --mount type=bind,source=$HOME/.ci_docker_ccache,target=/home/developer/.ccache \
   --mount type=bind,source=${LOCAL_REPO_PATH},target=/home/developer/ws/src/workspace \
   --runtime=$RUNTIME \
   --rm \
