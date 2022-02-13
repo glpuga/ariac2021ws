@@ -14,11 +14,11 @@ jobs:
     name: Update development environment
     runs-on: ubuntu-runner-lima-1
     steps:
-      # - name: Setup ccache action/cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: $HOME/.docker_ccache
-      #     key: ccache
+      - name: Setup ccache action/cache
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.ci_docker_ccache
+          key: ccache
       - uses: actions/checkout@v2
         with:
           submodules: true
