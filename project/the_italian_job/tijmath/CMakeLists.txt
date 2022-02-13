@@ -38,16 +38,16 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-  src/localization/FrameId.cpp
-  src/localization/Pose3.cpp
-  src/localization/RelativePose3.cpp
-  src/math/Isometry.cpp
-  src/math/Matrix3.cpp
-  src/math/Position.cpp
-  src/math/Quaternion.cpp
-  src/math/Rotation.cpp
-  src/math/Vector3.cpp
-  src/utils/angles.cpp
+  src/FrameId.cpp
+  src/Isometry.cpp
+  src/Matrix3.cpp
+  src/Pose3.cpp
+  src/Position.cpp
+  src/Quaternion.cpp
+  src/RelativePose3.cpp
+  src/Rotation.cpp
+  src/Vector3.cpp
+  src/math_utilities.cpp
 )
 
 add_dependencies(
