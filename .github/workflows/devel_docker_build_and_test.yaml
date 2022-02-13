@@ -14,11 +14,6 @@ jobs:
     name: Update development environment
     runs-on: ubuntu-runner-lima-1
     steps:
-      - name: Setup ccache action/cache
-        uses: actions/cache@v2
-        with:
-          path: $HOME/.docker_ccache
-          key: ccache
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -26,7 +21,7 @@ jobs:
         run: |
           cd docker
           ./build.bash
-      - name: Build and test
+      - name: Build and test ARIAC competition workspace
         run: |
           cd docker
           ./cirun.bash
