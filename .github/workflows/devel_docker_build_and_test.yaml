@@ -1,0 +1,32 @@
+
+name: Devel environment build and test
+
+on:
+  push: # this needs to run on the main and devel branches so that the cache is available to push_requests
+     branches: [ main, devel ]
+  pull_request:
+     branches: [ main, devel ]
+  workflow_dispatch: # allow manually starting this workflow
+
+jobs:
+
+  build_and_test:
+    name: Update development environment
+    runs-on: ubuntu-runner-lima-1
+    steps:
+      - name: Setup ccache action/cache
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.docker_ccache
+          key: ccache
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Build docker image
+        run: |
+          cd docker
+          ./build.bash
+      - name: Build and test
+        run: |
+          cd docker
+          ./cirun.bash
