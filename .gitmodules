@@ -4,3 +4,6 @@
 [submodule "external/roslint"]
 	path = external/roslint
 	url = git@github.com:ros/roslint.git
+[submodule "external/BehaviorTree.CPP"]
+	path = external/BehaviorTree.CPP
+	url = git@github.com:glpuga/BehaviorTree.CPP.git
