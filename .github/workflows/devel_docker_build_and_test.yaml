@@ -12,7 +12,7 @@ jobs:
 
   build_and_test:
     name: Update development environment
-    runs-on: ubuntu-runner-lima-1
+    runs-on: fast-runner
     steps:
       - uses: actions/checkout@v2
         with:
