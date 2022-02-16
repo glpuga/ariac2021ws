@@ -14,7 +14,7 @@
 #include <ros/ros.h>
 
 // tijcore
-#include <tijcore/perception/ModelPerceptionInterface.hpp>
+#include <tijcore/abstractions/ModelPerceptionInterface.hpp>
 #include <tijcore/utils/Timer.hpp>
 
 namespace tijros

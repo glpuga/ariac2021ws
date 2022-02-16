@@ -10,7 +10,7 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/perception/Toolbox.hpp>
+#include <tijcore/coremodels/Toolbox.hpp>
 #include <tijros/PickAndPlaceRobotCommonImpl.hpp>
 
 namespace tijros

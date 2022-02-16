@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/perception/StaticFrameTransformer.hpp>
+#include <tijcore/utils/StaticFrameTransformer.hpp>
 #include "utils/test_utils.hpp"
 
 namespace tijcore

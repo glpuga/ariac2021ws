@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/BinId.hpp>
+#include <tijcore/datatypes/BinId.hpp>
 
 namespace tijcore
 {

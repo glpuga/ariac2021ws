@@ -13,12 +13,12 @@
 #include <ros/ros.h>
 
 // project
-#include <tijcore/perception/ModelContainerInterface.hpp>
-#include <tijcore/perception/ModelPerceptionInterface.hpp>
-#include <tijcore/perception/PickAndPlaceRobotInterface.hpp>
-#include <tijcore/perception/SceneConfigReaderInterface.hpp>
-#include <tijcore/perception/TaskDriver.hpp>
-#include <tijcore/perception/Toolbox.hpp>
+#include <tijcore/abstractions/ModelContainerInterface.hpp>
+#include <tijcore/abstractions/ModelPerceptionInterface.hpp>
+#include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
+#include <tijcore/abstractions/SceneConfigReaderInterface.hpp>
+#include <tijcore/coremodels/Toolbox.hpp>
+#include <tijcore/tasking/TaskDriver.hpp>
 #include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 
 namespace tijchallenger

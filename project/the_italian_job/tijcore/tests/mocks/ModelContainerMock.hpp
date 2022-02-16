@@ -12,7 +12,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/perception/ModelContainerInterface.hpp>
+#include <tijcore/abstractions/ModelContainerInterface.hpp>
 
 namespace tijcore
 {

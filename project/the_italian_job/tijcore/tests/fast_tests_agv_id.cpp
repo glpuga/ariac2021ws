@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/AgvId.hpp>
+#include <tijcore/datatypes/AgvId.hpp>
 
 namespace tijcore
 {

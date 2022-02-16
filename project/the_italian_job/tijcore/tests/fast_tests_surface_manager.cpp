@@ -6,7 +6,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/SurfaceManager.hpp>
+#include <tijcore/resources/SurfaceManager.hpp>
 
 namespace tijcore
 {

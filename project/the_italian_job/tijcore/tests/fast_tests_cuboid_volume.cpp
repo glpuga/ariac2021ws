@@ -6,7 +6,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/math/CuboidVolume.hpp>
+#include <tijcore/utils/CuboidVolume.hpp>
 
 namespace tijcore
 {

@@ -9,7 +9,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/perception/ManagedLocus.hpp>
+#include <tijcore/resources/ManagedLocus.hpp>
 
 #include "mocks/ModelContainerMock.hpp"
 

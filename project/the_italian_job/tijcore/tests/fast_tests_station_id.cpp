@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/StationId.hpp>
+#include <tijcore/datatypes/StationId.hpp>
 
 namespace tijcore
 {

@@ -11,8 +11,8 @@
 #include <geometry_msgs/Pose.h>
 
 // tijcore
-#include <tijcore/agents/AgvId.hpp>
-#include <tijcore/agents/StationId.hpp>
+#include <tijcore/datatypes/AgvId.hpp>
+#include <tijcore/datatypes/StationId.hpp>
 #include <tijmath/Pose3.hpp>
 
 namespace tijros

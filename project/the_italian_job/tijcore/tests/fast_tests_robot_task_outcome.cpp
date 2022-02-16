@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/RobotTaskOutcome.hpp>
+#include <tijcore/datatypes/RobotTaskOutcome.hpp>
 
 namespace tijcore
 {

@@ -16,9 +16,9 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/perception/ResourceManager.hpp>
-#include <tijcore/perception/StaticFrameTransformer.hpp>
-#include <tijcore/perception/Toolbox.hpp>
+#include <tijcore/coremodels/Toolbox.hpp>
+#include <tijcore/resources/ResourceManager.hpp>
+#include <tijcore/utils/StaticFrameTransformer.hpp>
 
 #include "mocks/ModelContainerMock.hpp"
 #include "mocks/PickAndPlaceRobotMock.hpp"

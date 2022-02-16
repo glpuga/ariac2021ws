@@ -39,39 +39,39 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-  src/agents/AgvId.cpp
-  src/agents/BinId.cpp
-  src/agents/OrderId.cpp
-  src/agents/PartColorId.cpp
-  src/agents/PartId.cpp
-  src/agents/PartTypeId.cpp
-  src/agents/RobotTaskOutcome.cpp
-  src/agents/StationId.cpp
-  src/agents/SurfaceManager.cpp
-  src/agents/WorkRegionId.cpp
-  src/math/CuboidVolume.cpp
-  src/perception/AgvModelContainer.cpp
-  src/perception/AssemblyStationModelContainer.cpp
-  src/perception/BinModelContainer.cpp
-  src/perception/ConveyorBeltModelContainer.cpp
-  src/perception/ManagedLocus.cpp
-  src/perception/ModelContainerInterface.cpp
-  src/perception/ModelPerceptionMixer.cpp
-  src/perception/OrderProcessingStrategy.cpp
-  src/perception/ResourceHandle.cpp
-  src/perception/ResourceManager.cpp
-  src/perception/RobotTaskFactory.cpp
-  src/perception/StaticFrameTransformer.cpp
-  src/perception/TaskDriver.cpp
-  src/perception/TaskMaster.cpp
-  src/tasks/PickAndPlaceTask.cpp
-  src/tasks/PickAndTwistPartTask.cpp
-  src/tasks/RemoveBrokenPartTask.cpp
-  src/tasks/RobotTaskGroupRunner.cpp
-  src/tasks/SubmitAssemblyShipmentTask.cpp
-  src/tasks/SubmitKittingShipmentTask.cpp
-  src/utils/Timer.cpp
-  src/utils/string.cpp
+  src/AgvId.cpp
+  src/AgvModelContainer.cpp
+  src/AssemblyStationModelContainer.cpp
+  src/BinId.cpp
+  src/BinModelContainer.cpp
+  src/ConveyorBeltModelContainer.cpp
+  src/CuboidVolume.cpp
+  src/ManagedLocus.cpp
+  src/ModelContainerInterface.cpp
+  src/ModelPerceptionMixer.cpp
+  src/OrderId.cpp
+  src/OrderProcessingStrategy.cpp
+  src/PartColorId.cpp
+  src/PartId.cpp
+  src/PartTypeId.cpp
+  src/PickAndPlaceTask.cpp
+  src/PickAndTwistPartTask.cpp
+  src/RemoveBrokenPartTask.cpp
+  src/ResourceHandle.cpp
+  src/ResourceManager.cpp
+  src/RobotTaskFactory.cpp
+  src/RobotTaskGroupRunner.cpp
+  src/RobotTaskOutcome.cpp
+  src/StaticFrameTransformer.cpp
+  src/StationId.cpp
+  src/SubmitAssemblyShipmentTask.cpp
+  src/SubmitKittingShipmentTask.cpp
+  src/SurfaceManager.cpp
+  src/TaskDriver.cpp
+  src/TaskMaster.cpp
+  src/Timer.cpp
+  src/WorkRegionId.cpp
+  src/string.cpp
 )
 
 add_dependencies(

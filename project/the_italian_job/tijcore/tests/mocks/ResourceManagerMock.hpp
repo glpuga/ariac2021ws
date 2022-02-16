@@ -13,7 +13,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/perception/ResourceManagerInterface.hpp>
+#include <tijcore/abstractions/ResourceManagerInterface.hpp>
 
 namespace tijcore
 {

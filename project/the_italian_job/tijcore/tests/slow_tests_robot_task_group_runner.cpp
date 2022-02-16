@@ -13,8 +13,8 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/tasks/RobotTaskAsyncRunner.hpp>
-#include <tijcore/tasks/RobotTaskGroupRunner.hpp>
+#include <tijcore/tasking/RobotTaskAsyncRunner.hpp>
+#include <tijcore/tasking/RobotTaskGroupRunner.hpp>
 
 #include "mocks/RobotTaskMock.hpp"
 #include "utils/ActionQueue.hpp"

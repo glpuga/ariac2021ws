@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/PartColorId.hpp>
+#include <tijcore/datatypes/PartColorId.hpp>
 
 namespace tijcore
 {

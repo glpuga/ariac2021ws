@@ -17,7 +17,7 @@
 #include <std_msgs/String.h>
 
 // tijcore
-#include <tijcore/competition/ProcessManagementInterface.hpp>
+#include <tijcore/abstractions/ProcessManagementInterface.hpp>
 
 namespace tijros
 {
