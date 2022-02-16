@@ -11,7 +11,7 @@ on:
 jobs:
   industrial_ci:
     name: ROS Tests
-    runs-on: ubuntu-runner-lima-2
+    runs-on: slow-runner
     strategy:
       matrix: # matrix is the product of entries
         ROS_DISTRO: [melodic]
