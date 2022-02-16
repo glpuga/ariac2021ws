@@ -13,9 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
   tijmath
 )
 
-find_package(cmake_modules REQUIRED)
-find_package(Eigen3 REQUIRED)
-
 catkin_package(
   INCLUDE_DIRS
     include
@@ -24,8 +21,6 @@ catkin_package(
   CATKIN_DEPENDS
     roscpp
     tijlogger
-  DEPENDS
-    EIGEN3
 )
 
 # ##############################################################################

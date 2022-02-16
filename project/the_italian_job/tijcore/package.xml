@@ -10,10 +10,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>cmake_modules</depend>
   <depend>roscpp</depend>
   <depend>roslint</depend>
-  <depend>eigen</depend>
   <depend>rostest</depend>
   <depend>tijlogger</depend>
   <depend>tijmath</depend>
