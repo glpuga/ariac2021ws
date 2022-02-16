@@ -11,7 +11,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/perception/ModelPerceptionInterface.hpp>
+#include <tijcore/abstractions/ModelPerceptionInterface.hpp>
 
 namespace tijcore
 {

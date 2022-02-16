@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/OrderId.hpp>
+#include <tijcore/datatypes/OrderId.hpp>
 
 namespace tijcore
 {

@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/WorkRegionId.hpp>
+#include <tijcore/datatypes/WorkRegionId.hpp>
 
 namespace tijcore
 {

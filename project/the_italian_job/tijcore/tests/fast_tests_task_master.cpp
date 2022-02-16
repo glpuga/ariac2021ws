@@ -17,11 +17,11 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/perception/ResourceManager.hpp>
-#include <tijcore/perception/RobotTaskFactoryInterface.hpp>
-#include <tijcore/perception/StaticFrameTransformer.hpp>
-#include <tijcore/perception/TaskMaster.hpp>
-#include <tijcore/perception/Toolbox.hpp>
+#include <tijcore/abstractions/RobotTaskFactoryInterface.hpp>
+#include <tijcore/coremodels/Toolbox.hpp>
+#include <tijcore/resources/ResourceManager.hpp>
+#include <tijcore/tasking/TaskMaster.hpp>
+#include <tijcore/utils/StaticFrameTransformer.hpp>
 #include <tijlogger/logger.hpp>
 
 #include "mocks/ModelContainerMock.hpp"

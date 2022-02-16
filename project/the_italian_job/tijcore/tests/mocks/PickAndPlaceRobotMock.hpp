@@ -14,7 +14,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/perception/PickAndPlaceRobotInterface.hpp>
+#include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
 
 namespace tijcore
 {

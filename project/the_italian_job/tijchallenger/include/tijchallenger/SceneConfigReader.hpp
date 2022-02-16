@@ -9,7 +9,7 @@
 #include <vector>
 
 // project
-#include <tijcore/perception/SceneConfigReaderInterface.hpp>
+#include <tijcore/abstractions/SceneConfigReaderInterface.hpp>
 
 namespace tijchallenger
 {

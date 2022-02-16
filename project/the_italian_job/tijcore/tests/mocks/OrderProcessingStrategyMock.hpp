@@ -13,7 +13,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/perception/OrderProcessingStrategyInterface.hpp>
+#include <tijcore/abstractions/OrderProcessingStrategyInterface.hpp>
 
 namespace tijcore
 {

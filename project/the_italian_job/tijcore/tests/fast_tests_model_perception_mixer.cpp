@@ -12,7 +12,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/perception/ModelPerceptionMixer.hpp>
+#include <tijcore/coremodels/ModelPerceptionMixer.hpp>
 
 // mocks
 #include "mocks/ModelPerceptionMixerMock.hpp"

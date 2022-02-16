@@ -12,7 +12,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/perception/OrderProcessingStrategy.hpp>
+#include <tijcore/coremodels/OrderProcessingStrategy.hpp>
 
 #include "mocks/ResourceManagerMock.hpp"
 

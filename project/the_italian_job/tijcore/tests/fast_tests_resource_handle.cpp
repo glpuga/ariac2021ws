@@ -9,7 +9,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/perception/ResourceHandle.hpp>
+#include <tijcore/resources/ResourceHandle.hpp>
 
 namespace tijcore
 {

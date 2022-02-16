@@ -14,7 +14,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/competition/ProcessManagementInterface.hpp>
+#include <tijcore/abstractions/ProcessManagementInterface.hpp>
 
 namespace tijcore
 {

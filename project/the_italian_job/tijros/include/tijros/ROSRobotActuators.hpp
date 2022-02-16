@@ -16,7 +16,7 @@
 #include <nist_gear/VacuumGripperState.h>
 
 // tijcore
-#include <tijcore/competition/RobotActuatorsInterface.hpp>
+#include <tijcore/abstractions/RobotActuatorsInterface.hpp>
 
 namespace tijros
 {

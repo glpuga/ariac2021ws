@@ -15,9 +15,9 @@
 #include <ros/ros.h>
 
 // tijcore
-#include <tijcore/perception/ModelTraySharedAccessSpaceDescription.hpp>
-#include <tijcore/perception/PickAndPlaceRobotInterface.hpp>
-#include <tijcore/perception/Toolbox.hpp>
+#include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
+#include <tijcore/coremodels/Toolbox.hpp>
+#include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijmath/RelativePose3.hpp>
 
 namespace tijros

@@ -12,7 +12,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/perception/TaskMasterInterface.hpp>
+#include <tijcore/abstractions/TaskMasterInterface.hpp>
 
 namespace tijcore
 {

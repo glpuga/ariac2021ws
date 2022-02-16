@@ -11,7 +11,7 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/competition/RobotActuatorsInterface.hpp>
+#include <tijcore/abstractions/RobotActuatorsInterface.hpp>
 
 namespace tijcore
 {

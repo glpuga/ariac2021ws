@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/PartTypeId.hpp>
+#include <tijcore/datatypes/PartTypeId.hpp>
 
 namespace tijcore
 {

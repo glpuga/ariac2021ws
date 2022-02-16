@@ -6,12 +6,12 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/agents/AssemblyShipment.hpp>
-#include <tijcore/agents/KittingShipment.hpp>
-#include <tijcore/agents/ObservedModel.hpp>
-#include <tijcore/agents/Order.hpp>
-#include <tijcore/agents/ProductRequest.hpp>
-#include <tijcore/agents/ShipmentType.hpp>
+#include <tijcore/datatypes/AssemblyShipment.hpp>
+#include <tijcore/datatypes/KittingShipment.hpp>
+#include <tijcore/datatypes/ObservedModel.hpp>
+#include <tijcore/datatypes/Order.hpp>
+#include <tijcore/datatypes/ProductRequest.hpp>
+#include <tijcore/datatypes/ShipmentType.hpp>
 
 namespace tijcore
 {
