@@ -17,4 +17,6 @@
   <depend>rostest</depend>
   <depend>tijlogger</depend>
 
+  <depend>python-catkin-lint</depend>
+
 </package>

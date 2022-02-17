@@ -118,7 +118,7 @@ if(CATKIN_ENABLE_TESTING)
 
   set(ROSLINT_CPP_OPTS --extensions=h,hpp,cpp)
   roslint_cpp()
-  
+
   roslint_custom(catkin_lint --strict -W2 ${PROJECT_SOURCE_DIR})
   roslint_add_test()
 

@@ -14,4 +14,6 @@
   <depend>roslint</depend>
   <depend>rostest</depend>
 
+  <depend>python-catkin-lint</depend>
+
 </package>

@@ -22,4 +22,6 @@
   <depend>tijros</depend>
   <depend>tf</depend>
 
+  <depend>python-catkin-lint</depend>
+
 </package>

@@ -65,7 +65,7 @@ target_link_libraries(${PROJECT_NAME}
 # ##############################################################################
 
 install(
-  TARGETS ${PROJECT_NAME} 
+  TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
@@ -99,7 +99,7 @@ if(CATKIN_ENABLE_TESTING)
 
   set(ROSLINT_CPP_OPTS --extensions=h,hpp,cpp)
   roslint_cpp()
-  
+
   roslint_custom(catkin_lint --strict -W2 ${PROJECT_SOURCE_DIR})
   roslint_add_test()
 
