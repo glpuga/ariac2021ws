@@ -29,4 +29,6 @@
   <depend>tijlogger</depend>
   <depend>tijmath</depend>
 
+  <depend>python-catkin-lint</depend>
+
 </package>
