@@ -1,4 +1,4 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -12,9 +12,7 @@
 #include <mutex>
 #include <thread>
 
-namespace tijcore
-{
-namespace utils
+namespace tijutils
 {
 class Timer
 {
@@ -47,6 +45,4 @@ private:
   void runnerBody();
 };
 
-}  // namespace utils
-
-}  // namespace tijcore
+}  // namespace tijutils

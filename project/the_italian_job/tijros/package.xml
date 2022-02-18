@@ -28,6 +28,7 @@
   <depend>tijcore</depend>
   <depend>tijlogger</depend>
   <depend>tijmath</depend>
+  <depend>tijutils</depend>
 
   <depend>python-catkin-lint</depend>
 

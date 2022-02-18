@@ -10,12 +10,10 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-// tijcore
-#include <tijcore/utils/Timer.hpp>
+// tijutils
+#include <tijutils/Timer.hpp>
 
-namespace tijcore
-{
-namespace utils
+namespace tijutils
 {
 namespace test
 {
@@ -281,6 +279,4 @@ TEST_F(TimerTests, TimerCanChangeModeBackAndForth)
 
 }  // namespace test
 
-}  // namespace utils
-
-}  // namespace tijcore
+}  // namespace tijutils

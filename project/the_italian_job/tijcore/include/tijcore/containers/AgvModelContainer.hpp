@@ -11,7 +11,7 @@
 // tijcore
 #include <tijcore/abstractions/ModelContainerInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
-#include <tijcore/utils/Timer.hpp>
+#include <tijutils/Timer.hpp>
 
 namespace tijcore
 {
@@ -38,7 +38,7 @@ private:
 
   bool enabled_{ true };
 
-  utils::Timer timer_;
+  tijutils::Timer timer_;
 
   void timerCallback();
 };

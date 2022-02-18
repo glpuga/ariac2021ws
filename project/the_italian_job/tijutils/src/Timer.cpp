@@ -1,4 +1,4 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -8,12 +8,10 @@
 #include <mutex>
 #include <thread>
 
-// tijcore
-#include <tijcore/utils/Timer.hpp>
+// tijutils
+#include <tijutils/Timer.hpp>
 
-namespace tijcore
-{
-namespace utils
+namespace tijutils
 {
 Timer::Timer(std::function<void()> callback) : callback_{ callback }
 {
@@ -94,6 +92,4 @@ void Timer::runnerBody()
   autoremove_ = true;
 }
 
-}  // namespace utils
-
-}  // namespace tijcore
+}  // namespace tijutils

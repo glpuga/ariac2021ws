@@ -15,7 +15,7 @@
 #include <tijcore/abstractions/RobotTaskGroupRunnerInterface.hpp>
 #include <tijcore/abstractions/TaskMasterInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
-#include <tijcore/utils/Timer.hpp>
+#include <tijutils/Timer.hpp>
 
 using namespace std::literals;
 
@@ -44,7 +44,7 @@ private:
 
   std::mutex mutex_;
 
-  std::unique_ptr<utils::Timer> processing_driver_;
+  std::unique_ptr<tijutils::Timer> processing_driver_;
 
   void perceptionCallback();
 
