@@ -15,7 +15,7 @@
 
 // tijcore
 #include <tijcore/abstractions/ModelPerceptionInterface.hpp>
-#include <tijcore/utils/Timer.hpp>
+#include <tijutils/Timer.hpp>
 
 namespace tijros
 {
@@ -35,7 +35,7 @@ private:
   bool update_received_{ false };
   std::string logical_sensor_name_;
 
-  tijcore::utils::Timer timer_;
+  tijutils::Timer timer_;
 
   std::vector<tijcore::ObservedModel> models_;
 

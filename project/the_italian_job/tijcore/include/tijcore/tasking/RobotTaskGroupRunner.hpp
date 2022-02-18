@@ -11,7 +11,7 @@
 // tijcore
 #include <tijcore/abstractions/RobotTaskGroupRunnerInterface.hpp>
 #include <tijcore/tasking/RobotTaskAsyncRunner.hpp>
-#include <tijcore/utils/Timer.hpp>
+#include <tijutils/Timer.hpp>
 
 namespace tijcore
 {
@@ -28,7 +28,7 @@ private:
   std::mutex mutex_;
 
   std::list<RobotTaskAsyncRunner> tasks_in_execution_;
-  utils::Timer garbage_collector_timer_;
+  tijutils::Timer garbage_collector_timer_;
 
   void stopAllTasks();
 

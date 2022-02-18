@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   rostest
   tijlogger
   tijmath
+  tijutils
 )
 
 catkin_package(
@@ -21,6 +22,7 @@ catkin_package(
   CATKIN_DEPENDS
     roscpp
     tijlogger
+    tijutils
 )
 
 # ##############################################################################
@@ -64,7 +66,6 @@ add_library(${PROJECT_NAME}
   src/SurfaceManager.cpp
   src/TaskDriver.cpp
   src/TaskMaster.cpp
-  src/Timer.cpp
   src/WorkRegionId.cpp
   src/string.cpp
 )
