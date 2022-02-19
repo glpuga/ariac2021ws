@@ -17,7 +17,8 @@ namespace tijcore
 class RemoveBrokenPartTask : public RobotTaskInterface
 {
 public:
-  RemoveBrokenPartTask(const ResourceManagerInterface::SharedPtr& resource_manager, const Toolbox::SharedPtr& toolbox,
+  RemoveBrokenPartTask(const ResourceManagerInterface::SharedPtr& resource_manager,
+                       const Toolbox::SharedPtr& toolbox,
                        ResourceManagerInterface::ManagedLocusHandle&& target,
                        ResourceManagerInterface::PickAndPlaceRobotHandle&& robot);
 

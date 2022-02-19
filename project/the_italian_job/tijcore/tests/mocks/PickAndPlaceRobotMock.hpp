@@ -31,13 +31,14 @@ public:
 
   MOCK_CONST_METHOD1(getInLandingSpot, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD2(graspPartFromAbove,
-                     bool(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
+  MOCK_CONST_METHOD2(graspPartFromAbove, bool(const tijmath::RelativePose3& target,
+                                              const tijcore::PartTypeId& part_type_id));
 
-  MOCK_CONST_METHOD2(placePartFromAbove,
-                     bool(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
+  MOCK_CONST_METHOD2(placePartFromAbove, bool(const tijmath::RelativePose3& target,
+                                              const tijcore::PartTypeId& part_type_id));
 
-  MOCK_CONST_METHOD2(twistPartInPlace, bool(tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
+  MOCK_CONST_METHOD2(twistPartInPlace,
+                     bool(tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
 
   MOCK_CONST_METHOD0(enabled, bool());
 
@@ -65,9 +66,11 @@ public:
 
   MOCK_CONST_METHOD0(dropPartWhereYouStand, bool());
 
-  MOCK_METHOD1(markAsInaccessible, void(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors));
+  MOCK_METHOD1(markAsInaccessible,
+               void(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors));
 
-  MOCK_METHOD1(markAsAccessible, void(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors));
+  MOCK_METHOD1(markAsAccessible,
+               void(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors));
 };
 
 }  // namespace tijcore

@@ -33,12 +33,14 @@ public:
 
   virtual std::vector<Order> getOrders() = 0;
 
-  virtual ErrorWithReason submitAgvToAssemblyStation(const AgvId& agv, const StationId& destination_station,
+  virtual ErrorWithReason submitAgvToAssemblyStation(const AgvId& agv,
+                                                     const StationId& destination_station,
                                                      const std::string& shipment_type) const = 0;
 
   virtual std::string getAgvState(const AgvId& agv) const = 0;
 
-  virtual ErrorWithReason submitAssemblyStation(const StationId& station, const std::string& shipment_type) const = 0;
+  virtual ErrorWithReason submitAssemblyStation(const StationId& station,
+                                                const std::string& shipment_type) const = 0;
 
   virtual StationId getAgvStation(const AgvId& station) const = 0;
 };

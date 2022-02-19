@@ -14,7 +14,8 @@ class Quaternion
 public:
   Quaternion() = default;
 
-  Quaternion(const double x, const double y, const double z, const double w) : x_{ x }, y_{ y }, z_{ z }, w_{ w }
+  Quaternion(const double x, const double y, const double z, const double w)
+    : x_{ x }, y_{ y }, z_{ z }, w_{ w }
   {
   }
 

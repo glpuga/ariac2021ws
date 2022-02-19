@@ -40,8 +40,8 @@ public:
 class GenericTask : public RobotTaskInterface
 {
 public:
-  GenericTask(const std::chrono::milliseconds& pause, const int id, const RobotTaskOutcome& return_value,
-              SequenceChecker& checker)
+  GenericTask(const std::chrono::milliseconds& pause, const int id,
+              const RobotTaskOutcome& return_value, SequenceChecker& checker)
     : pause_{ pause }, id_{ id }, return_value_{ return_value }, checker_{ checker }
   {
   }
@@ -82,7 +82,8 @@ TEST_F(RobotTaskGroupRunnerTests, RunnerCanExecuteASingleTask)
   RobotTaskGroupRunner uut;
 
   action_queueu_.queueTestActionQueue([&] {
-    RobotTaskInterface::Ptr task = std::make_unique<GenericTask>(1s, 1, RobotTaskOutcome::TASK_SUCCESS, checker);
+    RobotTaskInterface::Ptr task =
+        std::make_unique<GenericTask>(1s, 1, RobotTaskOutcome::TASK_SUCCESS, checker);
     uut.add(task);
   });
 
@@ -102,17 +103,20 @@ TEST_F(RobotTaskGroupRunnerTests, MultipleTasksCoStarted)
   RobotTaskGroupRunner uut;
 
   action_queueu_.queueTestActionQueue([&] {
-    RobotTaskInterface::Ptr task = std::make_unique<GenericTask>(1500ms, 3, RobotTaskOutcome::TASK_SUCCESS, checker);
+    RobotTaskInterface::Ptr task =
+        std::make_unique<GenericTask>(1500ms, 3, RobotTaskOutcome::TASK_SUCCESS, checker);
     uut.add(task);
   });
 
   action_queueu_.queueTestActionQueue([&] {
-    RobotTaskInterface::Ptr task = std::make_unique<GenericTask>(1000ms, 2, RobotTaskOutcome::TASK_SUCCESS, checker);
+    RobotTaskInterface::Ptr task =
+        std::make_unique<GenericTask>(1000ms, 2, RobotTaskOutcome::TASK_SUCCESS, checker);
     uut.add(task);
   });
 
   action_queueu_.queueTestActionQueue([&] {
-    RobotTaskInterface::Ptr task = std::make_unique<GenericTask>(500ms, 1, RobotTaskOutcome::TASK_SUCCESS, checker);
+    RobotTaskInterface::Ptr task =
+        std::make_unique<GenericTask>(500ms, 1, RobotTaskOutcome::TASK_SUCCESS, checker);
     uut.add(task);
   });
 
@@ -140,12 +144,14 @@ TEST_F(RobotTaskGroupRunnerTests, MultipleTasksStaggeredInTime)
   RobotTaskGroupRunner uut;
 
   action_queueu_.queueTestActionQueue([&] {
-    RobotTaskInterface::Ptr task = std::make_unique<GenericTask>(3000ms, 3, RobotTaskOutcome::TASK_SUCCESS, checker);
+    RobotTaskInterface::Ptr task =
+        std::make_unique<GenericTask>(3000ms, 3, RobotTaskOutcome::TASK_SUCCESS, checker);
     uut.add(task);
   });
 
   action_queueu_.queueTestActionQueue([&] {
-    RobotTaskInterface::Ptr task = std::make_unique<GenericTask>(500ms, 1, RobotTaskOutcome::TASK_SUCCESS, checker);
+    RobotTaskInterface::Ptr task =
+        std::make_unique<GenericTask>(500ms, 1, RobotTaskOutcome::TASK_SUCCESS, checker);
     uut.add(task);
   });
 
@@ -156,7 +162,8 @@ TEST_F(RobotTaskGroupRunnerTests, MultipleTasksStaggeredInTime)
   action_queueu_.queueTestActionQueue([&] { std::this_thread::sleep_for(500ms); });
 
   action_queueu_.queueTestActionQueue([&] {
-    RobotTaskInterface::Ptr task = std::make_unique<GenericTask>(500ms, 2, RobotTaskOutcome::TASK_SUCCESS, checker);
+    RobotTaskInterface::Ptr task =
+        std::make_unique<GenericTask>(500ms, 2, RobotTaskOutcome::TASK_SUCCESS, checker);
     uut.add(task);
   });
 

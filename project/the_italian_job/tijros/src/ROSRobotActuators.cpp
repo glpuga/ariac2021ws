@@ -44,17 +44,19 @@ constexpr char robot_health_topic[] = "/ariac/robot_health";
 
 ROSRobotActuators::ROSRobotActuators(const ros::NodeHandle nh) : nh_{ nh }
 {
-  conveyor_state_sub_ =
-      nh_.subscribe(converyor_state_topic, default_queue_len, &ROSRobotActuators::conveyorStateCallback, this);
+  conveyor_state_sub_ = nh_.subscribe(converyor_state_topic, default_queue_len,
+                                      &ROSRobotActuators::conveyorStateCallback, this);
 
-  gantry_arm_gripper_state_sub_ = nh_.subscribe(gantry_arm_gripper_state_topic, default_queue_len,
-                                                &ROSRobotActuators::gantryArmGripperStateCallback, this);
+  gantry_arm_gripper_state_sub_ =
+      nh_.subscribe(gantry_arm_gripper_state_topic, default_queue_len,
+                    &ROSRobotActuators::gantryArmGripperStateCallback, this);
 
-  kitting_arm_gripper_state_sub_ = nh_.subscribe(kitting_arm_gripper_state_topic, default_queue_len,
-                                                 &ROSRobotActuators::kittingArmGripperStateCallback, this);
+  kitting_arm_gripper_state_sub_ =
+      nh_.subscribe(kitting_arm_gripper_state_topic, default_queue_len,
+                    &ROSRobotActuators::kittingArmGripperStateCallback, this);
 
-  robot_health_sub_ =
-      nh_.subscribe(robot_health_topic, default_queue_len, &ROSRobotActuators::robotHealthCallback, this);
+  robot_health_sub_ = nh_.subscribe(robot_health_topic, default_queue_len,
+                                    &ROSRobotActuators::robotHealthCallback, this);
 }
 
 RobotActuatorsInterface::ConveyorState ROSRobotActuators::getConveyorState() const

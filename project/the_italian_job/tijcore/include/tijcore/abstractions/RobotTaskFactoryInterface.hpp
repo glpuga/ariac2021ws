@@ -27,20 +27,23 @@ public:
   getRemoveBrokenPartTask(ResourceManagerInterface::ManagedLocusHandle&& source_locus,
                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
-  virtual RobotTaskInterface::Ptr getPickAndPlaceTask(
-      ResourceManagerInterface::ManagedLocusHandle&& source, ResourceManagerInterface::ManagedLocusHandle&& destination,
-      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
+  virtual RobotTaskInterface::Ptr
+  getPickAndPlaceTask(ResourceManagerInterface::ManagedLocusHandle&& source,
+                      ResourceManagerInterface::ManagedLocusHandle&& destination,
+                      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
-  virtual RobotTaskInterface::Ptr getPickAndTwistPartTask(
-      ResourceManagerInterface::ManagedLocusHandle&& target, ResourceManagerInterface::ManagedLocusHandle&& destination,
-      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
+  virtual RobotTaskInterface::Ptr
+  getPickAndTwistPartTask(ResourceManagerInterface::ManagedLocusHandle&& target,
+                          ResourceManagerInterface::ManagedLocusHandle&& destination,
+                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
-  virtual RobotTaskInterface::Ptr getSubmitKittingShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                                                               const StationId& station_id,
-                                                               const ShipmentType& shipment_type) const = 0;
+  virtual RobotTaskInterface::Ptr getSubmitKittingShipmentTask(
+      ResourceManagerInterface::SubmissionTrayHandle&& tray, const StationId& station_id,
+      const ShipmentType& shipment_type) const = 0;
 
-  virtual RobotTaskInterface::Ptr getSubmitAssemblyShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                                                                const ShipmentType& shipment_type) const = 0;
+  virtual RobotTaskInterface::Ptr
+  getSubmitAssemblyShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
+                                const ShipmentType& shipment_type) const = 0;
 };
 
 }  // namespace tijcore

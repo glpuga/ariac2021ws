@@ -69,12 +69,14 @@ std::string toString(const StationId& id)
 
 bool isKittingStation(const StationId& id)
 {
-  return ((id == StationId::ks1) || (id == StationId::ks2) || (id == StationId::ks3) || (id == StationId::ks4));
+  return ((id == StationId::ks1) || (id == StationId::ks2) || (id == StationId::ks3) ||
+          (id == StationId::ks4));
 }
 
 bool isAssemblyStation(const StationId& id)
 {
-  return ((id == StationId::as1) || (id == StationId::as2) || (id == StationId::as3) || (id == StationId::as4));
+  return ((id == StationId::as1) || (id == StationId::as2) || (id == StationId::as3) ||
+          (id == StationId::as4));
 }
 
 bool isAny(const StationId& id)

@@ -33,7 +33,8 @@ LogicalCameraModelPerception::LogicalCameraModelPerception(const ros::NodeHandle
   : nh_{ nh }, logical_sensor_name_{ logical_sensor_name }, timer_{ [this] { timerCallback(); } }
 {
   const std::string topic_id{ topic_prefix_ + logical_sensor_name_ };
-  camera_sub_ = nh_.subscribe(topic_id, default_queue_len_, &LogicalCameraModelPerception::cameraCallback, this);
+  camera_sub_ = nh_.subscribe(topic_id, default_queue_len_,
+                              &LogicalCameraModelPerception::cameraCallback, this);
   timer_.start(timer_interval_);
 }
 
@@ -52,7 +53,8 @@ void LogicalCameraModelPerception::cameraCallback(nist_gear::LogicalCameraImage:
   {
     const auto& geo_pose = ros_model.pose;
     const auto relative_core_pose =
-        tijmath::RelativePose3{ logical_sensor_name_ + "_frame", utils::convertGeoPoseToCorePose(geo_pose) };
+        tijmath::RelativePose3{ logical_sensor_name_ + "_frame",
+                                utils::convertGeoPoseToCorePose(geo_pose) };
     const tijcore::PartId part_id{ ros_model.type };
     const tijcore::ObservedModel core_model{ part_id, relative_core_pose, false };
     models_.emplace_back(core_model);

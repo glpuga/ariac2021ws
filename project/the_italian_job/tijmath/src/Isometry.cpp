@@ -12,8 +12,9 @@
 
 namespace tijmath
 {
-const Isometry Isometry::Identity{ Matrix3{ Vector3{ 1, 0, 0 }, Vector3{ 0, 1, 0 }, Vector3{ 0, 0, 1 } },
-                                   Vector3{ 0, 0, 0 } };
+const Isometry Isometry::Identity{
+  Matrix3{ Vector3{ 1, 0, 0 }, Vector3{ 0, 1, 0 }, Vector3{ 0, 0, 1 } }, Vector3{ 0, 0, 0 }
+};
 
 Isometry::Isometry() : rotation_{ Matrix3::Identity }, translation_{ Vector3::Zero }
 {

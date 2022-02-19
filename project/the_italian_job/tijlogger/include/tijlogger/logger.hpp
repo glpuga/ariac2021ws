@@ -15,21 +15,21 @@
 // for user defined types; needs to be included after spdlog.h
 #include <tijlogger/spdlog/fmt/ostr.h>
 
-#define DEBUG(...)                                                                                                     \
-  {                                                                                                                    \
-    ::logger::instance().debug(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                                            \
+#define DEBUG(...)                                                                                 \
+  {                                                                                                \
+    ::logger::instance().debug(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                        \
   };
-#define INFO(...)                                                                                                      \
-  {                                                                                                                    \
-    ::logger::instance().info(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                                             \
+#define INFO(...)                                                                                  \
+  {                                                                                                \
+    ::logger::instance().info(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                         \
   };
-#define WARNING(...)                                                                                                   \
-  {                                                                                                                    \
-    ::logger::instance().warning(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                                          \
+#define WARNING(...)                                                                               \
+  {                                                                                                \
+    ::logger::instance().warning(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                      \
   };
-#define ERROR(...)                                                                                                     \
-  {                                                                                                                    \
-    ::logger::instance().error(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                                            \
+#define ERROR(...)                                                                                 \
+  {                                                                                                \
+    ::logger::instance().error(__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__);                        \
   };
 
 namespace logger

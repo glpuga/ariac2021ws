@@ -106,12 +106,14 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
     return retval;
   };
 
-  auto is_occupied_space = [](const auto& uut, const PartId& expected_part_id, const bool expected_broken_value) {
+  auto is_occupied_space = [](const auto& uut, const PartId& expected_part_id,
+                              const bool expected_broken_value) {
     bool retval;
     try
     {
       auto [part_id, broken] = uut.model();
-      retval = !uut.isEmpty() && uut.isModel() && (expected_part_id == part_id) && (expected_broken_value == broken);
+      retval = !uut.isEmpty() && uut.isModel() && (expected_part_id == part_id) &&
+               (expected_broken_value == broken);
     }
     catch (...)
     {
@@ -120,20 +122,27 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
     return retval;
   };
 
-  auto is_the_same_pose = [](const tijmath::RelativePose3& expected, const tijmath::RelativePose3& actual,
-                             const double tolerance) {
+  auto is_the_same_pose = [](const tijmath::RelativePose3& expected,
+                             const tijmath::RelativePose3& actual, const double tolerance) {
     auto is_within_tolerance = [](const double a, const double b, const double tolerance) {
       return ((a - b) < tolerance) && ((b - a) < tolerance);
     };
 
     return (expected.frameId() == actual.frameId()) &&
-           is_within_tolerance(expected.position().vector().x(), actual.position().vector().x(), tolerance) &&
-           is_within_tolerance(expected.position().vector().y(), actual.position().vector().y(), tolerance) &&
-           is_within_tolerance(expected.position().vector().z(), actual.position().vector().z(), tolerance) &&
-           is_within_tolerance(expected.rotation().quaternion().x(), actual.rotation().quaternion().x(), tolerance) &&
-           is_within_tolerance(expected.rotation().quaternion().y(), actual.rotation().quaternion().y(), tolerance) &&
-           is_within_tolerance(expected.rotation().quaternion().z(), actual.rotation().quaternion().z(), tolerance) &&
-           is_within_tolerance(expected.rotation().quaternion().w(), actual.rotation().quaternion().w(), tolerance);
+           is_within_tolerance(expected.position().vector().x(), actual.position().vector().x(),
+                               tolerance) &&
+           is_within_tolerance(expected.position().vector().y(), actual.position().vector().y(),
+                               tolerance) &&
+           is_within_tolerance(expected.position().vector().z(), actual.position().vector().z(),
+                               tolerance) &&
+           is_within_tolerance(expected.rotation().quaternion().x(),
+                               actual.rotation().quaternion().x(), tolerance) &&
+           is_within_tolerance(expected.rotation().quaternion().y(),
+                               actual.rotation().quaternion().y(), tolerance) &&
+           is_within_tolerance(expected.rotation().quaternion().z(),
+                               actual.rotation().quaternion().z(), tolerance) &&
+           is_within_tolerance(expected.rotation().quaternion().w(),
+                               actual.rotation().quaternion().w(), tolerance);
   };
 
   auto src_parent{ "src_container" };

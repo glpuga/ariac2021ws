@@ -26,8 +26,9 @@ const CuboidVolume agv_container_volume_{
 AgvModelContainer::AgvModelContainer(const std::string& name, const std::string& local_frame_id,
                                      const std::string& model_tray_shared_access_space_id,
                                      const Toolbox::SharedPtr toolbox)
-  : ModelContainerInterface(name, local_frame_id, local_frame_id, tijmath::RelativePose3{ local_frame_id, {} },
-                            agv_container_volume_, model_tray_shared_access_space_id)
+  : ModelContainerInterface(name, local_frame_id, local_frame_id,
+                            tijmath::RelativePose3{ local_frame_id, {} }, agv_container_volume_,
+                            model_tray_shared_access_space_id)
   , toolbox_{ toolbox }
   , timer_{ [this] { timerCallback(); } }
 {
@@ -74,7 +75,8 @@ void AgvModelContainer::timerCallback()
   std::lock_guard<std::mutex> lock{ mutex_ };
   auto process_manager = toolbox_->getProcessManager();
   INFO("AGV status for {}: enabled={}, station={}, status={}", name(), enabled_ ? "true" : "false",
-       process_manager->getAgvStation(agv::fromString(name())), process_manager->getAgvState(agv::fromString(name())));
+       process_manager->getAgvStation(agv::fromString(name())),
+       process_manager->getAgvState(agv::fromString(name())));
 }
 
 }  // namespace tijcore

@@ -29,8 +29,9 @@ public:
   virtual void disambiguateOrderEndpoints(Order& order, std::set<AgvId>& input_agvs_in_use,
                                           std::set<StationId>& stations_in_use) const = 0;
 
-  virtual std::vector<RobotTaskInterface::Ptr> processOrder(Order& order, const std::set<AgvId>& agvs_in_use,
-                                                            const std::set<StationId>& stations_in_use) const = 0;
+  virtual std::vector<RobotTaskInterface::Ptr>
+  processOrder(Order& order, const std::set<AgvId>& agvs_in_use,
+               const std::set<StationId>& stations_in_use) const = 0;
 };
 
 }  // namespace tijcore

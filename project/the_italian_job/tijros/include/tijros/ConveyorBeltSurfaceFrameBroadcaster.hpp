@@ -19,7 +19,8 @@ class ConveyorBeltSurfaceFrameBroadcaster
 public:
   using Ptr = std::unique_ptr<ConveyorBeltSurfaceFrameBroadcaster>;
 
-  ConveyorBeltSurfaceFrameBroadcaster(const ros::NodeHandle& nh, const std::string& container_reference_frame_id,
+  ConveyorBeltSurfaceFrameBroadcaster(const ros::NodeHandle& nh,
+                                      const std::string& container_reference_frame_id,
                                       const std::string& surface_reference_frame_id,
                                       const double conveyor_belt_speed_meters_per_second,
                                       const double publication_rate = 20.0)
@@ -47,12 +48,13 @@ private:
   void updateAndPublishTransform()
   {
     const auto now = ros::Time::now();
-    const auto conveyor_belt_offset = -(now - start_time_).toSec() * conveyor_belt_speed_meters_per_second_;
+    const auto conveyor_belt_offset =
+        -(now - start_time_).toSec() * conveyor_belt_speed_meters_per_second_;
     tf::Transform transform;
     transform.setOrigin(tf::Vector3(0.0, conveyor_belt_offset, 0.0));
     transform.setRotation(tf::Quaternion{ 0, 0, 0, 1 });
-    broadcaster_.sendTransform(
-        tf::StampedTransform(transform, now, container_reference_frame_id_, surface_reference_frame_id_));
+    broadcaster_.sendTransform(tf::StampedTransform(transform, now, container_reference_frame_id_,
+                                                    surface_reference_frame_id_));
   }
 };
 

@@ -60,11 +60,13 @@ void PickAndPlaceKittingRobot::setSuctionGripper(const bool state) const
   robot_actuator_->setKittingGripperSuction(state);
 }
 
-void PickAndPlaceKittingRobot::patchJointStateValuesForRestingPose(std::vector<double>& joint_states) const
+void PickAndPlaceKittingRobot::patchJointStateValuesForRestingPose(
+    std::vector<double>& joint_states) const
 {
   if (joint_states.size() != 7)
   {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(), name());
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
   }
   // these correspond to the positions of the rest position of the arm,
   // excluding the linear rail
@@ -82,7 +84,8 @@ void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
 {
   if (joint_states.size() != 7)
   {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(), name());
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
   }
   const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");
   joint_states[0] = target_in_world.position().vector().y();
@@ -102,12 +105,13 @@ void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
   }
 }
 
-void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
-                                                                       const tijmath::RelativePose3& target) const
+void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(
+    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
   if (joint_states.size() != 7)
   {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(), name());
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
   }
 
   const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");
@@ -128,11 +132,13 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(std::vect
   }
 }
 
-void PickAndPlaceKittingRobot::patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const
+void PickAndPlaceKittingRobot::patchJointStateValuesForAlignedZeroWrist(
+    std::vector<double>& joint_states) const
 {
   if (joint_states.size() != 7)
   {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(), name());
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
   }
   joint_states[6] = degreesToRadians(0);
 }

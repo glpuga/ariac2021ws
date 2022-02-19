@@ -35,9 +35,11 @@ public:
 
   bool getInLandingSpot(const tijmath::RelativePose3& target) const override;
 
-  bool graspPartFromAbove(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
+  bool graspPartFromAbove(const tijmath::RelativePose3& target,
+                          const tijcore::PartTypeId& part_type_id) const override;
 
-  bool placePartFromAbove(const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
+  bool placePartFromAbove(const tijmath::RelativePose3& target,
+                          const tijcore::PartTypeId& part_type_id) const override;
 
   bool twistPartInPlace(tijmath::RelativePose3& target,
 
@@ -47,9 +49,11 @@ public:
 
   void cancelAction() override;
 
-  void markAsInaccessible(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
+  void markAsInaccessible(
+      const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
 
-  void markAsAccessible(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
+  void markAsAccessible(
+      const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
 
 private:
   tijcore::Toolbox::SharedPtr toolbox_;
@@ -61,8 +65,9 @@ private:
 
   void setupObjectConstraints() const;
 
-  void markAsCommanded(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors,
-                       const int command);
+  void
+  markAsCommanded(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors,
+                  const int command);
 
   void alignEndEffectorWithTarget(tijmath::RelativePose3& target_in_world) const;
 

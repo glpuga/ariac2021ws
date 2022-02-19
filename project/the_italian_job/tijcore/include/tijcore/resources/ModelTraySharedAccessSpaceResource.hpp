@@ -23,7 +23,8 @@ public:
 
   ModelTraySharedAccessSpaceResource(const std::vector<ModelContainerHandle>& model_tray_handles,
                                      const SharedWorkspaceHandle& shared_access_space_handle)
-    : model_tray_handles_{ model_tray_handles }, shared_access_space_handle_{ shared_access_space_handle }
+    : model_tray_handles_{ model_tray_handles }
+    , shared_access_space_handle_{ shared_access_space_handle }
   {
   }
 

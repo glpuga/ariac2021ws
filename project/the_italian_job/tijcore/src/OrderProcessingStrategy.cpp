@@ -32,10 +32,13 @@ const double free_radious_for_flippable_pieces{ 0.2 };
 
 }  // namespace
 
-OrderProcessingStrategy::OrderProcessingStrategy(const ResourceManagerInterface::SharedPtr& resource_manager,
-                                                 const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
-                                                 const Toolbox::SharedPtr& toolbox)
-  : resource_manager_{ resource_manager }, robot_task_factory_{ robot_task_factory }, toolbox_{ toolbox }
+OrderProcessingStrategy::OrderProcessingStrategy(
+    const ResourceManagerInterface::SharedPtr& resource_manager,
+    const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
+    const Toolbox::SharedPtr& toolbox)
+  : resource_manager_{ resource_manager }
+  , robot_task_factory_{ robot_task_factory }
+  , toolbox_{ toolbox }
 {
   frame_transformer_ = toolbox_->getFrameTransformer();
 }
@@ -137,8 +140,9 @@ void OrderProcessingStrategy::disambiguateOrderEndpoints(Order& order, std::set<
   }
 }
 
-std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::processOrder(
-    Order& order, const std::set<AgvId>& agvs_in_use, const std::set<StationId>& stations_in_use) const
+std::vector<RobotTaskInterface::Ptr>
+OrderProcessingStrategy::processOrder(Order& order, const std::set<AgvId>& agvs_in_use,
+                                      const std::set<StationId>& stations_in_use) const
 {
   std::vector<RobotTaskInterface::Ptr> output;
 
@@ -151,7 +155,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::processOrder(
     };
 
     // process each shipment, removing those that get completed
-    order.kitting_shipments.erase(std::remove_if(order.kitting_shipments.begin(), order.kitting_shipments.end(),
+    order.kitting_shipments.erase(std::remove_if(order.kitting_shipments.begin(),
+                                                 order.kitting_shipments.end(),
                                                  execute_and_filter_terminated_kitting_shipments),
                                   order.kitting_shipments.end());
   }
@@ -165,7 +170,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::processOrder(
     };
 
     // process each shipment, removing those that get completed
-    order.assembly_shipments.erase(std::remove_if(order.assembly_shipments.begin(), order.assembly_shipments.end(),
+    order.assembly_shipments.erase(std::remove_if(order.assembly_shipments.begin(),
+                                                  order.assembly_shipments.end(),
                                                   execute_and_filter_terminated_assembly_shipments),
                                    order.assembly_shipments.end());
   }
@@ -173,13 +179,16 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::processOrder(
   return output;
 }
 
-std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::processUniversalShipment(
+std::pair<std::vector<RobotTaskInterface::Ptr>, bool>
+OrderProcessingStrategy::processUniversalShipment(
     const ShipmentClass shipment_class, const OrderId& order, const ShipmentType& shipment_type,
-    const std::optional<AgvId>& agv_id, const StationId& station_id, const std::vector<ProductRequest>& products,
-    const std::set<AgvId>& agvs_in_use, const std::set<StationId>& assemblies_in_use) const
+    const std::optional<AgvId>& agv_id, const StationId& station_id,
+    const std::vector<ProductRequest>& products, const std::set<AgvId>& agvs_in_use,
+    const std::set<StationId>& assemblies_in_use) const
 {
-  const std::string target_container_name =
-      shipment_class == ShipmentClass::Assembly ? station_id::toString(station_id) : agv::toString(agv_id.value());
+  const std::string target_container_name = shipment_class == ShipmentClass::Assembly ?
+                                                station_id::toString(station_id) :
+                                                agv::toString(agv_id.value());
   const std::string target_frame_id = resource_manager_->getContainerFrameId(target_container_name);
 
   std::vector<ResourceManagerInterface::ManagedLocusHandle> parts_in_place;
@@ -268,11 +277,12 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
     }
   }
 
-  INFO("Analysis - in_pose:{} broken:{} missing:{} unwanted:{}", parts_in_place.size(), broken_parts.size(),
-       missing_parts.size(), unwanted_parts.size());
+  INFO("Analysis - in_pose:{} broken:{} missing:{} unwanted:{}", parts_in_place.size(),
+       broken_parts.size(), missing_parts.size(), unwanted_parts.size());
 
   auto active_agv_and_assemblies_filter =
-      [agvs_in_use, assemblies_in_use](const ResourceManagerInterface::ManagedLocusHandle& handle) -> bool {
+      [agvs_in_use,
+       assemblies_in_use](const ResourceManagerInterface::ManagedLocusHandle& handle) -> bool {
     auto parent_container_name = handle.resource()->parentName();
     // TODO(glpuga) last minute hack. Ignore all assembly stations, because it's
     // using them to turn pumps around.
@@ -312,55 +322,60 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
 
       if (robot_handle_opt)
       {
-        WARNING("Creating a RemoveBrokenPartTask for {} for {}", robot_handle_opt->resource()->name(),
-                part.resource()->pose());
-        output_actions.emplace_back(
-            robot_task_factory_->getRemoveBrokenPartTask(std::move(part), std::move(*robot_handle_opt)));
+        WARNING("Creating a RemoveBrokenPartTask for {} for {}",
+                robot_handle_opt->resource()->name(), part.resource()->pose());
+        output_actions.emplace_back(robot_task_factory_->getRemoveBrokenPartTask(
+            std::move(part), std::move(*robot_handle_opt)));
       }
     }
   }
 
-  auto sort_farthest_first_generalized = [this](const tijmath::RelativePose3& reference_pose,
-                                                const ResourceManagerInterface::ManagedLocusHandle& lhs,
-                                                const ResourceManagerInterface::ManagedLocusHandle& rhs) {
-    // TODO(glpuga) update name of the lambda to account for this
-    // additional check.
-    // if difficulties are different, then prioritize placing easy parts
-    // at the end of the list (from where we grab them)
-    if (lhs.resource()->difficulty() != rhs.resource()->difficulty())
-    {
-      return lhs.resource()->difficulty() > rhs.resource()->difficulty();
-    }
+  auto sort_farthest_first_generalized =
+      [this](const tijmath::RelativePose3& reference_pose,
+             const ResourceManagerInterface::ManagedLocusHandle& lhs,
+             const ResourceManagerInterface::ManagedLocusHandle& rhs) {
+        // TODO(glpuga) update name of the lambda to account for this
+        // additional check.
+        // if difficulties are different, then prioritize placing easy parts
+        // at the end of the list (from where we grab them)
+        if (lhs.resource()->difficulty() != rhs.resource()->difficulty())
+        {
+          return lhs.resource()->difficulty() > rhs.resource()->difficulty();
+        }
 
-    // if they are the same difficulty, the as a second criteria order
-    // giving preference to those that are aligned with the reference
+        // if they are the same difficulty, the as a second criteria order
+        // giving preference to those that are aligned with the reference
 
-    const auto& lhs_pose = lhs.resource()->pose();
-    const auto& rhs_pose = rhs.resource()->pose();
-    // get all the poses in the same reference frame
-    const auto target_lhs_pose = frame_transformer_->transformPoseToFrame(lhs_pose, reference_pose.frameId());
-    const auto target_rhs_pose = frame_transformer_->transformPoseToFrame(rhs_pose, reference_pose.frameId());
+        const auto& lhs_pose = lhs.resource()->pose();
+        const auto& rhs_pose = rhs.resource()->pose();
+        // get all the poses in the same reference frame
+        const auto target_lhs_pose =
+            frame_transformer_->transformPoseToFrame(lhs_pose, reference_pose.frameId());
+        const auto target_rhs_pose =
+            frame_transformer_->transformPoseToFrame(rhs_pose, reference_pose.frameId());
 
-    const auto ref_z = reference_pose.rotation().rotationMatrix().col(2);
-    const auto lhs_z = lhs_pose.rotation().rotationMatrix().col(2);
-    const auto rhs_z = rhs_pose.rotation().rotationMatrix().col(2);
-    const auto lhs_proj = lhs_z.dot(ref_z);
-    const auto rhs_proj = rhs_z.dot(ref_z);
-    // if the projections have different signs, then order higher in
-    // priority the part that is aligned with the reference
-    if (lhs_proj * rhs_proj < 0)
-    {
-      return lhs_proj < 0;
-    }
+        const auto ref_z = reference_pose.rotation().rotationMatrix().col(2);
+        const auto lhs_z = lhs_pose.rotation().rotationMatrix().col(2);
+        const auto rhs_z = rhs_pose.rotation().rotationMatrix().col(2);
+        const auto lhs_proj = lhs_z.dot(ref_z);
+        const auto rhs_proj = rhs_z.dot(ref_z);
+        // if the projections have different signs, then order higher in
+        // priority the part that is aligned with the reference
+        if (lhs_proj * rhs_proj < 0)
+        {
+          return lhs_proj < 0;
+        }
 
-    // finally, given all else equal, order by distance, giving preference
-    // to parts that are closer to the reference
+        // finally, given all else equal, order by distance, giving preference
+        // to parts that are closer to the reference
 
-    const auto lhs_distance = (reference_pose.position().vector() - target_lhs_pose.position().vector()).norm();
-    const auto rhs_distance = (reference_pose.position().vector() - target_rhs_pose.position().vector()).norm();
+        const auto lhs_distance =
+            (reference_pose.position().vector() - target_lhs_pose.position().vector()).norm();
+        const auto rhs_distance =
+            (reference_pose.position().vector() - target_rhs_pose.position().vector()).norm();
 
-    return lhs_distance > rhs_distance;
-  };
+        return lhs_distance > rhs_distance;
+      };
 
   // next deal with unwanted pieces present in the container. Relocate them
   // somewhere else.
@@ -376,8 +391,9 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
         empty_loci = resource_manager_->findEmptyLoci(free_radious_for_unwanted_pieces);
 
         // remove loci in agvs that are currently targeted by orders
-        empty_loci.erase(std::remove_if(empty_loci.begin(), empty_loci.end(), active_agv_and_assemblies_filter),
-                         empty_loci.end());
+        empty_loci.erase(
+            std::remove_if(empty_loci.begin(), empty_loci.end(), active_agv_and_assemblies_filter),
+            empty_loci.end());
 
         if (empty_loci.empty())
         {
@@ -387,7 +403,8 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
         }
       }
 
-      auto sort_farthest_first = [this, sort_farthest_first_generalized, reference_pose = part.resource()->pose()](
+      auto sort_farthest_first = [this, sort_farthest_first_generalized,
+                                  reference_pose = part.resource()->pose()](
                                      const ResourceManagerInterface::ManagedLocusHandle& lhs,
                                      const ResourceManagerInterface::ManagedLocusHandle& rhs) {
         return sort_farthest_first_generalized(reference_pose, lhs, rhs);
@@ -414,7 +431,8 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
           WARNING(
               "Creating a PickAndPlaceTask for {} to move an unwanted piece "
               "from {} to {}",
-              robot_handle_opt->resource()->name(), part.resource()->pose(), closest_empty_spot.resource()->pose());
+              robot_handle_opt->resource()->name(), part.resource()->pose(),
+              closest_empty_spot.resource()->pose());
           output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
               std::move(part), std::move(closest_empty_spot), std::move(*robot_handle_opt)));
           break;
@@ -433,9 +451,9 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
       auto potential_sources = resource_manager_->findManagedLociByPartId(part_id);
 
       // remove parts in agvs that are currently targeted by orders
-      potential_sources.erase(
-          std::remove_if(potential_sources.begin(), potential_sources.end(), active_agv_and_assemblies_filter),
-          potential_sources.end());
+      potential_sources.erase(std::remove_if(potential_sources.begin(), potential_sources.end(),
+                                             active_agv_and_assemblies_filter),
+                              potential_sources.end());
 
       auto sort_farthest_first = [this, sort_farthest_first_generalized,
                                   reference_pose = missing_part_locus.resource()->pose()](
@@ -467,8 +485,10 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
 
         if (robot_handle_opt)
         {
-          auto selected_source_part_orientation = selected_source_part.resource()->pose().rotation().rotationMatrix();
-          auto missing_part_locus_orientation = missing_part_locus.resource()->pose().rotation().rotationMatrix();
+          auto selected_source_part_orientation =
+              selected_source_part.resource()->pose().rotation().rotationMatrix();
+          auto missing_part_locus_orientation =
+              missing_part_locus.resource()->pose().rotation().rotationMatrix();
 
           // dont flip parts that are not pumps
           auto [part_id, broken] = selected_source_part.resource()->model();
@@ -478,49 +498,55 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
           // find an empty space to leave the part as an intermediate stage
           // instead of carrying it to the destination.
           const bool conveyor_belt_piece = (selected_part_region == WorkRegionId::conveyor_belt);
-          const bool part_needs_flipping = part_id.defined() && (part_id.type() == PartTypeId::pump) &&
-                                           (selected_source_part_orientation.col(2).dot(
-                                                missing_part_locus_orientation.col(2)) < part_flipping_threshold_);
+          const bool part_needs_flipping =
+              part_id.defined() && (part_id.type() == PartTypeId::pump) &&
+              (selected_source_part_orientation.col(2).dot(missing_part_locus_orientation.col(2)) <
+               part_flipping_threshold_);
 
           // try to find a place where to flip it
           auto special_empty_loci = resource_manager_->findEmptyLoci(
-              conveyor_belt_piece ? free_radious_for_unwanted_pieces : free_radious_for_flippable_pieces);
+              conveyor_belt_piece ? free_radious_for_unwanted_pieces :
+                                    free_radious_for_flippable_pieces);
 
           // remove loci in agvs that are currently targeted by orders
-          special_empty_loci.erase(
-              std::remove_if(special_empty_loci.begin(), special_empty_loci.end(), active_agv_and_assemblies_filter),
-              special_empty_loci.end());
+          special_empty_loci.erase(std::remove_if(special_empty_loci.begin(),
+                                                  special_empty_loci.end(),
+                                                  active_agv_and_assemblies_filter),
+                                   special_empty_loci.end());
 
-          auto unreachable_empty_space = [this,
-                                          robot_reachable_regions = robot_handle_opt->resource()->supportedRegions()](
-                                             const ResourceManagerInterface::ManagedLocusHandle& locus) {
-            const auto locus_work_region = resource_manager_->getWorkRegionId(locus);
-            return robot_reachable_regions.count(locus_work_region) == 0;
-          };
+          auto unreachable_empty_space =
+              [this, robot_reachable_regions = robot_handle_opt->resource()->supportedRegions()](
+                  const ResourceManagerInterface::ManagedLocusHandle& locus) {
+                const auto locus_work_region = resource_manager_->getWorkRegionId(locus);
+                return robot_reachable_regions.count(locus_work_region) == 0;
+              };
 
           // remove loci not reachable by the robot
-          special_empty_loci.erase(
-              std::remove_if(special_empty_loci.begin(), special_empty_loci.end(), unreachable_empty_space),
-              special_empty_loci.end());
+          special_empty_loci.erase(std::remove_if(special_empty_loci.begin(),
+                                                  special_empty_loci.end(),
+                                                  unreachable_empty_space),
+                                   special_empty_loci.end());
 
-          auto conveyor_belt_spaces = [this](const ResourceManagerInterface::ManagedLocusHandle& locus) {
-            const auto locus_work_region = resource_manager_->getWorkRegionId(locus);
-            return locus_work_region == WorkRegionId::conveyor_belt;
-          };
+          auto conveyor_belt_spaces =
+              [this](const ResourceManagerInterface::ManagedLocusHandle& locus) {
+                const auto locus_work_region = resource_manager_->getWorkRegionId(locus);
+                return locus_work_region == WorkRegionId::conveyor_belt;
+              };
 
           // remove loci in the conveyor belt
-          special_empty_loci.erase(
-              std::remove_if(special_empty_loci.begin(), special_empty_loci.end(), conveyor_belt_spaces),
-              special_empty_loci.end());
+          special_empty_loci.erase(std::remove_if(special_empty_loci.begin(),
+                                                  special_empty_loci.end(), conveyor_belt_spaces),
+                                   special_empty_loci.end());
 
           if (!special_empty_loci.empty() && (conveyor_belt_piece || part_needs_flipping))
           {
-            auto sort_farthest_first = [this, sort_farthest_first_generalized,
-                                        reference_pose = missing_part_locus.resource()->pose()](
-                                           const ResourceManagerInterface::ManagedLocusHandle& lhs,
-                                           const ResourceManagerInterface::ManagedLocusHandle& rhs) {
-              return sort_farthest_first_generalized(reference_pose, lhs, rhs);
-            };
+            auto sort_farthest_first =
+                [this, sort_farthest_first_generalized,
+                 reference_pose = missing_part_locus.resource()->pose()](
+                    const ResourceManagerInterface::ManagedLocusHandle& lhs,
+                    const ResourceManagerInterface::ManagedLocusHandle& rhs) {
+                  return sort_farthest_first_generalized(reference_pose, lhs, rhs);
+                };
 
             // sort by distance to the target spot (larger distance first, to
             // remove efficiently the nearest spot from the list)
@@ -537,7 +563,8 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
                   robot_handle_opt->resource()->name(), selected_source_part.resource()->pose(),
                   closest_empty_spot.resource()->pose());
               output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
-                  std::move(selected_source_part), std::move(closest_empty_spot), std::move(*robot_handle_opt)));
+                  std::move(selected_source_part), std::move(closest_empty_spot),
+                  std::move(*robot_handle_opt)));
             }
             else
             {
@@ -547,7 +574,8 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
                   robot_handle_opt->resource()->name(), selected_source_part.resource()->pose(),
                   closest_empty_spot.resource()->pose());
               output_actions.emplace_back(robot_task_factory_->getPickAndTwistPartTask(
-                  std::move(selected_source_part), std::move(closest_empty_spot), std::move(*robot_handle_opt)));
+                  std::move(selected_source_part), std::move(closest_empty_spot),
+                  std::move(*robot_handle_opt)));
             }
           }
           else
@@ -558,7 +586,8 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
                 robot_handle_opt->resource()->name(), selected_source_part.resource()->pose(),
                 missing_part_locus.resource()->pose());
             output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
-                std::move(selected_source_part), std::move(missing_part_locus), std::move(*robot_handle_opt)));
+                std::move(selected_source_part), std::move(missing_part_locus),
+                std::move(*robot_handle_opt)));
           }
         }
       }
@@ -585,13 +614,13 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
       {
         case ShipmentClass::Kitting:
           WARNING("Creating a SubmitKittingShipmentTask for {}", tray_handle->resource()->name());
-          output_actions.emplace_back(robot_task_factory_->getSubmitKittingShipmentTask(std::move(tray_handle.value()),
-                                                                                        station_id, shipment_type));
+          output_actions.emplace_back(robot_task_factory_->getSubmitKittingShipmentTask(
+              std::move(tray_handle.value()), station_id, shipment_type));
           break;
         case ShipmentClass::Assembly:
           WARNING("Creating a SubmitAssemblyShipmentTask for {}", tray_handle->resource()->name());
-          output_actions.emplace_back(
-              robot_task_factory_->getSubmitAssemblyShipmentTask(std::move(tray_handle.value()), shipment_type));
+          output_actions.emplace_back(robot_task_factory_->getSubmitAssemblyShipmentTask(
+              std::move(tray_handle.value()), shipment_type));
           break;
       }
     }
@@ -600,20 +629,26 @@ std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::p
   return std::make_pair(std::move(output_actions), shipping_done);
 }
 
-std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::processKittingShipment(
-    const OrderId& order, const KittingShipment& shipment, const std::set<AgvId>& agvs_in_use,
-    const std::set<StationId>& stations_in_use) const
+std::pair<std::vector<RobotTaskInterface::Ptr>, bool>
+OrderProcessingStrategy::processKittingShipment(const OrderId& order,
+                                                const KittingShipment& shipment,
+                                                const std::set<AgvId>& agvs_in_use,
+                                                const std::set<StationId>& stations_in_use) const
 {
-  return processUniversalShipment(ShipmentClass::Kitting, order, shipment.shipment_type, shipment.agv_id,
-                                  shipment.station_id, shipment.products, agvs_in_use, stations_in_use);
+  return processUniversalShipment(ShipmentClass::Kitting, order, shipment.shipment_type,
+                                  shipment.agv_id, shipment.station_id, shipment.products,
+                                  agvs_in_use, stations_in_use);
 }
 
-std::pair<std::vector<RobotTaskInterface::Ptr>, bool> OrderProcessingStrategy::processAssemblyShipment(
-    const OrderId& order, const AssemblyShipment& shipment, const std::set<AgvId>& agvs_in_use,
-    const std::set<StationId>& stations_in_use) const
+std::pair<std::vector<RobotTaskInterface::Ptr>, bool>
+OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
+                                                 const AssemblyShipment& shipment,
+                                                 const std::set<AgvId>& agvs_in_use,
+                                                 const std::set<StationId>& stations_in_use) const
 {
-  return processUniversalShipment(ShipmentClass::Assembly, order, shipment.shipment_type, std::nullopt,
-                                  shipment.station_id, shipment.products, agvs_in_use, stations_in_use);
+  return processUniversalShipment(ShipmentClass::Assembly, order, shipment.shipment_type,
+                                  std::nullopt, shipment.station_id, shipment.products, agvs_in_use,
+                                  stations_in_use);
 }
 
 }  // namespace tijcore

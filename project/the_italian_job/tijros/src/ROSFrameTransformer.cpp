@@ -21,8 +21,8 @@ ROSFrameTransformer::ROSFrameTransformer()
 {
 }
 
-tijmath::RelativePose3 ROSFrameTransformer::transformPoseToFrame(const tijmath::RelativePose3& relative_pose,
-                                                                 const std::string& new_frame_id) const
+tijmath::RelativePose3 ROSFrameTransformer::transformPoseToFrame(
+    const tijmath::RelativePose3& relative_pose, const std::string& new_frame_id) const
 {
   // TODO(glpuga) We should be able to use Pose instead of PoseStamped here.
   geometry_msgs::PoseStamped ros_input_pose;
@@ -38,7 +38,8 @@ tijmath::RelativePose3 ROSFrameTransformer::transformPoseToFrame(const tijmath::
   {
     auto start = ros::Time::now();
     tf2::doTransform(ros_input_pose, ros_output_pose,
-                     tf_buffer_.lookupTransform(new_frame_id, relative_pose.frameId(), ros::Time(0), tf_timeout_));
+                     tf_buffer_.lookupTransform(new_frame_id, relative_pose.frameId(), ros::Time(0),
+                                                tf_timeout_));
     auto end = ros::Time::now();
     if (end - start > ros::Duration(0.1))
     {
@@ -48,7 +49,8 @@ tijmath::RelativePose3 ROSFrameTransformer::transformPoseToFrame(const tijmath::
   }
   catch (const std::exception& ex)
   {
-    ERROR("Error while tranforming between frames {} and {}: {}", relative_pose.frameId(), new_frame_id, ex.what());
+    ERROR("Error while tranforming between frames {} and {}: {}", relative_pose.frameId(),
+          new_frame_id, ex.what());
     throw std::runtime_error{ "Failed ROS frame transformation" };
   }
 
@@ -56,7 +58,8 @@ tijmath::RelativePose3 ROSFrameTransformer::transformPoseToFrame(const tijmath::
   auto local_output_pose = utils::convertGeoPoseToCorePose(ros_output_pose.pose);
   tijmath::RelativePose3 output_pose{ output_frame_id, local_output_pose };
 
-  DEBUG("Transformed pose {} to frame {}, resulting in the pose {}", relative_pose, new_frame_id, output_pose);
+  DEBUG("Transformed pose {} to frame {}, resulting in the pose {}", relative_pose, new_frame_id,
+        output_pose);
 
   return output_pose;
 }

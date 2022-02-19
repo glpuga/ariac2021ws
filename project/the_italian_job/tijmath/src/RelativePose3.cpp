@@ -17,12 +17,14 @@ RelativePose3::RelativePose3(const FrameId& frame_id) : frame_id_{ frame_id }
 {
 }
 
-RelativePose3::RelativePose3(const FrameId& frame_id, const Pose3& pose) : frame_id_{ frame_id }, pose_{ pose }
+RelativePose3::RelativePose3(const FrameId& frame_id, const Pose3& pose)
+  : frame_id_{ frame_id }, pose_{ pose }
 {
 }
 
 bool RelativePose3::sameRelativePose3(const RelativePose3& lhs, const RelativePose3& rhs,
-                                      const double position_tolerance, const double angular_tolerance)
+                                      const double position_tolerance,
+                                      const double angular_tolerance)
 {
   return (lhs.frameId() == rhs.frameId()) &&
          Position::samePosition(lhs.position(), rhs.position(), position_tolerance) &&

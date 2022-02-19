@@ -11,14 +11,17 @@ CuboidVolume::CuboidVolume() : CuboidVolume(tijmath::Vector3{}, tijmath::Vector3
 {
 }
 
-CuboidVolume::CuboidVolume(const tijmath::Vector3& lower_right_back, const tijmath::Vector3& upper_left_front)
+CuboidVolume::CuboidVolume(const tijmath::Vector3& lower_right_back,
+                           const tijmath::Vector3& upper_left_front)
   : lower_right_back_{ lower_right_back }, upper_left_front_{ upper_left_front }
 {
 }
 
 bool CuboidVolume::contains(const tijmath::Vector3& point) const
 {
-  auto a_less_than_x_less_than_b = [](const double a, const double x, const double b) { return (a <= x) && (x <= b); };
+  auto a_less_than_x_less_than_b = [](const double a, const double x, const double b) {
+    return (a <= x) && (x <= b);
+  };
   return a_less_than_x_less_than_b(lower_right_back_.x(), point.x(), upper_left_front_.x()) &&
          a_less_than_x_less_than_b(lower_right_back_.y(), point.y(), upper_left_front_.y()) &&
          a_less_than_x_less_than_b(lower_right_back_.z(), point.z(), upper_left_front_.z());

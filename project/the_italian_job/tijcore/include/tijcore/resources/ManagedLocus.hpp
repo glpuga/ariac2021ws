@@ -25,9 +25,11 @@ public:
 
   static void TransferPartFromHereToThere(ManagedLocus& here, ManagedLocus& there);
 
-  static ManagedLocus CreateEmptySpace(const std::string& parent_container, const tijmath::RelativePose3& pose);
-  static ManagedLocus CreateOccupiedSpace(const std::string& parent_container, const tijmath::RelativePose3& pose,
-                                          const PartId& part_id, const bool broken);
+  static ManagedLocus CreateEmptySpace(const std::string& parent_container,
+                                       const tijmath::RelativePose3& pose);
+  static ManagedLocus CreateOccupiedSpace(const std::string& parent_container,
+                                          const tijmath::RelativePose3& pose, const PartId& part_id,
+                                          const bool broken);
 
   bool isEmpty() const;
   bool isModel() const;
@@ -57,8 +59,8 @@ public:
 
 private:
   ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose);
-  ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose, const PartId& part_id,
-               const bool broken);
+  ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose,
+               const PartId& part_id, const bool broken);
 
   std::string parent_container_;
 

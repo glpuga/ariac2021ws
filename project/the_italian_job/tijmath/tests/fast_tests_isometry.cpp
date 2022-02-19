@@ -148,7 +148,8 @@ TEST_F(IsometryTests, Composition)
     const Isometry op2{ rotation2, translation2 };
     const auto uut = op1 * op2;
     ASSERT_TRUE(areEqualWithinTolerance(rotation1 * rotation2, uut.rotation(), tolerance_));
-    ASSERT_TRUE(areEqualWithinTolerance(rotation1 * translation2 + translation1, uut.translation(), tolerance_));
+    ASSERT_TRUE(areEqualWithinTolerance(rotation1 * translation2 + translation1, uut.translation(),
+                                        tolerance_));
   }
   {
     const Matrix3 rotation1{ Vector3{ 0, 1, 0 }, Vector3{ 0, 0, 1 }, Vector3{ 1, 0, 0 } };
@@ -160,7 +161,8 @@ TEST_F(IsometryTests, Composition)
     Isometry uut{ rotation1, translation1 };
     uut *= op2;
     ASSERT_TRUE(areEqualWithinTolerance(rotation1 * rotation2, uut.rotation(), tolerance_));
-    ASSERT_TRUE(areEqualWithinTolerance(rotation1 * translation2 + translation1, uut.translation(), tolerance_));
+    ASSERT_TRUE(areEqualWithinTolerance(rotation1 * translation2 + translation1, uut.translation(),
+                                        tolerance_));
   }
 }
 
@@ -170,7 +172,8 @@ TEST_F(IsometryTests, InverseIsometry)
   const Vector3 translation1{ 1, 2, 3 };
   const Isometry uut{ rotation1, translation1 };
   ASSERT_TRUE(areEqualWithinTolerance(rotation1.inv(), uut.inv().rotation(), tolerance_));
-  ASSERT_TRUE(areEqualWithinTolerance((-1) * rotation1.inv() * translation1, uut.inv().translation(), tolerance_));
+  ASSERT_TRUE(areEqualWithinTolerance((-1) * rotation1.inv() * translation1,
+                                      uut.inv().translation(), tolerance_));
   ASSERT_TRUE(areEqualWithinTolerance(Isometry::Identity, uut * uut.inv(), tolerance_));
   ASSERT_TRUE(areEqualWithinTolerance(Isometry::Identity, uut.inv() * uut, tolerance_));
 }

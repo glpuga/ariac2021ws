@@ -19,7 +19,8 @@ namespace tijcore
 class ModelTrayAccessSpaceManager
 {
 public:
-  ModelTrayAccessSpaceManager(ResourceManagerInterface& resource_manager, PickAndPlaceRobotInterface& robot)
+  ModelTrayAccessSpaceManager(ResourceManagerInterface& resource_manager,
+                              PickAndPlaceRobotInterface& robot)
     : resource_manager_{ resource_manager }, robot_{ robot }
   {
   }
@@ -29,8 +30,8 @@ public:
     return getAccessToModelImpl(target_parent, std::nullopt, timeout);
   }
 
-  bool getAccessToModel(const std::string& first_target_parent, const std::string& second_target_parent,
-                        std::chrono::milliseconds timeout)
+  bool getAccessToModel(const std::string& first_target_parent,
+                        const std::string& second_target_parent, std::chrono::milliseconds timeout)
   {
     return getAccessToModelImpl(first_target_parent, second_target_parent, timeout);
   }
@@ -59,7 +60,8 @@ private:
   {
     handle_.reset();
 
-    handle_ = resource_manager_.getModelTrayExclusionZoneHandle(first_target_parent, second_target_parent_opt, timeout);
+    handle_ = resource_manager_.getModelTrayExclusionZoneHandle(first_target_parent,
+                                                                second_target_parent_opt, timeout);
     if (!handle_)
     {
       return false;

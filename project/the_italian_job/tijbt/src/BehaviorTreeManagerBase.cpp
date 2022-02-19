@@ -12,7 +12,8 @@
 
 namespace tijbt
 {
-BehaviorTreeManagerBase::BehaviorTreeManagerBase(BTHandle bt_handle) : bt_handle_{ std::move(bt_handle) }
+BehaviorTreeManagerBase::BehaviorTreeManagerBase(BTHandle bt_handle)
+  : bt_handle_{ std::move(bt_handle) }
 {
 }
 
@@ -37,7 +38,8 @@ BTExecutionResult BehaviorTreeManagerBase::run()
     return BTExecutionResult::ERROR;
   }
 
-  return tree_status == BT::NodeStatus::SUCCESS ? BTExecutionResult::SUCCESS : BTExecutionResult::FAILURE;
+  return tree_status == BT::NodeStatus::SUCCESS ? BTExecutionResult::SUCCESS :
+                                                  BTExecutionResult::FAILURE;
 }
 
 void BehaviorTreeManagerBase::halt()

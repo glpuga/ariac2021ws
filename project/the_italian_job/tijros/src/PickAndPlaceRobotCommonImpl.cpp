@@ -48,16 +48,18 @@ static const double max_planning_time = 20.0;
 static const int max_planning_attempts = 5;
 
 static const double tight_goal_position_tolerance = 0.001;
-static const double tight_goal_orientation_tolerance = tijmath::utils::angles::degreesToRadians(0.2);
+static const double tight_goal_orientation_tolerance =
+    tijmath::utils::angles::degreesToRadians(0.2);
 
 static const double coarse_goal_position_tolerance = 0.015;
-static const double coarse_goal_orientation_tolerance = tijmath::utils::angles::degreesToRadians(2.5);
+static const double coarse_goal_orientation_tolerance =
+    tijmath::utils::angles::degreesToRadians(2.5);
 
-moveit_msgs::CollisionObject createCollisionBox(const std::string& id, const std::string& sub_id,
-                                                const std::string& frame_id, const double width, const double height,
-                                                const double depth, const double xoffset, const double yoffset,
-                                                const double zoffset,
-                                                const int operation = moveit_msgs::CollisionObject::ADD)
+moveit_msgs::CollisionObject
+createCollisionBox(const std::string& id, const std::string& sub_id, const std::string& frame_id,
+                   const double width, const double height, const double depth,
+                   const double xoffset, const double yoffset, const double zoffset,
+                   const int operation = moveit_msgs::CollisionObject::ADD)
 {
   // do the hard part
   moveit_msgs::CollisionObject collision_object;
@@ -84,13 +86,15 @@ moveit_msgs::CollisionObject createCollisionBox(const std::string& id, const std
   return collision_object;
 }
 
-double estimatePartHeight(const tijmath::Matrix3& orientation_in_world, const tijcore::PartTypeId& id)
+double estimatePartHeight(const tijmath::Matrix3& orientation_in_world,
+                          const tijcore::PartTypeId& id)
 {
   const auto part_dimensions = tijcore::part_type::dimensions(id);
 
-  const double estimated_height = std::abs(tijmath::Vector3{ 0, 0, 1 }.dot(
-      part_dimensions[0] * orientation_in_world.col(0) + part_dimensions[1] * orientation_in_world.col(1) +
-      part_dimensions[2] * orientation_in_world.col(2)));
+  const double estimated_height =
+      std::abs(tijmath::Vector3{ 0, 0, 1 }.dot(part_dimensions[0] * orientation_in_world.col(0) +
+                                               part_dimensions[1] * orientation_in_world.col(1) +
+                                               part_dimensions[2] * orientation_in_world.col(2)));
   return estimated_height;
 }
 
@@ -115,7 +119,8 @@ void PickAndPlaceRobotCommonImpl::configureGoalTolerances(const bool tight_mode)
   }
 }
 
-moveit::planning_interface::MoveGroupInterface* PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const
+moveit::planning_interface::MoveGroupInterface*
+PickAndPlaceRobotCommonImpl::getMoveItGroupHandlePtr() const
 {
   // if the setup had not been performed before, do it now
   // Ugly AF, need to find a better solution.
@@ -127,9 +132,10 @@ moveit::planning_interface::MoveGroupInterface* PickAndPlaceRobotCommonImpl::get
   move_group_ptr_.reset();
   if (!move_group_ptr_)
   {
-    moveit::planning_interface::MoveGroupInterface::Options options{ getRobotPlanningGroup(),
-                                                                     custom_moveit_namespace + "/robot_description",
-                                                                     ros::NodeHandle(custom_moveit_namespace) };
+    moveit::planning_interface::MoveGroupInterface::Options options{
+      getRobotPlanningGroup(), custom_moveit_namespace + "/robot_description",
+      ros::NodeHandle(custom_moveit_namespace)
+    };
     move_group_ptr_ = std::make_unique<moveit::planning_interface::MoveGroupInterface>(options);
     move_group_ptr_->setPlanningTime(max_planning_time);
     move_group_ptr_->setNumPlanningAttempts(max_planning_attempts);
@@ -144,7 +150,8 @@ moveit::planning_interface::MoveGroupInterface* PickAndPlaceRobotCommonImpl::get
 
   if (!planning_scene_ptr_)
   {
-    planning_scene_ptr_ = std::make_unique<moveit::planning_interface::PlanningSceneInterface>(custom_moveit_namespace);
+    planning_scene_ptr_ = std::make_unique<moveit::planning_interface::PlanningSceneInterface>(
+        custom_moveit_namespace);
     setupObjectConstraints();
   }
 
@@ -173,7 +180,8 @@ bool PickAndPlaceRobotCommonImpl::getInSafePose() const
   INFO("Get-in-rest-pose movement: {} is planning", name());
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
-    auto success = (move_group_ptr->plan(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    auto success = (move_group_ptr->plan(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to generate a plan", name());
@@ -183,7 +191,8 @@ bool PickAndPlaceRobotCommonImpl::getInSafePose() const
 
   INFO("Get-in-rest-pose movement: {} is executing", name());
   {
-    auto success = (move_group_ptr->execute(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    auto success = (move_group_ptr->execute(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to execute", name());
@@ -195,7 +204,8 @@ bool PickAndPlaceRobotCommonImpl::getInSafePose() const
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(const tijmath::RelativePose3& target) const
+bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(
+    const tijmath::RelativePose3& target) const
 {
   if (!enabled())
   {
@@ -224,7 +234,8 @@ bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(const tijmath::Relativ
   INFO("Get-in-rest-pose movement: {} is planning", name());
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
-    auto success = (move_group_ptr->plan(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    auto success = (move_group_ptr->plan(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to generate a plan", name());
@@ -234,7 +245,8 @@ bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(const tijmath::Relativ
 
   INFO("Get-in-rest-pose movement: {} is executing", name());
   {
-    auto success = (move_group_ptr->execute(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    auto success = (move_group_ptr->execute(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to execute", name());
@@ -280,7 +292,8 @@ bool PickAndPlaceRobotCommonImpl::getToGraspingPoseHint(const tijmath::RelativeP
   INFO("Closest-safe-spot movement: {} is planning", name());
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
-    auto success = (move_group_ptr->plan(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    auto success = (move_group_ptr->plan(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to generate a plan", name());
@@ -290,7 +303,8 @@ bool PickAndPlaceRobotCommonImpl::getToGraspingPoseHint(const tijmath::RelativeP
 
   INFO("Closest-safe-spot movement: {} is executing", name());
   {
-    auto success = (move_group_ptr->execute(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    auto success = (move_group_ptr->execute(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to move execute", name());
@@ -330,7 +344,8 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3&
     move_group_ptr->setPoseTarget(target_geo_pose);
     move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
-    bool success = (move_group_ptr->plan(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (move_group_ptr->plan(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to generate a plan to arrive at the approximation pose", name());
@@ -340,7 +355,8 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3&
 
   INFO("Approximation movement: {} is executing the movement", name());
   {
-    auto success = (move_group_ptr->execute(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    auto success = (move_group_ptr->execute(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
       ERROR("{} failed to move arm into the approximation pose", name());
@@ -384,17 +400,20 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(const tijmath::RelativePose
 
   // notice that part poses get detected with a height equal to about half the
   // height of the piece
-  const auto run_top = end_effector_target_pose_in_world.position().vector().z() +
-                       estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id) * 0.5 +
-                       pick_search_length * 0.5;
-  const auto run_bottom = end_effector_target_pose_in_world.position().vector().z() +
-                          estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id) * 0.5 -
-                          pick_search_length * 0.5;
+  const auto run_top =
+      end_effector_target_pose_in_world.position().vector().z() +
+      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id) * 0.5 +
+      pick_search_length * 0.5;
+  const auto run_bottom =
+      end_effector_target_pose_in_world.position().vector().z() +
+      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id) * 0.5 -
+      pick_search_length * 0.5;
   end_effector_target_pose_in_world.position().vector().z() = run_top;
 
   double part_displacement = 0.0;
 
-  while (!gripperHasPartAttached() && (end_effector_target_pose_in_world.position().vector().z() > run_bottom))
+  while (!gripperHasPartAttached() &&
+         (end_effector_target_pose_in_world.position().vector().z() > run_bottom))
   {
     std::vector<geometry_msgs::Pose> waypoints;
 
@@ -403,7 +422,8 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(const tijmath::RelativePose
       // update the y coordinate because the target may be moving on a
       // conveyor belt
       auto current_target_pose = frame_transformer->transformPoseToFrame(target, world_frame);
-      end_effector_target_pose_in_world.position().vector().y() = current_target_pose.position().vector().y();
+      end_effector_target_pose_in_world.position().vector().y() =
+          current_target_pose.position().vector().y();
     }
 
     // decrease the gripper one step
@@ -412,11 +432,13 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(const tijmath::RelativePose
     INFO("Pick-up movement: {} is generating the moveit plan", name());
     moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
     {
-      auto target_geo_pose_in_world = utils::convertCorePoseToGeoPose(end_effector_target_pose_in_world);
+      auto target_geo_pose_in_world =
+          utils::convertCorePoseToGeoPose(end_effector_target_pose_in_world);
       move_group_ptr->setPoseTarget(target_geo_pose_in_world);
       move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
-      bool success = (move_group_ptr->plan(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      bool success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
       if (!success)
       {
         ERROR("{} failed to generate a plan", name());
@@ -431,8 +453,8 @@ bool PickAndPlaceRobotCommonImpl::graspPartFromAbove(const tijmath::RelativePose
 
     auto current_target_pose = frame_transformer->transformPoseToFrame(target, world_frame);
 
-    part_displacement +=
-        end_effector_target_pose_in_world.position().vector().y() - current_target_pose.position().vector().y();
+    part_displacement += end_effector_target_pose_in_world.position().vector().y() -
+                         current_target_pose.position().vector().y();
 
     auto& trajectory = movement_plan.trajectory_;
     auto t0 = trajectory.joint_trajectory.points[0].time_from_start.toSec();
@@ -497,20 +519,21 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(const tijmath::RelativePose
   auto end_effector_target_pose_in_world = end_effector_target_pose.pose();
 
   end_effector_target_pose_in_world.position().vector().z() +=
-      part_drop_height + estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id);
+      part_drop_height +
+      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id);
 
   {
     std::vector<geometry_msgs::Pose> waypoints;
     waypoints.push_back(utils::convertCorePoseToGeoPose(end_effector_target_pose_in_world));
 
-    INFO("Place will drop the part once we are at {} in {} frame", utils::convertGeoPoseToCorePose(waypoints.at(0)),
-         world_frame);
+    INFO("Place will drop the part once we are at {} in {} frame",
+         utils::convertGeoPoseToCorePose(waypoints.at(0)), world_frame);
 
     INFO("Place movement: {} is generating the moveit plan", name());
     moveit_msgs::RobotTrajectory trajectory;
     {
-      const double fraction = move_group_ptr->computeCartesianPath(waypoints, pickup_displacement_step,
-                                                                   pickup_displacement_jump_threshold, trajectory);
+      const double fraction = move_group_ptr->computeCartesianPath(
+          waypoints, pickup_displacement_step, pickup_displacement_jump_threshold, trajectory);
       DEBUG("Place movement: cartesian planner plan fraction for {}: {}", name(), fraction);
       bool success = (fraction > 0.95);
       if (!success)
@@ -559,7 +582,8 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
   {
     // determine the part height
     const auto target_in_world_frame = frame_transformer->transformPoseToFrame(target, world_frame);
-    estimated_part_height = estimatePartHeight(target_in_world_frame.rotation().rotationMatrix(), part_type_id);
+    estimated_part_height =
+        estimatePartHeight(target_in_world_frame.rotation().rotationMatrix(), part_type_id);
   }
 
   // we determine the rotation that goes from the end effector frame rotation to
@@ -569,7 +593,8 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
   {
     const auto rotated_target_rotation_matrix = target.rotation().rotationMatrix();
 
-    const auto end_effector_pose_in_world = utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
+    const auto end_effector_pose_in_world =
+        utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
     const auto end_effector_pose_in_target_frame = frame_transformer->transformPoseToFrame(
         tijmath::RelativePose3{ world_frame, end_effector_pose_in_world }, target.frameId());
     const auto end_effector_rotation_matrix_in_target_frame =
@@ -595,7 +620,8 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
 
     moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
     {
-      auto success = (move_group_ptr->plan(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      auto success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
       if (!success)
       {
         ERROR("{} failed to execute the plan", name());
@@ -608,7 +634,8 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
         "the end efector with the arm articulations",
         name());
     {
-      auto success = (move_group_ptr->execute(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      auto success = (move_group_ptr->execute(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
       if (!success)
       {
         ERROR("{} failed to execute end effector twist", name());
@@ -623,17 +650,20 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
         "effector",
         name());
 
-    auto rotated_end_effector_in_world = utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
+    auto rotated_end_effector_in_world =
+        utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
 
     moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
     {
       {
-        auto rotated_target_rotation_matrix = rotated_end_effector_in_world.rotation().rotationMatrix();
+        auto rotated_target_rotation_matrix =
+            rotated_end_effector_in_world.rotation().rotationMatrix();
 
         rotated_target_rotation_matrix *=
             tijmath::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(-90)).rotationMatrix();
 
-        rotated_end_effector_in_world.rotation() = tijmath::Rotation(rotated_target_rotation_matrix);
+        rotated_end_effector_in_world.rotation() =
+            tijmath::Rotation(rotated_target_rotation_matrix);
         rotated_end_effector_in_world.position().vector() +=
             rotated_target_rotation_matrix.col(1) * twist_height_correction +
             rotated_target_rotation_matrix.col(0) * (-estimated_part_height / 2.0);
@@ -642,7 +672,8 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
       move_group_ptr->setPoseTarget(utils::convertCorePoseToGeoPose(rotated_end_effector_in_world));
       move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
-      bool success = (move_group_ptr->plan(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      bool success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
       if (!success)
       {
@@ -653,7 +684,8 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
 
     INFO("Twist-part-in-place movement: {} is executing the twist movement", name());
     {
-      auto success = (move_group_ptr->execute(movement_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      auto success = (move_group_ptr->execute(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
       // TODO(glpuga) with the competition controller parameters, loading the
       // gripper from the side causes the goal tolerances to be exceeded.
@@ -677,11 +709,13 @@ bool PickAndPlaceRobotCommonImpl::twistPartInPlace(tijmath::RelativePose3& targe
           tijmath::RelativePose3{ world_frame, rotated_end_effector_in_world }, target.frameId());
 
       // get the rotation matrix
-      auto end_effector_rotation_matrix_in_target_frame = end_effector_pose_in_target_frame.rotation().rotationMatrix();
+      auto end_effector_rotation_matrix_in_target_frame =
+          end_effector_pose_in_target_frame.rotation().rotationMatrix();
 
       // given that we know the rotation between the end effector and the part,
       // use that to infer the rotation part now.
-      auto new_target_orientation = end_effector_rotation_matrix_in_target_frame * target_in_end_effector_rotation;
+      auto new_target_orientation =
+          end_effector_rotation_matrix_in_target_frame * target_in_end_effector_rotation;
 
       target.rotation() = tijmath::Rotation{ new_target_orientation };
     }
@@ -718,56 +752,56 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const
   DEBUG(" - adding AGV tray representatives");
   for (const auto& item : scene_configuration->getListOfAgvs())
   {
-    collision_objects.push_back(
-        createCollisionBox(item.name, "surface", item.frame_id, 0.5, 0.7, z_offset, 0, 0, 0, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "tower_foot", item.frame_id, 0.23, 0.23, 0.22, 0.0, -0.45, 0.11, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "tower_head", item.frame_id, 0.15, 0.15, 0.7, 0.0, -0.45, 0.35, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "surface", item.frame_id, 0.5, 0.7,
+                                                   z_offset, 0, 0, 0, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "tower_foot", item.frame_id, 0.23,
+                                                   0.23, 0.22, 0.0, -0.45, 0.11, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "tower_head", item.frame_id, 0.15,
+                                                   0.15, 0.7, 0.0, -0.45, 0.35, operation));
   }
 
   DEBUG(" - adding assembly station representatives");
   for (const auto& item : scene_configuration->getListOfAssemblyStations())
   {
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_table", item.frame_id, 1.6, 1.2, z_offset,
-                                                   -0.3, -0.1, 0.0, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "briefcase_front", item.frame_id, 0.05, 0.6, 0.16, 0.3, 0.0, 0.08, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "briefcase_side", item.frame_id, 0.6, 0.05, 0.16, 0.0, -0.3, 0.08, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "table_right", item.frame_id, 1.0, 0.10, 1.0, -0.70, -0.75, 0.5, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "table_back", item.frame_id, 0.8, 1.2, 1.0, -0.7, -0.1, 0.5, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "table_left", item.frame_id, 1.6, 0.1, 1.0, -0.45, 0.54, 0.5, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "briefcase_top_1", item.frame_id, 0.04, 0.1, 0.80, 0.33, 0.35, 0.40, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "briefcase_top_2", item.frame_id, 0.7, 0.1, 0.1, 0.0, 0.35, 0.75, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_table", item.frame_id, 1.6,
+                                                   1.2, z_offset, -0.3, -0.1, 0.0, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_front", item.frame_id,
+                                                   0.05, 0.6, 0.16, 0.3, 0.0, 0.08, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_side", item.frame_id, 0.6,
+                                                   0.05, 0.16, 0.0, -0.3, 0.08, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "table_right", item.frame_id, 1.0,
+                                                   0.10, 1.0, -0.70, -0.75, 0.5, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "table_back", item.frame_id, 0.8, 1.2,
+                                                   1.0, -0.7, -0.1, 0.5, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "table_left", item.frame_id, 1.6, 0.1,
+                                                   1.0, -0.45, 0.54, 0.5, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_1", item.frame_id,
+                                                   0.04, 0.1, 0.80, 0.33, 0.35, 0.40, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_2", item.frame_id, 0.7,
+                                                   0.1, 0.1, 0.0, 0.35, 0.75, operation));
   }
 
   DEBUG(" - adding bin representatives");
   for (const auto& item : scene_configuration->getListOfBins())
   {
-    collision_objects.push_back(
-        createCollisionBox(item.name, "surface", item.frame_id, 0.6, 0.6, z_offset, 0, 0, 0, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "surface", item.frame_id, 0.6, 0.6,
+                                                   z_offset, 0, 0, 0, operation));
 
-    collision_objects.push_back(
-        createCollisionBox(item.name, "wall_1", item.frame_id, 0.64, 0.06, 0.08, 0.0, 0.31, 0.04, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "wall_2", item.frame_id, 0.64, 0.06, 0.08, 0.0, -0.31, 0.04, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "wall_3", item.frame_id, 0.06, 0.64, 0.08, 0.31, 0.0, 0.04, operation));
-    collision_objects.push_back(
-        createCollisionBox(item.name, "wall_4", item.frame_id, 0.06, 0.64, 0.08, -0.31, 0.0, 0.04, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "wall_1", item.frame_id, 0.64, 0.06,
+                                                   0.08, 0.0, 0.31, 0.04, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "wall_2", item.frame_id, 0.64, 0.06,
+                                                   0.08, 0.0, -0.31, 0.04, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "wall_3", item.frame_id, 0.06, 0.64,
+                                                   0.08, 0.31, 0.0, 0.04, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "wall_4", item.frame_id, 0.06, 0.64,
+                                                   0.08, -0.31, 0.0, 0.04, operation));
   }
 
   DEBUG(" - adding conveyor belt representatives");
   for (const auto& item : scene_configuration->getListOfConveyorBelts())
   {
-    collision_objects.push_back(
-        createCollisionBox(item.name, "surface", item.container_frame_id, 0.63, 9, z_offset, 0, 0, 0, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "surface", item.container_frame_id,
+                                                   0.63, 9, z_offset, 0, 0, 0, operation));
   }
 
   // kitting rail
@@ -782,7 +816,8 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const
 }
 
 void PickAndPlaceRobotCommonImpl::markAsCommanded(
-    const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors, const int command)
+    const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors,
+    const int command)
 {
   // TODO(glpuga) improve this
   // this method call is needed to generate the pointers if planning_scene_ptr_
@@ -794,8 +829,9 @@ void PickAndPlaceRobotCommonImpl::markAsCommanded(
   {
     const auto& frame_id = item.center.frameId();
     const auto& offsets = item.center.position().vector();
-    collision_objects.push_back(createCollisionBox("access", item.id, frame_id, item.x_size, item.y_size, item.z_size,
-                                                   offsets.x(), offsets.y(), offsets.z(), command));
+    collision_objects.push_back(createCollisionBox("access", item.id, frame_id, item.x_size,
+                                                   item.y_size, item.z_size, offsets.x(),
+                                                   offsets.y(), offsets.z(), command));
   }
   planning_scene_ptr_->applyCollisionObjects(collision_objects);
 }
@@ -812,7 +848,8 @@ void PickAndPlaceRobotCommonImpl::markAsAccessible(
   markAsCommanded(descriptors, moveit_msgs::CollisionObject::REMOVE);
 }
 
-void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(tijmath::RelativePose3& end_effector_target_pose) const
+void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
+    tijmath::RelativePose3& end_effector_target_pose) const
 {
   const auto orientation = end_effector_target_pose.rotation().rotationMatrix();
   const auto x_director = tijmath::Vector3{ 0, 0, -1 };
@@ -825,8 +862,10 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(tijmath::RelativePo
   // part flipping, try to use always the same vector, unless that's the one
   // that's pointing up.
   tijmath::Vector3 z_director;
-  if ((std::abs(x_director.dot(original_x_director)) > std::abs(x_director.dot(original_y_director))) &&
-      (std::abs(x_director.dot(original_x_director)) > std::abs(x_director.dot(original_z_director))))
+  if ((std::abs(x_director.dot(original_x_director)) >
+       std::abs(x_director.dot(original_y_director))) &&
+      (std::abs(x_director.dot(original_x_director)) >
+       std::abs(x_director.dot(original_z_director))))
   {
     // x is pointing up
     // TODO(glpuga) the sign inversion is because without this accessing the

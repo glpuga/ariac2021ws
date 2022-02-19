@@ -18,10 +18,9 @@ namespace
 std::chrono::seconds anti_ghosting_delay{ 10 };
 }
 
-SubmitKittingShipmentTask::SubmitKittingShipmentTask(const Toolbox::SharedPtr& toolbox,
-                                                     ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                                                     const StationId& destination_station,
-                                                     const ShipmentType& shipment_type)
+SubmitKittingShipmentTask::SubmitKittingShipmentTask(
+    const Toolbox::SharedPtr& toolbox, ResourceManagerInterface::SubmissionTrayHandle&& tray,
+    const StationId& destination_station, const ShipmentType& shipment_type)
   : toolbox_{ toolbox }
   , tray_{ std::move(tray) }
   , destination_station_{ destination_station }
@@ -33,8 +32,8 @@ RobotTaskOutcome SubmitKittingShipmentTask::run()
 {
   auto proces_manager = toolbox_->getProcessManager();
   INFO("Submitting shipment {} on {}", shipment_type_, tray_.resource()->name());
-  proces_manager->submitAgvToAssemblyStation(agv::fromString(tray_.resource()->name()), destination_station_,
-                                             shipment_type_);
+  proces_manager->submitAgvToAssemblyStation(agv::fromString(tray_.resource()->name()),
+                                             destination_station_, shipment_type_);
 
   INFO("The kitting shipment is on the move...");
 

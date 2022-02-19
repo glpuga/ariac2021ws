@@ -18,7 +18,8 @@ const Matrix3 Matrix3::Zero{ { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
 
 Matrix3::Matrix3() = default;
 
-Matrix3::Matrix3(const Vector3& row0, const Vector3& row1, const Vector3& row2) : rows_{ row0, row1, row2 }
+Matrix3::Matrix3(const Vector3& row0, const Vector3& row1, const Vector3& row2)
+  : rows_{ row0, row1, row2 }
 {
 }
 
@@ -71,7 +72,8 @@ double Matrix3::det() const
   auto a32 = rows_[2][1];
   auto a33 = rows_[2][2];
 
-  return a11 * (a22 * a33 - a23 * a32) - a12 * (a21 * a33 - a23 * a31) + a13 * (a21 * a32 - a22 * a31);
+  return a11 * (a22 * a33 - a23 * a32) - a12 * (a21 * a33 - a23 * a31) +
+         a13 * (a21 * a32 - a22 * a31);
 }
 
 Matrix3 Matrix3::trans() const
@@ -103,7 +105,8 @@ Matrix3 Matrix3::inv() const
   auto b32 = -(a11 * a23 - a13 * a21);
   auto b33 = a11 * a22 - a12 * a21;
 
-  return Matrix3(Vector3{ b11, b12, b13 }, Vector3{ b21, b22, b23 }, Vector3{ b31, b32, b33 }).trans() *
+  return Matrix3(Vector3{ b11, b12, b13 }, Vector3{ b21, b22, b23 }, Vector3{ b31, b32, b33 })
+             .trans() *
          (1.0 / this->det());
 }
 
@@ -196,8 +199,9 @@ Matrix3 operator*(const double lhs, const Matrix3& rhs)
 
 std::ostream& operator<<(std::ostream& os, const Matrix3& m)
 {
-  return os << "[ " << m[0][0] << " " << m[0][1] << " " << m[0][2] << "; " << m[1][0] << " " << m[1][1] << " "
-            << m[1][2] << "; " << m[2][0] << " " << m[2][1] << " " << m[2][2] << " ]";
+  return os << "[ " << m[0][0] << " " << m[0][1] << " " << m[0][2] << "; " << m[1][0] << " "
+            << m[1][1] << " " << m[1][2] << "; " << m[2][0] << " " << m[2][1] << " " << m[2][2]
+            << " ]";
 }
 
 }  // namespace tijmath

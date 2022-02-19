@@ -82,24 +82,29 @@ using tijcore::StationId;
 
 ROSProcessManagement::ROSProcessManagement(const ros::NodeHandle& nh) : nh_{ nh }
 {
-  competition_state_sub_ =
-      nh_.subscribe(competition_state_topic, default_queue_len, &ROSProcessManagement::competitionStateCallback, this);
+  competition_state_sub_ = nh_.subscribe(competition_state_topic, default_queue_len,
+                                         &ROSProcessManagement::competitionStateCallback, this);
 
-  orders_sub_ = nh_.subscribe(orders_topic, default_queue_len, &ROSProcessManagement::ordersCallback, this);
+  orders_sub_ =
+      nh_.subscribe(orders_topic, default_queue_len, &ROSProcessManagement::ordersCallback, this);
 
-  agv1_state_sub_ = nh_.subscribe(agv1_state_topic, default_queue_len, &ROSProcessManagement::agv1StateCallback, this);
-  agv2_state_sub_ = nh_.subscribe(agv2_state_topic, default_queue_len, &ROSProcessManagement::agv2StateCallback, this);
-  agv3_state_sub_ = nh_.subscribe(agv3_state_topic, default_queue_len, &ROSProcessManagement::agv3StateCallback, this);
-  agv4_state_sub_ = nh_.subscribe(agv4_state_topic, default_queue_len, &ROSProcessManagement::agv4StateCallback, this);
+  agv1_state_sub_ = nh_.subscribe(agv1_state_topic, default_queue_len,
+                                  &ROSProcessManagement::agv1StateCallback, this);
+  agv2_state_sub_ = nh_.subscribe(agv2_state_topic, default_queue_len,
+                                  &ROSProcessManagement::agv2StateCallback, this);
+  agv3_state_sub_ = nh_.subscribe(agv3_state_topic, default_queue_len,
+                                  &ROSProcessManagement::agv3StateCallback, this);
+  agv4_state_sub_ = nh_.subscribe(agv4_state_topic, default_queue_len,
+                                  &ROSProcessManagement::agv4StateCallback, this);
 
-  agv1_station_sub_ =
-      nh_.subscribe(agv1_station_topic, default_queue_len, &ROSProcessManagement::agv1StationCallback, this);
-  agv2_station_sub_ =
-      nh_.subscribe(agv2_station_topic, default_queue_len, &ROSProcessManagement::agv2StationCallback, this);
-  agv3_station_sub_ =
-      nh_.subscribe(agv3_station_topic, default_queue_len, &ROSProcessManagement::agv3StationCallback, this);
-  agv4_station_sub_ =
-      nh_.subscribe(agv4_station_topic, default_queue_len, &ROSProcessManagement::agv4StationCallback, this);
+  agv1_station_sub_ = nh_.subscribe(agv1_station_topic, default_queue_len,
+                                    &ROSProcessManagement::agv1StationCallback, this);
+  agv2_station_sub_ = nh_.subscribe(agv2_station_topic, default_queue_len,
+                                    &ROSProcessManagement::agv2StationCallback, this);
+  agv3_station_sub_ = nh_.subscribe(agv3_station_topic, default_queue_len,
+                                    &ROSProcessManagement::agv3StationCallback, this);
+  agv4_station_sub_ = nh_.subscribe(agv4_station_topic, default_queue_len,
+                                    &ROSProcessManagement::agv4StationCallback, this);
 }
 
 ProcessManagementInterface::ErrorWithReason ROSProcessManagement::startCompetition() const
@@ -151,7 +156,8 @@ std::vector<tijcore::Order> ROSProcessManagement::getOrders()
 }
 
 ProcessManagementInterface::ErrorWithReason ROSProcessManagement::submitAgvToAssemblyStation(
-    const AgvId& agv_id, const tijcore::StationId& destination_station, const std::string& shipment_type) const
+    const AgvId& agv_id, const tijcore::StationId& destination_station,
+    const std::string& shipment_type) const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   nist_gear::AGVToAssemblyStation msg;
@@ -205,8 +211,8 @@ std::string ROSProcessManagement::getAgvState(const AgvId& agv_id) const
   return "";
 }
 
-ProcessManagementInterface::ErrorWithReason
-ROSProcessManagement::submitAssemblyStation(const StationId& station_id, const std::string& shipment_type) const
+ProcessManagementInterface::ErrorWithReason ROSProcessManagement::submitAssemblyStation(
+    const StationId& station_id, const std::string& shipment_type) const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   nist_gear::AssemblyStationSubmitShipment msg;
@@ -232,7 +238,8 @@ ROSProcessManagement::submitAssemblyStation(const StationId& station_id, const s
       case StationId::ks2:
       case StationId::ks3:
       case StationId::ks4:
-        throw std::invalid_argument{ "Can't submit a shipment to from " + tijcore::station_id::toString(station_id) };
+        throw std::invalid_argument{ "Can't submit a shipment to from " +
+                                     tijcore::station_id::toString(station_id) };
         break;
       case StationId::any:
         throw std::invalid_argument{ "Can't submit a shipment to from \"any\"" };
@@ -281,25 +288,29 @@ void ROSProcessManagement::ordersCallback(nist_gear::Order::ConstPtr msg)
   tijcore::Order new_order;
   new_order.order_id = tijcore::OrderId(msg->order_id);
 
-  auto convert_ros_product_to_core_product = [](const nist_gear::Product& ros_msg_product_description,
-                                                const std::string& tray_frame_id) {
-    return tijcore::ProductRequest{ tijcore::PartId(ros_msg_product_description.type),
-                                    tijmath::RelativePose3{ tray_frame_id, utils::convertGeoPoseToCorePose(
-                                                                               ros_msg_product_description.pose) } };
-  };
+  auto convert_ros_product_to_core_product =
+      [](const nist_gear::Product& ros_msg_product_description, const std::string& tray_frame_id) {
+        return tijcore::ProductRequest{
+          tijcore::PartId(ros_msg_product_description.type),
+          tijmath::RelativePose3{
+              tray_frame_id, utils::convertGeoPoseToCorePose(ros_msg_product_description.pose) }
+        };
+      };
 
   for (const auto& input_kitting_shipment : msg->kitting_shipments)
   {
     tijcore::KittingShipment output_kitting_shipment;
     output_kitting_shipment.agv_id = tijcore::agv::fromString(input_kitting_shipment.agv_id);
-    output_kitting_shipment.station_id = tijcore::station_id::fromString(input_kitting_shipment.station_id);
+    output_kitting_shipment.station_id =
+        tijcore::station_id::fromString(input_kitting_shipment.station_id);
     output_kitting_shipment.shipment_type = input_kitting_shipment.shipment_type;
 
     auto kit_tray_frame_id = utils::convertAgvIdToKitTrayFrameId(output_kitting_shipment.agv_id);
 
     for (const auto& input_product : input_kitting_shipment.products)
     {
-      output_kitting_shipment.products.push_back(convert_ros_product_to_core_product(input_product, kit_tray_frame_id));
+      output_kitting_shipment.products.push_back(
+          convert_ros_product_to_core_product(input_product, kit_tray_frame_id));
     }
     new_order.kitting_shipments.push_back(output_kitting_shipment);
   }
@@ -307,10 +318,12 @@ void ROSProcessManagement::ordersCallback(nist_gear::Order::ConstPtr msg)
   for (const auto& input_assembly_shipment : msg->assembly_shipments)
   {
     tijcore::AssemblyShipment output_assembly_shipment;
-    output_assembly_shipment.station_id = tijcore::station_id::fromString(input_assembly_shipment.station_id);
+    output_assembly_shipment.station_id =
+        tijcore::station_id::fromString(input_assembly_shipment.station_id);
     output_assembly_shipment.shipment_type = input_assembly_shipment.shipment_type;
 
-    auto briefcase_frame_id = utils::convertAgvIdToBriefcaseFrameId(output_assembly_shipment.station_id);
+    auto briefcase_frame_id =
+        utils::convertAgvIdToBriefcaseFrameId(output_assembly_shipment.station_id);
 
     for (const auto& input_product : input_assembly_shipment.products)
     {

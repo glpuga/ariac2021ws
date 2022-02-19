@@ -23,8 +23,9 @@ public:
   using SharedPtr = std::shared_ptr<ModelContainerInterface>;
 
   ModelContainerInterface(const std::string& name, const std::string& container_reference_frame_id_,
-                          const std::string& surface_reference_frame_id_, const tijmath::RelativePose3& pose,
-                          const CuboidVolume& container_volume, const std::string& shared_workspace_id);
+                          const std::string& surface_reference_frame_id_,
+                          const tijmath::RelativePose3& pose, const CuboidVolume& container_volume,
+                          const std::string& shared_workspace_id);
 
   virtual ~ModelContainerInterface() = default;
 

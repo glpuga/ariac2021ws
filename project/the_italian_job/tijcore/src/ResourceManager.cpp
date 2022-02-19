@@ -31,10 +31,11 @@ constexpr std::chrono::milliseconds blocking_methods_sleep_interval_{ 200 };
 constexpr int32_t conveyor_belt_start_difficulty_ = 3;
 }  // namespace
 
-ResourceManager::ResourceManager(const Toolbox::SharedPtr& toolbox,
-                                 const std::vector<ModelTraySharedAccessSpaceDescription>& shared_workspace_descriptors,
-                                 std::vector<ModelContainerInterface::Ptr>&& model_containers,
-                                 std::vector<PickAndPlaceRobotInterface::Ptr>&& pick_and_place_robots)
+ResourceManager::ResourceManager(
+    const Toolbox::SharedPtr& toolbox,
+    const std::vector<ModelTraySharedAccessSpaceDescription>& shared_workspace_descriptors,
+    std::vector<ModelContainerInterface::Ptr>&& model_containers,
+    std::vector<PickAndPlaceRobotInterface::Ptr>&& pick_and_place_robots)
   : shared_workspace_descriptors_{ shared_workspace_descriptors }, toolbox_{ toolbox }
 {
   for (auto& shared_workspace : shared_workspace_descriptors)
@@ -45,20 +46,23 @@ ResourceManager::ResourceManager(const Toolbox::SharedPtr& toolbox,
     }
 
     shared_working_spaces_.emplace(std::make_pair(
-        shared_workspace.id, SharedWorkspaceHandle{ std::make_unique<std::string>(shared_workspace.id) }));
+        shared_workspace.id,
+        SharedWorkspaceHandle{ std::make_unique<std::string>(shared_workspace.id) }));
   }
 
   for (auto& container : model_containers)
   {
     if (model_containers_.count(container->name()))
     {
-      throw std::runtime_error{ "Duplicated container name " + container->name() + " in model containers" };
+      throw std::runtime_error{ "Duplicated container name " + container->name() +
+                                " in model containers" };
     }
 
     if (!shared_working_spaces_.count(container->exclusionZoneId()))
     {
       throw std::runtime_error{ "The container " + container->name() +
-                                " has a shared workspace id not defined in the descriptors vector (" +
+                                " has a shared workspace id not defined in the descriptors vector "
+                                "(" +
                                 container->exclusionZoneId() + ")" };
     }
 
@@ -67,7 +71,8 @@ ResourceManager::ResourceManager(const Toolbox::SharedPtr& toolbox,
     // the std::make_tuple() call may crash if it happens before reading the
     // first argument (that indeed happened in the first version of the code)
     auto container_name = container->name();
-    model_containers_.emplace(std::make_pair(container_name, ModelContainerHandle{ std::move(container) }));
+    model_containers_.emplace(
+        std::make_pair(container_name, ModelContainerHandle{ std::move(container) }));
   }
 
   for (auto& robot : pick_and_place_robots)
@@ -76,7 +81,8 @@ ResourceManager::ResourceManager(const Toolbox::SharedPtr& toolbox,
   }
 }
 
-std::vector<ResourceManagerInterface::ManagedLocusHandle> ResourceManager::findEmptyLoci(const double free_radius)
+std::vector<ResourceManagerInterface::ManagedLocusHandle>
+ResourceManager::findEmptyLoci(const double free_radius)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
@@ -89,8 +95,8 @@ std::vector<ResourceManagerInterface::ManagedLocusHandle> ResourceManager::findE
     auto& model_container_handle = model_container_entry.second;
     if (!model_container_handle.allocated() && model_container_handle.resource()->enabled())
     {
-      surface_occupancy_maps.emplace(
-          std::make_pair(model_container_entry.first, buildContainerSurfaceManager(model_container_entry.first)));
+      surface_occupancy_maps.emplace(std::make_pair(
+          model_container_entry.first, buildContainerSurfaceManager(model_container_entry.first)));
     }
   }
 
@@ -108,7 +114,8 @@ std::vector<ResourceManagerInterface::ManagedLocusHandle> ResourceManager::findE
       auto parent_pose = model_containers_.at(container_name).resource()->pose();
       auto [x, y] = region_opt.value();
 
-      auto parent_ref_frame = model_containers_.at(container_name).resource()->containerReferenceFrameId();
+      auto parent_ref_frame =
+          model_containers_.at(container_name).resource()->containerReferenceFrameId();
 
       tijmath::RelativePose3 pose{ parent_ref_frame, tijmath::Position::fromVector(x, y, 0),
                                    tijmath::Rotation::Identity };
@@ -236,9 +243,11 @@ ResourceManager::getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& region
 
     auto robot_supported_regions = pap_robot_handle.resource()->supportedRegions();
 
-    auto fitness_level_opt = calculate_robot_to_task_fitness_to_task(regions, robot_supported_regions);
+    auto fitness_level_opt =
+        calculate_robot_to_task_fitness_to_task(regions, robot_supported_regions);
 
-    if (fitness_level_opt && (!current_selection_opt || (current_selection_fitness_level > fitness_level_opt.value())))
+    if (fitness_level_opt &&
+        (!current_selection_opt || (current_selection_fitness_level > fitness_level_opt.value())))
     {
       current_selection_opt = pap_robot_handle;
       current_selection_fitness_level = fitness_level_opt.value();
@@ -247,8 +256,10 @@ ResourceManager::getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& region
   return current_selection_opt;
 }
 
-std::optional<ResourceManagerInterface::ExclusionZoneHandle> ResourceManager::getModelTrayExclusionZoneHandle(
-    const std::string& model_tray_name, const std::optional<std::string>& additional_model_tray_name_opt,
+std::optional<ResourceManagerInterface::ExclusionZoneHandle>
+ResourceManager::getModelTrayExclusionZoneHandle(
+    const std::string& model_tray_name,
+    const std::optional<std::string>& additional_model_tray_name_opt,
     const std::chrono::milliseconds& timeout)
 {
   std::unique_lock<std::mutex> lock{ mutex_ };
@@ -292,8 +303,9 @@ std::optional<ResourceManagerInterface::ExclusionZoneHandle> ResourceManager::ge
 
   const auto start_time = std::chrono::system_clock::now();
 
-  const auto logging_names =
-      additional_model_tray_name_opt ? model_tray_name + " and " + additional_model_tray_name : model_tray_name;
+  const auto logging_names = additional_model_tray_name_opt ?
+                                 model_tray_name + " and " + additional_model_tray_name :
+                                 model_tray_name;
 
   const auto initial_sensor_update_count = sensor_update_count_;
 
@@ -314,7 +326,8 @@ std::optional<ResourceManagerInterface::ExclusionZoneHandle> ResourceManager::ge
     }
   }
 
-  if (!model_tray_handle.resource()->enabled() || !additional_model_tray_handle.resource()->enabled())
+  if (!model_tray_handle.resource()->enabled() ||
+      !additional_model_tray_handle.resource()->enabled())
   {
     WARNING(
         "Failed to get a handle to the exclusion zone of {} "
@@ -330,8 +343,8 @@ std::optional<ResourceManagerInterface::ExclusionZoneHandle> ResourceManager::ge
     locked_containers.push_back(model_tray_handle);
   }
 
-  return ExclusionZoneHandle(std::make_shared<ModelTraySharedAccessSpaceResource>(std::move(locked_containers),
-                                                                                  model_tray_exclusion_zone_handle));
+  return ExclusionZoneHandle(std::make_shared<ModelTraySharedAccessSpaceResource>(
+      std::move(locked_containers), model_tray_exclusion_zone_handle));
 }
 
 std::optional<ResourceManagerInterface::SubmissionTrayHandle>
@@ -367,10 +380,12 @@ ResourceManager::getSubmissionTray(const std::string& model_container_name)
 
   // the block can only be granted if there are no allocated handles on it.
   bool container_has_allocated_handles{ false };
-  auto handle_checker = [&container_has_allocated_handles, &model_container_name](const ManagedLocusHandle& handle) {
+  auto handle_checker = [&container_has_allocated_handles,
+                         &model_container_name](const ManagedLocusHandle& handle) {
     const auto handle_in_container = (model_container_name == handle.resource()->parentName());
     const auto handle_is_allocated = handle.allocated();
-    container_has_allocated_handles = container_has_allocated_handles || (handle_is_allocated && handle_in_container);
+    container_has_allocated_handles =
+        container_has_allocated_handles || (handle_is_allocated && handle_in_container);
   };
 
   std::for_each(model_loci_.begin(), model_loci_.end(), handle_checker);
@@ -390,18 +405,21 @@ std::string ResourceManager::getContainerFrameId(const std::string& model_contai
   std::string frame_id;
   if (!model_containers_.count(model_container_name))
   {
-    throw std::invalid_argument{ "There's no container filed with the name " + model_container_name };
+    throw std::invalid_argument{ "There's no container filed with the name " +
+                                 model_container_name };
   }
   return model_containers_.at(model_container_name).resource()->containerReferenceFrameId();
 }
 
-std::string ResourceManager::getContainerExclusionZoneId(const std::string& model_container_name) const
+std::string
+ResourceManager::getContainerExclusionZoneId(const std::string& model_container_name) const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   std::string frame_id;
   if (!model_containers_.count(model_container_name))
   {
-    throw std::invalid_argument{ "There's no container filed with the name " + model_container_name };
+    throw std::invalid_argument{ "There's no container filed with the name " +
+                                 model_container_name };
   }
   return model_containers_.at(model_container_name).resource()->exclusionZoneId();
 }
@@ -423,8 +441,9 @@ ResourceManager::getManagedLocusHandleForPose(const tijmath::RelativePose3& pose
   clearNonAllocatedEmptyLoci();
 
   // check if the pose matches that of a known managed locus
-  auto shortest_distance_to_pose = [this, &reference_pose = pose](const ManagedLocusHandle& lhs_locus_handle,
-                                                                  const ManagedLocusHandle& rhs_locus_handle) {
+  auto shortest_distance_to_pose = [this, &reference_pose =
+                                              pose](const ManagedLocusHandle& lhs_locus_handle,
+                                                    const ManagedLocusHandle& rhs_locus_handle) {
     auto& lhs_locus = *lhs_locus_handle.resource();
     auto& rhs_locus = *rhs_locus_handle.resource();
 
@@ -436,8 +455,10 @@ ResourceManager::getManagedLocusHandleForPose(const tijmath::RelativePose3& pose
     lhs_pose.position().vector().z() = reference_pose.position().vector().z();
     rhs_pose.position().vector().z() = reference_pose.position().vector().z();
 
-    const auto lhs_distance = (lhs_pose.position().vector() - reference_pose.position().vector()).norm();
-    const auto rhs_distance = (rhs_pose.position().vector() - reference_pose.position().vector()).norm();
+    const auto lhs_distance =
+        (lhs_pose.position().vector() - reference_pose.position().vector()).norm();
+    const auto rhs_distance =
+        (rhs_pose.position().vector() - reference_pose.position().vector()).norm();
 
     return lhs_distance < rhs_distance;
   };
@@ -445,7 +466,8 @@ ResourceManager::getManagedLocusHandleForPose(const tijmath::RelativePose3& pose
   if (model_loci_.size())
   {
     // determine the model that's closest to the requested pose
-    const auto closest_part = std::min_element(model_loci_.begin(), model_loci_.end(), shortest_distance_to_pose);
+    const auto closest_part =
+        std::min_element(model_loci_.begin(), model_loci_.end(), shortest_distance_to_pose);
 
     // get both poses in the same reference frame
     auto reframed_closest_part_pose =
@@ -456,7 +478,8 @@ ResourceManager::getManagedLocusHandleForPose(const tijmath::RelativePose3& pose
 
     // they get compared without rotation, because we may not know the
     // rotation value
-    if (tijmath::Position::samePosition(reframed_closest_part_pose.position(), pose.position(), position_tolerance_))
+    if (tijmath::Position::samePosition(reframed_closest_part_pose.position(), pose.position(),
+                                        position_tolerance_))
     {
       return *closest_part;
     }
@@ -493,7 +516,8 @@ ResourceManager::getManagedLocusHandleForPose(const tijmath::RelativePose3& pose
 
   auto [x, y, r] = poseToOccupancy(pose, parent_frame_id);
 
-  if (!surface_manager.regionIsWithinSurface(x, y, r) || !surface_manager.regionIsAvailable(x, y, r))
+  if (!surface_manager.regionIsWithinSurface(x, y, r) ||
+      !surface_manager.regionIsAvailable(x, y, r))
   {
     ERROR(
         "Could not create an empty space, there's no free space in {}  "
@@ -531,7 +555,8 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(const std::string& 
 
   for (const auto& model_locus : model_loci_)
   {
-    auto [x, y, r] = poseToOccupancy(model_locus.resource()->pose(), handle_ptr->containerReferenceFrameId());
+    auto [x, y, r] =
+        poseToOccupancy(model_locus.resource()->pose(), handle_ptr->containerReferenceFrameId());
     surface_manager.markAsOccupied(x, y, r);
   }
 
@@ -583,8 +608,8 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
     auto local_frame_pose = transformPoseToContainerLocalPose(model.pose, surface_frame_id);
 
     auto new_model_locus = ManagedLocus::CreateOccupiedSpace(
-        parent_container->resource()->name(), tijmath::RelativePose3{ surface_frame_id, local_frame_pose }, model.type,
-        model.broken);
+        parent_container->resource()->name(),
+        tijmath::RelativePose3{ surface_frame_id, local_frame_pose }, model.type, model.broken);
 
     // TODO(glpuga) Conveyor belt hack. I artificially increase the difficulty
     // of parts on conveyor belts to reduce their chances to be picked if there
@@ -638,16 +663,16 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
 
       // make sure both poses are known in the same frame
       auto known_model_locus_pose = known_model_locus.pose();
-      auto new_model_locus_pose =
-          transformPoseToContainerLocalPose(new_model_locus.pose(), known_model_locus_pose.frameId());
+      auto new_model_locus_pose = transformPoseToContainerLocalPose(
+          new_model_locus.pose(), known_model_locus_pose.frameId());
 
       // ignore differences in height
       new_model_locus_pose.position().vector().z() = known_model_locus_pose.position().vector().z();
 
       // they get compared without rotation, because we may not know the
       // rotation value
-      if (tijmath::Position::samePosition(new_model_locus_pose.position(), known_model_locus_pose.position(),
-                                          position_tolerance_))
+      if (tijmath::Position::samePosition(new_model_locus_pose.position(),
+                                          known_model_locus_pose.position(), position_tolerance_))
       {
         // don't update parts that are involved in active tasks
         if (known_model_locus_handle.allocated())
@@ -688,8 +713,8 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
           // changed.
           auto known_pose = new_model_locus.pose();
 
-          known_model_locus =
-              ManagedLocus::CreateOccupiedSpace(new_model_locus.parentName(), known_pose, known_part_id, known_broken);
+          known_model_locus = ManagedLocus::CreateOccupiedSpace(
+              new_model_locus.parentName(), known_pose, known_part_id, known_broken);
 
           // TODO(glpuga) this is hackish, fix
           known_model_locus.correctDifficulty(difficulty_value);
@@ -719,7 +744,8 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
 
   // erase the loci that have not been updated or that have no special
   // reason to be kept (empty loci)
-  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter), model_loci_.end());
+  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
+                    model_loci_.end());
 
   //
   // model_loci_ has now:
@@ -731,7 +757,8 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
   // - new models in allocated containers
 }
 
-const ResourceManager::ModelContainerHandle* ResourceManager::findLociContainer(const ManagedLocus& locus) const
+const ResourceManager::ModelContainerHandle*
+ResourceManager::findLociContainer(const ManagedLocus& locus) const
 {
   for (const auto& container : model_containers_)
   {
@@ -750,26 +777,28 @@ void ResourceManager::clearEmptyLoci()
     // an empty locus
     return !locus.allocated() && locus.resource()->isEmpty();
   };
-  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter), model_loci_.end());
+  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
+                    model_loci_.end());
 }
 
-tijmath::Pose3 ResourceManager::transformPoseToContainerLocalPose(const tijmath::RelativePose3& pose,
-                                                                  const std::string& container_frame_id) const
+tijmath::Pose3 ResourceManager::transformPoseToContainerLocalPose(
+    const tijmath::RelativePose3& pose, const std::string& container_frame_id) const
 {
   auto frame_transformer = toolbox_->getFrameTransformer();
   auto transformed_pose = frame_transformer->transformPoseToFrame(pose, container_frame_id);
   return transformed_pose.pose();
 }
 
-std::tuple<double, double, double> ResourceManager::poseToOccupancy(const tijmath::RelativePose3& relative_pose,
-                                                                    const std::string& container_frame_id) const
+std::tuple<double, double, double> ResourceManager::poseToOccupancy(
+    const tijmath::RelativePose3& relative_pose, const std::string& container_frame_id) const
 {
   tijmath::Pose3 local_pose = transformPoseToContainerLocalPose(relative_pose, container_frame_id);
   auto local_vector = local_pose.position().vector();
   return std::make_tuple(local_vector.x(), local_vector.y(), default_occupancy_radius_);
 }
 
-bool ResourceManager::locusWithinVolume(const ManagedLocus& locus, const ModelContainerHandle& container) const
+bool ResourceManager::locusWithinVolume(const ManagedLocus& locus,
+                                        const ModelContainerHandle& container) const
 {
   const auto& container_volume = container.resource()->containerVolume();
   const auto& local_frame_id = container.resource()->containerReferenceFrameId();
@@ -779,9 +808,12 @@ bool ResourceManager::locusWithinVolume(const ManagedLocus& locus, const ModelCo
 
 void ResourceManager::clearNonAllocatedEmptyLoci()
 {
-  auto filter = [](const ManagedLocusHandle& locus) { return !locus.allocated() && locus.resource()->isEmpty(); };
+  auto filter = [](const ManagedLocusHandle& locus) {
+    return !locus.allocated() && locus.resource()->isEmpty();
+  };
 
-  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter), model_loci_.end());
+  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
+                    model_loci_.end());
 }
 
 void ResourceManager::logKnownLoci()
@@ -796,27 +828,33 @@ void ResourceManager::logKnownLoci()
 
     // Convert to the frame of the parent
     auto known_model_locus_pose = known_model_locus.pose();
-    auto parent_frame = model_containers_.at(known_model_locus.parentName()).resource()->containerReferenceFrameId();
-    auto pose_in_parent =
-        tijmath::RelativePose3{ parent_frame, transformPoseToContainerLocalPose(known_model_locus_pose, parent_frame) };
+    auto parent_frame = model_containers_.at(known_model_locus.parentName())
+                            .resource()
+                            ->containerReferenceFrameId();
+    auto pose_in_parent = tijmath::RelativePose3{
+      parent_frame, transformPoseToContainerLocalPose(known_model_locus_pose, parent_frame)
+    };
     if (known_model_locus.isEmpty())
     {
-      INFO(" - empty at {} (allocated: {}, diff: {}, uid: {})", pose_in_parent, known_model_locus_handle.allocated(),
-           known_model_locus.difficulty(), known_model_locus.uniqueId());
+      INFO(" - empty at {} (allocated: {}, diff: {}, uid: {})", pose_in_parent,
+           known_model_locus_handle.allocated(), known_model_locus.difficulty(),
+           known_model_locus.uniqueId());
     }
     else
     {
       auto [known_model_part_id, broken] = known_model_locus.model();
       (void)broken;
-      INFO(" - {} at {} (broken: {} , allocated: {}, diff: {}, uid: {})", known_model_part_id.codedString(),
-           pose_in_parent, broken, known_model_locus_handle.allocated(), known_model_locus.difficulty(),
+      INFO(" - {} at {} (broken: {} , allocated: {}, diff: {}, uid: {})",
+           known_model_part_id.codedString(), pose_in_parent, broken,
+           known_model_locus_handle.allocated(), known_model_locus.difficulty(),
            known_model_locus.uniqueId());
     }
   }
   INFO("---");
 }
 
-const std::vector<ModelTraySharedAccessSpaceDescription>& ResourceManager::getListOfExclusionZones() const
+const std::vector<ModelTraySharedAccessSpaceDescription>&
+ResourceManager::getListOfExclusionZones() const
 {
   // no need to take the mutex, since this data is read-only.
   return shared_workspace_descriptors_;

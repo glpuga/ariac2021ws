@@ -41,7 +41,8 @@ private:
 
   tijmath::Isometry poseToIsometry(const tijmath::Pose3& pose) const;
 
-  tijmath::RelativePose3 TransformToRelativePose(const tijmath::Isometry& tr, const std::string& parent_frame_id) const;
+  tijmath::RelativePose3 TransformToRelativePose(const tijmath::Isometry& tr,
+                                                 const std::string& parent_frame_id) const;
 };
 
 }  // namespace tijcore

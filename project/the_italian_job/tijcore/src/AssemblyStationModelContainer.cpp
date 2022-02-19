@@ -21,10 +21,11 @@ const CuboidVolume briefcase_container_volume_{
 
 }  // namespace
 
-AssemblyStationModelContainer::AssemblyStationModelContainer(const std::string& name, const std::string& local_frame_id,
-                                                             const std::string& model_tray_shared_access_space_id,
-                                                             const Toolbox::SharedPtr toolbox)
-  : ModelContainerInterface(name, local_frame_id, local_frame_id, tijmath::RelativePose3{ local_frame_id, {} },
+AssemblyStationModelContainer::AssemblyStationModelContainer(
+    const std::string& name, const std::string& local_frame_id,
+    const std::string& model_tray_shared_access_space_id, const Toolbox::SharedPtr toolbox)
+  : ModelContainerInterface(name, local_frame_id, local_frame_id,
+                            tijmath::RelativePose3{ local_frame_id, {} },
                             briefcase_container_volume_, model_tray_shared_access_space_id)
   , toolbox_{ toolbox }
 {

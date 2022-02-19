@@ -36,12 +36,14 @@ protected:
   ValidRequestsStaticFrameTransformerTests()
   {
     std::initializer_list<StaticFrameTransformer::TransformTreeLink> links = {
-      { "table",
-        tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1), tijmath::Rotation::Identity } },
+      { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1),
+                                         tijmath::Rotation::Identity } },
       { "lamp", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(0, 0, 0.1),
-                                        tijmath::Rotation{ tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
+                                        tijmath::Rotation{
+                                            tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
       { "book", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(-0.3, 0, 0.1),
-                                        tijmath::Rotation{ tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
+                                        tijmath::Rotation{
+                                            tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
     };
     uut_ = std::make_unique<StaticFrameTransformer>(links);
   }
@@ -50,30 +52,38 @@ protected:
 TEST_F(ValidRequestsStaticFrameTransformerTests, TrivialWorldToWorld)
 {
   auto result = uut_->transformPoseToFrame(tijmath::RelativePose3{ "world" }, "world");
-  auto expected = tijmath::RelativePose3{ "world", tijmath::Position::Zero, tijmath::Rotation::Identity };
-  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_, angular_tolerance_));
+  auto expected =
+      tijmath::RelativePose3{ "world", tijmath::Position::Zero, tijmath::Rotation::Identity };
+  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_,
+                                                        angular_tolerance_));
 }
 
 TEST_F(ValidRequestsStaticFrameTransformerTests, TrivialLampToLamp)
 {
   auto result = uut_->transformPoseToFrame(tijmath::RelativePose3{ "lamp" }, "lamp");
-  auto expected = tijmath::RelativePose3{ "lamp", tijmath::Position::Zero, tijmath::Rotation::Identity };
-  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_, angular_tolerance_));
+  auto expected =
+      tijmath::RelativePose3{ "lamp", tijmath::Position::Zero, tijmath::Rotation::Identity };
+  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_,
+                                                        angular_tolerance_));
 }
 
 TEST_F(ValidRequestsStaticFrameTransformerTests, RegularFrameConversionLampToWorld)
 {
   {
     auto result = uut_->transformPoseToFrame(tijmath::RelativePose3{ "lamp" }, "world");
-    auto expected = tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1.1),
-                                            tijmath::Rotation::fromQuaternion(0, 0, -0.3826834, 0.9238795) };
-    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_, angular_tolerance_));
+    auto expected =
+        tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1.1),
+                                tijmath::Rotation::fromQuaternion(0, 0, -0.3826834, 0.9238795) };
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_,
+                                                          angular_tolerance_));
   }
   {
     auto result = uut_->transformPoseToFrame(tijmath::RelativePose3{ "world" }, "lamp");
-    auto expected = tijmath::RelativePose3{ "lamp", tijmath::Position::fromVector(0, 0, -1.1),
-                                            tijmath::Rotation::fromQuaternion(0, 0, 0.3826834, 0.9238795) };
-    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_, angular_tolerance_));
+    auto expected =
+        tijmath::RelativePose3{ "lamp", tijmath::Position::fromVector(0, 0, -1.1),
+                                tijmath::Rotation::fromQuaternion(0, 0, 0.3826834, 0.9238795) };
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_,
+                                                          angular_tolerance_));
   }
 }
 
@@ -81,32 +91,40 @@ TEST_F(ValidRequestsStaticFrameTransformerTests, RegularFrameConversionBookToWor
 {
   {
     auto result = uut_->transformPoseToFrame(tijmath::RelativePose3{ "book" }, "world");
-    auto expected = tijmath::RelativePose3{ "world", tijmath::Position::fromVector(-0.3, 0, 1.1),
-                                            tijmath::Rotation::fromQuaternion(0, 0, 0.3826834, 0.9238795) };
-    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_, angular_tolerance_));
+    auto expected =
+        tijmath::RelativePose3{ "world", tijmath::Position::fromVector(-0.3, 0, 1.1),
+                                tijmath::Rotation::fromQuaternion(0, 0, 0.3826834, 0.9238795) };
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_,
+                                                          angular_tolerance_));
   }
   {
     auto result = uut_->transformPoseToFrame(tijmath::RelativePose3{ "world" }, "book");
-    auto expected =
-        tijmath::RelativePose3{ "book", tijmath::Position::fromVector(0.21213203435596423, -0.21213203435596423, -1.1),
-                                tijmath::Rotation::fromQuaternion(0, 0, -0.3826834, 0.9238795) };
-    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_, angular_tolerance_));
+    auto expected = tijmath::RelativePose3{
+      "book", tijmath::Position::fromVector(0.21213203435596423, -0.21213203435596423, -1.1),
+      tijmath::Rotation::fromQuaternion(0, 0, -0.3826834, 0.9238795)
+    };
+    ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_,
+                                                          angular_tolerance_));
   }
 }
 
 TEST_F(ValidRequestsStaticFrameTransformerTests, RegularFrameConversionBookToWorldLamp)
 {
   auto result = uut_->transformPoseToFrame(tijmath::RelativePose3{ "book" }, "lamp");
-  auto expected =
-      tijmath::RelativePose3{ "lamp", tijmath::Position::fromVector(-0.21213203435596423, -0.21213203435596423, 0),
-                              tijmath::Rotation::fromQuaternion(0, 0, 0.7071068, 0.7071068) };
-  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_, angular_tolerance_));
+  auto expected = tijmath::RelativePose3{
+    "lamp", tijmath::Position::fromVector(-0.21213203435596423, -0.21213203435596423, 0),
+    tijmath::Rotation::fromQuaternion(0, 0, 0.7071068, 0.7071068)
+  };
+  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(expected, result, position_tolerance_,
+                                                        angular_tolerance_));
 }
 
 TEST_F(ValidRequestsStaticFrameTransformerTests, InvalidFrameTransformationsThrwo)
 {
-  ASSERT_THROW(uut_->transformPoseToFrame(tijmath::RelativePose3{ "world" }, "foo"), std::invalid_argument);
-  ASSERT_THROW(uut_->transformPoseToFrame(tijmath::RelativePose3{ "foo" }, "world"), std::invalid_argument);
+  ASSERT_THROW(uut_->transformPoseToFrame(tijmath::RelativePose3{ "world" }, "foo"),
+               std::invalid_argument);
+  ASSERT_THROW(uut_->transformPoseToFrame(tijmath::RelativePose3{ "foo" }, "world"),
+               std::invalid_argument);
 }
 
 class InvalidRequestsStaticFrameTransformerTests : public StaticFrameTransformerTests
@@ -116,13 +134,17 @@ class InvalidRequestsStaticFrameTransformerTests : public StaticFrameTransformer
 TEST_F(InvalidRequestsStaticFrameTransformerTests, LinkWithMissingParentThrows)
 {
   std::initializer_list<StaticFrameTransformer::TransformTreeLink> links = {
-    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1), tijmath::Rotation::Identity } },
+    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1),
+                                       tijmath::Rotation::Identity } },
     { "lamp", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(0, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
     { "book", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(-0.3, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
     { "tv", tijmath::RelativePose3{ "remote", tijmath::Position::fromVector(-0.3, 0, 0.1),
-                                    tijmath::Rotation{ tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
+                                    tijmath::Rotation{
+                                        tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
   };
   ASSERT_THROW(std::make_unique<StaticFrameTransformer>(links), std::invalid_argument);
 }
@@ -130,13 +152,18 @@ TEST_F(InvalidRequestsStaticFrameTransformerTests, LinkWithMissingParentThrows)
 TEST_F(InvalidRequestsStaticFrameTransformerTests, LinkWithIndirectMissingdParentThrows)
 {
   std::initializer_list<StaticFrameTransformer::TransformTreeLink> links = {
-    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1), tijmath::Rotation::Identity } },
+    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1),
+                                       tijmath::Rotation::Identity } },
     { "lamp", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(0, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
     { "book", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(-0.3, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
-    { "tv", tijmath::RelativePose3{ "remote", tijmath::Position::Zero, tijmath::Rotation::Identity } },
-    { "remote", tijmath::RelativePose3{ "window", tijmath::Position::Zero, tijmath::Rotation::Identity } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
+    { "tv",
+      tijmath::RelativePose3{ "remote", tijmath::Position::Zero, tijmath::Rotation::Identity } },
+    { "remote",
+      tijmath::RelativePose3{ "window", tijmath::Position::Zero, tijmath::Rotation::Identity } },
   };
   ASSERT_THROW(std::make_unique<StaticFrameTransformer>(links), std::invalid_argument);
 }
@@ -144,11 +171,14 @@ TEST_F(InvalidRequestsStaticFrameTransformerTests, LinkWithIndirectMissingdParen
 TEST_F(InvalidRequestsStaticFrameTransformerTests, LinkWithRecursivePathThrows)
 {
   std::initializer_list<StaticFrameTransformer::TransformTreeLink> links = {
-    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1), tijmath::Rotation::Identity } },
+    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1),
+                                       tijmath::Rotation::Identity } },
     { "lamp", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(0, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
     { "book", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(-0.3, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
     { "tv", tijmath::RelativePose3{ "tv", tijmath::Position::Zero, tijmath::Rotation::Identity } },
   };
   ASSERT_THROW(std::make_unique<StaticFrameTransformer>(links), std::invalid_argument);
@@ -157,13 +187,17 @@ TEST_F(InvalidRequestsStaticFrameTransformerTests, LinkWithRecursivePathThrows)
 TEST_F(InvalidRequestsStaticFrameTransformerTests, LinkWithIndirectRecursivePathThrows)
 {
   std::initializer_list<StaticFrameTransformer::TransformTreeLink> links = {
-    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1), tijmath::Rotation::Identity } },
+    { "table", tijmath::RelativePose3{ "world", tijmath::Position::fromVector(0, 0, 1),
+                                       tijmath::Rotation::Identity } },
     { "lamp", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(0, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, -0.3826834, 0.9238795) } } },
     { "book", tijmath::RelativePose3{ "table", tijmath::Position::fromVector(-0.3, 0, 0.1),
-                                      tijmath::Rotation{ tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
+                                      tijmath::Rotation{
+                                          tijmath::Quaternion(0, 0, 0.3826834, 0.9238795) } } },
     { "tv", tijmath::RelativePose3{ "tv", tijmath::Position::Zero, tijmath::Rotation::Identity } },
-    { "remote", tijmath::RelativePose3{ "tv", tijmath::Position::Zero, tijmath::Rotation::Identity } },
+    { "remote",
+      tijmath::RelativePose3{ "tv", tijmath::Position::Zero, tijmath::Rotation::Identity } },
   };
   ASSERT_THROW(std::make_unique<StaticFrameTransformer>(links), std::invalid_argument);
 }

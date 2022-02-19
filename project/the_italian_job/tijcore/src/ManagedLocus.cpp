@@ -14,13 +14,15 @@ namespace tijcore
 {
 int32_t ManagedLocus::unique_id_counter_;
 
-ManagedLocus ManagedLocus::CreateEmptySpace(const std::string& parent_container, const tijmath::RelativePose3& pose)
+ManagedLocus ManagedLocus::CreateEmptySpace(const std::string& parent_container,
+                                            const tijmath::RelativePose3& pose)
 {
   // can't use make shared because constructor is private
   return ManagedLocus(parent_container, pose);
 }
 
-ManagedLocus ManagedLocus::CreateOccupiedSpace(const std::string& parent_container, const tijmath::RelativePose3& pose,
+ManagedLocus ManagedLocus::CreateOccupiedSpace(const std::string& parent_container,
+                                               const tijmath::RelativePose3& pose,
                                                const PartId& part_id, const bool broken)
 {
   // can't use make shared because constructor is private
@@ -55,7 +57,11 @@ ManagedLocus::ManagedLocus(const std::string& parent_container, const tijmath::R
 
 ManagedLocus::ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose,
                            const PartId& part_id, const bool broken)
-  : parent_container_{ parent_container }, pose_{ pose }, part_id_{ part_id }, is_model_{ true }, is_broken_{ broken }
+  : parent_container_{ parent_container }
+  , pose_{ pose }
+  , part_id_{ part_id }
+  , is_model_{ true }
+  , is_broken_{ broken }
 {
 }
 

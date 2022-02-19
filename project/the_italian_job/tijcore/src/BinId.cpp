@@ -18,8 +18,9 @@ namespace bin
 BinId fromString(const std::string& sid)
 {
   static std::unordered_map<std::string, BinId> id_map = {
-    { "bin1", BinId::bin1 }, { "bin2", BinId::bin2 }, { "bin3", BinId::bin3 }, { "bin4", BinId::bin4 },
-    { "bin5", BinId::bin5 }, { "bin6", BinId::bin6 }, { "bin7", BinId::bin7 }, { "bin8", BinId::bin8 },
+    { "bin1", BinId::bin1 }, { "bin2", BinId::bin2 }, { "bin3", BinId::bin3 },
+    { "bin4", BinId::bin4 }, { "bin5", BinId::bin5 }, { "bin6", BinId::bin6 },
+    { "bin7", BinId::bin7 }, { "bin8", BinId::bin8 },
   };
 
   auto it = id_map.find(sid);
@@ -34,8 +35,9 @@ BinId fromString(const std::string& sid)
 std::string toString(const BinId& id)
 {
   static const std::unordered_map<BinId, std::string> id_map = {
-    { BinId::bin1, "bin1" }, { BinId::bin2, "bin2" }, { BinId::bin3, "bin3" }, { BinId::bin4, "bin4" },
-    { BinId::bin5, "bin5" }, { BinId::bin6, "bin6" }, { BinId::bin7, "bin7" }, { BinId::bin8, "bin8" },
+    { BinId::bin1, "bin1" }, { BinId::bin2, "bin2" }, { BinId::bin3, "bin3" },
+    { BinId::bin4, "bin4" }, { BinId::bin5, "bin5" }, { BinId::bin6, "bin6" },
+    { BinId::bin7, "bin7" }, { BinId::bin8, "bin8" },
   };
 
   auto it = id_map.find(id);
