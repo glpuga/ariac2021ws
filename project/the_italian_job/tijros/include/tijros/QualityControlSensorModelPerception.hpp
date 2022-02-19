@@ -22,7 +22,8 @@ namespace tijros
 class QualityControlSensorModelPerception : public tijcore::ModelPerceptionInterface
 {
 public:
-  QualityControlSensorModelPerception(const ros::NodeHandle& nh, const std::string& quality_sensor_name);
+  QualityControlSensorModelPerception(const ros::NodeHandle& nh,
+                                      const std::string& quality_sensor_name);
 
   std::vector<tijcore::ObservedModel> getObservedModels() const override;
 

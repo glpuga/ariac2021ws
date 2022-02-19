@@ -38,17 +38,21 @@ public:
 
   std::vector<ManagedLocusHandle> findManagedLociByParent(const std::string& parent_name) override;
 
-  std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& regions) override;
+  std::optional<PickAndPlaceRobotHandle>
+  getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& regions) override;
 
-  std::optional<ManagedLocusHandle> getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) override;
+  std::optional<ManagedLocusHandle>
+  getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) override;
 
   void updateSensorData(const std::vector<ObservedModel>& observed_models) override;
 
-  std::optional<ExclusionZoneHandle> getModelTrayExclusionZoneHandle(
-      const std::string& model_container_name, const std::optional<std::string>& additional_model_tray_name_opt,
-      const std::chrono::milliseconds& timeout) override;
+  std::optional<ExclusionZoneHandle>
+  getModelTrayExclusionZoneHandle(const std::string& model_container_name,
+                                  const std::optional<std::string>& additional_model_tray_name_opt,
+                                  const std::chrono::milliseconds& timeout) override;
 
-  std::optional<SubmissionTrayHandle> getSubmissionTray(const std::string& model_container_name) override;
+  std::optional<SubmissionTrayHandle>
+  getSubmissionTray(const std::string& model_container_name) override;
 
   std::string getContainerFrameId(const std::string& model_container_name) const override;
 
@@ -58,7 +62,8 @@ public:
 
   void logKnownLoci() override;
 
-  const std::vector<ModelTraySharedAccessSpaceDescription>& getListOfExclusionZones() const override;
+  const std::vector<ModelTraySharedAccessSpaceDescription>&
+  getListOfExclusionZones() const override;
 
 private:
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;
@@ -66,10 +71,11 @@ private:
 
   int32_t sensor_update_count_{ 0 };
 
-  const double position_tolerance_{ 0.024 };       // TODO(glpuga) analyze what value should be used for this
-  const double default_occupancy_radius_{ 0.02 };  // TODO(glpuga) this fixed value should be replaced by the
-                                                   // footprint of a given part, or at least be a function of part
-                                                   // size.
+  const double position_tolerance_{ 0.024 };  // TODO(glpuga) analyze what value should be used for
+                                              // this
+  const double default_occupancy_radius_{ 0.02 };  // TODO(glpuga) this fixed value should be
+                                                   // replaced by the footprint of a given part, or
+                                                   // at least be a function of part size.
 
   const std::vector<ModelTraySharedAccessSpaceDescription> shared_workspace_descriptors_;
 

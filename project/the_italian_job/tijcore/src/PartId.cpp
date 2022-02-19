@@ -25,8 +25,8 @@ PartId::PartId(const std::string& coded_part_str)
 {
   auto tokens = utils::string::splitStringByChar(coded_part_str, coded_part_string_separator_);
 
-  if ((tokens.size() != 3) || tokens[0] != coded_part_string_prefix_ || !part_type::isValid(tokens[1]) ||
-      !part_color::isValid(tokens[2]))
+  if ((tokens.size() != 3) || tokens[0] != coded_part_string_prefix_ ||
+      !part_type::isValid(tokens[1]) || !part_color::isValid(tokens[2]))
   {
     throw std::invalid_argument{ coded_part_str + " is not a valid coded part descriptor" };
   }

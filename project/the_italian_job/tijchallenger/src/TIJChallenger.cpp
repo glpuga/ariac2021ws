@@ -58,18 +58,19 @@ TIJChallenger::TIJChallenger()
   toolbox_ = createToolbox();
 
   INFO(" - Creating ResourceManager");
-  auto resource_manager =
-      std::make_shared<tijcore::ResourceManager>(toolbox_, config_->getListOfSharedAccessSpaceDescriptions(),
-                                                 createModelContainers(toolbox_), createPickAndPlaceRobots(toolbox_));
+  auto resource_manager = std::make_shared<tijcore::ResourceManager>(
+      toolbox_, config_->getListOfSharedAccessSpaceDescriptions(), createModelContainers(toolbox_),
+      createPickAndPlaceRobots(toolbox_));
 
   INFO(" - Creating RobotTaskFactory");
   auto task_master = std::make_unique<tijcore::TaskMaster>(
-      resource_manager, std::make_unique<tijcore::RobotTaskFactory>(resource_manager, toolbox_), toolbox_);
+      resource_manager, std::make_unique<tijcore::RobotTaskFactory>(resource_manager, toolbox_),
+      toolbox_);
 
   INFO(" - Creating TaskDriver");
-  task_driver_ =
-      std::make_unique<tijcore::TaskDriver>(std::move(task_master), std::make_unique<tijcore::RobotTaskGroupRunner>(),
-                                            resource_manager, createModelPerceptionMixer(), toolbox_);
+  task_driver_ = std::make_unique<tijcore::TaskDriver>(
+      std::move(task_master), std::make_unique<tijcore::RobotTaskGroupRunner>(), resource_manager,
+      createModelPerceptionMixer(), toolbox_);
 
   INFO("Setup complete.");
 }
@@ -104,7 +105,8 @@ tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createModelPerceptionMixer
   for (const auto& item : config_->getListOfQualityControlSensors())
   {
     INFO("   - {} @ {}", item.name, item.frame_id);
-    cameras.emplace_back(std::make_unique<tijros::QualityControlSensorModelPerception>(nh_, item.name));
+    cameras.emplace_back(
+        std::make_unique<tijros::QualityControlSensorModelPerception>(nh_, item.name));
   }
 
   return std::make_unique<tijcore::ModelPerceptionMixer>(std::move(cameras));
@@ -128,8 +130,8 @@ TIJChallenger::createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox_
   for (const auto& item : config_->getListOfAgvs())
   {
     INFO("   - {} @ {}", item.name, item.frame_id);
-    containers.emplace_back(
-        std::make_unique<tijcore::AgvModelContainer>(item.name, item.frame_id, item.shared_access_space_id, toolbox_));
+    containers.emplace_back(std::make_unique<tijcore::AgvModelContainer>(
+        item.name, item.frame_id, item.shared_access_space_id, toolbox_));
   }
 
   INFO(" - Loading assembly station data");
@@ -144,8 +146,8 @@ TIJChallenger::createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox_
   for (const auto& item : config_->getListOfBins())
   {
     INFO("   - {} @ {} ({})", item.name, item.frame_id, item.work_region);
-    containers.emplace_back(std::make_unique<tijcore::BinModelContainer>(item.name, item.frame_id, item.work_region,
-                                                                         item.shared_access_space_id));
+    containers.emplace_back(std::make_unique<tijcore::BinModelContainer>(
+        item.name, item.frame_id, item.work_region, item.shared_access_space_id));
   }
 
   INFO(" - Loading conveyor belts data");

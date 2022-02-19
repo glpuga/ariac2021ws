@@ -48,7 +48,11 @@ TEST_F(AgvIdTests, TestStreamOperator)
 {
   std::ostringstream os;
 
-  os << AgvId::agv1 << "\n" << AgvId::agv2 << "\n" << AgvId::agv3 << "\n" << AgvId::agv4 << "\n" << AgvId::any << "\n";
+  os << AgvId::agv1 << "\n"
+     << AgvId::agv2 << "\n"
+     << AgvId::agv3 << "\n"
+     << AgvId::agv4 << "\n"
+     << AgvId::any << "\n";
 
   ASSERT_EQ(
       "agv1\n"

@@ -22,27 +22,30 @@ RobotTaskFactory::RobotTaskFactory(const ResourceManagerInterface::SharedPtr& re
                                    const Toolbox::SharedPtr toolbox)
   : resource_manager_{ resource_manager }, toolbox_{ toolbox } {};
 
-RobotTaskInterface::Ptr
-RobotTaskFactory::getRemoveBrokenPartTask(ResourceManagerInterface::ManagedLocusHandle&& source_locus,
-                                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
+RobotTaskInterface::Ptr RobotTaskFactory::getRemoveBrokenPartTask(
+    ResourceManagerInterface::ManagedLocusHandle&& source_locus,
+    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
 {
-  return std::make_unique<RemoveBrokenPartTask>(resource_manager_, toolbox_, std::move(source_locus), std::move(robot));
+  return std::make_unique<RemoveBrokenPartTask>(resource_manager_, toolbox_,
+                                                std::move(source_locus), std::move(robot));
 }
 
 RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlaceTask(
-    ResourceManagerInterface::ManagedLocusHandle&& source, ResourceManagerInterface::ManagedLocusHandle&& destination,
+    ResourceManagerInterface::ManagedLocusHandle&& source,
+    ResourceManagerInterface::ManagedLocusHandle&& destination,
     ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
 {
-  return std::make_unique<PickAndPlaceTask>(resource_manager_, std::move(source), std::move(destination),
-                                            std::move(robot));
+  return std::make_unique<PickAndPlaceTask>(resource_manager_, std::move(source),
+                                            std::move(destination), std::move(robot));
 }
 
 RobotTaskInterface::Ptr RobotTaskFactory::getPickAndTwistPartTask(
-    ResourceManagerInterface::ManagedLocusHandle&& target, ResourceManagerInterface::ManagedLocusHandle&& destination,
+    ResourceManagerInterface::ManagedLocusHandle&& target,
+    ResourceManagerInterface::ManagedLocusHandle&& destination,
     ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
 {
-  return std::make_unique<PickAndTwistPartTask>(resource_manager_, std::move(target), std::move(destination),
-                                                std::move(robot));
+  return std::make_unique<PickAndTwistPartTask>(resource_manager_, std::move(target),
+                                                std::move(destination), std::move(robot));
 }
 
 RobotTaskInterface::Ptr RobotTaskFactory::getSubmitKittingShipmentTask(
@@ -53,7 +56,8 @@ RobotTaskInterface::Ptr RobotTaskFactory::getSubmitKittingShipmentTask(
   {
     throw std::invalid_argument{ tray.resource()->name() + " is not an agv id!" };
   }
-  return std::make_unique<SubmitKittingShipmentTask>(toolbox_, std::move(tray), destination_station, shipment_type);
+  return std::make_unique<SubmitKittingShipmentTask>(toolbox_, std::move(tray), destination_station,
+                                                     shipment_type);
 }
 
 RobotTaskInterface::Ptr RobotTaskFactory::getSubmitAssemblyShipmentTask(

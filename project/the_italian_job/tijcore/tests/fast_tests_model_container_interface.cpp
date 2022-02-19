@@ -32,16 +32,21 @@ TEST_F(ModelContainerInterfaceTests, ConstructionTest)
   const tijmath::Vector3 ufl_corner{ 3, 4, 2 };
   const CuboidVolume uut_container_volume{ lbr_corner, ufl_corner };
 
-  const ModelContainerMock uut{ "uut_name", "container_reference_frame_id", "surface_reference_frame_id",
-                                uut_pose,   uut_container_volume,           "exclusion_volume_id" };
+  const ModelContainerMock uut{
+    "uut_name", "container_reference_frame_id", "surface_reference_frame_id",
+    uut_pose,   uut_container_volume,           "exclusion_volume_id"
+  };
 
   ASSERT_EQ("uut_name", uut.name());
-  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(uut_pose, uut.pose(), position_tolerance_, angular_tolerance_));
+  ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(uut_pose, uut.pose(), position_tolerance_,
+                                                        angular_tolerance_));
 
   ASSERT_TRUE(tijmath::Position::samePosition(tijmath::Position(lbr_corner),
-                                              uut.containerVolume().lowerRightBackCorner(), position_tolerance_));
+                                              uut.containerVolume().lowerRightBackCorner(),
+                                              position_tolerance_));
   ASSERT_TRUE(tijmath::Position::samePosition(tijmath::Position(ufl_corner),
-                                              uut.containerVolume().upperLeftFrontCorner(), position_tolerance_));
+                                              uut.containerVolume().upperLeftFrontCorner(),
+                                              position_tolerance_));
 }
 
 }  // namespace

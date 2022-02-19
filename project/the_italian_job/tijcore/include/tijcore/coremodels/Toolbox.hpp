@@ -58,7 +58,8 @@ private:
   Contents contents_;
 
   template <typename T>
-  std::shared_ptr<T> returnPtrIfInstanceNotNull(const char* where, const std::shared_ptr<T>& ptr) const
+  std::shared_ptr<T> returnPtrIfInstanceNotNull(const char* where,
+                                                const std::shared_ptr<T>& ptr) const
   {
     if (!ptr)
     {

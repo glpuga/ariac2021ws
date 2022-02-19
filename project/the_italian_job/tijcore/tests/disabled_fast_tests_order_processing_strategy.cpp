@@ -55,10 +55,13 @@ TEST_F(OrderProcessingStrategyTests, CollectAgvsAndStationsInUse)
 
   {
     test_order.kitting_shipments.clear();
-    test_order.kitting_shipments.push_back(KittingShipment{ "shipment_type_id_1", AgvId::agv1, StationId::as1, {} });
-    test_order.kitting_shipments.push_back(KittingShipment{ "shipment_type_id_2", AgvId::agv3, StationId::as4, {} });
+    test_order.kitting_shipments.push_back(
+        KittingShipment{ "shipment_type_id_1", AgvId::agv1, StationId::as1, {} });
+    test_order.kitting_shipments.push_back(
+        KittingShipment{ "shipment_type_id_2", AgvId::agv3, StationId::as4, {} });
     const std::set<AgvId> expected_agvs_in_use{ AgvId::agv1, AgvId::agv2, AgvId::agv3 };
-    const std::set<StationId> expected_stations_in_use{ StationId::as1, StationId::as2, StationId::as4 };
+    const std::set<StationId> expected_stations_in_use{ StationId::as1, StationId::as2,
+                                                        StationId::as4 };
     std::set<AgvId> agvs_in_use{ AgvId::agv2 };
     std::set<StationId> stations_in_use{ StationId::as2 };
     uut.getAgvsAndStationsInUse(test_order, agvs_in_use, stations_in_use);
@@ -68,8 +71,10 @@ TEST_F(OrderProcessingStrategyTests, CollectAgvsAndStationsInUse)
 
   {
     test_order.kitting_shipments.clear();
-    test_order.kitting_shipments.push_back(KittingShipment{ "shipment_type_id_1", AgvId::any, StationId::as1, {} });
-    test_order.kitting_shipments.push_back(KittingShipment{ "shipment_type_id_2", AgvId::agv3, StationId::any, {} });
+    test_order.kitting_shipments.push_back(
+        KittingShipment{ "shipment_type_id_1", AgvId::any, StationId::as1, {} });
+    test_order.kitting_shipments.push_back(
+        KittingShipment{ "shipment_type_id_2", AgvId::agv3, StationId::any, {} });
     const std::set<AgvId> expected_agvs_in_use{ AgvId::agv2, AgvId::agv3 };
     const std::set<StationId> expected_stations_in_use{ StationId::as1, StationId::as2 };
     std::set<AgvId> agvs_in_use{ AgvId::agv2 };
@@ -87,7 +92,8 @@ TEST_F(OrderProcessingStrategyTests, DisambiguateOrderWorks)
 
   Order test_order;
   test_order.order_id = test_order_id_;
-  test_order.kitting_shipments.push_back(KittingShipment{ "shipment_type_id", AgvId::agv1, StationId::as1, {} });
+  test_order.kitting_shipments.push_back(
+      KittingShipment{ "shipment_type_id", AgvId::agv1, StationId::as1, {} });
 
   struct DisambiguationTestEntry
   {
@@ -154,14 +160,17 @@ TEST_F(OrderProcessingStrategyTests, DisambiguateOrderWorks)
     auto stations_in_use = entry.input_stations_in_use;
 
     ASSERT_TRUE(agv::isAny(entry.input_agv_id) || agvs_in_use.count(entry.input_agv_id));
-    ASSERT_TRUE(station_id::isAny(entry.input_station_id) || stations_in_use.count(entry.input_station_id));
+    ASSERT_TRUE(station_id::isAny(entry.input_station_id) ||
+                stations_in_use.count(entry.input_station_id));
 
-    uut.disambiguateOrderEndpoints(resource_manager_mock_, test_order, agvs_in_use, stations_in_use);
+    uut.disambiguateOrderEndpoints(resource_manager_mock_, test_order, agvs_in_use,
+                                   stations_in_use);
     ASSERT_EQ(entry.output_agv_id, test_order.kitting_shipments[0].agv_id);
     ASSERT_EQ(entry.output_station_id, test_order.kitting_shipments[0].station_id);
 
     ASSERT_TRUE(!agv::isAny(entry.output_agv_id) && agvs_in_use.count(entry.output_agv_id));
-    ASSERT_TRUE(!station_id::isAny(entry.output_station_id) && stations_in_use.count(entry.output_station_id));
+    ASSERT_TRUE(!station_id::isAny(entry.output_station_id) &&
+                stations_in_use.count(entry.output_station_id));
   }
 }
 

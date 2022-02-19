@@ -35,7 +35,8 @@ Rotation& Pose3::rotation()
   return r_;
 }
 
-bool samePose3(const Pose3& lhs, const Pose3& rhs, const double position_tolerance, const double angular_tolerance)
+bool samePose3(const Pose3& lhs, const Pose3& rhs, const double position_tolerance,
+               const double angular_tolerance)
 {
   return Position::samePosition(lhs.position(), rhs.position(), position_tolerance) &&
          Rotation::sameRotation(lhs.rotation(), rhs.rotation(), angular_tolerance);

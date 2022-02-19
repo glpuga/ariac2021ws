@@ -12,7 +12,8 @@
 
 namespace tijcore
 {
-RobotTaskGroupRunner::RobotTaskGroupRunner() : garbage_collector_timer_{ [this] { timerCallback(); } }
+RobotTaskGroupRunner::RobotTaskGroupRunner()
+  : garbage_collector_timer_{ [this] { timerCallback(); } }
 {
   garbage_collector_timer_.start(std::chrono::milliseconds{ 100 });
 }
@@ -31,12 +32,13 @@ void RobotTaskGroupRunner::add(RobotTaskInterface::Ptr& task)
 
 void RobotTaskGroupRunner::stopAllTasks()
 {
-  std::for_each(tasks_in_execution_.begin(), tasks_in_execution_.end(), [](RobotTaskAsyncRunner& task) {
-    if (!task.terminated())
-    {
-      task.halt();
-    }
-  });
+  std::for_each(tasks_in_execution_.begin(), tasks_in_execution_.end(),
+                [](RobotTaskAsyncRunner& task) {
+                  if (!task.terminated())
+                  {
+                    task.halt();
+                  }
+                });
 }
 
 void RobotTaskGroupRunner::clearTerminatedTasks()

@@ -46,7 +46,8 @@ private:
   std::vector<tijcore::ModelContainerInterface::Ptr>
   createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox) const;
 
-  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr> createConveyorBeltTransformBroadcasters() const;
+  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr>
+  createConveyorBeltTransformBroadcasters() const;
 
   std::vector<tijcore::PickAndPlaceRobotInterface::Ptr>
   createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr& toolbox) const;

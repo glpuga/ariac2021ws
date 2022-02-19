@@ -17,11 +17,14 @@ namespace
 constexpr std::chrono::seconds timeout_{ 120 };
 }
 
-RemoveBrokenPartTask::RemoveBrokenPartTask(const ResourceManagerInterface::SharedPtr& resource_manager,
-                                           const Toolbox::SharedPtr& toolbox,
-                                           ResourceManagerInterface::ManagedLocusHandle&& target,
-                                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot)
-  : resource_manager_{ resource_manager }, toolbox_{ toolbox }, target_{ std::move(target) }, robot_{ std::move(robot) }
+RemoveBrokenPartTask::RemoveBrokenPartTask(
+    const ResourceManagerInterface::SharedPtr& resource_manager, const Toolbox::SharedPtr& toolbox,
+    ResourceManagerInterface::ManagedLocusHandle&& target,
+    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot)
+  : resource_manager_{ resource_manager }
+  , toolbox_{ toolbox }
+  , target_{ std::move(target) }
+  , robot_{ std::move(robot) }
 {
 }
 
@@ -46,7 +49,8 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   // we are located
   model_tray_access_manager.clearAllExclusionZones();
 
-  if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) || !model_tray_access_manager.releaseAccess())
+  if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||
+      !model_tray_access_manager.releaseAccess())
   {
     ERROR("{} failed to get in resting pose", robot.name());
   }
@@ -66,8 +70,8 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   {
     ERROR("{} failed to pick up the broken part while trying to remove it", robot.name());
   }
-  else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) || !robot.gripperHasPartAttached() ||
-           !model_tray_access_manager.releaseAccess())
+  else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||
+           !robot.gripperHasPartAttached() || !model_tray_access_manager.releaseAccess())
   {
     ERROR("{} failed to get the broken part ready for transport to the bucket", robot.name());
   }
@@ -103,7 +107,8 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   // source part is
   if (result != RobotTaskOutcome::TASK_SUCCESS)
   {
-    *target_.resource() = ManagedLocus::CreateEmptySpace(target_.resource()->parentName(), target_.resource()->pose());
+    *target_.resource() = ManagedLocus::CreateEmptySpace(target_.resource()->parentName(),
+                                                         target_.resource()->pose());
   }
 
   // try to get in a resting pose to remove the robot from the way

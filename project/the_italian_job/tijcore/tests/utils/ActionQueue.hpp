@@ -37,7 +37,8 @@ public:
     }
     catch (const std::exception& e)
     {
-      std::cerr << "Unexpected exception thrown while executing action queue: " << e.what() << std::endl;
+      std::cerr << "Unexpected exception thrown while executing action queue: " << e.what()
+                << std::endl;
       return false;
     }
     return true;

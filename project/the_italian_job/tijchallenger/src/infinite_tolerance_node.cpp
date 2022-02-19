@@ -21,24 +21,27 @@ public:
   {
     const int queue_len = 10;
 
-    goal_sub_ = nh_.subscribe(client_facing_server + "/goal", queue_len, &InfiniteToleranceNode::goalCallback, this);
-    status_sub_ =
-        nh_.subscribe(controller_facing_server + "/status", queue_len, &InfiniteToleranceNode::statusCallback, this);
+    goal_sub_ = nh_.subscribe(client_facing_server + "/goal", queue_len,
+                              &InfiniteToleranceNode::goalCallback, this);
+    status_sub_ = nh_.subscribe(controller_facing_server + "/status", queue_len,
+                                &InfiniteToleranceNode::statusCallback, this);
     feedback_sub_ = nh_.subscribe(controller_facing_server + "/feedback", queue_len,
                                   &InfiniteToleranceNode::feedbackCallback, this);
-    result_sub_ =
-        nh_.subscribe(controller_facing_server + "/result", queue_len, &InfiniteToleranceNode::resultCallback, this);
-    cancel_sub_ =
-        nh_.subscribe(client_facing_server + "/cancel", queue_len, &InfiniteToleranceNode::cancelCallback, this);
+    result_sub_ = nh_.subscribe(controller_facing_server + "/result", queue_len,
+                                &InfiniteToleranceNode::resultCallback, this);
+    cancel_sub_ = nh_.subscribe(client_facing_server + "/cancel", queue_len,
+                                &InfiniteToleranceNode::cancelCallback, this);
 
-    goal_pub_ =
-        nh_.advertise<control_msgs::FollowJointTrajectoryActionGoal>(controller_facing_server + "/goal", queue_len);
-    status_pub_ = nh_.advertise<actionlib_msgs::GoalStatusArray>(client_facing_server + "/status", queue_len);
-    feedback_pub_ =
-        nh_.advertise<control_msgs::FollowJointTrajectoryActionFeedback>(client_facing_server + "/feedback", queue_len);
-    result_pub_ =
-        nh_.advertise<control_msgs::FollowJointTrajectoryActionResult>(client_facing_server + "/result", queue_len);
-    cancel_pub_ = nh_.advertise<actionlib_msgs::GoalID>(controller_facing_server + "/cancel", queue_len);
+    goal_pub_ = nh_.advertise<control_msgs::FollowJointTrajectoryActionGoal>(
+        controller_facing_server + "/goal", queue_len);
+    status_pub_ =
+        nh_.advertise<actionlib_msgs::GoalStatusArray>(client_facing_server + "/status", queue_len);
+    feedback_pub_ = nh_.advertise<control_msgs::FollowJointTrajectoryActionFeedback>(
+        client_facing_server + "/feedback", queue_len);
+    result_pub_ = nh_.advertise<control_msgs::FollowJointTrajectoryActionResult>(
+        client_facing_server + "/result", queue_len);
+    cancel_pub_ =
+        nh_.advertise<actionlib_msgs::GoalID>(controller_facing_server + "/cancel", queue_len);
   }
 
   void run()
@@ -121,7 +124,8 @@ int main(int argc, char** argv)
   std::string controller_facing_server;
   std::string client_facing_server;
 
-  ros::param::param<std::string>("~controller_facing_server", controller_facing_server, "controller_server");
+  ros::param::param<std::string>("~controller_facing_server", controller_facing_server,
+                                 "controller_server");
   ros::param::param<std::string>("~client_facing_server", client_facing_server, "client_client");
   InfiniteToleranceNode node{ nh, controller_facing_server, client_facing_server };
   node.run();

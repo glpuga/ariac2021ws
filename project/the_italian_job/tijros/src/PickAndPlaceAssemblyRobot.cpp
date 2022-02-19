@@ -78,11 +78,13 @@ void PickAndPlaceAssemblyRobot::setSuctionGripper(const bool state) const
   robot_actuator_->setGantryGripperSuction(state);
 }
 
-void PickAndPlaceAssemblyRobot::patchJointStateValuesForRestingPose(std::vector<double>& joint_states) const
+void PickAndPlaceAssemblyRobot::patchJointStateValuesForRestingPose(
+    std::vector<double>& joint_states) const
 {
   if (joint_states.size() != 9)
   {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(), name());
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
   }
   // Note that rail coordinates are relative to the rail, not to world
   joint_states[2] = 0.0;
@@ -96,22 +98,24 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForRestingPose(std::vector<
   // reuse current_pose_estimation to get us to the closest safe pose from where
   // we are now. This requires recovering the coordinates in the rail frame from
   // the current rail values.
-  tijmath::RelativePose3 current_pose_estimation{ long_rail_frame_id_,
-                                                  tijmath::Position::fromVector(joint_states[1], joint_states[0], 0.0),
-                                                  {} };
+  tijmath::RelativePose3 current_pose_estimation{
+    long_rail_frame_id_, tijmath::Position::fromVector(joint_states[1], joint_states[0], 0.0), {}
+  };
   patchJointStateValuesToGetCloseToTarget(joint_states, current_pose_estimation);
 }
 
-void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
-                                                                        const tijmath::RelativePose3& target) const
+void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTarget(
+    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
-  patchJointStateValuesToGetNearPose(joint_states, target, scene_config_->getListOfSafeWaitingSpotHints());
+  patchJointStateValuesToGetNearPose(joint_states, target,
+                                     scene_config_->getListOfSafeWaitingSpotHints());
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesGraspingHingPoseNearTarget(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
-  patchJointStateValuesToGetNearPose(joint_states, target, scene_config_->getListOfGantryPlanningHints());
+  patchJointStateValuesToGetNearPose(joint_states, target,
+                                     scene_config_->getListOfGantryPlanningHints());
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
@@ -120,14 +124,19 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
 {
   if (joint_states.size() != 9)
   {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(), name());
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
   }
-  const auto target_in_world = frame_transformer_->transformPoseToFrame(target, scene_config_->getWorldFrameId());
+  const auto target_in_world =
+      frame_transformer_->transformPoseToFrame(target, scene_config_->getWorldFrameId());
 
-  auto shortest_distance_to_reference_sorter = [this, &reference = target_in_world](const tijmath::RelativePose3& lhs,
-                                                                                    const tijmath::RelativePose3& rhs) {
-    const auto lhs_in_world = frame_transformer_->transformPoseToFrame(lhs, scene_config_->getWorldFrameId());
-    const auto rhs_in_world = frame_transformer_->transformPoseToFrame(rhs, scene_config_->getWorldFrameId());
+  auto shortest_distance_to_reference_sorter = [this, &reference = target_in_world](
+                                                   const tijmath::RelativePose3& lhs,
+                                                   const tijmath::RelativePose3& rhs) {
+    const auto lhs_in_world =
+        frame_transformer_->transformPoseToFrame(lhs, scene_config_->getWorldFrameId());
+    const auto rhs_in_world =
+        frame_transformer_->transformPoseToFrame(rhs, scene_config_->getWorldFrameId());
     auto distance_vector_left = (reference.position().vector() - lhs_in_world.position().vector());
     auto distance_vector_right = (reference.position().vector() - rhs_in_world.position().vector());
     // ignore height differences
@@ -140,7 +149,8 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
 
   const auto closest_hint =
       std::min_element(pose_hints.begin(), pose_hints.end(), shortest_distance_to_reference_sorter);
-  const auto target_in_rail = frame_transformer_->transformPoseToFrame(*closest_hint, long_rail_frame_id_);
+  const auto target_in_rail =
+      frame_transformer_->transformPoseToFrame(*closest_hint, long_rail_frame_id_);
 
   // pay attention to the conversion from rail pose to rail values!
   joint_states[0] = target_in_rail.position().vector().y();
@@ -163,11 +173,13 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
   }
 }
 
-void PickAndPlaceAssemblyRobot::patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const
+void PickAndPlaceAssemblyRobot::patchJointStateValuesForAlignedZeroWrist(
+    std::vector<double>& joint_states) const
 {
   if (joint_states.size() != 9)
   {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(), name());
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
   }
   joint_states[8] = degreesToRadians(0);
 }

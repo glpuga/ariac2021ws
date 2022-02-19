@@ -15,9 +15,11 @@ namespace tijcore
 {
 using tijutils::Timer;
 
-TaskDriver::TaskDriver(TaskMasterInterface::Ptr&& task_master, RobotTaskGroupRunnerInterface::Ptr&& task_group_runner,
+TaskDriver::TaskDriver(TaskMasterInterface::Ptr&& task_master,
+                       RobotTaskGroupRunnerInterface::Ptr&& task_group_runner,
                        const ResourceManagerInterface::SharedPtr& resource_manager,
-                       const ModelPerceptionInterface::SharedPtr& perception_input, const Toolbox::SharedPtr& toolbox,
+                       const ModelPerceptionInterface::SharedPtr& perception_input,
+                       const Toolbox::SharedPtr& toolbox,
                        const std::chrono::milliseconds perception_interval,
                        const std::chrono::milliseconds processing_interval)
   : processing_interval_{ processing_interval }

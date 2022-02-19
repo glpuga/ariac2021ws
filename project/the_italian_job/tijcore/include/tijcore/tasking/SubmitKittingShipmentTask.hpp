@@ -14,8 +14,10 @@ namespace tijcore
 class SubmitKittingShipmentTask : public RobotTaskInterface
 {
 public:
-  SubmitKittingShipmentTask(const Toolbox::SharedPtr& toolbox, ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                            const StationId& destination_station, const ShipmentType& shipment_type);
+  SubmitKittingShipmentTask(const Toolbox::SharedPtr& toolbox,
+                            ResourceManagerInterface::SubmissionTrayHandle&& tray,
+                            const StationId& destination_station,
+                            const ShipmentType& shipment_type);
 
   RobotTaskOutcome run() override;
 

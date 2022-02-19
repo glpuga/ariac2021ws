@@ -25,12 +25,13 @@ constexpr int default_queue_len = 10;
 constexpr std::chrono::seconds timer_interval_{ 1 };
 }  // namespace
 
-QualityControlSensorModelPerception::QualityControlSensorModelPerception(const ros::NodeHandle& nh,
-                                                                         const std::string& quality_sensor_name)
+QualityControlSensorModelPerception::QualityControlSensorModelPerception(
+    const ros::NodeHandle& nh, const std::string& quality_sensor_name)
   : nh_{ nh }, quality_sensor_name_{ quality_sensor_name }, timer_{ [this] { timerCallback(); } }
 {
   const std::string topic_id{ topic_prefix + quality_sensor_name_ };
-  camera_sub_ = nh_.subscribe(topic_id, default_queue_len, &QualityControlSensorModelPerception::cameraCallback, this);
+  camera_sub_ = nh_.subscribe(topic_id, default_queue_len,
+                              &QualityControlSensorModelPerception::cameraCallback, this);
   timer_.start(timer_interval_);
 }
 
@@ -40,7 +41,8 @@ std::vector<tijcore::ObservedModel> QualityControlSensorModelPerception::getObse
   return models_;
 }
 
-void QualityControlSensorModelPerception::cameraCallback(nist_gear::LogicalCameraImage::ConstPtr msg)
+void QualityControlSensorModelPerception::cameraCallback(
+    nist_gear::LogicalCameraImage::ConstPtr msg)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   update_received_ = true;
@@ -49,7 +51,8 @@ void QualityControlSensorModelPerception::cameraCallback(nist_gear::LogicalCamer
   {
     const auto& geo_pose = ros_model.pose;
     const auto relative_core_pose =
-        tijmath::RelativePose3{ quality_sensor_name_ + "_frame", utils::convertGeoPoseToCorePose(geo_pose) };
+        tijmath::RelativePose3{ quality_sensor_name_ + "_frame",
+                                utils::convertGeoPoseToCorePose(geo_pose) };
     const auto part_id = tijcore::PartId::UnkownPartId;
     // quality sensor only report faulty parts
     const tijcore::ObservedModel core_model{ part_id, relative_core_pose, true };

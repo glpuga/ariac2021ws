@@ -60,9 +60,10 @@ public:
     auto executor = [source_locus = std::move(source_locus), robot = std::move(robot)]() mutable {
       auto& src = *source_locus.resource();
       auto [part_id, broken] = src.model();
-      INFO("Removing {} (broken {}) from {} (@{})", part_id.codedString(), broken, src.pose(), src.parentName());
-      auto null_place =
-          ManagedLocus::CreateEmptySpace(source_locus.resource()->parentName(), source_locus.resource()->pose());
+      INFO("Removing {} (broken {}) from {} (@{})", part_id.codedString(), broken, src.pose(),
+           src.parentName());
+      auto null_place = ManagedLocus::CreateEmptySpace(source_locus.resource()->parentName(),
+                                                       source_locus.resource()->pose());
       ManagedLocus::TransferPartFromHereToThere(*source_locus.resource(), null_place);
       return RobotTaskOutcome::TASK_SUCCESS;
     };
@@ -71,17 +72,18 @@ public:
     return std::move(mock);
   }
 
-  RobotTaskInterface::Ptr getPickAndPlaceTask(ResourceManagerInterface::ManagedLocusHandle&& source,
-                                              ResourceManagerInterface::ManagedLocusHandle&& destination,
-                                              ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override
+  RobotTaskInterface::Ptr
+  getPickAndPlaceTask(ResourceManagerInterface::ManagedLocusHandle&& source,
+                      ResourceManagerInterface::ManagedLocusHandle&& destination,
+                      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override
   {
     auto executor = [source = std::move(source), destination = std::move(destination),
                      robot = std::move(robot)]() mutable {
       auto& src = *source.resource();
       auto& dst = *destination.resource();
       auto [part_id, broken] = src.model();
-      INFO("Moving {} (broken {}) from {} (@{}) to {} (@{})", part_id.codedString(), broken, src.pose(),
-           src.parentName(), dst.pose(), dst.parentName());
+      INFO("Moving {} (broken {}) from {} (@{}) to {} (@{})", part_id.codedString(), broken,
+           src.pose(), src.parentName(), dst.pose(), dst.parentName());
       ManagedLocus::TransferPartFromHereToThere(*source.resource(), *destination.resource());
       return RobotTaskOutcome::TASK_SUCCESS;
     };
@@ -90,17 +92,18 @@ public:
     return std::move(mock);
   }
 
-  RobotTaskInterface::Ptr getPickAndTwistPartTask(
-      ResourceManagerInterface::ManagedLocusHandle&& target, ResourceManagerInterface::ManagedLocusHandle&& destination,
-      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override
+  RobotTaskInterface::Ptr
+  getPickAndTwistPartTask(ResourceManagerInterface::ManagedLocusHandle&& target,
+                          ResourceManagerInterface::ManagedLocusHandle&& destination,
+                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override
   {
     auto executor = [target = std::move(target), destination = std::move(destination),
                      robot = std::move(robot)]() mutable {
       auto& src = *target.resource();
       auto& dst = *destination.resource();
       auto [part_id, broken] = src.model();
-      INFO("Picking {} (broken {}) from {} (@{}) and twisting at {} (@{})", part_id.codedString(), broken, src.pose(),
-           src.parentName(), dst.pose(), dst.parentName());
+      INFO("Picking {} (broken {}) from {} (@{}) and twisting at {} (@{})", part_id.codedString(),
+           broken, src.pose(), src.parentName(), dst.pose(), dst.parentName());
       ManagedLocus::TransferPartFromHereToThere(*target.resource(), *destination.resource());
       return RobotTaskOutcome::TASK_SUCCESS;
     };
@@ -109,17 +112,17 @@ public:
     return std::move(mock);
   }
 
-  RobotTaskInterface::Ptr getSubmitKittingShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                                                       const StationId& destination_station,
-                                                       const ShipmentType& shipment_type) const override
+  RobotTaskInterface::Ptr getSubmitKittingShipmentTask(
+      ResourceManagerInterface::SubmissionTrayHandle&& tray, const StationId& destination_station,
+      const ShipmentType& shipment_type) const override
   {
     if (!agv::isValid(tray.resource()->name()))
     {
       throw std::invalid_argument{ tray.resource()->name() + " is not an agv id!" };
     }
     auto executor = [this, tray = std::move(tray), destination_station, shipment_type]() mutable {
-      INFO("Submitting kitting shipment {} in tray {} to station {}", shipment_type, tray.resource()->name(),
-           tijcore::station_id::toString(destination_station));
+      INFO("Submitting kitting shipment {} in tray {} to station {}", shipment_type,
+           tray.resource()->name(), tijcore::station_id::toString(destination_station));
       tray.resource()->submit();
       submission_callback_(tray.resource()->name());
       return RobotTaskOutcome::TASK_SUCCESS;
@@ -129,8 +132,9 @@ public:
     return std::move(mock);
   }
 
-  RobotTaskInterface::Ptr getSubmitAssemblyShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                                                        const ShipmentType& shipment_type) const override
+  RobotTaskInterface::Ptr
+  getSubmitAssemblyShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
+                                const ShipmentType& shipment_type) const override
   {
     if (!station_id::isValid(tray.resource()->name()))
     {
@@ -157,8 +161,10 @@ public:
   const double position_tolerance_{ 1e-3 };
   const double rotation_tolerance_{ 1e-3 };
 
-  const CuboidVolume table_container_volume{ tijmath::Vector3{ 0, 0, -0.1 }, tijmath::Vector3{ 0.9, 0.9, 0.1 } };
-  const CuboidVolume table_exclusion_volume{ tijmath::Vector3{ 0, 0, 0.0 }, tijmath::Vector3{ 0.9, 0.9, 1.0 } };
+  const CuboidVolume table_container_volume{ tijmath::Vector3{ 0, 0, -0.1 },
+                                             tijmath::Vector3{ 0.9, 0.9, 0.1 } };
+  const CuboidVolume table_exclusion_volume{ tijmath::Vector3{ 0, 0, 0.0 },
+                                             tijmath::Vector3{ 0.9, 0.9, 1.0 } };
 
   const tijmath::Pose3 table_rel_pose_11{ tijmath::Position::fromVector(0.22, 0.22, 0),
                                           tijmath::Rotation::fromQuaternion(0, 0, 0, 1) };
@@ -257,8 +263,8 @@ public:
 
   TaskMasterTests()
   {
-    static_frame_transformer_ =
-        std::make_shared<StaticFrameTransformer>(std::initializer_list<StaticFrameTransformer::TransformTreeLink>{
+    static_frame_transformer_ = std::make_shared<StaticFrameTransformer>(
+        std::initializer_list<StaticFrameTransformer::TransformTreeLink>{
             { agv1_frame_id_, agv1_pose_ },
             { agv2_frame_id_, agv2_pose_ },
             { as1_frame_id_, as1_pose_ },
@@ -267,23 +273,29 @@ public:
             { bin2_frame_id_, bin2_pose_ },
         });
 
-    agv1_container_mock_ = std::make_unique<ModelContainerMock>(agv1_name_, agv1_frame_id_, agv1_frame_id_, agv1_pose_,
-                                                                agv1_container_volume_, agv1_exclusion_volume_);
+    agv1_container_mock_ =
+        std::make_unique<ModelContainerMock>(agv1_name_, agv1_frame_id_, agv1_frame_id_, agv1_pose_,
+                                             agv1_container_volume_, agv1_exclusion_volume_);
 
-    agv2_container_mock_ = std::make_unique<ModelContainerMock>(agv2_name_, agv2_frame_id_, agv2_frame_id_, agv2_pose_,
-                                                                agv2_container_volume_, agv2_exclusion_volume_);
+    agv2_container_mock_ =
+        std::make_unique<ModelContainerMock>(agv2_name_, agv2_frame_id_, agv2_frame_id_, agv2_pose_,
+                                             agv2_container_volume_, agv2_exclusion_volume_);
 
-    as1_container_mock_ = std::make_unique<ModelContainerMock>(as1_name_, as1_frame_id_, as1_frame_id_, as1_pose_,
-                                                               as1_container_volume_, as1_exclusion_volume_);
+    as1_container_mock_ =
+        std::make_unique<ModelContainerMock>(as1_name_, as1_frame_id_, as1_frame_id_, as1_pose_,
+                                             as1_container_volume_, as1_exclusion_volume_);
 
-    as2_container_mock_ = std::make_unique<ModelContainerMock>(as2_name_, as2_frame_id_, as2_frame_id_, as2_pose_,
-                                                               as2_container_volume_, as2_exclusion_volume_);
+    as2_container_mock_ =
+        std::make_unique<ModelContainerMock>(as2_name_, as2_frame_id_, as2_frame_id_, as2_pose_,
+                                             as2_container_volume_, as2_exclusion_volume_);
 
-    bin1_container_mock_ = std::make_unique<ModelContainerMock>(bin1_name_, bin1_frame_id_, bin1_frame_id_, bin1_pose_,
-                                                                bin1_container_volume_, bin1_exclusion_volume_);
+    bin1_container_mock_ =
+        std::make_unique<ModelContainerMock>(bin1_name_, bin1_frame_id_, bin1_frame_id_, bin1_pose_,
+                                             bin1_container_volume_, bin1_exclusion_volume_);
 
-    bin2_container_mock_ = std::make_unique<ModelContainerMock>(bin2_name_, bin2_frame_id_, bin2_frame_id_, bin2_pose_,
-                                                                bin2_container_volume_, bin2_exclusion_volume_);
+    bin2_container_mock_ =
+        std::make_unique<ModelContainerMock>(bin2_name_, bin2_frame_id_, bin2_frame_id_, bin2_pose_,
+                                             bin2_container_volume_, bin2_exclusion_volume_);
 
     kitting_robot_mock_ = std::make_unique<PickAndPlaceRobotMock>();
     assembly_robot_mock_ = std::make_unique<PickAndPlaceRobotMock>();
@@ -292,16 +304,20 @@ public:
     contents.frame_transformer_instance = static_frame_transformer_;
     toolbox_ = std::make_shared<Toolbox>(std::move(contents));
 
-    EXPECT_CALL(*agv1_container_mock_, region()).WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
+    EXPECT_CALL(*agv1_container_mock_, region())
+        .WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
     EXPECT_CALL(*agv1_container_mock_, enabled()).WillRepeatedly(Return(true));
     EXPECT_CALL(*agv1_container_mock_, isSubmissionTray()).WillRepeatedly(Return(true));
-    EXPECT_CALL(*agv2_container_mock_, region()).WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
+    EXPECT_CALL(*agv2_container_mock_, region())
+        .WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
     EXPECT_CALL(*agv2_container_mock_, enabled()).WillRepeatedly(Return(true));
     EXPECT_CALL(*agv2_container_mock_, isSubmissionTray()).WillRepeatedly(Return(true));
-    EXPECT_CALL(*bin1_container_mock_, region()).WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
+    EXPECT_CALL(*bin1_container_mock_, region())
+        .WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
     EXPECT_CALL(*bin1_container_mock_, enabled()).WillRepeatedly(Return(true));
     EXPECT_CALL(*bin1_container_mock_, isSubmissionTray()).WillRepeatedly(Return(false));
-    EXPECT_CALL(*bin2_container_mock_, region()).WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
+    EXPECT_CALL(*bin2_container_mock_, region())
+        .WillRepeatedly(Return(WorkRegionId::kitting_near_bins));
     EXPECT_CALL(*bin2_container_mock_, enabled()).WillRepeatedly(Return(true));
     EXPECT_CALL(*bin2_container_mock_, isSubmissionTray()).WillRepeatedly(Return(false));
     EXPECT_CALL(*as1_container_mock_, region()).WillRepeatedly(Return(WorkRegionId::assembly));
@@ -313,11 +329,13 @@ public:
     EXPECT_CALL(*kitting_robot_mock_, name()).WillRepeatedly(Return("kitting"));
     EXPECT_CALL(*kitting_robot_mock_, enabled()).WillRepeatedly(Return(true));
     EXPECT_CALL(*kitting_robot_mock_, supportedRegions())
-        .WillRepeatedly(Return(std::set<WorkRegionId>{ WorkRegionId::conveyor_belt, WorkRegionId::kitting_near_bins }));
+        .WillRepeatedly(Return(std::set<WorkRegionId>{ WorkRegionId::conveyor_belt,
+                                                       WorkRegionId::kitting_near_bins }));
     EXPECT_CALL(*assembly_robot_mock_, name()).WillRepeatedly(Return("assembly"));
     EXPECT_CALL(*assembly_robot_mock_, enabled()).WillRepeatedly(Return(true));
     EXPECT_CALL(*assembly_robot_mock_, supportedRegions())
-        .WillRepeatedly(Return(std::set<WorkRegionId>{ WorkRegionId::kitting_near_bins, WorkRegionId::assembly }));
+        .WillRepeatedly(Return(
+            std::set<WorkRegionId>{ WorkRegionId::kitting_near_bins, WorkRegionId::assembly }));
   }
 
   void submissionCallback(const std::string& tray_name)
@@ -344,11 +362,11 @@ public:
     robots_.push_back(std::move(kitting_robot_mock_));
     robots_.push_back(std::move(assembly_robot_mock_));
 
-    resource_manager_ =
-        std::make_shared<ResourceManager>(toolbox_, shared_workspaces, std::move(containers_), std::move(robots_));
+    resource_manager_ = std::make_shared<ResourceManager>(
+        toolbox_, shared_workspaces, std::move(containers_), std::move(robots_));
 
-    robot_task_factory_ =
-        std::make_shared<RobotTaskFactoryFake>([this](const std::string& tray_name) { submissionCallback(tray_name); });
+    robot_task_factory_ = std::make_shared<RobotTaskFactoryFake>(
+        [this](const std::string& tray_name) { submissionCallback(tray_name); });
 
     uut_ = std::make_unique<TaskMaster>(resource_manager_, robot_task_factory_, toolbox_);
   }
@@ -390,7 +408,8 @@ TEST_F(KittingOrders, SimpleOrder)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
     shipment.products.push_back(
         ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
@@ -429,15 +448,15 @@ TEST_F(KittingOrders, SimpleOrder)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -469,7 +488,8 @@ TEST_F(KittingOrders, OrderWithUnwantedPiecesOnAgv)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
     shipment.products.push_back(
         ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
@@ -518,15 +538,15 @@ TEST_F(KittingOrders, OrderWithUnwantedPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -559,7 +579,8 @@ TEST_F(KittingOrders, OrderWithBrokenPiecesOnAgv)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
     shipment.products.push_back(
         ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
@@ -615,15 +636,15 @@ TEST_F(KittingOrders, OrderWithBrokenPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -655,7 +676,8 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
     shipment.products.push_back(
         ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
@@ -690,15 +712,15 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -712,7 +734,8 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv2;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_21) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_21) });
     shipment.products.push_back(
         ProductRequest{ blue_pump_, tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22) });
 
@@ -751,15 +774,15 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_21));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -794,8 +817,8 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
       shipment.station_id = StationId::as1;
       shipment.products.push_back(
           ProductRequest{ red_sensor_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
-      shipment.products.push_back(
-          ProductRequest{ blue_sensor_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21) });
+      shipment.products.push_back(ProductRequest{
+          blue_sensor_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21) });
 
       Order order_0;
       order_0.order_id = OrderId{ "order_0" };
@@ -853,15 +876,15 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -897,15 +920,15 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_sensor_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_sensor_, part_id);
       EXPECT_FALSE(broken);
@@ -934,7 +957,8 @@ TEST_F(KittingOrders, NotEnoughPartsToComplete)
     shipment.shipment_type = "shipment1";
     shipment.agv_id = AgvId::agv1;
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11) });
     shipment.products.push_back(
         ProductRequest{ blue_pump_, tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12) });
 
@@ -970,8 +994,8 @@ TEST_F(KittingOrders, NotEnoughPartsToComplete)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1011,8 +1035,10 @@ TEST_F(AssemblyOrders, SimpleOrder)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1053,15 +1079,15 @@ TEST_F(AssemblyOrders, SimpleOrder)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1092,8 +1118,10 @@ TEST_F(AssemblyOrders, OrderWithUnwantedPiecesOnAgv)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1148,15 +1176,15 @@ TEST_F(AssemblyOrders, OrderWithUnwantedPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1188,8 +1216,10 @@ TEST_F(AssemblyOrders, OrderWithBrokenPiecesOnAgv)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1251,15 +1281,15 @@ TEST_F(AssemblyOrders, OrderWithBrokenPiecesOnAgv)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1293,8 +1323,10 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1335,15 +1367,15 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1356,8 +1388,10 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as2;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_21) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_21) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22) });
 
     Order order_0_update;
     order_0_update.order_id = OrderId{ "order_0_update" };
@@ -1399,15 +1433,15 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_21));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as2_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1503,15 +1537,15 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as2_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_pump_, part_id);
       EXPECT_FALSE(broken);
@@ -1558,15 +1592,15 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_sensor_, part_id);
       EXPECT_FALSE(broken);
     }
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_21));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_21));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(blue_sensor_, part_id);
       EXPECT_FALSE(broken);
@@ -1594,8 +1628,10 @@ TEST_F(AssemblyOrders, NotEnoughPartsToComplete)
     AssemblyShipment shipment;
     shipment.shipment_type = "shipment1";
     shipment.station_id = StationId::as1;
-    shipment.products.push_back(ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
-    shipment.products.push_back(ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
+    shipment.products.push_back(
+        ProductRequest{ red_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11) });
+    shipment.products.push_back(
+        ProductRequest{ blue_pump_, tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12) });
 
     Order order_0;
     order_0.order_id = OrderId{ "order_0" };
@@ -1629,8 +1665,8 @@ TEST_F(AssemblyOrders, NotEnoughPartsToComplete)
 
   action_queue_.queueTestActionQueue([&, this]() {
     {
-      auto handle =
-          resource_manager_->getManagedLocusHandleForPose(tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
+      auto handle = resource_manager_->getManagedLocusHandleForPose(
+          tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
       auto [part_id, broken] = handle->resource()->model();
       EXPECT_EQ(red_pump_, part_id);
       EXPECT_FALSE(broken);

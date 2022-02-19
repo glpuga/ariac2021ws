@@ -43,8 +43,9 @@ TEST_F(InUseMarkHandlerTests, SharedRegularUse)
 
 TEST_F(InUseMarkHandlerTests, SharedNullResourceThrows)
 {
-  ASSERT_THROW({ ResourceHandle<SomeResourse> uut{ ResourceHandle<SomeResourse>::ResourceSharedPtr{} }; },
-               std::invalid_argument);
+  ASSERT_THROW(
+      { ResourceHandle<SomeResourse> uut{ ResourceHandle<SomeResourse>::ResourceSharedPtr{} }; },
+      std::invalid_argument);
 }
 
 TEST_F(InUseMarkHandlerTests, SharedUseCountNeedsToBeOneOnConstruction)
@@ -77,8 +78,9 @@ TEST_F(InUseMarkHandlerTests, UniqueRegularUse)
 
 TEST_F(InUseMarkHandlerTests, UniqueNullResourceThrows)
 {
-  ASSERT_THROW({ ResourceHandle<SomeResourse> uut{ ResourceHandle<SomeResourse>::ResourceUniquePtr{} }; },
-               std::invalid_argument);
+  ASSERT_THROW(
+      { ResourceHandle<SomeResourse> uut{ ResourceHandle<SomeResourse>::ResourceUniquePtr{} }; },
+      std::invalid_argument);
 }
 
 }  // namespace

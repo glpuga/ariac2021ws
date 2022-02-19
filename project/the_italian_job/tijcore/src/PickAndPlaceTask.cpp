@@ -54,16 +54,20 @@ RobotTaskOutcome PickAndPlaceTask::run()
   const auto destination_parent_name = destination_.resource()->parentName();
 
   // if we don't change exclusion zones, we can skip some time-consuming steps
-  const bool do_exclusion_zone_change = resource_manager_->getContainerExclusionZoneId(source_parent_name) !=
-                                        resource_manager_->getContainerExclusionZoneId(destination_parent_name);
+  const bool do_exclusion_zone_change =
+      resource_manager_->getContainerExclusionZoneId(source_parent_name) !=
+      resource_manager_->getContainerExclusionZoneId(destination_parent_name);
 
-  if (!robot.getInSafePoseNearTarget(source_.resource()->pose()) || !model_tray_access_manager.releaseAccess())
+  if (!robot.getInSafePoseNearTarget(source_.resource()->pose()) ||
+      !model_tray_access_manager.releaseAccess())
   {
     ERROR("{} failed to get in resting pose", robot.name());
   }
-  else if ((do_exclusion_zone_change && !model_tray_access_manager.getAccessToModel(source_parent_name, timeout_)) ||
+  else if ((do_exclusion_zone_change &&
+            !model_tray_access_manager.getAccessToModel(source_parent_name, timeout_)) ||
            (!do_exclusion_zone_change &&
-            !model_tray_access_manager.getAccessToModel(source_parent_name, destination_parent_name, timeout_)))
+            !model_tray_access_manager.getAccessToModel(source_parent_name, destination_parent_name,
+                                                        timeout_)))
   {
     ERROR("{} failed to setup access constraints to target", robot.name());
   }
@@ -87,15 +91,18 @@ RobotTaskOutcome PickAndPlaceTask::run()
         robot.name());
   }
   else if (do_exclusion_zone_change &&
-           (!robot.getInSafePoseNearTarget(source_.resource()->pose()) || !model_tray_access_manager.releaseAccess()))
+           (!robot.getInSafePoseNearTarget(source_.resource()->pose()) ||
+            !model_tray_access_manager.releaseAccess()))
   {
     ERROR("{} failed to get in resting pose", robot.name());
   }
-  else if (do_exclusion_zone_change && !robot.getInSafePoseNearTarget(destination_.resource()->pose()))
+  else if (do_exclusion_zone_change &&
+           !robot.getInSafePoseNearTarget(destination_.resource()->pose()))
   {
     ERROR("{} failed to get in resting pose", robot.name());
   }
-  else if (do_exclusion_zone_change && (!model_tray_access_manager.getAccessToModel(destination_parent_name, timeout_)))
+  else if (do_exclusion_zone_change &&
+           (!model_tray_access_manager.getAccessToModel(destination_parent_name, timeout_)))
   {
     ERROR("{} failed to setup access constraints to target", robot.name());
   }
@@ -103,7 +110,8 @@ RobotTaskOutcome PickAndPlaceTask::run()
   {
     ERROR("{} failed to get closer to target", robot.name());
   }
-  else if (!robot.getInLandingSpot(destination_.resource()->pose()) || !robot.gripperHasPartAttached())
+  else if (!robot.getInLandingSpot(destination_.resource()->pose()) ||
+           !robot.gripperHasPartAttached())
   {
     ERROR(
         "{} failed to get to the destination landing pose with the part "

@@ -27,9 +27,11 @@ public:
   using Ptr = std::unique_ptr<TaskDriver>;
   using SharedPtr = std::shared_ptr<TaskDriver>;
 
-  TaskDriver(TaskMasterInterface::Ptr&& task_master, RobotTaskGroupRunnerInterface::Ptr&& task_group_runner,
+  TaskDriver(TaskMasterInterface::Ptr&& task_master,
+             RobotTaskGroupRunnerInterface::Ptr&& task_group_runner,
              const ResourceManagerInterface::SharedPtr& resource_manager,
-             const ModelPerceptionInterface::SharedPtr& perception_input, const Toolbox::SharedPtr& toolbox,
+             const ModelPerceptionInterface::SharedPtr& perception_input,
+             const Toolbox::SharedPtr& toolbox,
              const std::chrono::milliseconds perception_interval = 1s,
              const std::chrono::milliseconds processing_interval = 1s);
 

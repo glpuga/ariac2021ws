@@ -18,7 +18,8 @@ public:
   using ResourceUniquePtr = std::unique_ptr<ResourceType>;
   using ResourceSharedPtr = std::shared_ptr<ResourceType>;
 
-  explicit ResourceHandle(ResourceUniquePtr&& resource) : ResourceHandle{ std::shared_ptr(std::move(resource)) }
+  explicit ResourceHandle(ResourceUniquePtr&& resource)
+    : ResourceHandle{ std::shared_ptr(std::move(resource)) }
   {
   }
 

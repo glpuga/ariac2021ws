@@ -18,7 +18,8 @@ namespace
 static constexpr int32_t max_find_attempts_{ 1000 };
 }
 
-SurfaceManager::SurfaceManager(const double x0, const double y0, const double width, const double height)
+SurfaceManager::SurfaceManager(const double x0, const double y0, const double width,
+                               const double height)
   : x0_{ x0 }, y0_{ y0 }, width_{ width }, height_{ height }
 {
 }
@@ -53,7 +54,8 @@ bool SurfaceManager::regionIsAvailable(const RegionInUse& candidate) const
   return retval;
 }
 
-bool SurfaceManager::regionIsWithinSurface(const double x, const double y, const double radius) const
+bool SurfaceManager::regionIsWithinSurface(const double x, const double y,
+                                           const double radius) const
 {
   RegionInUse candidate{ x, y, radius };
   return regionIsWithinSurface(candidate);
@@ -61,11 +63,14 @@ bool SurfaceManager::regionIsWithinSurface(const double x, const double y, const
 
 bool SurfaceManager::regionIsWithinSurface(const RegionInUse& candidate) const
 {
-  return ((candidate.x - candidate.radius) >= x0_) && ((candidate.x + candidate.radius) <= (width_ + x0_)) &&
-         ((candidate.y - candidate.radius) >= y0_) && ((candidate.y + candidate.radius) <= (height_ + y0_));
+  return ((candidate.x - candidate.radius) >= x0_) &&
+         ((candidate.x + candidate.radius) <= (width_ + x0_)) &&
+         ((candidate.y - candidate.radius) >= y0_) &&
+         ((candidate.y + candidate.radius) <= (height_ + y0_));
 }
 
-std::optional<std::tuple<double, double>> SurfaceManager::findFreeRegion(const double free_radius) const
+std::optional<std::tuple<double, double>>
+SurfaceManager::findFreeRegion(const double free_radius) const
 {
   std::optional<RegionInUse> opt_best_candidate;
 
@@ -133,7 +138,8 @@ std::optional<double> SurfaceManager::minimumDistanceToOthers(const RegionInUse&
   return min_distance;
 }
 
-double SurfaceManager::distanceBetweenRegions(const RegionInUse& region_a, const RegionInUse& region_b)
+double SurfaceManager::distanceBetweenRegions(const RegionInUse& region_a,
+                                              const RegionInUse& region_b)
 {
   const double dx = region_a.x - region_b.x;
   const double dy = region_a.y - region_b.y;

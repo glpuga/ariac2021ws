@@ -18,13 +18,17 @@ namespace tijcore
 {
 TaskMaster::TaskMaster(const ResourceManagerInterface::SharedPtr& resource_manager,
                        const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
-                       const Toolbox::SharedPtr& toolbox, OrderProcessingStrategyInterface::Ptr&& order_strategy)
-  : resource_manager_{ resource_manager }, robot_task_factory_{ robot_task_factory }, toolbox_{ toolbox }
+                       const Toolbox::SharedPtr& toolbox,
+                       OrderProcessingStrategyInterface::Ptr&& order_strategy)
+  : resource_manager_{ resource_manager }
+  , robot_task_factory_{ robot_task_factory }
+  , toolbox_{ toolbox }
 {
   order_strategy_ = std::move(order_strategy);
   if (!order_strategy_)
   {
-    order_strategy_ = std::make_unique<OrderProcessingStrategy>(resource_manager, robot_task_factory, toolbox_);
+    order_strategy_ =
+        std::make_unique<OrderProcessingStrategy>(resource_manager, robot_task_factory, toolbox_);
   }
   else
   {
@@ -49,7 +53,8 @@ void TaskMaster::registerOrder(const Order& order)
     else
     {
       // replace the current order
-      WARNING("A new order was received updating one with the same id: {}", order.order_id.codedString());
+      WARNING("A new order was received updating one with the same id: {}",
+              order.order_id.codedString());
       orders_.at(key) = order;
     }
   }

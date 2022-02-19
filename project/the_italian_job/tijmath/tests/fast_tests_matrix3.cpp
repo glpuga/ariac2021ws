@@ -155,7 +155,8 @@ TEST_F(Matrix3Tests, Inverse)
 {
   {
     const Matrix3 uut{ { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 1 } };
-    const Matrix3 expected{ Vector3{ -1.79167, 0.91667, -0.12500 }, Vector3{ 1.58333, -0.83333, 0.25000 },
+    const Matrix3 expected{ Vector3{ -1.79167, 0.91667, -0.12500 },
+                            Vector3{ 1.58333, -0.83333, 0.25000 },
                             Vector3{ -0.12500, 0.25000, -0.12500 } };
     EXPECT_TRUE(areEqualWithinTolerance(expected, uut.inv(), tolerance_));
     EXPECT_TRUE(areEqualWithinTolerance(Matrix3::Identity, uut * uut.inv(), tolerance_));

@@ -14,7 +14,8 @@ namespace tijcore
 class SubmitAssemblyShipmentTask : public RobotTaskInterface
 {
 public:
-  SubmitAssemblyShipmentTask(const Toolbox::SharedPtr& toolbox, ResourceManagerInterface::SubmissionTrayHandle&& tray,
+  SubmitAssemblyShipmentTask(const Toolbox::SharedPtr& toolbox,
+                             ResourceManagerInterface::SubmissionTrayHandle&& tray,
                              const ShipmentType& shipment_type);
 
   RobotTaskOutcome run() override;

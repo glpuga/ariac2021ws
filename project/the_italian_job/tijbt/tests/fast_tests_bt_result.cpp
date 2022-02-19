@@ -44,7 +44,9 @@ TEST_F(AgvIdTests, TestStreamOperator)
 {
   std::ostringstream os;
 
-  os << BTExecutionResult::SUCCESS << "\n" << BTExecutionResult::FAILURE << "\n" << BTExecutionResult::ERROR << "\n";
+  os << BTExecutionResult::SUCCESS << "\n"
+     << BTExecutionResult::FAILURE << "\n"
+     << BTExecutionResult::ERROR << "\n";
 
   ASSERT_EQ(
       "SUCCESS\n"

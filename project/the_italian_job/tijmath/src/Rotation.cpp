@@ -80,8 +80,8 @@ Rotation Rotation::fromRollPitchYaw(const double roll, const double pitch, const
   double cr = std::cos(roll * 0.5);
   double sr = std::sin(roll * 0.5);
 
-  return Rotation{ Quaternion{ sr * cp * cy - cr * sp * sy, cr * sp * cy + sr * cp * sy, cr * cp * sy - sr * sp * cy,
-                               cr * cp * cy + sr * sp * sy } };
+  return Rotation{ Quaternion{ sr * cp * cy - cr * sp * sy, cr * sp * cy + sr * cp * sy,
+                               cr * cp * sy - sr * sp * cy, cr * cp * cy + sr * sp * sy } };
 }
 
 bool Rotation::sameRotation(const Rotation& lhs, const Rotation& rhs, const double tolerance)
@@ -97,8 +97,10 @@ bool Rotation::sameRotation(const Rotation& lhs, const Rotation& rhs, const doub
     return diff_squared < tolerance;
   };
 
-  return is_within_tolerance(lhsq.x(), rhsq.x(), tolerance) && is_within_tolerance(lhsq.y(), rhsq.y(), tolerance) &&
-         is_within_tolerance(lhsq.z(), rhsq.z(), tolerance) && is_within_tolerance(lhsq.w(), rhsq.w(), tolerance);
+  return is_within_tolerance(lhsq.x(), rhsq.x(), tolerance) &&
+         is_within_tolerance(lhsq.y(), rhsq.y(), tolerance) &&
+         is_within_tolerance(lhsq.z(), rhsq.z(), tolerance) &&
+         is_within_tolerance(lhsq.w(), rhsq.w(), tolerance);
 }
 
 std::ostream& operator<<(std::ostream& os, const Rotation& r)

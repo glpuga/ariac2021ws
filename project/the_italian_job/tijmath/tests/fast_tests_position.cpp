@@ -37,19 +37,31 @@ TEST_F(PositionTests, DefaultConstructor)
 
   ASSERT_TRUE(Position::samePosition(uut, uut, position_tolerance_));
 
-  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_x }, position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_y }, position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_z }, position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_x }, position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_y }, position_tolerance_));
-  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_z }, position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_x },
+                                     position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_y },
+                                     position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() + decrease_factor_ * dev_z },
+                                     position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_x },
+                                     position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_y },
+                                     position_tolerance_));
+  ASSERT_TRUE(Position::samePosition(uut, Position{ uut.vector() - decrease_factor_ * dev_z },
+                                     position_tolerance_));
 
-  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_x }, position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_y }, position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_z }, position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_x }, position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_y }, position_tolerance_));
-  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_z }, position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_x },
+                                      position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_y },
+                                      position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() + increase_factor_ * dev_z },
+                                      position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_x },
+                                      position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_y },
+                                      position_tolerance_));
+  ASSERT_FALSE(Position::samePosition(uut, Position{ uut.vector() - increase_factor_ * dev_z },
+                                      position_tolerance_));
 }
 
 }  // namespace

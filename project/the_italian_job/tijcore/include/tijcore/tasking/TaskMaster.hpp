@@ -23,7 +23,8 @@ class TaskMaster : public TaskMasterInterface
 {
 public:
   TaskMaster(const ResourceManagerInterface::SharedPtr& resource_manager,
-             const RobotTaskFactoryInterface::SharedPtr& robot_task_factory, const Toolbox::SharedPtr& toolbox,
+             const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
+             const Toolbox::SharedPtr& toolbox,
              OrderProcessingStrategyInterface::Ptr&& order_strategy = nullptr);
 
   void registerOrder(const Order& order) override;

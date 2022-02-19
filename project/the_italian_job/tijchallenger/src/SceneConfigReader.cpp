@@ -28,22 +28,31 @@ const std::string& SceneConfigReader::getWorldFrameId() const
 
 const tijmath::RelativePose3& SceneConfigReader::getDropBucketPose() const
 {
-  static const tijmath::RelativePose3 data{ world_frame_id_,
-                                            tijmath::Pose3{ tijmath::Position::fromVector(-2.2, 0.0, 1.0), {} } };
+  static const tijmath::RelativePose3 data{
+    world_frame_id_, tijmath::Pose3{ tijmath::Position::fromVector(-2.2, 0.0, 1.0), {} }
+  };
   return data;
 }
 
 const std::vector<SceneConfigReader::BinData>& SceneConfigReader::getListOfBins() const
 {
   static const std::vector<BinData> data{
-    { "bin1", "bin1_frame", "agv12_near_kitting_access_space", tijcore::WorkRegionId::kitting_near_bins },
-    { "bin2", "bin2_frame", "agv12_near_kitting_access_space", tijcore::WorkRegionId::kitting_near_bins },
-    { "bin3", "bin3_frame", "agv12_far_kitting_access_space", tijcore::WorkRegionId::kitting_far_bins },
-    { "bin4", "bin4_frame", "agv12_far_kitting_access_space", tijcore::WorkRegionId::kitting_far_bins },
-    { "bin5", "bin5_frame", "agv34_near_kitting_access_space", tijcore::WorkRegionId::kitting_near_bins },
-    { "bin6", "bin6_frame", "agv34_near_kitting_access_space", tijcore::WorkRegionId::kitting_near_bins },
-    { "bin7", "bin7_frame", "agv34_far_kitting_access_space", tijcore::WorkRegionId::kitting_far_bins },
-    { "bin8", "bin8_frame", "agv34_far_kitting_access_space", tijcore::WorkRegionId::kitting_far_bins },
+    { "bin1", "bin1_frame", "agv12_near_kitting_access_space",
+      tijcore::WorkRegionId::kitting_near_bins },
+    { "bin2", "bin2_frame", "agv12_near_kitting_access_space",
+      tijcore::WorkRegionId::kitting_near_bins },
+    { "bin3", "bin3_frame", "agv12_far_kitting_access_space",
+      tijcore::WorkRegionId::kitting_far_bins },
+    { "bin4", "bin4_frame", "agv12_far_kitting_access_space",
+      tijcore::WorkRegionId::kitting_far_bins },
+    { "bin5", "bin5_frame", "agv34_near_kitting_access_space",
+      tijcore::WorkRegionId::kitting_near_bins },
+    { "bin6", "bin6_frame", "agv34_near_kitting_access_space",
+      tijcore::WorkRegionId::kitting_near_bins },
+    { "bin7", "bin7_frame", "agv34_far_kitting_access_space",
+      tijcore::WorkRegionId::kitting_far_bins },
+    { "bin8", "bin8_frame", "agv34_far_kitting_access_space",
+      tijcore::WorkRegionId::kitting_far_bins },
   };
   return data;
 }
@@ -73,7 +82,8 @@ const std::vector<SceneConfigReader::DeviceData>& SceneConfigReader::getListOfLo
   return data;
 }
 
-const std::vector<SceneConfigReader::DeviceData>& SceneConfigReader::getListOfQualityControlSensors() const
+const std::vector<SceneConfigReader::DeviceData>&
+SceneConfigReader::getListOfQualityControlSensors() const
 {
   static const std::vector<SceneConfigReader::DeviceData> data{
     { "quality_control_sensor_1", "quality_control_sensor_1_frame" },
@@ -95,7 +105,8 @@ const std::vector<SceneConfigReader::DeviceData>& SceneConfigReader::getListOfAg
   return data;
 }
 
-const std::vector<SceneConfigReader::DeviceData>& SceneConfigReader::getListOfAssemblyStations() const
+const std::vector<SceneConfigReader::DeviceData>&
+SceneConfigReader::getListOfAssemblyStations() const
 {
   static const std::vector<DeviceData> data{
     { "as1", "briefcase_1", "as1_access_space" },
@@ -106,10 +117,12 @@ const std::vector<SceneConfigReader::DeviceData>& SceneConfigReader::getListOfAs
   return data;
 }
 
-const std::vector<SceneConfigReader::ConveyorBeltData>& SceneConfigReader::getListOfConveyorBelts() const
+const std::vector<SceneConfigReader::ConveyorBeltData>&
+SceneConfigReader::getListOfConveyorBelts() const
 {
   static const std::vector<ConveyorBeltData> data{
-    { "conveyor_belt", "corrected_belt_frame", "belt_frame_surface", "conveyor_belt_access_space", 0.2 },
+    { "conveyor_belt", "corrected_belt_frame", "belt_frame_surface", "conveyor_belt_access_space",
+      0.2 },
   };
   return data;
 }
@@ -119,27 +132,37 @@ SceneConfigReader::getListOfSharedAccessSpaceDescriptions() const
 {
   static const std::vector<tijcore::ModelTraySharedAccessSpaceDescription> data{
     { "agv12_near_kitting_access_space",
-      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-1.986283, 3.0, 1.35), {} }, 0.6, 2, 2.7 },
+      tijmath::RelativePose3{
+          world_frame_id_, tijmath::Position::fromVector(-1.986283, 3.0, 1.35), {} },
+      0.6, 2, 2.7 },
     { "agv12_far_kitting_access_space",
-      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-2.586283, 3.0, 0.5), {} }, 0.6, 1.4,
-      1.0 },
+      tijmath::RelativePose3{
+          world_frame_id_, tijmath::Position::fromVector(-2.586283, 3.0, 0.5), {} },
+      0.6, 1.4, 1.0 },
     { "agv34_near_kitting_access_space",
-      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-1.986283, -3.0, 1.35), {} }, 0.6, 2,
-      2.7 },
+      tijmath::RelativePose3{
+          world_frame_id_, tijmath::Position::fromVector(-1.986283, -3.0, 1.35), {} },
+      0.6, 2, 2.7 },
     { "agv34_far_kitting_access_space",
-      tijmath::RelativePose3{ world_frame_id_, tijmath::Position::fromVector(-2.586283, -3.0, 0.5), {} }, 0.6, 1.4,
-      1.0 },
-    { "as1_access_space", tijmath::RelativePose3{ "briefcase_1", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
+      tijmath::RelativePose3{
+          world_frame_id_, tijmath::Position::fromVector(-2.586283, -3.0, 0.5), {} },
+      0.6, 1.4, 1.0 },
+    { "as1_access_space",
+      tijmath::RelativePose3{ "briefcase_1", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
-    { "as2_access_space", tijmath::RelativePose3{ "briefcase_2", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
+    { "as2_access_space",
+      tijmath::RelativePose3{ "briefcase_2", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
-    { "as3_access_space", tijmath::RelativePose3{ "briefcase_3", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
+    { "as3_access_space",
+      tijmath::RelativePose3{ "briefcase_3", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
-    { "as4_access_space", tijmath::RelativePose3{ "briefcase_4", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
+    { "as4_access_space",
+      tijmath::RelativePose3{ "briefcase_4", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
       0.6, 0.6, 0.3 },
     { "conveyor_belt_access_space",
-      tijmath::RelativePose3{ "corrected_belt_frame", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} }, 0.63, 9.0,
-      0.4 },
+      tijmath::RelativePose3{
+          "corrected_belt_frame", tijmath::Position::fromVector(0.0, 0.0, 0.0), {} },
+      0.63, 9.0, 0.4 },
   };
   return data;
 }

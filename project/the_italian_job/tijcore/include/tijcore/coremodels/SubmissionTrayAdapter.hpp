@@ -22,7 +22,8 @@ public:
 
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;
 
-  explicit SubmissionTrayAdapter(const ModelContainerHandle& container_handle) : container_handle_{ container_handle }
+  explicit SubmissionTrayAdapter(const ModelContainerHandle& container_handle)
+    : container_handle_{ container_handle }
   {
   }
 
