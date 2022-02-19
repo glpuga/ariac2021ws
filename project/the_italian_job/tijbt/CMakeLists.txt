@@ -36,7 +36,8 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/BTExecutionResult.cpp
-  src/BehaviorTreeManagerBase.cpp
+  src/BehaviorTreeBuilder.cpp
+  src/BehaviorTreeManager.cpp
 )
 
 add_dependencies(
