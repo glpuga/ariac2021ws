@@ -1,4 +1,4 @@
-/* Copyright [2022] <Ekumen>
+/* Copyright [2022] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -20,6 +20,7 @@ struct BTHandle
 
   std::vector<std::unique_ptr<BT::StatusChangeLogger>> loggers;
 
+  BTHandle() = default;
   // make sure handles cannot be copied
   BTHandle(BTHandle&&) = default;
   BTHandle& operator=(BTHandle&&) = default;

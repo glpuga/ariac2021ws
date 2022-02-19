@@ -8,20 +8,19 @@
 
 // project
 #include <tijbt/BTExecutionResult.hpp>
-#include <tijbt/BehaviorTreeManagerBase.hpp>
+#include <tijbt/BehaviorTreeManager.hpp>
 
 namespace tijbt
 {
-BehaviorTreeManagerBase::BehaviorTreeManagerBase(BTHandle bt_handle)
-  : bt_handle_{ std::move(bt_handle) }
+BehaviorTreeManager::BehaviorTreeManager(BTHandle bt_handle) : bt_handle_{ std::move(bt_handle) }
 {
 }
 
-BehaviorTreeManagerBase::~BehaviorTreeManagerBase()
+BehaviorTreeManager::~BehaviorTreeManager()
 {
 }
 
-BTExecutionResult BehaviorTreeManagerBase::run()
+BTExecutionResult BehaviorTreeManager::run()
 {
   BT::NodeStatus tree_status = BT::NodeStatus::RUNNING;
 
@@ -42,7 +41,7 @@ BTExecutionResult BehaviorTreeManagerBase::run()
                                                   BTExecutionResult::FAILURE;
 }
 
-void BehaviorTreeManagerBase::halt()
+void BehaviorTreeManager::halt()
 {
   bt_handle_.tree->haltTree();
 }

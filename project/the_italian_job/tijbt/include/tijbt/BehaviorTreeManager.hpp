@@ -1,4 +1,4 @@
-/* Copyright [2022] <Ekumen>
+/* Copyright [2022] <TheItalianJob>
  * Author: Gerardo Puga
  */
 
@@ -13,11 +13,11 @@
 
 namespace tijbt
 {
-class BehaviorTreeManagerBase : public BehaviorTreeManagerInterface
+class BehaviorTreeManager : public BehaviorTreeManagerInterface
 {
 public:
-  explicit BehaviorTreeManagerBase(BTHandle bt_handle);
-  ~BehaviorTreeManagerBase();
+  explicit BehaviorTreeManager(BTHandle bt_handle);
+  ~BehaviorTreeManager();
 
   BTExecutionResult run() override;
 
