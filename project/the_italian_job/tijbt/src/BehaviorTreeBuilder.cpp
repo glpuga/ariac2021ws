@@ -15,6 +15,7 @@
 #include <tijbt/BTHandle.hpp>
 #include <tijbt/BehaviorTreeBuilder.hpp>
 #include <tijbt/BehaviorTreeManager.hpp>
+#include <tijbt/loggers/TIJBTLogger.hpp>
 
 namespace tijbt
 {
@@ -133,6 +134,9 @@ BehaviorTreeManagerInterface::Ptr BehaviorTreeBuilder::build()
   {
     throw std::runtime_error{ "No tree description was provided." };
   }
+
+  // add a single custom logger
+  bth.loggers.push_back(std::make_unique<TIJBTLogger>(*bth.tree));
 
   return std::make_unique<BehaviorTreeManager>(std::move(bth));
 }

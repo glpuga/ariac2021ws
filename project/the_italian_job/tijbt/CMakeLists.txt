@@ -38,6 +38,7 @@ add_library(${PROJECT_NAME}
   src/BTExecutionResult.cpp
   src/BehaviorTreeBuilder.cpp
   src/BehaviorTreeManager.cpp
+  src/loggers/TIJBTLogger.cpp
 )
 
 add_dependencies(
