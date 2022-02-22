@@ -2,7 +2,7 @@
 <package format="2">
   <name>tijbt</name>
   <version>0.0.0</version>
-  <description>TheItalianJob's ARIAC competition challenger bt toolbox package</description>
+  <description>ARIAC competition Behavior Tree toolbox</description>
   <author email="glpuga@gmail.com">Gerardo Puga</author>
   <maintainer email="glpuga@gmail.com">Gerardo Puga</maintainer>
 

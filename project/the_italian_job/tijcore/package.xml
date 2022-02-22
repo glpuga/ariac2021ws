@@ -2,7 +2,7 @@
 <package format="2">
   <name>tijcore</name>
   <version>0.0.0</version>
-  <description>TheItalianJob's official ARIAC 2021 competition challenger core package</description>
+  <description>ARIAC competition ROS-agnostic core layer</description>
   <author email="glpuga@gmail.com">Gerardo Puga</author>
   <maintainer email="glpuga@gmail.com">Gerardo Puga</maintainer>
 

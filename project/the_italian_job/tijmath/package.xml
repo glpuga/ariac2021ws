@@ -2,7 +2,7 @@
 <package format="2">
   <name>tijmath</name>
   <version>0.0.0</version>
-  <description>TheItalianJob's official ARIAC 2021 competition challenger core package</description>
+  <description>ARIAC competition reusable basic 2D/2D algebra library</description>
   <author email="glpuga@gmail.com">Gerardo Puga</author>
   <maintainer email="glpuga@gmail.com">Gerardo Puga</maintainer>
 

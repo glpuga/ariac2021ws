@@ -2,7 +2,7 @@
 <package format="2">
   <name>tijros</name>
   <version>0.1.0</version>
-  <description>TheItalianJob challenger ROS layer libraries code</description>
+  <description>ARIAC competition ROS implementation layer</description>
 
   <author email="glpuga@gmail.com">Gerardo Puga</author>
   <maintainer email="glpuga@gmail.com">Gerardo Puga</maintainer>
