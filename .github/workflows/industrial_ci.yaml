@@ -4,10 +4,14 @@
 name: Industrial CI
 
 on:
+  # run this workflow whenever a push is made to either devel or main
   push:
      branches: [ main, devel ]
-  workflow_dispatch: # allow manually starting this workflow
-
+  # allow manually starting this workflow manually
+  workflow_dispatch:
+  # run this workflow daily at 6 am on the default branch
+  schedule:
+    - cron: '0 6 * * *'
 jobs:
   industrial_ci:
     name: ROS Tests
