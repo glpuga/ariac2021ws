@@ -2,7 +2,7 @@
 <package format="2">
   <name>tijchallenger</name>
   <version>3.0.6</version>
-  <description>TheItalianJob's official ARIAC 2021 competition challenger node</description>
+  <description>ARIAC competition challenger ROS node</description>
   <author email="glpuga@gmail.com">Gerardo Puga</author>
   <maintainer email="glpuga@gmail.com">Gerardo Puga</maintainer>
 
