@@ -5,6 +5,7 @@
 #pragma once
 
 // standard library
+#include <atomic>
 #include <memory>
 
 // project
@@ -25,6 +26,8 @@ public:
 
 private:
   BTHandle bt_handle_;
+
+  std::atomic_bool halted_{ false };
 };
 
 }  // namespace tijbt
