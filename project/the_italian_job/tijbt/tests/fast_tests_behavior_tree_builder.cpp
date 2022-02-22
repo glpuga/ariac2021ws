@@ -306,9 +306,8 @@ TEST_F(BehaviorTreeBuilderTest, SettingMockedBranches)
   // baseline case: mocks are set in the bt factory, but not enabled through the flag,
   // and therefore they are not used
   {
-    class
+    struct
     {
-    public:
       MOCK_METHOD0(mockedRun, BT::NodeStatus());
     } node_mock;
 
@@ -333,9 +332,8 @@ TEST_F(BehaviorTreeBuilderTest, SettingMockedBranches)
 
   // test case: mocks are set in the factory and enable in the flag
   {
-    class
+    struct
     {
-    public:
       MOCK_METHOD0(mockedRun, BT::NodeStatus());
     } node_mock;
 
