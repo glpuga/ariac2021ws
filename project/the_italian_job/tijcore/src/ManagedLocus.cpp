@@ -4,7 +4,6 @@
 
 // Standard library
 #include <string>
-#include <tuple>
 #include <utility>
 
 // tijcore
@@ -75,7 +74,7 @@ bool ManagedLocus::isModel() const
   return is_model_;
 }
 
-void ManagedLocus::setBrokenState(const bool is_broken)
+void ManagedLocus::setBroken(const bool is_broken)
 {
   if (isEmpty())
   {
@@ -84,13 +83,22 @@ void ManagedLocus::setBrokenState(const bool is_broken)
   is_broken_ = is_broken;
 }
 
-std::tuple<PartId, bool> ManagedLocus::model() const
+PartId ManagedLocus::partId() const
 {
   if (isEmpty())
   {
     throw std::logic_error{ "Requested part id from empty space" };
   }
-  return std::make_tuple(part_id_, is_broken_);
+  return part_id_;
+}
+
+bool ManagedLocus::broken() const
+{
+  if (isEmpty())
+  {
+    throw std::logic_error{ "Requested broken status from empty space" };
+  }
+  return is_broken_;
 }
 
 const tijmath::RelativePose3& ManagedLocus::pose() const

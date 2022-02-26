@@ -59,7 +59,8 @@ public:
   {
     auto executor = [source_locus = std::move(source_locus), robot = std::move(robot)]() mutable {
       auto& src = *source_locus.resource();
-      auto [part_id, broken] = src.model();
+      const auto part_id = src.partId();
+      const auto broken = src.broken();
       INFO("Removing {} (broken {}) from {} (@{})", part_id.codedString(), broken, src.pose(),
            src.parentName());
       auto null_place = ManagedLocus::CreateEmptySpace(source_locus.resource()->parentName(),
@@ -81,7 +82,8 @@ public:
                      robot = std::move(robot)]() mutable {
       auto& src = *source.resource();
       auto& dst = *destination.resource();
-      auto [part_id, broken] = src.model();
+      const auto part_id = src.partId();
+      const auto broken = src.broken();
       INFO("Moving {} (broken {}) from {} (@{}) to {} (@{})", part_id.codedString(), broken,
            src.pose(), src.parentName(), dst.pose(), dst.parentName());
       ManagedLocus::TransferPartFromHereToThere(*source.resource(), *destination.resource());
@@ -101,7 +103,8 @@ public:
                      robot = std::move(robot)]() mutable {
       auto& src = *target.resource();
       auto& dst = *destination.resource();
-      auto [part_id, broken] = src.model();
+      const auto part_id = src.partId();
+      const auto broken = src.broken();
       INFO("Picking {} (broken {}) from {} (@{}) and twisting at {} (@{})", part_id.codedString(),
            broken, src.pose(), src.parentName(), dst.pose(), dst.parentName());
       ManagedLocus::TransferPartFromHereToThere(*target.resource(), *destination.resource());
@@ -450,16 +453,14 @@ TEST_F(KittingOrders, SimpleOrder)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -540,16 +541,14 @@ TEST_F(KittingOrders, OrderWithUnwantedPiecesOnAgv)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -638,16 +637,14 @@ TEST_F(KittingOrders, OrderWithBrokenPiecesOnAgv)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -714,16 +711,14 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -776,16 +771,14 @@ TEST_F(KittingOrders, OrderWithOrderUpdate)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_21));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -878,16 +871,14 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv2_frame_id_, table_rel_pose_22));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -922,16 +913,14 @@ TEST_F(KittingOrders, TwoOrdersAtTheSameTime)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_sensor_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_sensor_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_21));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_sensor_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_sensor_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -996,9 +985,8 @@ TEST_F(KittingOrders, NotEnoughPartsToComplete)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(agv1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1081,16 +1069,14 @@ TEST_F(AssemblyOrders, SimpleOrder)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1178,16 +1164,14 @@ TEST_F(AssemblyOrders, OrderWithUnwantedPiecesOnAgv)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1283,16 +1267,14 @@ TEST_F(AssemblyOrders, OrderWithBrokenPiecesOnAgv)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1369,16 +1351,14 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1435,16 +1415,14 @@ TEST_F(AssemblyOrders, DISABLED_OrderWithOrderUpdate)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as2_frame_id_, table_rel_pose_21));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1539,16 +1517,14 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as2_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as2_frame_id_, table_rel_pose_22));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1594,16 +1570,14 @@ TEST_F(AssemblyOrders, TwoOrdersAtTheSameTime)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_12));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_sensor_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_sensor_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_21));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(blue_sensor_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(blue_sensor_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 
@@ -1667,9 +1641,8 @@ TEST_F(AssemblyOrders, NotEnoughPartsToComplete)
     {
       auto handle = resource_manager_->getManagedLocusHandleForPose(
           tijmath::RelativePose3(as1_frame_id_, table_rel_pose_11));
-      auto [part_id, broken] = handle->resource()->model();
-      EXPECT_EQ(red_pump_, part_id);
-      EXPECT_FALSE(broken);
+      EXPECT_EQ(red_pump_, handle->resource()->partId());
+      EXPECT_FALSE(handle->resource()->broken());
     }
   });
 

@@ -161,9 +161,7 @@ ResourceManager::findManagedLociByPartId(const PartId& part_id)
     {
       return false;
     }
-    auto [known_model_part_id, broken] = handle.resource()->model();
-    (void)broken;  // avoids unused variable warning
-    return part_id == known_model_part_id;
+    return part_id == handle.resource()->partId();
   };
 
   std::vector<ResourceManagerInterface::ManagedLocusHandle> output;
@@ -692,8 +690,11 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
         else
         {
           // Combine the new and the old information
-          auto [known_part_id, known_broken] = known_model_locus.model();
-          auto [new_part_id, new_broken] = new_model_locus.model();
+          auto known_part_id = known_model_locus.partId();
+          auto known_broken = known_model_locus.broken();
+
+          const auto new_part_id = new_model_locus.partId();
+          const auto new_broken = new_model_locus.broken();
 
           if (new_part_id != PartId::UnkownPartId)
           {
@@ -842,8 +843,8 @@ void ResourceManager::logKnownLoci()
     }
     else
     {
-      auto [known_model_part_id, broken] = known_model_locus.model();
-      (void)broken;
+      const auto known_model_part_id = known_model_locus.partId();
+      const auto broken = known_model_locus.broken();
       INFO(" - {} at {} (broken: {} , allocated: {}, diff: {}, uid: {})",
            known_model_part_id.codedString(), pose_in_parent, broken,
            known_model_locus_handle.allocated(), known_model_locus.difficulty(),
