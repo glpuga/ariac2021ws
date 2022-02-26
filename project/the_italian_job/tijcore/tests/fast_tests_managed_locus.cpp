@@ -42,7 +42,7 @@ TEST_F(ManagedLocusTests, EmptySpaceConstruction)
   auto uut = ManagedLocus::CreateEmptySpace(parent_, pose_);
   ASSERT_TRUE(uut.isEmpty());
   ASSERT_FALSE(uut.isModel());
-  ASSERT_THROW({ uut.model(); }, std::logic_error);
+  ASSERT_THROW({ uut.partId(); }, std::logic_error);
   ASSERT_NEAR(pose_.position().vector().x(), uut.pose().position().vector().x(), tolerance_);
   ASSERT_EQ(parent_, uut.parentName());
 }
@@ -52,7 +52,8 @@ TEST_F(ManagedLocusTests, NonEmptySpaceConstructionNonBroken)
   auto uut = ManagedLocus::CreateOccupiedSpace(parent_, pose_, part_id_, false);
   ASSERT_FALSE(uut.isEmpty());
   ASSERT_TRUE(uut.isModel());
-  auto [part_id, broken] = uut.model();
+  const auto part_id = uut.partId();
+  const auto broken = uut.broken();
   ASSERT_EQ(part_id_, part_id);
   ASSERT_EQ(false, broken);
   ASSERT_NEAR(pose_.position().vector().x(), uut.pose().position().vector().x(), tolerance_);
@@ -64,7 +65,8 @@ TEST_F(ManagedLocusTests, NonEmptySpaceConstructionBroken)
   auto uut = ManagedLocus::CreateOccupiedSpace(parent_, pose_, part_id_, true);
   ASSERT_FALSE(uut.isEmpty());
   ASSERT_TRUE(uut.isModel());
-  auto [part_id, broken] = uut.model();
+  const auto part_id = uut.partId();
+  const auto broken = uut.broken();
   ASSERT_EQ(part_id_, part_id);
   ASSERT_EQ(true, broken);
   ASSERT_NEAR(pose_.position().vector().x(), uut.pose().position().vector().x(), tolerance_);
@@ -74,19 +76,25 @@ TEST_F(ManagedLocusTests, NonEmptySpaceConstructionBroken)
 TEST_F(ManagedLocusTests, SetBrokenStateWorks)
 {
   auto uut = ManagedLocus::CreateOccupiedSpace(parent_, pose_, part_id_, false);
-  auto [part_id, broken] = uut.model();
+  auto part_id = uut.partId();
+  auto broken = uut.broken();
+
   ASSERT_EQ(part_id_, part_id);
   ASSERT_EQ(false, broken);
 
-  uut.setBrokenState(true);
+  uut.setBroken(true);
 
-  std::tie(part_id, broken) = uut.model();
+  part_id = uut.partId();
+  broken = uut.broken();
+
   ASSERT_EQ(part_id_, part_id);
   ASSERT_EQ(true, broken);
 
-  uut.setBrokenState(false);
+  uut.setBroken(false);
 
-  std::tie(part_id, broken) = uut.model();
+  part_id = uut.partId();
+  broken = uut.broken();
+
   ASSERT_EQ(part_id_, part_id);
   ASSERT_EQ(false, broken);
 }
@@ -111,7 +119,8 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
     bool retval;
     try
     {
-      auto [part_id, broken] = uut.model();
+      const auto part_id = uut.partId();
+      const auto broken = uut.broken();
       retval = !uut.isEmpty() && uut.isModel() && (expected_part_id == part_id) &&
                (expected_broken_value == broken);
     }

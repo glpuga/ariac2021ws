@@ -7,7 +7,6 @@
 // standard library
 #include <memory>
 #include <string>
-#include <tuple>
 
 // tijcore
 #include <tijcore/datatypes/PartId.hpp>
@@ -34,9 +33,10 @@ public:
   bool isEmpty() const;
   bool isModel() const;
 
-  void setBrokenState(const bool is_broken);
+  void setBroken(const bool is_broken);
 
-  std::tuple<PartId, bool> model() const;
+  PartId partId() const;
+  bool broken() const;
 
   tijmath::RelativePose3& pose();
   const tijmath::RelativePose3& pose() const;

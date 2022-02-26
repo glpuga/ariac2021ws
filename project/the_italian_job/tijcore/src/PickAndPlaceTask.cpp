@@ -41,8 +41,7 @@ RobotTaskOutcome PickAndPlaceTask::run()
   ModelTrayAccessSpaceManager model_tray_access_manager(*resource_manager_, robot);
   tijcore::PartTypeId part_type_id;
   {
-    auto [part_type, broken] = source_.resource()->model();
-    (void)broken;
+    const auto part_type = source_.resource()->partId();
     part_type_id = part_type.type();
   }
 

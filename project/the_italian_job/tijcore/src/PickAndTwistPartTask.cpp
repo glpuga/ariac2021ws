@@ -37,8 +37,7 @@ RobotTaskOutcome PickAndTwistPartTask::run()
 
   tijcore::PartTypeId part_type_id;
   {
-    auto [part_type, broken] = target_.resource()->model();
-    (void)broken;
+    const auto part_type = target_.resource()->partId();
     part_type_id = part_type.type();
   }
 

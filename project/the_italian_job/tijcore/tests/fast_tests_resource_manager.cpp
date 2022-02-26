@@ -1027,8 +1027,7 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
     ASSERT_EQ(1u, parts_in_table3.size());
 
     auto model_only = [](const ManagedLocus* locus_ptr) {
-      auto [model, broken] = locus_ptr->model();
-      (void)broken;  // avoids unused variable warning
+      auto model = locus_ptr->partId();
       return model;
     };
     ASSERT_EQ(table1_parts, model_only(parts_in_table1[0].resource()));
@@ -1053,8 +1052,7 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
     ASSERT_EQ(0u, parts_in_table3.size());
 
     auto model_only = [](const ManagedLocus* locus_ptr) {
-      auto [model, broken] = locus_ptr->model();
-      (void)broken;  // avoids unused variable warning
+      auto model = locus_ptr->partId();
       return model;
     };
     ASSERT_EQ(table1_parts, model_only(parts_in_table1[0].resource()));

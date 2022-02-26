@@ -233,8 +233,8 @@ OrderProcessingStrategy::processUniversalShipment(
 
     // if the part is broken or not the correct type, ignore it, it will be
     // dealt with later
-    auto [part_id, broken] = locus.model();
-    (void)broken;  // avoids unused variable warning
+    const auto part_id = locus.partId();
+    const auto broken = locus.broken();
     if (broken || (part_id != desired_part_id))
     {
       WARNING("Unwanted/Broken part at {} ({} is not {}, {})", desired_pose, part_id.codedString(),
@@ -264,8 +264,7 @@ OrderProcessingStrategy::processUniversalShipment(
     // from the parts to remove, separate broken and unwanted
     for (const auto& part : parts_to_remove)
     {
-      auto [part_id, broken] = part.resource()->model();
-      (void)part_id;  // avoids unused variable warning
+      const auto broken = part.resource()->broken();
       if (broken)
       {
         broken_parts.push_back(part);
@@ -491,8 +490,7 @@ OrderProcessingStrategy::processUniversalShipment(
               missing_part_locus.resource()->pose().rotation().rotationMatrix();
 
           // dont flip parts that are not pumps
-          auto [part_id, broken] = selected_source_part.resource()->model();
-          (void)broken;
+          const auto part_id = selected_source_part.resource()->partId();
 
           // If we need to flip the part or if it comes from the conveyor belt,
           // find an empty space to leave the part as an intermediate stage
