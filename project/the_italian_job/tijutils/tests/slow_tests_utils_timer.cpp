@@ -21,7 +21,7 @@ namespace
 {
 using testing::InSequence;
 
-using namespace std::literals;
+using namespace std::literals;  // NOLINT(build/namespaces)
 
 class HelperInterface
 {

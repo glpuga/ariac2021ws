@@ -19,7 +19,7 @@
 #include "mocks/RobotTaskMock.hpp"
 #include "utils/ActionQueue.hpp"
 
-using namespace std::literals;
+using namespace std::literals;  // NOLINT(build/namespaces)
 
 namespace tijcore
 {
