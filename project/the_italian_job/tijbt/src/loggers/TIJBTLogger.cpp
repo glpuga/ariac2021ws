@@ -18,7 +18,7 @@ TIJBTLogger::TIJBTLogger(const BT::Tree& tree) : StatusChangeLogger(tree.rootNod
 void TIJBTLogger::callback(BT::Duration timestamp, const BT::TreeNode& node,
                            BT::NodeStatus prev_status, BT::NodeStatus status)
 {
-  using namespace std::chrono;
+  using namespace std::chrono;  // NOLINT(build/namespaces)
 
   constexpr const char* whitespaces = "                         ";
   constexpr const size_t ws_count = 25;

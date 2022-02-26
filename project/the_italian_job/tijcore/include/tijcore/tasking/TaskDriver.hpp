@@ -17,8 +17,6 @@
 #include <tijcore/coremodels/Toolbox.hpp>
 #include <tijutils/Timer.hpp>
 
-using namespace std::literals;
-
 namespace tijcore
 {
 class TaskDriver
@@ -32,8 +30,8 @@ public:
              const ResourceManagerInterface::SharedPtr& resource_manager,
              const ModelPerceptionInterface::SharedPtr& perception_input,
              const Toolbox::SharedPtr& toolbox,
-             const std::chrono::milliseconds perception_interval = 1s,
-             const std::chrono::milliseconds processing_interval = 1s);
+             const std::chrono::milliseconds perception_interval = std::chrono::seconds{ 1 },
+             const std::chrono::milliseconds processing_interval = std::chrono::seconds{ 1 });
 
 private:
   const std::chrono::milliseconds processing_interval_{ 1000 };
