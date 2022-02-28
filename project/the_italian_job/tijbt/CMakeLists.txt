@@ -39,6 +39,10 @@ add_library(${PROJECT_NAME}
   src/BehaviorTreeBuilder.cpp
   src/BehaviorTreeManager.cpp
   src/loggers/TIJBTLogger.cpp
+  src/modular_loggers/ModularFileLogger.cpp
+  src/modular_loggers/ModularMinitraceLogger.cpp
+  src/modular_loggers/ModularStdCoutLogger.cpp
+  src/modular_loggers/ModularTIJBTLogger.cpp
 )
 
 add_dependencies(

@@ -10,7 +10,9 @@
 
 // third party
 #include <behaviortree_cpp_v3/behavior_tree.h>
-#include <behaviortree_cpp_v3/loggers/abstract_logger.h>
+
+// project
+#include <tijbt/modular_loggers/ModularAbstractLogger.hpp>
 
 namespace tijbt
 {
@@ -18,7 +20,7 @@ struct BTHandle
 {
   std::unique_ptr<BT::Tree> tree;
 
-  std::vector<std::unique_ptr<BT::StatusChangeLogger>> loggers;
+  std::vector<ModularStatusChangeLogger::Ptr> loggers;
 
   BTHandle() = default;
   // make sure handles cannot be copied

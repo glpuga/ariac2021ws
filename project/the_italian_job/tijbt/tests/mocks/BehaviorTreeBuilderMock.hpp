@@ -24,28 +24,32 @@ public:
     return *this;
   }
 
-  BehaviorTreeBuilderInterface&
-  addFileDescription(const std::string& description_file_full_path) override
+  BehaviorTreeBuilderInterface& addFileDescription(const std::string&) override
   {
     return *this;
   }
 
-  BehaviorTreeBuilderInterface& addStringDescription(const std::string& description) override
+  BehaviorTreeBuilderInterface& addStringDescription(const std::string&) override
   {
     return *this;
   }
 
-  BehaviorTreeBuilderInterface& addRootName(const std::string& root_name) override
+  BehaviorTreeBuilderInterface& addRootName(const std::string&) override
   {
     return *this;
   }
 
-  BehaviorTreeBuilderInterface& addBlackboard(BT::Blackboard::Ptr blackboard) override
+  BehaviorTreeBuilderInterface& addBlackboard(BT::Blackboard::Ptr) override
   {
     return *this;
   }
 
   BehaviorTreeBuilderInterface& addMockingFlag()
+  {
+    return *this;
+  }
+
+  BehaviorTreeBuilderInterface& addLogger(ModularStatusChangeLogger::Ptr) override
   {
     return *this;
   }
