@@ -40,6 +40,8 @@ public:
 
   BehaviorTreeBuilderInterface& addMockingFlag() override;
 
+  BehaviorTreeBuilderInterface& addLogger(ModularStatusChangeLogger::Ptr logger) override;
+
   BehaviorTreeManagerInterface::Ptr build() override;
 
 private:
@@ -56,6 +58,7 @@ private:
   BT::Blackboard::Ptr blackboard_;
   std::unique_ptr<BT::BehaviorTreeFactory> node_factory_;
   bool mocking_flag_{ false };
+  std::vector<ModularStatusChangeLogger::Ptr> loggers_;
 
   BehaviorTreeBuilder(const FactoryLoaderFunction& factory_loader_function, const bool);
 

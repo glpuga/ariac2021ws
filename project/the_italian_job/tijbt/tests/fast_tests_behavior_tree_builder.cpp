@@ -15,6 +15,9 @@
 
 // project
 #include <tijbt/BehaviorTreeBuilder.hpp>
+#include <tijbt/modular_loggers/ModularStdCoutLogger.hpp>
+#include <tijbt/modular_loggers/ModularTIJBTLogger.hpp>
+#include <tijlogger/logger.hpp>
 
 namespace tijbt
 {
@@ -128,9 +131,12 @@ public:
   }
 };
 
-class BehaviorTreeBuilderTest : public Test
+struct BehaviorTreeBuilderTest : public Test
 {
-protected:
+  void SetUp() override
+  {
+    logger::instance().setLevel(logger::Level::Debug);
+  }
 };
 
 TEST_F(BehaviorTreeBuilderTest, ConstructionTest)
@@ -221,6 +227,22 @@ TEST_F(BehaviorTreeBuilderTest, ThrowIfMultipleDescriptionsGiven)
       std::runtime_error);
 }
 
+TEST_F(BehaviorTreeBuilderTest, TreeWithMultipleLoggers)
+{
+  // construct a tree with multiple loggers
+  auto bt_factory_loader_function = [](BT::BehaviorTreeFactory&) {};
+
+  BehaviorTreeBuilder uut(bt_factory_loader_function);
+  auto tree = uut.createTree()
+                  .addStringDescription(trivial_tree_success)           //
+                  .addLogger(std::make_unique<ModularTIJBTLogger>())    //
+                  .addLogger(std::make_unique<ModularStdCoutLogger>())  //
+                  .addLogger(std::make_unique<ModularTIJBTLogger>())    //
+                  .build();                                             //
+  auto retval = tree->run();
+  EXPECT_EQ(BTExecutionResult::SUCCESS, retval);
+}
+
 TEST_F(BehaviorTreeBuilderTest, UsingAndExternalBlackboard)
 {
   // build a tree with an externa blackboard
@@ -237,9 +259,10 @@ TEST_F(BehaviorTreeBuilderTest, UsingAndExternalBlackboard)
     blackboard->set<double>("operand_2", 4.0);  // NOLINT(build/include_what_you_use)
 
     auto tree = uut.createTree()
-                    .addStringDescription(operations_tree)  //
-                    .addBlackboard(blackboard)              //
-                    .build();                               //
+                    .addStringDescription(operations_tree)              //
+                    .addBlackboard(blackboard)                          //
+                    .addLogger(std::make_unique<ModularTIJBTLogger>())  //
+                    .build();                                           //
 
     auto retval = tree->run();
 
@@ -267,9 +290,10 @@ TEST_F(BehaviorTreeBuilderTest, UsingAnAlternateRoot)
     blackboard->set<double>("operand_2", 7.0);   // NOLINT(build/include_what_you_use)
 
     auto tree = uut.createTree()
-                    .addStringDescription(operations_tree)  //
-                    .addBlackboard(blackboard)              //
-                    .build();                               //
+                    .addStringDescription(operations_tree)              //
+                    .addBlackboard(blackboard)                          //
+                    .addLogger(std::make_unique<ModularTIJBTLogger>())  //
+                    .build();                                           //
 
     auto retval = tree->run();
 
@@ -286,10 +310,11 @@ TEST_F(BehaviorTreeBuilderTest, UsingAnAlternateRoot)
     blackboard->set<double>("operand_2", 7.0);   // NOLINT(build/include_what_you_use)
 
     auto tree = uut.createTree()
-                    .addStringDescription(operations_tree)  //
-                    .addBlackboard(blackboard)              //
-                    .addRootName("AlternativeTree")         //
-                    .build();                               //
+                    .addStringDescription(operations_tree)              //
+                    .addBlackboard(blackboard)                          //
+                    .addRootName("AlternativeTree")                     //
+                    .addLogger(std::make_unique<ModularTIJBTLogger>())  //
+                    .build();                                           //
 
     auto retval = tree->run();
 
@@ -354,9 +379,10 @@ TEST_F(BehaviorTreeBuilderTest, SettingMockedBranches)
     EXPECT_CALL(node_mock, mockedRun()).WillOnce(Return(BT::NodeStatus::FAILURE));
 
     BehaviorTreeBuilder uut(bt_factory_loader_function);
-    auto tree = uut.createTree()                          //
-                    .addStringDescription(mockable_tree)  //
-                    .addMockingFlag()                     //
+    auto tree = uut.createTree()                                        //
+                    .addStringDescription(mockable_tree)                //
+                    .addMockingFlag()                                   //
+                    .addLogger(std::make_unique<ModularTIJBTLogger>())  //
                     .build();
     auto retval = tree->run();
     EXPECT_EQ(BTExecutionResult::FAILURE, retval);

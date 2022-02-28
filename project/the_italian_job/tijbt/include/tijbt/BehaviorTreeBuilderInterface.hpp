@@ -16,7 +16,7 @@
 
 // project
 #include <tijbt/BehaviorTreeManagerInterface.hpp>
-
+#include <tijbt/modular_loggers/ModularAbstractLogger.hpp>
 namespace tijbt
 {
 class BehaviorTreeBuilderInterface
@@ -38,6 +38,8 @@ public:
   virtual BehaviorTreeBuilderInterface& addBlackboard(BT::Blackboard::Ptr blackboard) = 0;
 
   virtual BehaviorTreeBuilderInterface& addMockingFlag() = 0;
+
+  virtual BehaviorTreeBuilderInterface& addLogger(ModularStatusChangeLogger::Ptr logger) = 0;
 
   virtual BehaviorTreeManagerInterface::Ptr build() = 0;
 };

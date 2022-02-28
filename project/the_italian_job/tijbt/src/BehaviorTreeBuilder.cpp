@@ -104,12 +104,18 @@ BehaviorTreeBuilderInterface& BehaviorTreeBuilder::addBlackboard(BT::Blackboard:
   return *this;
 }
 
+BehaviorTreeBuilderInterface& BehaviorTreeBuilder::addLogger(ModularStatusChangeLogger::Ptr logger)
+{
+  checkIfWeAreABuilderInstance();
+  loggers_.emplace_back(std::move(logger));
+  return *this;
+}
+
 BehaviorTreeManagerInterface::Ptr BehaviorTreeBuilder::build()
 {
   BTHandle bth;
 
   std::unique_ptr<BT::Tree> tree;
-  std::vector<std::unique_ptr<BT::StatusChangeLogger>> loggers;
 
   BT::BehaviorTreeFactory bt_factory;
   factory_loader_function_(bt_factory);
@@ -136,7 +142,10 @@ BehaviorTreeManagerInterface::Ptr BehaviorTreeBuilder::build()
   }
 
   // add a single custom logger
-  bth.loggers.push_back(std::make_unique<TIJBTLogger>(*bth.tree));
+  bth.loggers = std::move(loggers_);
+
+  std::for_each(bth.loggers.begin(), bth.loggers.end(),
+                [&bth](auto& logger) { logger->attach(*bth.tree); });
 
   return std::make_unique<BehaviorTreeManager>(std::move(bth));
 }
