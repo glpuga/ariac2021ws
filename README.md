@@ -53,6 +53,6 @@ The node will start the competition mode and the robots will begin completing th
 Links and documents:
 
 * [ARIAC main site](https://www.nist.gov/el/intelligent-systems-division-73500/agile-robotics-industrial-automation-competition).
-* [ARIAC code repository](https://github.com/usnistgov/ARIAC/tree/ariac2021).
+* [ARIAC code repository](https://github.com/usnistgov/ARIAC).
 * [ARIAC competition server code](https://github.com/osrf/ariac-docker).
 
