@@ -1,15 +1,19 @@
-
 name: Devel environment build and test
 
 on:
-  push: # this needs to run on the main and devel branches so that the cache is available to push_requests
-     branches: [ main, devel ]
+  # run workflow on commits against both main or devel
+  push:
+    branches: [main, devel]
+  # run workflow on new pull requests both either main or devel
   pull_request:
-     branches: [ main, devel ]
-  workflow_dispatch: # allow manually starting this workflow
+    branches: [main, devel]
+  # allow starting this workflow manually
+  workflow_dispatch:
+  # run this workflow daily at 6 am for the default branch
+  schedule:
+    - cron: "5 6 * * *"
 
 jobs:
-
   build_and_test:
     name: Update development environment
     runs-on: fast-runner
