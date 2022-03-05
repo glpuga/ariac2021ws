@@ -11,6 +11,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>behaviortree_cpp_v3</depend>
+  <depend>behavior_tree_extras</depend>
   <depend>roscpp</depend>
   <depend>roslint</depend>
   <depend>rostest</depend>

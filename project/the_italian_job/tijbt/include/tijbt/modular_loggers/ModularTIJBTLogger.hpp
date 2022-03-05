@@ -9,7 +9,7 @@
 #include <memory>
 
 // bt
-#include <tijbt/modular_loggers/ModularAbstractLogger.hpp>
+#include <behavior_tree_extras/modular_loggers/ModularAbstractLogger.hpp>
 
 // project
 #include <tijbt/loggers/TIJBTLogger.hpp>
@@ -19,7 +19,7 @@ namespace tijbt
  * @brief Injectable StdCoutLogger logger that can be attached to a tree after creation. Allows
  *        dependency injection-ish mode of adding loggers to trees.
  */
-class ModularTIJBTLogger : public ModularStatusChangeLogger
+class ModularTIJBTLogger : public behavior_tree_extras::ModularStatusChangeLogger
 {
 public:
   /** @brief Attaches the logger to a tree and complete initialization. Needs to be called before

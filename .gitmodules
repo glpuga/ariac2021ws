@@ -7,3 +7,6 @@
 [submodule "external/BehaviorTree.CPP"]
 	path = external/BehaviorTree.CPP
 	url = git@github.com:glpuga/BehaviorTree.CPP.git
+[submodule "external/BehaviorTreeExtras"]
+	path = external/BehaviorTreeExtras
+	url = git@github.com:glpuga/BehaviorTreeExtras.git

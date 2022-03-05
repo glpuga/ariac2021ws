@@ -6,6 +6,7 @@ add_compile_options(-std=c++17)
 add_compile_options(-Wall -Werror)
 
 find_package(catkin REQUIRED COMPONENTS
+  behavior_tree_extras
   behaviortree_cpp_v3
   roscpp
   roslint
@@ -19,6 +20,7 @@ catkin_package(
   LIBRARIES
     ${PROJECT_NAME}
   CATKIN_DEPENDS
+    behavior_tree_extras
     behaviortree_cpp_v3
     roscpp
     tijlogger
@@ -35,13 +37,7 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-  src/BTExecutionResult.cpp
-  src/BehaviorTreeBuilder.cpp
-  src/BehaviorTreeManager.cpp
   src/loggers/TIJBTLogger.cpp
-  src/modular_loggers/ModularFileLogger.cpp
-  src/modular_loggers/ModularMinitraceLogger.cpp
-  src/modular_loggers/ModularStdCoutLogger.cpp
   src/modular_loggers/ModularTIJBTLogger.cpp
 )
 
