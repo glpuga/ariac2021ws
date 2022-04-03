@@ -1,12 +1,8 @@
-# Ubuntu 18.04 with nvidia-docker2 beta opengl support.
 ARG BASEIMG=ubuntu:bionic
 FROM $BASEIMG
 
 # Set ROS distribution
 ARG DIST=melodic
-
-# Set Gazebo verison
-ARG GAZ=gazebo9
 
 # Base system tools
 RUN apt update \
@@ -17,25 +13,16 @@ RUN apt update \
     cmake \
     cppcheck \
     curl \
-    gdb \
     git \
-    libeigen3-dev \
     locate \
     lsb-release \
     mc \
-    mercurial \
     pkg-config \
-    protobuf-compiler \
-    python3-dbg \
     python3-pip \
-    python3-venv \
-    ruby \
     software-properties-common \
     sudo \
     tmux \
-    vim \
     wget \
-    xterm \
  && apt clean
 
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -61,42 +48,7 @@ RUN /bin/sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) 
     python-rosdep \
     python-catkin-lint \
     python-catkin-tools \
-    ros-${DIST}-controller-manager \
-    ros-${DIST}-effort-controllers \
-    ros-${DIST}-image-proc \
-    ros-${DIST}-industrial-core \
-    ros-${DIST}-joint-state-controller \
-    ros-${DIST}-joint-state-publisher \
-    ros-${DIST}-joint-state-publisher-gui \
-    ros-${DIST}-joint-trajectory-action \
-    ros-${DIST}-joint-trajectory-action-tools \
-    ros-${DIST}-joint-trajectory-controller \
-    ros-${DIST}-joy \
-    ros-${DIST}-joy-teleop \
-    ros-${DIST}-key-teleop \
-    ros-${DIST}-moveit \
-    ros-${DIST}-moveit-fake-controller-manager \
-    ros-${DIST}-moveit-kinematics \
-    ros-${DIST}-moveit-opw-kinematics-plugin \
-    ros-${DIST}-moveit-planners-ompl \
-    ros-${DIST}-moveit-ros-move-group \
-    ros-${DIST}-moveit-ros-visualization \
-    ros-${DIST}-moveit-setup-assistant \
-    ros-${DIST}-moveit-simple-controller-manager \
-    ros-${DIST}-moveit-visual-tools \
-    ros-${DIST}-robot-localization \
-    ros-${DIST}-robot-state-publisher \
-    ros-${DIST}-ros-base \
-    ros-${DIST}-rqt \
-    ros-${DIST}-rqt-common-plugins \
-    ros-${DIST}-rviz \
-    ros-${DIST}-teleop-tools \
-    ros-${DIST}-teleop-twist-keyboard \
-    ros-${DIST}-topic-tools \
-    ros-${DIST}-trac-ik \
-    ros-${DIST}-trac-ik-kinematics-plugin \
-    ros-${DIST}-velodyne-simulator \
-    ros-${DIST}-vision-opencv \
+    ros-${DIST}-desktop-full \
  && rosdep init \
  && apt clean
 
@@ -105,19 +57,43 @@ COPY keys/gazebo.key /tmp/gazebo.key
 RUN /bin/sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list' \
  && apt-key add /tmp/gazebo.key \
  && apt update \
- && apt install -y \
-    qtbase5-dev \
-    libgles2-mesa-dev \
-    ${GAZ} \
-    lib${GAZ}-dev \
-    ros-${DIST}-gazebo-plugins \
-    ros-${DIST}-gazebo-ros \
-    ros-${DIST}-gazebo-ros-control \
-    ros-${DIST}-xacro \
+ && apt upgrade -y \
  && apt clean
 # This seems to be needed to launch Gazebo on this setup
 # or it fails to launch with a symbol error on gzserver
-RUN apt upgrade -y libignition-math2
+RUN apt-get update && apt-get upgrade -y libignition-math4
+
+#
+# Additional GEAR dependencies obtained running
+# rosdep install -si --reinstall --from-path src/ | cut -f7- -d" " | sort
+
+RUN apt update \
+ && apt install -y \
+    libboost-all-dev \
+    libeigen3-dev \
+    libncurses5-dev \
+    libzmq3-dev \
+    python-catkin-lint \
+    python-rospkg \
+    ros-melodic-effort-controllers \
+    ros-melodic-joint-state-publisher-gui \
+    ros-melodic-moveit-fake-controller-manager \
+    ros-melodic-moveit-kinematics \
+    ros-melodic-moveit-planners-ompl \
+    ros-melodic-moveit-ros-move-group \
+    ros-melodic-moveit-ros-visualization \
+    ros-melodic-moveit-setup-assistant \
+ && apt clean
+
+# Additional ros-control dependencies not installed by the previous stages
+RUN apt update \
+ && apt install -y \
+    "ros-melodic-ros-control*" \
+    "ros-melodic-control*" \
+    "ros-melodic-gazebo-ros-control*" \
+    ros-melodic-moveit-simple-controller-manager \
+    ros-melodic-moveit-commander \
+ && apt clean
 
 # Set USER and GROUP
 ARG USER=developer
