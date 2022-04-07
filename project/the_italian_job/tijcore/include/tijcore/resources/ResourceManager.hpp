@@ -54,8 +54,6 @@ public:
   std::optional<SubmissionTrayHandle>
   getSubmissionTray(const std::string& model_container_name) override;
 
-  std::string getContainerFrameId(const std::string& model_container_name) const override;
-
   std::string getContainerExclusionZoneId(const std::string& model_container_name) const override;
 
   WorkRegionId getWorkRegionId(const ManagedLocusHandle& handle) const override;

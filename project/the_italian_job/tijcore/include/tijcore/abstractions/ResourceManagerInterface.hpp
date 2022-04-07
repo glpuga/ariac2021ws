@@ -59,8 +59,6 @@ public:
   virtual std::optional<SubmissionTrayHandle>
   getSubmissionTray(const std::string& model_container_name) = 0;
 
-  virtual std::string getContainerFrameId(const std::string& model_container_name) const = 0;
-
   virtual std::string
   getContainerExclusionZoneId(const std::string& model_container_name) const = 0;
 
