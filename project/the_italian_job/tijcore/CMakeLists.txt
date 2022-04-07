@@ -47,7 +47,6 @@ add_library(${PROJECT_NAME}
   src/ModelContainerInterface.cpp
   src/ModelPerceptionMixer.cpp
   src/OrderId.cpp
-  src/OrderProcessingStrategy.cpp
   src/PartColorId.cpp
   src/PartId.cpp
   src/PartTypeId.cpp
@@ -64,8 +63,6 @@ add_library(${PROJECT_NAME}
   src/SubmitAssemblyShipmentTask.cpp
   src/SubmitKittingShipmentTask.cpp
   src/SurfaceManager.cpp
-  src/TaskDispatcher.cpp
-  src/TaskDriver.cpp
   src/WorkRegionId.cpp
 )
 
