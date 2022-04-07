@@ -28,7 +28,6 @@ class ResourceManager : public ResourceManagerInterface
 {
 public:
   ResourceManager(const Toolbox::SharedPtr& toolbox,
-                  const std::vector<ModelTraySharedAccessSpaceDescription>& shared_workspaces,
                   std::vector<ModelContainerInterface::Ptr>&& model_containers,
                   std::vector<PickAndPlaceRobotInterface::Ptr>&& pick_and_place_robots);
 
@@ -46,26 +45,10 @@ public:
 
   void updateSensorData(const std::vector<ObservedModel>& observed_models) override;
 
-  std::optional<ExclusionZoneHandle>
-  getModelTrayExclusionZoneHandle(const std::string& model_container_name,
-                                  const std::optional<std::string>& additional_model_tray_name_opt,
-                                  const std::chrono::milliseconds& timeout) override;
-
-  std::optional<SubmissionTrayHandle>
-  getSubmissionTray(const std::string& model_container_name) override;
-
-  std::string getContainerExclusionZoneId(const std::string& model_container_name) const override;
-
-  WorkRegionId getWorkRegionId(const ManagedLocusHandle& handle) const override;
-
   void logKnownLoci() override;
-
-  const std::vector<ModelTraySharedAccessSpaceDescription>&
-  getListOfExclusionZones() const override;
 
 private:
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;
-  using SharedWorkspaceHandle = ResourceHandle<std::string>;
 
   int32_t sensor_update_count_{ 0 };
 
@@ -75,8 +58,6 @@ private:
                                                    // replaced by the footprint of a given part, or
                                                    // at least be a function of part size.
 
-  const std::vector<ModelTraySharedAccessSpaceDescription> shared_workspace_descriptors_;
-
   mutable std::mutex mutex_;
 
   Toolbox::SharedPtr toolbox_;
@@ -84,8 +65,6 @@ private:
   std::vector<ManagedLocusHandle> model_loci_;
 
   std::map<std::string, ModelContainerHandle> model_containers_;
-  // std::map<std::string, ExclusionZoneHandle> working_spaces_;
-  std::map<std::string, SharedWorkspaceHandle> shared_working_spaces_;
 
   std::vector<PickAndPlaceRobotHandle> pick_and_place_robots_;
 
@@ -99,9 +78,9 @@ private:
   std::tuple<double, double, double> poseToOccupancy(const tijmath::RelativePose3& relative_pose,
                                                      const std::string& container_frame_id) const;
 
-  SurfaceManager buildContainerSurfaceManager(const std::string& parent_name) const;
-
   SurfaceManager volumeToSurface(const CuboidVolume& v) const;
+
+  SurfaceManager buildContainerSurfaceManager(const std::string& parent_name) const;
 
   bool locusWithinVolume(const ManagedLocus& locus, const ModelContainerHandle& container) const;
 

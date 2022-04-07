@@ -16,7 +16,6 @@
 
 namespace tijutils
 {
-
 namespace test
 {
 namespace

@@ -32,38 +32,16 @@ constexpr int32_t conveyor_belt_start_difficulty_ = 3;
 }  // namespace
 
 ResourceManager::ResourceManager(
-    const Toolbox::SharedPtr& toolbox,
-    const std::vector<ModelTraySharedAccessSpaceDescription>& shared_workspace_descriptors,
-    std::vector<ModelContainerInterface::Ptr>&& model_containers,
+    const Toolbox::SharedPtr& toolbox, std::vector<ModelContainerInterface::Ptr>&& model_containers,
     std::vector<PickAndPlaceRobotInterface::Ptr>&& pick_and_place_robots)
-  : shared_workspace_descriptors_{ shared_workspace_descriptors }, toolbox_{ toolbox }
+  : toolbox_{ toolbox }
 {
-  for (auto& shared_workspace : shared_workspace_descriptors)
-  {
-    if (shared_working_spaces_.count(shared_workspace.id))
-    {
-      WARNING("Duplicated id {} in shared_workspace_descriptors", shared_workspace.id);
-    }
-
-    shared_working_spaces_.emplace(std::make_pair(
-        shared_workspace.id,
-        SharedWorkspaceHandle{ std::make_unique<std::string>(shared_workspace.id) }));
-  }
-
   for (auto& container : model_containers)
   {
     if (model_containers_.count(container->name()))
     {
       throw std::runtime_error{ "Duplicated container name " + container->name() +
                                 " in model containers" };
-    }
-
-    if (!shared_working_spaces_.count(container->exclusionZoneId()))
-    {
-      throw std::runtime_error{ "The container " + container->name() +
-                                " has a shared workspace id not defined in the descriptors vector "
-                                "(" +
-                                container->exclusionZoneId() + ")" };
     }
 
     // Convert the unique_ptr into a shared ptr. I need to make a copy of the
@@ -252,172 +230,6 @@ ResourceManager::getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& region
     }
   }
   return current_selection_opt;
-}
-
-std::optional<ResourceManagerInterface::ExclusionZoneHandle>
-ResourceManager::getModelTrayExclusionZoneHandle(
-    const std::string& model_tray_name,
-    const std::optional<std::string>& additional_model_tray_name_opt,
-    const std::chrono::milliseconds& timeout)
-{
-  std::unique_lock<std::mutex> lock{ mutex_ };
-
-  if (!model_containers_.count(model_tray_name))
-  {
-    // what container did you say?
-    ERROR(
-        "Could not provide access to container airspace because the name "
-        "does not match any known container");
-    return std::nullopt;
-  }
-
-  // notice the hackish way to avoid having to check multiple times if a second
-  // tray name was provided
-  std::string additional_model_tray_name;
-  if (additional_model_tray_name_opt)
-  {
-    additional_model_tray_name = additional_model_tray_name_opt.value();
-  }
-  else
-  {
-    // if none was given, we'll check twice for the same
-    additional_model_tray_name = model_tray_name;
-  }
-
-  if (!model_containers_.count(additional_model_tray_name))
-  {
-    // what container did you say?
-    ERROR(
-        "An additional container name was provided, but the name does not "
-        "match any known container");
-    return std::nullopt;
-  }
-
-  const auto& model_tray_handle = model_containers_.at(model_tray_name);
-  const auto& additional_model_tray_handle = model_containers_.at(model_tray_name);
-
-  const auto& model_tray_exclusion_zone_handle =
-      shared_working_spaces_.at(model_tray_handle.resource()->exclusionZoneId());
-
-  const auto start_time = std::chrono::system_clock::now();
-
-  const auto logging_names = additional_model_tray_name_opt ?
-                                 model_tray_name + " and " + additional_model_tray_name :
-                                 model_tray_name;
-
-  const auto initial_sensor_update_count = sensor_update_count_;
-
-  while ((initial_sensor_update_count == sensor_update_count_) || model_tray_handle.allocated() ||
-         additional_model_tray_handle.allocated() || model_tray_exclusion_zone_handle.allocated())
-  {
-    const auto current_time = std::chrono::system_clock::now();
-    if (current_time - start_time > timeout)
-    {
-      WARNING("Timed out while waiting to get access the exclusion zone of {}", logging_names);
-      return std::nullopt;
-    }
-
-    {
-      lock.unlock();
-      std::this_thread::sleep_for(blocking_methods_sleep_interval_);
-      lock.lock();
-    }
-  }
-
-  if (!model_tray_handle.resource()->enabled() ||
-      !additional_model_tray_handle.resource()->enabled())
-  {
-    WARNING(
-        "Failed to get a handle to the exclusion zone of {} "
-        "because at least one of the trays is disabled",
-        logging_names);
-    return std::nullopt;
-  }
-
-  std::vector<ModelContainerHandle> locked_containers;
-  locked_containers.push_back(model_tray_handle);
-  if (additional_model_tray_name_opt)
-  {
-    locked_containers.push_back(model_tray_handle);
-  }
-
-  return ExclusionZoneHandle(std::make_shared<ModelTraySharedAccessSpaceResource>(
-      std::move(locked_containers), model_tray_exclusion_zone_handle));
-}
-
-std::optional<ResourceManagerInterface::SubmissionTrayHandle>
-ResourceManager::getSubmissionTray(const std::string& model_container_name)
-{
-  std::lock_guard<std::mutex> lock{ mutex_ };
-  clearNonAllocatedEmptyLoci();
-
-  if (!model_containers_.count(model_container_name))
-  {
-    // what container did you say?
-    ERROR(
-        "Could not provide access to container tray because the name does "
-        "not match any known container");
-    return std::nullopt;
-  }
-
-  const auto& container_handle_ref = model_containers_.at(model_container_name);
-
-  if (container_handle_ref.allocated())
-  {
-    // TODO(glpuga) test this case I just added
-    // the working space around he container is in use, sorry.
-    return std::nullopt;
-  }
-
-  if (!container_handle_ref.resource()->enabled())
-  {
-    // TODO(glpuga) should we be able to allocate trays in disabled containers?
-    // how do we enable them again?
-    return std::nullopt;
-  }
-
-  // the block can only be granted if there are no allocated handles on it.
-  bool container_has_allocated_handles{ false };
-  auto handle_checker = [&container_has_allocated_handles,
-                         &model_container_name](const ManagedLocusHandle& handle) {
-    const auto handle_in_container = (model_container_name == handle.resource()->parentName());
-    const auto handle_is_allocated = handle.allocated();
-    container_has_allocated_handles =
-        container_has_allocated_handles || (handle_is_allocated && handle_in_container);
-  };
-
-  std::for_each(model_loci_.begin(), model_loci_.end(), handle_checker);
-
-  if (container_has_allocated_handles)
-  {
-    // can't allocate the resource with active model handles in it
-    return std::nullopt;
-  }
-
-  return SubmissionTrayHandle(std::make_shared<SubmissionTrayAdapter>(container_handle_ref));
-}
-
-std::string
-ResourceManager::getContainerExclusionZoneId(const std::string& model_container_name) const
-{
-  std::lock_guard<std::mutex> lock{ mutex_ };
-  std::string frame_id;
-  if (!model_containers_.count(model_container_name))
-  {
-    throw std::invalid_argument{ "There's no container filed with the name " +
-                                 model_container_name };
-  }
-  return model_containers_.at(model_container_name).resource()->exclusionZoneId();
-}
-
-WorkRegionId ResourceManager::getWorkRegionId(const ManagedLocusHandle& handle) const
-{
-  auto parent_container_ptr = findLociContainer(*handle.resource());
-  if (!parent_container_ptr)
-  {
-    throw std::runtime_error("Can't find parent for requested locus");
-  }
-  return parent_container_ptr->resource()->region();
 }
 
 std::optional<ResourceManagerInterface::ManagedLocusHandle>
@@ -840,13 +652,6 @@ void ResourceManager::logKnownLoci()
     }
   }
   INFO("---");
-}
-
-const std::vector<ModelTraySharedAccessSpaceDescription>&
-ResourceManager::getListOfExclusionZones() const
-{
-  // no need to take the mutex, since this data is read-only.
-  return shared_workspace_descriptors_;
 }
 
 }  // namespace tijcore

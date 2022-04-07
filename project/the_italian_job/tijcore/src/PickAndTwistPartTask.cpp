@@ -7,7 +7,6 @@
 #include <utility>
 
 // tijcore
-#include <tijcore/resources/ModelTrayAccessSpaceManager.hpp>
 #include <tijcore/tasking/PickAndTwistPartTask.hpp>
 #include <tijlogger/logger.hpp>
 
@@ -41,35 +40,15 @@ RobotTaskOutcome PickAndTwistPartTask::run()
     part_type_id = part_type.type();
   }
 
-  ModelTrayAccessSpaceManager model_tray_access_manager(*resource_manager_, robot);
-
-  // clear exclusion zones to enable movement to a safe spot regardless of where
-  // we are located
-  model_tray_access_manager.clearAllExclusionZones();
-
   // TODO(glpuga) generalize this code so that we can rotate pieces with other
   // rotations.
 
   const auto source_parent_name = target_.resource()->parentName();
   const auto destination_parent_name = destination_.resource()->parentName();
 
-  // if we don't change exclusion zones, we can skip some time-consuming steps
-  const bool do_exclusion_zone_change =
-      resource_manager_->getContainerExclusionZoneId(source_parent_name) !=
-      resource_manager_->getContainerExclusionZoneId(destination_parent_name);
-
-  if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||
-      !model_tray_access_manager.releaseAccess())
+  if (!robot.getInSafePoseNearTarget(target_.resource()->pose()))
   {
     ERROR("{} failed to get in resting pose", robot.name());
-  }
-  else if ((do_exclusion_zone_change &&
-            !model_tray_access_manager.getAccessToModel(source_parent_name, timeout_)) ||
-           (!do_exclusion_zone_change &&
-            !model_tray_access_manager.getAccessToModel(source_parent_name, destination_parent_name,
-                                                        timeout_)))
-  {
-    ERROR("{} failed to setup access constraints to target", robot.name());
   }
   else if (!robot.getToGraspingPoseHint(target_.resource()->pose()))
   {
@@ -89,22 +68,6 @@ RobotTaskOutcome PickAndTwistPartTask::run()
         "{} failed to get into the landing pose post grasping with the part "
         "grasped",
         robot.name());
-  }
-  else if (do_exclusion_zone_change &&
-           (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||
-            !model_tray_access_manager.releaseAccess()))
-  {
-    ERROR("{} failed to get in resting pose", robot.name());
-  }
-  else if (do_exclusion_zone_change &&
-           !robot.getInSafePoseNearTarget(destination_.resource()->pose()))
-  {
-    ERROR("{} failed to get in resting pose", robot.name());
-  }
-  else if (do_exclusion_zone_change &&
-           (!model_tray_access_manager.getAccessToModel(destination_parent_name, timeout_)))
-  {
-    ERROR("{} failed to setup access constraints to target", robot.name());
   }
   else if (!robot.getToGraspingPoseHint(destination_.resource()->pose()))
   {
@@ -176,7 +139,6 @@ RobotTaskOutcome PickAndTwistPartTask::run()
   // try to get in a resting pose to remove the robot from the way
   robot.dropPartWhereYouStand();
   robot.getInSafePose();
-  model_tray_access_manager.releaseAccess();
   return result;
 }
 

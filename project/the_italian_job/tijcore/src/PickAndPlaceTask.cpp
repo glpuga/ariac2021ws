@@ -8,7 +8,6 @@
 #include <utility>
 
 // tijcore
-#include <tijcore/resources/ModelTrayAccessSpaceManager.hpp>
 #include <tijcore/tasking/PickAndPlaceTask.hpp>
 #include <tijlogger/logger.hpp>
 
@@ -38,37 +37,18 @@ RobotTaskOutcome PickAndPlaceTask::run()
   auto& robot = *robot_.resource();
   RobotTaskOutcome result{ RobotTaskOutcome::TASK_FAILURE };
 
-  ModelTrayAccessSpaceManager model_tray_access_manager(*resource_manager_, robot);
   tijcore::PartTypeId part_type_id;
   {
     const auto part_type = source_.resource()->partId();
     part_type_id = part_type.type();
   }
 
-  // clear exclusion zones to enable movement to a safe spot regardless of where
-  // we are located
-  model_tray_access_manager.clearAllExclusionZones();
-
   const auto source_parent_name = source_.resource()->parentName();
   const auto destination_parent_name = destination_.resource()->parentName();
 
-  // if we don't change exclusion zones, we can skip some time-consuming steps
-  const bool do_exclusion_zone_change =
-      resource_manager_->getContainerExclusionZoneId(source_parent_name) !=
-      resource_manager_->getContainerExclusionZoneId(destination_parent_name);
-
-  if (!robot.getInSafePoseNearTarget(source_.resource()->pose()) ||
-      !model_tray_access_manager.releaseAccess())
+  if (!robot.getInSafePoseNearTarget(source_.resource()->pose()))
   {
     ERROR("{} failed to get in resting pose", robot.name());
-  }
-  else if ((do_exclusion_zone_change &&
-            !model_tray_access_manager.getAccessToModel(source_parent_name, timeout_)) ||
-           (!do_exclusion_zone_change &&
-            !model_tray_access_manager.getAccessToModel(source_parent_name, destination_parent_name,
-                                                        timeout_)))
-  {
-    ERROR("{} failed to setup access constraints to target", robot.name());
   }
   else if (!robot.getToGraspingPoseHint(source_.resource()->pose()))
   {
@@ -88,22 +68,6 @@ RobotTaskOutcome PickAndPlaceTask::run()
         "{} failed to get into the landing pose post grasping with the part "
         "grasped",
         robot.name());
-  }
-  else if (do_exclusion_zone_change &&
-           (!robot.getInSafePoseNearTarget(source_.resource()->pose()) ||
-            !model_tray_access_manager.releaseAccess()))
-  {
-    ERROR("{} failed to get in resting pose", robot.name());
-  }
-  else if (do_exclusion_zone_change &&
-           !robot.getInSafePoseNearTarget(destination_.resource()->pose()))
-  {
-    ERROR("{} failed to get in resting pose", robot.name());
-  }
-  else if (do_exclusion_zone_change &&
-           (!model_tray_access_manager.getAccessToModel(destination_parent_name, timeout_)))
-  {
-    ERROR("{} failed to setup access constraints to target", robot.name());
   }
   else if (!robot.getToGraspingPoseHint(destination_.resource()->pose()))
   {
@@ -141,7 +105,6 @@ RobotTaskOutcome PickAndPlaceTask::run()
   // try to get in a resting pose to remove the robot from the way
   robot.dropPartWhereYouStand();
   robot.getInSafePose();
-  model_tray_access_manager.releaseAccess();
 
   if (result != RobotTaskOutcome::TASK_SUCCESS)
   {

@@ -15,7 +15,6 @@ namespace tijutils
 {
 namespace string_utils
 {
-
 std::vector<std::string> splitStringByChar(const std::string& s, const char sep)
 {
   std::vector<std::string> tokens_vector;
