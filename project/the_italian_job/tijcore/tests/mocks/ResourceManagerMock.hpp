@@ -34,23 +34,6 @@ public:
                std::optional<ManagedLocusHandle>(const tijmath::RelativePose3& pose));
 
   MOCK_METHOD1(updateSensorData, void(const std::vector<ObservedModel>& observed_models));
-
-  MOCK_METHOD3(getModelTrayExclusionZoneHandle,
-               std::optional<ExclusionZoneHandle>(
-                   const std::string& model_container_name,
-                   const std::optional<std::string>& additional_model_tray_name_opt,
-                   const std::chrono::milliseconds& timeout));
-
-  MOCK_METHOD1(getSubmissionTray,
-               std::optional<SubmissionTrayHandle>(const std::string& model_container_name));
-
-  MOCK_CONST_METHOD1(getContainerExclusionZoneId,
-                     std::string(const std::string& model_container_name));
-
-  MOCK_CONST_METHOD1(getWorkRegionId, WorkRegionId(const ManagedLocusHandle& handle));
-
-  MOCK_CONST_METHOD0(getListOfExclusionZones,
-                     const std::vector<ModelTraySharedAccessSpaceDescription>&());
 };
 
 }  // namespace tijcore

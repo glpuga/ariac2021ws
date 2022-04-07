@@ -51,22 +51,6 @@ public:
 
   virtual void updateSensorData(const std::vector<ObservedModel>& observed_models) = 0;
 
-  virtual std::optional<ExclusionZoneHandle>
-  getModelTrayExclusionZoneHandle(const std::string& model_container_name,
-                                  const std::optional<std::string>& additional_model_tray_name_opt,
-                                  const std::chrono::milliseconds& timeout) = 0;
-
-  virtual std::optional<SubmissionTrayHandle>
-  getSubmissionTray(const std::string& model_container_name) = 0;
-
-  virtual std::string
-  getContainerExclusionZoneId(const std::string& model_container_name) const = 0;
-
-  virtual WorkRegionId getWorkRegionId(const ManagedLocusHandle& handle) const = 0;
-
-  virtual const std::vector<ModelTraySharedAccessSpaceDescription>&
-  getListOfExclusionZones() const = 0;
-
   virtual void logKnownLoci()
   {
   }  // default non-implementation

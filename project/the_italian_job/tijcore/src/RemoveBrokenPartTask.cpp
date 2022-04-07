@@ -6,7 +6,6 @@
 #include <utility>
 
 // tijcore
-#include <tijcore/resources/ModelTrayAccessSpaceManager.hpp>
 #include <tijcore/tasking/RemoveBrokenPartTask.hpp>
 #include <tijlogger/logger.hpp>
 
@@ -42,20 +41,9 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
 
   const auto target_parent_name = target_.resource()->parentName();
 
-  ModelTrayAccessSpaceManager model_tray_access_manager(*resource_manager_, robot);
-
-  // clear exclusion zones to enable movement to a safe spot regardless of where
-  // we are located
-  model_tray_access_manager.clearAllExclusionZones();
-
-  if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||
-      !model_tray_access_manager.releaseAccess())
+  if (!robot.getInSafePoseNearTarget(target_.resource()->pose()))
   {
     ERROR("{} failed to get in resting pose", robot.name());
-  }
-  else if (!model_tray_access_manager.getAccessToModel(target_parent_name, timeout_))
-  {
-    ERROR("{} failed to setup access constraints to target", robot.name());
   }
   else if (!robot.getToGraspingPoseHint(target_.resource()->pose()))
   {
@@ -70,7 +58,7 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
     ERROR("{} failed to pick up the broken part while trying to remove it", robot.name());
   }
   else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||
-           !robot.gripperHasPartAttached() || !model_tray_access_manager.releaseAccess())
+           !robot.gripperHasPartAttached())
   {
     ERROR("{} failed to get the broken part ready for transport to the bucket", robot.name());
   }
@@ -113,7 +101,6 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   // try to get in a resting pose to remove the robot from the way
   robot.dropPartWhereYouStand();
   robot.getInSafePose();
-  model_tray_access_manager.releaseAccess();
   return result;
 }
 
