@@ -9,7 +9,7 @@
 
 // tijcore
 #include <tijcore/datatypes/OrderId.hpp>
-#include <tijcore/utils/string.hpp>
+#include <tijutils/string_utils.hpp>
 
 namespace tijcore
 {
@@ -23,7 +23,7 @@ constexpr char coded_part_string_separator_{ '_' };
 
 OrderId::OrderId(const std::string& coded_part_str)
 {
-  auto tokens = utils::string::splitStringByChar(coded_part_str, coded_part_string_separator_);
+  auto tokens = tijutils::string_utils::splitStringByChar(coded_part_str, coded_part_string_separator_);
 
   const bool valid_regular_order =
       (tokens.size() == 2) && (tokens[0] == coded_order_string_prefix_);
@@ -57,11 +57,11 @@ std::string OrderId::codedString() const
 {
   if (!is_update_)
   {
-    return utils::string::joinStringsWithSeparator(
+    return tijutils::string_utils::joinStringsWithSeparator(
         { coded_order_string_prefix_, std::to_string(id_) }, coded_part_string_separator_);
   }
 
-  return utils::string::joinStringsWithSeparator(
+  return tijutils::string_utils::joinStringsWithSeparator(
       { coded_order_string_prefix_, std::to_string(id_), coded_order_string_update_posfix_ },
       coded_part_string_separator_);
 }

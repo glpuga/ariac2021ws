@@ -8,7 +8,7 @@
 
 // tijcore
 #include <tijcore/datatypes/PartId.hpp>
-#include <tijcore/utils/string.hpp>
+#include <tijutils/string_utils.hpp>
 
 namespace tijcore
 {
@@ -23,7 +23,7 @@ const PartId PartId::UnkownPartId = PartId{};
 
 PartId::PartId(const std::string& coded_part_str)
 {
-  auto tokens = utils::string::splitStringByChar(coded_part_str, coded_part_string_separator_);
+  auto tokens = tijutils::string_utils::splitStringByChar(coded_part_str, coded_part_string_separator_);
 
   if ((tokens.size() != 3) || tokens[0] != coded_part_string_prefix_ ||
       !part_type::isValid(tokens[1]) || !part_color::isValid(tokens[2]))
@@ -63,7 +63,7 @@ std::string PartId::codedString() const
   {
     throw std::logic_error("An unknown part id has no defined coded string");
   }
-  return utils::string::joinStringsWithSeparator(
+  return tijutils::string_utils::joinStringsWithSeparator(
       { coded_part_string_prefix_, part_type::toString(type_), part_color::toString(color_) },
       coded_part_string_separator_);
 }

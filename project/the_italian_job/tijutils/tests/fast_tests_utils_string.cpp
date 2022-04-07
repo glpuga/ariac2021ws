@@ -11,13 +11,12 @@
 // gtest
 #include "gtest/gtest.h"
 
-// tijcore
-#include <tijcore/utils/string.hpp>
+// tijutils
+#include <tijutils/string_utils.hpp>
 
-namespace tijcore
+namespace tijutils
 {
-namespace utils
-{
+
 namespace test
 {
 namespace
@@ -36,7 +35,7 @@ TEST_F(SplitStringTests, EmptyStringCase)
 {
   const std::string input{ "" };
   const std::vector<std::string> expected{};
-  ASSERT_EQ(expected, string::splitStringByChar(input, '-'));
+  ASSERT_EQ(expected, string_utils::splitStringByChar(input, '-'));
 }
 
 TEST_F(SplitStringTests, SingleItem)
@@ -45,7 +44,7 @@ TEST_F(SplitStringTests, SingleItem)
   const std::vector<std::string> expected{
     "foo",
   };
-  ASSERT_EQ(expected, string::splitStringByChar(input, '-'));
+  ASSERT_EQ(expected, string_utils::splitStringByChar(input, '-'));
 }
 
 TEST_F(SplitStringTests, MultipleItems)
@@ -56,7 +55,7 @@ TEST_F(SplitStringTests, MultipleItems)
     "2",
     "3",
   };
-  ASSERT_EQ(expected, string::splitStringByChar(input, '-'));
+  ASSERT_EQ(expected, string_utils::splitStringByChar(input, '-'));
 }
 
 TEST_F(SplitStringTests, EmptyItemsStart)
@@ -68,7 +67,7 @@ TEST_F(SplitStringTests, EmptyItemsStart)
     "2",
     "3",
   };
-  ASSERT_EQ(expected, string::splitStringByChar(input, '-'));
+  ASSERT_EQ(expected, string_utils::splitStringByChar(input, '-'));
 }
 
 TEST_F(SplitStringTests, EmptyItemsMiddle)
@@ -77,14 +76,14 @@ TEST_F(SplitStringTests, EmptyItemsMiddle)
   const std::vector<std::string> expected{
     "1", "2", "", "", "3",
   };
-  ASSERT_EQ(expected, string::splitStringByChar(input, '-'));
+  ASSERT_EQ(expected, string_utils::splitStringByChar(input, '-'));
 }
 
 TEST_F(SplitStringTests, EmptyItemsEnd)
 {
   const std::string input{ "1-2-3--" };
   const std::vector<std::string> expected{ "1", "2", "3", "", "" };
-  ASSERT_EQ(expected, string::splitStringByChar(input, '-'));
+  ASSERT_EQ(expected, string_utils::splitStringByChar(input, '-'));
 }
 
 class JoinStringsTests : public UtilsTests
@@ -95,38 +94,36 @@ TEST_F(JoinStringsTests, EmptyVectorCase)
 {
   const std::vector<std::string> input{};
   const std::string expected{ "" };
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, '-'));
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, "-"));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, '-'));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, "-"));
 }
 
 TEST_F(JoinStringsTests, SingleStringCase)
 {
   const std::vector<std::string> input{ "foo" };
   const std::string expected{ "foo" };
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, '-'));
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, "-"));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, '-'));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, "-"));
 }
 
 TEST_F(JoinStringsTests, MultipleStringsCase)
 {
   const std::vector<std::string> input{ "1", "2", "3" };
   const std::string expected{ "1-2-3" };
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, '-'));
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, "-"));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, '-'));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, "-"));
 }
 
 TEST_F(JoinStringsTests, EmptyItemsInVector)
 {
   const std::vector<std::string> input{ "", "2", "", "", "5", "6", "" };
   const std::string expected{ "-2---5-6-" };
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, '-'));
-  ASSERT_EQ(expected, string::joinStringsWithSeparator(input, "-"));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, '-'));
+  ASSERT_EQ(expected, string_utils::joinStringsWithSeparator(input, "-"));
 }
 
 }  // namespace
 
 }  // namespace test
 
-}  // namespace utils
-
-}  // namespace tijcore
+}  // namespace tijutils

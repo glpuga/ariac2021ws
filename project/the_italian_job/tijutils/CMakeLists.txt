@@ -30,6 +30,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/Timer.cpp
+  src/string_utils.cpp
 )
 
 add_dependencies(
