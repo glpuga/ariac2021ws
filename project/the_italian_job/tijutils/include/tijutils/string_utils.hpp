@@ -8,11 +8,9 @@
 #include <string>
 #include <vector>
 
-namespace tijcore
+namespace tijutils
 {
-namespace utils
-{
-namespace string
+namespace string_utils
 {
 std::vector<std::string> splitStringByChar(const std::string& s, const char sep);
 
@@ -20,8 +18,6 @@ std::string joinStringsWithSeparator(const std::vector<std::string>& sv, const c
 
 std::string joinStringsWithSeparator(const std::vector<std::string>& sv, const std::string& sep);
 
-}  // namespace string
+}  // namespace string_utils
 
-}  // namespace utils
-
-}  // namespace tijcore
+}  // namespace tijutils

@@ -67,7 +67,6 @@ add_library(${PROJECT_NAME}
   src/TaskDriver.cpp
   src/TaskMaster.cpp
   src/WorkRegionId.cpp
-  src/string.cpp
 )
 
 add_dependencies(

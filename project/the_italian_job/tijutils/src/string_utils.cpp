@@ -4,19 +4,18 @@
 
 // Standard library
 
-// tijcore
-#include <tijcore/utils/string.hpp>
+// tijutils
+#include <tijutils/string_utils.hpp>
 
 // standard library
 #include <string>
 #include <vector>
 
-namespace tijcore
+namespace tijutils
 {
-namespace utils
+namespace string_utils
 {
-namespace string
-{
+
 std::vector<std::string> splitStringByChar(const std::string& s, const char sep)
 {
   std::vector<std::string> tokens_vector;
@@ -59,8 +58,6 @@ std::string joinStringsWithSeparator(const std::vector<std::string>& sv, const s
   return retval;
 }
 
-}  // namespace string
+}  // namespace string_utils
 
-}  // namespace utils
-
-}  // namespace tijcore
+}  // namespace tijutils
