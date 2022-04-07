@@ -11,6 +11,7 @@
 
 // tijcore
 #include <tijcore/utils/StaticFrameTransformer.hpp>
+
 #include "utils/test_utils.hpp"
 
 namespace tijcore

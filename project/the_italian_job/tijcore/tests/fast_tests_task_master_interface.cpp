@@ -6,7 +6,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include "mocks/TaskMasterMock.hpp"
+#include "mocks/TaskDispatcherMock.hpp"
 
 namespace tijcore
 {
@@ -16,15 +16,15 @@ namespace
 {
 using ::testing::Test;
 
-class TaskMasterInterfaceTests : public Test
+class TaskDispatcherInterfaceTests : public Test
 {
 public:
 };
 
-TEST_F(TaskMasterInterfaceTests, TheMockCanBeConstructed)
+TEST_F(TaskDispatcherInterfaceTests, TheMockCanBeConstructed)
 {
   // just testing that the mock builds
-  TaskMasterMock uut;
+  TaskDispatcherMock uut;
 }
 
 }  // namespace

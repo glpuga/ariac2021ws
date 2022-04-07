@@ -12,20 +12,20 @@
 #include <tijcore/abstractions/OrderProcessingStrategyInterface.hpp>
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/abstractions/RobotTaskFactoryInterface.hpp>
-#include <tijcore/abstractions/TaskMasterInterface.hpp>
+#include <tijcore/abstractions/TaskDispatcherInterface.hpp>
 #include <tijcore/coremodels/OrderProcessingStrategy.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
 #include <tijcore/datatypes/Order.hpp>
 
 namespace tijcore
 {
-class TaskMaster : public TaskMasterInterface
+class TaskDispatcher : public TaskDispatcherInterface
 {
 public:
-  TaskMaster(const ResourceManagerInterface::SharedPtr& resource_manager,
-             const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
-             const Toolbox::SharedPtr& toolbox,
-             OrderProcessingStrategyInterface::Ptr&& order_strategy = nullptr);
+  TaskDispatcher(const ResourceManagerInterface::SharedPtr& resource_manager,
+                 const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
+                 const Toolbox::SharedPtr& toolbox,
+                 OrderProcessingStrategyInterface::Ptr&& order_strategy = nullptr);
 
   void registerOrder(const Order& order) override;
 

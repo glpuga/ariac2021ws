@@ -23,7 +23,8 @@ const PartId PartId::UnkownPartId = PartId{};
 
 PartId::PartId(const std::string& coded_part_str)
 {
-  auto tokens = tijutils::string_utils::splitStringByChar(coded_part_str, coded_part_string_separator_);
+  auto tokens =
+      tijutils::string_utils::splitStringByChar(coded_part_str, coded_part_string_separator_);
 
   if ((tokens.size() != 3) || tokens[0] != coded_part_string_prefix_ ||
       !part_type::isValid(tokens[1]) || !part_color::isValid(tokens[2]))
