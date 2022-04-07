@@ -44,8 +44,6 @@ public:
   MOCK_METHOD1(getSubmissionTray,
                std::optional<SubmissionTrayHandle>(const std::string& model_container_name));
 
-  MOCK_CONST_METHOD1(getContainerFrameId, std::string(const std::string& model_container_name));
-
   MOCK_CONST_METHOD1(getContainerExclusionZoneId,
                      std::string(const std::string& model_container_name));
 

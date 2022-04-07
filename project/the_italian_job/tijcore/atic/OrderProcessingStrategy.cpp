@@ -189,8 +189,6 @@ OrderProcessingStrategy::processUniversalShipment(
   const std::string target_container_name = shipment_class == ShipmentClass::Assembly ?
                                                 station_id::toString(station_id) :
                                                 agv::toString(agv_id.value());
-  const std::string target_frame_id = resource_manager_->getContainerFrameId(target_container_name);
-
   std::vector<ResourceManagerInterface::ManagedLocusHandle> parts_in_place;
   std::vector<std::pair<ResourceManagerInterface::ManagedLocusHandle, PartId>> missing_parts;
 

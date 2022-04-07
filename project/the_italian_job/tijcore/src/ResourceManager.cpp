@@ -397,18 +397,6 @@ ResourceManager::getSubmissionTray(const std::string& model_container_name)
   return SubmissionTrayHandle(std::make_shared<SubmissionTrayAdapter>(container_handle_ref));
 }
 
-std::string ResourceManager::getContainerFrameId(const std::string& model_container_name) const
-{
-  std::lock_guard<std::mutex> lock{ mutex_ };
-  std::string frame_id;
-  if (!model_containers_.count(model_container_name))
-  {
-    throw std::invalid_argument{ "There's no container filed with the name " +
-                                 model_container_name };
-  }
-  return model_containers_.at(model_container_name).resource()->containerReferenceFrameId();
-}
-
 std::string
 ResourceManager::getContainerExclusionZoneId(const std::string& model_container_name) const
 {

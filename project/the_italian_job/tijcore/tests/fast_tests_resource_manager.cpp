@@ -1065,15 +1065,6 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
   }
 }
 
-TEST_F(ResourceManagerTests, GetContainerFrameWorks)
-{
-  buildUnitUnderTest();
-  ASSERT_EQ(table_1_frame_id_, uut_->getContainerFrameId(table_1_name_));
-  ASSERT_EQ(table_2_frame_id_, uut_->getContainerFrameId(table_2_name_));
-  ASSERT_EQ(table_3_frame_id_, uut_->getContainerFrameId(table_3_name_));
-  ASSERT_THROW(uut_->getContainerFrameId("foo"), std::invalid_argument);
-}
-
 }  // namespace
 
 }  // namespace test
