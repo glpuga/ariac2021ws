@@ -37,13 +37,15 @@ then
 fi
 LOCAL_REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
 
-
 USERID=$(id -u)
 GROUPID=$(id -g)
+
+CONTAINER_NAME="${IMAGE_NAME}_instance"
 
 mkdir -p $HOME/.docker_ccache
 
 docker run -it \
+  --name ${CONTAINER_NAME} \
   -e DISPLAY \
   -e QT_X11_NO_MITSHM=1 \
   -e XAUTHORITY=$XAUTH \

@@ -18,8 +18,9 @@
 #
 
 IMAGE_NAME="ariac2021_devel_env"
+CONTAINER_NAME="${IMAGE_NAME}_instance"
 
 xhost +
-CONTAINER_ID=$(docker ps -aqf "ancestor=${IMAGE_NAME}")
+CONTAINER_ID=$(docker ps -aqf "name=${CONTAINER_NAME}")
 docker exec --privileged -e DISPLAY=${DISPLAY} -e LINES=`tput lines` -it ${CONTAINER_ID} bash
 xhost -
