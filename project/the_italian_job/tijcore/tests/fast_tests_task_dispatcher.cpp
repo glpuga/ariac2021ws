@@ -20,7 +20,7 @@
 #include <tijcore/abstractions/RobotTaskFactoryInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
-#include <tijcore/tasking/TaskMaster.hpp>
+#include <tijcore/tasking/TaskDispatcher.hpp>
 #include <tijcore/utils/StaticFrameTransformer.hpp>
 #include <tijlogger/logger.hpp>
 
@@ -158,7 +158,7 @@ private:
   SubmissionCallback submission_callback_;
 };
 
-class TaskMasterTests : public Test
+class TaskDispatcherTests : public Test
 {
 public:
   const double position_tolerance_{ 1e-3 };
@@ -260,11 +260,11 @@ public:
   // submitted trays info
   std::vector<std::string> submitted_trays_;
 
-  TaskMasterInterface::Ptr uut_;
+  TaskDispatcherInterface::Ptr uut_;
 
   utils::ActionQueue action_queue_;
 
-  TaskMasterTests()
+  TaskDispatcherTests()
   {
     static_frame_transformer_ = std::make_shared<StaticFrameTransformer>(
         std::initializer_list<StaticFrameTransformer::TransformTreeLink>{
@@ -371,17 +371,17 @@ public:
     robot_task_factory_ = std::make_shared<RobotTaskFactoryFake>(
         [this](const std::string& tray_name) { submissionCallback(tray_name); });
 
-    uut_ = std::make_unique<TaskMaster>(resource_manager_, robot_task_factory_, toolbox_);
+    uut_ = std::make_unique<TaskDispatcher>(resource_manager_, robot_task_factory_, toolbox_);
   }
 };
 
-TEST_F(TaskMasterTests, ConstructionDestruction)
+TEST_F(TaskDispatcherTests, ConstructionDestruction)
 {
   buildUnitUnderTest();
   uut_ = nullptr;
 }
 
-class KittingOrders : public TaskMasterTests
+class KittingOrders : public TaskDispatcherTests
 {
 };
 
@@ -994,7 +994,7 @@ TEST_F(KittingOrders, NotEnoughPartsToComplete)
   ASSERT_TRUE(action_queue_.runTestActionQueue());
 }
 
-class AssemblyOrders : public TaskMasterTests
+class AssemblyOrders : public TaskDispatcherTests
 {
 };
 

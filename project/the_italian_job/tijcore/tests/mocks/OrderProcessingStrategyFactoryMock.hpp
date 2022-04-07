@@ -5,7 +5,7 @@
 #pragma once
 
 // TODO(glpuga) this file may not be needed in the end, depending on how
-// injection is performed in TaskMaster
+// injection is performed in TaskDispatcher
 
 // standard library
 #include <memory>

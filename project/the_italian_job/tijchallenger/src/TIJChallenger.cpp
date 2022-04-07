@@ -25,8 +25,8 @@
 #include <tijcore/resources/ResourceManager.hpp>
 #include <tijcore/tasking/RobotTaskFactory.hpp>
 #include <tijcore/tasking/RobotTaskGroupRunner.hpp>
+#include <tijcore/tasking/TaskDispatcher.hpp>
 #include <tijcore/tasking/TaskDriver.hpp>
-#include <tijcore/tasking/TaskMaster.hpp>
 #include <tijlogger/logger.hpp>
 #include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
@@ -63,7 +63,7 @@ TIJChallenger::TIJChallenger()
       createPickAndPlaceRobots(toolbox_));
 
   INFO(" - Creating RobotTaskFactory");
-  auto task_master = std::make_unique<tijcore::TaskMaster>(
+  auto task_master = std::make_unique<tijcore::TaskDispatcher>(
       resource_manager, std::make_unique<tijcore::RobotTaskFactory>(resource_manager, toolbox_),
       toolbox_);
 

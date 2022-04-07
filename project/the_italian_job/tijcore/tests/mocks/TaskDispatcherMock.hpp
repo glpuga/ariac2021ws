@@ -12,14 +12,14 @@
 #include "gmock/gmock.h"
 
 // tijcore
-#include <tijcore/abstractions/TaskMasterInterface.hpp>
+#include <tijcore/abstractions/TaskDispatcherInterface.hpp>
 
 namespace tijcore
 {
-class TaskMasterMock : public TaskMasterInterface
+class TaskDispatcherMock : public TaskDispatcherInterface
 {
 public:
-  using Ptr = std::unique_ptr<TaskMasterMock>;
+  using Ptr = std::unique_ptr<TaskDispatcherMock>;
 
   MOCK_METHOD1(registerOrder, void(const Order& order));
 

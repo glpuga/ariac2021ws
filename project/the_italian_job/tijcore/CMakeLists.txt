@@ -64,8 +64,8 @@ add_library(${PROJECT_NAME}
   src/SubmitAssemblyShipmentTask.cpp
   src/SubmitKittingShipmentTask.cpp
   src/SurfaceManager.cpp
+  src/TaskDispatcher.cpp
   src/TaskDriver.cpp
-  src/TaskMaster.cpp
   src/WorkRegionId.cpp
 )
 
@@ -84,7 +84,7 @@ target_link_libraries(${PROJECT_NAME}
 # ##############################################################################
 
 install(
-  TARGETS ${PROJECT_NAME} 
+  TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

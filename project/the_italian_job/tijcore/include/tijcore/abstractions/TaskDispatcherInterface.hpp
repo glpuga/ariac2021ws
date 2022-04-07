@@ -14,13 +14,13 @@
 
 namespace tijcore
 {
-class TaskMasterInterface
+class TaskDispatcherInterface
 {
 public:
-  using Ptr = std::unique_ptr<TaskMasterInterface>;
-  using SharedPtr = std::shared_ptr<TaskMasterInterface>;
+  using Ptr = std::unique_ptr<TaskDispatcherInterface>;
+  using SharedPtr = std::shared_ptr<TaskDispatcherInterface>;
 
-  virtual ~TaskMasterInterface() = default;
+  virtual ~TaskDispatcherInterface() = default;
 
   virtual void registerOrder(const Order& order) = 0;
 

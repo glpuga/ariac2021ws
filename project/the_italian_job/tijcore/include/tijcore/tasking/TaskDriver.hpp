@@ -13,7 +13,7 @@
 #include <tijcore/abstractions/ModelPerceptionInterface.hpp>
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/abstractions/RobotTaskGroupRunnerInterface.hpp>
-#include <tijcore/abstractions/TaskMasterInterface.hpp>
+#include <tijcore/abstractions/TaskDispatcherInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
 #include <tijutils/Timer.hpp>
 
@@ -25,7 +25,7 @@ public:
   using Ptr = std::unique_ptr<TaskDriver>;
   using SharedPtr = std::shared_ptr<TaskDriver>;
 
-  TaskDriver(TaskMasterInterface::Ptr&& task_master,
+  TaskDriver(TaskDispatcherInterface::Ptr&& task_master,
              RobotTaskGroupRunnerInterface::Ptr&& task_group_runner,
              const ResourceManagerInterface::SharedPtr& resource_manager,
              const ModelPerceptionInterface::SharedPtr& perception_input,
@@ -36,7 +36,7 @@ public:
 private:
   const std::chrono::milliseconds processing_interval_{ 1000 };
 
-  TaskMasterInterface::Ptr task_master_;
+  TaskDispatcherInterface::Ptr task_master_;
   RobotTaskGroupRunnerInterface::Ptr task_group_runner_;
   ResourceManagerInterface::SharedPtr resource_manager_;
   ModelPerceptionInterface::SharedPtr perception_input_;

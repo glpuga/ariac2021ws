@@ -11,15 +11,15 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/tasking/TaskMaster.hpp>
+#include <tijcore/tasking/TaskDispatcher.hpp>
 #include <tijlogger/logger.hpp>
 
 namespace tijcore
 {
-TaskMaster::TaskMaster(const ResourceManagerInterface::SharedPtr& resource_manager,
-                       const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
-                       const Toolbox::SharedPtr& toolbox,
-                       OrderProcessingStrategyInterface::Ptr&& order_strategy)
+TaskDispatcher::TaskDispatcher(const ResourceManagerInterface::SharedPtr& resource_manager,
+                               const RobotTaskFactoryInterface::SharedPtr& robot_task_factory,
+                               const Toolbox::SharedPtr& toolbox,
+                               OrderProcessingStrategyInterface::Ptr&& order_strategy)
   : resource_manager_{ resource_manager }
   , robot_task_factory_{ robot_task_factory }
   , toolbox_{ toolbox }
@@ -35,7 +35,7 @@ TaskMaster::TaskMaster(const ResourceManagerInterface::SharedPtr& resource_manag
   }
 }
 
-void TaskMaster::registerOrder(const Order& order)
+void TaskDispatcher::registerOrder(const Order& order)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   auto key = order.order_id.id();
@@ -63,7 +63,7 @@ void TaskMaster::registerOrder(const Order& order)
   orders_.emplace(std::make_pair(key, order));
 }
 
-std::vector<RobotTaskInterface::Ptr> TaskMaster::run()
+std::vector<RobotTaskInterface::Ptr> TaskDispatcher::run()
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
 
