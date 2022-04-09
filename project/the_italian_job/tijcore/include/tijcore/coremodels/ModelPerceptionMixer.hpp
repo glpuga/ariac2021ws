@@ -18,7 +18,7 @@ class ModelPerceptionMixer : public ModelPerceptionInterface
 public:
   explicit ModelPerceptionMixer(std::vector<ModelPerceptionInterface::Ptr>&& children);
 
-  std::vector<ObservedModel> getObservedModels() const override;
+  std::vector<ObservedItem> getObservedModels() const override;
 
 private:
   std::vector<ModelPerceptionInterface::Ptr> children_;

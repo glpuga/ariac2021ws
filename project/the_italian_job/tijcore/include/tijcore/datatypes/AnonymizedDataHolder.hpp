@@ -14,10 +14,15 @@ class AnonymizedDataHolder
 public:
   AnonymizedDataHolder() = default;
 
-  template <typename T>
-  AnonymizedDataHolder(const T& part_info)  // NOLINT(runtime/explicit)
-    : contents_{ std::make_unique<DataHolderImpl<T>>(part_info) }
+  AnonymizedDataHolder(AnonymizedDataHolder&&) = default;
+  AnonymizedDataHolder& operator=(AnonymizedDataHolder&&) = default;
+
+  AnonymizedDataHolder(const AnonymizedDataHolder& original)
   {
+    if (original.contents_)
+    {
+      contents_ = original.contents_->clone();
+    }
   }
 
   AnonymizedDataHolder& operator=(const AnonymizedDataHolder& original)
@@ -28,6 +33,12 @@ public:
     }
     contents_ = original.contents_->clone();
     return *this;
+  }
+
+  template <typename T>
+  AnonymizedDataHolder(const T& part_info)  // NOLINT(runtime/explicit)
+    : contents_{ std::make_unique<DataHolderImpl<T>>(part_info) }
+  {
   }
 
   template <typename T>
@@ -46,6 +57,10 @@ public:
   template <typename T>
   const T& as() const
   {
+    if (!is<T>())
+    {
+      throw std::invalid_argument{ "Invalid AnonymizedDataHolder cast" };
+    }
     return *dynamic_cast<DataHolderImpl<T>*>(contents_.get());
   }
 

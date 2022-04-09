@@ -16,6 +16,7 @@
 #include <vector>
 
 // tijcore
+#include <tijcore/datatypes/QualifiedPartInfo.hpp>
 #include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
 #include <tijcore/resources/SurfaceManager.hpp>
@@ -361,7 +362,7 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(const std::string& 
   return surface_manager;
 }
 
-void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observed_models)
+void ResourceManager::updateSensorData(const std::vector<ObservedItem>& observed_models)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
 
@@ -376,9 +377,15 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
   std::vector<ManagedLocus> new_model_loci;
 
   // create a list of model locus that can be matched to a container
-  for (const auto& model : observed_models)
+  for (const auto& observed_item_entry : observed_models)
   {
-    auto model_locus = ManagedLocus::CreateOccupiedSpace("", model.pose, model.type, model.broken);
+    if (!observed_item_entry.item.is<QualifiedPartInfo>())
+    {
+      continue;
+    }
+    const auto& observed_part = observed_item_entry.item.as<QualifiedPartInfo>();
+    auto model_locus = ManagedLocus::CreateOccupiedSpace(
+        "", observed_item_entry.pose, observed_part.part_type, observed_part.part_is_broken);
 
     auto parent_container = findLociContainer(model_locus);
 
@@ -387,7 +394,7 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
       WARNING(
           "A model at {} appears in sensor input but could not be matched "
           "to a model tray",
-          model.pose);
+          observed_item_entry.pose);
       continue;
     }
 
@@ -403,11 +410,13 @@ void ResourceManager::updateSensorData(const std::vector<ObservedModel>& observe
     // this transformation makes all objects relative to the surface. This is
     // the same as the relative to the container, except for the conveyor belt.
     const auto surface_frame_id = parent_container->resource()->surfaceReferenceFrameId();
-    auto local_frame_pose = transformPoseToContainerLocalPose(model.pose, surface_frame_id);
+    auto local_frame_pose =
+        transformPoseToContainerLocalPose(observed_item_entry.pose, surface_frame_id);
 
     auto new_model_locus = ManagedLocus::CreateOccupiedSpace(
         parent_container->resource()->name(),
-        tijmath::RelativePose3{ surface_frame_id, local_frame_pose }, model.type, model.broken);
+        tijmath::RelativePose3{ surface_frame_id, local_frame_pose }, observed_part.part_type,
+        observed_part.part_is_broken);
 
     // TODO(glpuga) Conveyor belt hack. I artificially increase the difficulty
     // of parts on conveyor belts to reduce their chances to be picked if there

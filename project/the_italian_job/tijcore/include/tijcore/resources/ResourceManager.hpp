@@ -43,7 +43,7 @@ public:
   std::optional<ManagedLocusHandle>
   getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) override;
 
-  void updateSensorData(const std::vector<ObservedModel>& observed_models) override;
+  void updateSensorData(const std::vector<ObservedItem>& observed_models) override;
 
   void logKnownLoci() override;
 

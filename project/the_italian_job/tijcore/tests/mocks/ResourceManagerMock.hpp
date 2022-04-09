@@ -33,7 +33,7 @@ public:
   MOCK_METHOD1(getManagedLocusHandleForPose,
                std::optional<ManagedLocusHandle>(const tijmath::RelativePose3& pose));
 
-  MOCK_METHOD1(updateSensorData, void(const std::vector<ObservedModel>& observed_models));
+  MOCK_METHOD1(updateSensorData, void(const std::vector<ObservedItem>& observed_models));
 };
 
 }  // namespace tijcore

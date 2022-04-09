@@ -9,7 +9,7 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/datatypes/ObservedModel.hpp>
+#include <tijcore/datatypes/ObservedItem.hpp>
 
 namespace tijcore
 {
@@ -17,10 +17,9 @@ class ModelPerceptionInterface
 {
 public:
   using Ptr = std::unique_ptr<ModelPerceptionInterface>;
-  using SharedPtr = std::shared_ptr<ModelPerceptionInterface>;
 
   virtual ~ModelPerceptionInterface() = default;
-  virtual std::vector<ObservedModel> getObservedModels() const = 0;
+  virtual std::vector<ObservedItem> getObservedModels() const = 0;
 };
 
 }  // namespace tijcore

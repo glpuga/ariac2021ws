@@ -17,6 +17,7 @@
 
 // tijcore
 #include <tijcore/coremodels/Toolbox.hpp>
+#include <tijcore/datatypes/QualifiedPartInfo.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
 #include <tijcore/utils/StaticFrameTransformer.hpp>
 
@@ -182,11 +183,15 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataWithNoTablesInUse)
     ASSERT_EQ(0u, rpump.size());
   }
 
-  std::vector<ObservedModel> observed_models_ = {
-    { part_rpump_, tijmath::RelativePose3(table_1_frame_id_, table_rel_pose_11) },
-    { part_rpump_, tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_11) },
-    { part_rpump_, tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_22) },
-    { part_rpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_22) },
+  std::vector<ObservedItem> observed_models_ = {
+    { QualifiedPartInfo{ part_rpump_ },
+      tijmath::RelativePose3(table_1_frame_id_, table_rel_pose_11) },
+    { QualifiedPartInfo{ part_rpump_ },
+      tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_11) },
+    { QualifiedPartInfo{ part_rpump_ },
+      tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_22) },
+    { QualifiedPartInfo{ part_rpump_ },
+      tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_22) },
   };
   uut_->updateSensorData(observed_models_);
 
@@ -203,11 +208,16 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataWithNoTablesInUse)
   }
 
   observed_models_ = {
-    { part_bpump_, tijmath::RelativePose3(table_1_frame_id_, table_rel_pose_11) },
-    { part_bpump_, tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_22) },
-    { part_gpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_11) },
-    { part_gpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_12) },
-    { part_gpump_, tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_22) },
+    { QualifiedPartInfo{ part_bpump_ },
+      tijmath::RelativePose3(table_1_frame_id_, table_rel_pose_11) },
+    { QualifiedPartInfo{ part_bpump_ },
+      tijmath::RelativePose3(table_2_frame_id_, table_rel_pose_22) },
+    { QualifiedPartInfo{ part_gpump_ },
+      tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_11) },
+    { QualifiedPartInfo{ part_gpump_ },
+      tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_12) },
+    { QualifiedPartInfo{ part_gpump_ },
+      tijmath::RelativePose3(table_3_frame_id_, table_rel_pose_22) },
   };
   uut_->updateSensorData(observed_models_);
 
@@ -239,11 +249,11 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
   const tijmath::RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
 
   {
-    std::vector<ObservedModel> observed_models_ = {
-      { part1, pose1 },
-      { part2, pose2 },
-      { part3, pose3 },
-      { part4, pose4 },
+    std::vector<ObservedItem> observed_models_ = {
+      { QualifiedPartInfo{ part1 }, pose1 },
+      { QualifiedPartInfo{ part2 }, pose2 },
+      { QualifiedPartInfo{ part3 }, pose3 },
+      { QualifiedPartInfo{ part4 }, pose4 },
     };
     uut_->updateSensorData(observed_models_);
 
@@ -266,11 +276,11 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
   }
 
   {
-    std::vector<ObservedModel> observed_models_ = {
-      { part2, pose1 },
-      { part3, pose2 },
-      { part4, pose3 },
-      { part1, pose4 },
+    std::vector<ObservedItem> observed_models_ = {
+      { QualifiedPartInfo{ part2 }, pose1 },
+      { QualifiedPartInfo{ part3 }, pose2 },
+      { QualifiedPartInfo{ part4 }, pose3 },
+      { QualifiedPartInfo{ part1 }, pose4 },
     };
     uut_->updateSensorData(observed_models_);
 
@@ -293,11 +303,11 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
   }
 
   {
-    std::vector<ObservedModel> observed_models_ = {
-      { part3, pose1 },
-      { part4, pose2 },
-      { part1, pose3 },
-      { part2, pose4 },
+    std::vector<ObservedItem> observed_models_ = {
+      { QualifiedPartInfo{ part3 }, pose1 },
+      { QualifiedPartInfo{ part4 }, pose2 },
+      { QualifiedPartInfo{ part1 }, pose3 },
+      { QualifiedPartInfo{ part2 }, pose4 },
     };
     uut_->updateSensorData(observed_models_);
 
@@ -338,11 +348,11 @@ TEST_F(ResourceManagerTests, SensorDataMissingKnownModelGetPurged)
   const tijmath::RelativePose3 pose4(table_1_frame_id_, table_rel_pose_22);
 
   {
-    std::vector<ObservedModel> observed_models_ = {
-      { part1, pose1 },
-      { part2, pose2 },
-      { part3, pose3 },
-      { part4, pose4 },
+    std::vector<ObservedItem> observed_models_ = {
+      { QualifiedPartInfo{ part1 }, pose1 },
+      { QualifiedPartInfo{ part2 }, pose2 },
+      { QualifiedPartInfo{ part3 }, pose3 },
+      { QualifiedPartInfo{ part4 }, pose4 },
     };
     uut_->updateSensorData(observed_models_);
 
@@ -365,10 +375,10 @@ TEST_F(ResourceManagerTests, SensorDataMissingKnownModelGetPurged)
   }
 
   {
-    std::vector<ObservedModel> observed_models_ = {
-      { part1, pose1 },
-      { part2, pose2 },
-      { part4, pose4 },
+    std::vector<ObservedItem> observed_models_ = {
+      { QualifiedPartInfo{ part1 }, pose1 },
+      { QualifiedPartInfo{ part2 }, pose2 },
+      { QualifiedPartInfo{ part4 }, pose4 },
     };
     uut_->updateSensorData(observed_models_);
 
@@ -428,11 +438,11 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
   // with the information for that locus if it is not
   // allocated
   {
-    std::vector<ObservedModel> observed_models_ = {
-      { part1, pose1 },
-      { part2, pose2 },
-      { part3, pose3 },
-      { part4, pose4 },
+    std::vector<ObservedItem> observed_models_ = {
+      { QualifiedPartInfo{ part1 }, pose1 },
+      { QualifiedPartInfo{ part2 }, pose2 },
+      { QualifiedPartInfo{ part3 }, pose3 },
+      { QualifiedPartInfo{ part4 }, pose4 },
     };
     uut_->updateSensorData(observed_models_);
 
@@ -464,11 +474,11 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
   // that that if the pose match that of a known model locus, but the
   // handle is allocated, we get nullopt
   {
-    std::vector<ObservedModel> observed_models_ = {
-      { part1, pose1 },
-      { part2, pose2 },
-      { part3, pose3 },
-      { part4, pose4 },
+    std::vector<ObservedItem> observed_models_ = {
+      { QualifiedPartInfo{ part1 }, pose1 },
+      { QualifiedPartInfo{ part2 }, pose2 },
+      { QualifiedPartInfo{ part3 }, pose3 },
+      { QualifiedPartInfo{ part4 }, pose4 },
     };
     uut_->updateSensorData(observed_models_);
 
@@ -677,11 +687,11 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
   const tijmath::RelativePose3 pose3(table_2_frame_id_, table_rel_pose_21);
   const tijmath::RelativePose3 pose4(table_3_frame_id_, table_rel_pose_22);
 
-  std::vector<ObservedModel> observed_models_ = {
-    { table1_parts, pose1 },
-    { table2_parts, pose2 },
-    { table2_parts, pose3 },
-    { table3_parts, pose4 },
+  std::vector<ObservedItem> observed_models_ = {
+    { QualifiedPartInfo{ table1_parts }, pose1 },
+    { QualifiedPartInfo{ table2_parts }, pose2 },
+    { QualifiedPartInfo{ table2_parts }, pose3 },
+    { QualifiedPartInfo{ table3_parts }, pose4 },
   };
   uut_->updateSensorData(observed_models_);
 
