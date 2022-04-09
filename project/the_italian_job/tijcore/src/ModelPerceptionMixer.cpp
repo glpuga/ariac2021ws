@@ -16,9 +16,9 @@ ModelPerceptionMixer::ModelPerceptionMixer(std::vector<ModelPerceptionInterface:
 {
 }
 
-std::vector<ObservedModel> ModelPerceptionMixer::getObservedModels() const
+std::vector<ObservedItem> ModelPerceptionMixer::getObservedModels() const
 {
-  std::vector<ObservedModel> models;
+  std::vector<ObservedItem> models;
 
   for (const auto& camera : children_)
   {

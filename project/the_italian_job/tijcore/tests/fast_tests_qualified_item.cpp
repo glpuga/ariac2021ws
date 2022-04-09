@@ -60,20 +60,53 @@ TEST_F(QualifiedItemTests, NonConstAccessToData)
   uut.as<TypeA>().data = new_content.data;
   ASSERT_EQ(recovered_contents.data, new_content.data);
 }
-
-TEST_F(QualifiedItemTests, IdenticalTypeAssignment)
+TEST_F(QualifiedItemTests, CopyConstructor)
 {
-  const TypeA original_content{ 42 };
-  AnonymizedDataHolder uut{ original_content };
   {
+    const AnonymizedDataHolder original;
+    const auto uut{ original };
+    ASSERT_FALSE(uut.is<TypeA>());
+    ASSERT_FALSE(uut.is<TypeB>());
+  }
+
+  {
+    const TypeA original_content{ 42 };
+    const AnonymizedDataHolder original{ original_content };
+    const auto uut{ original };
+    ASSERT_TRUE(uut.is<TypeA>());
+    ASSERT_FALSE(uut.is<TypeB>());
     const auto& recovered_contents = uut.as<TypeA>();
     ASSERT_EQ(recovered_contents.data, original_content.data);
   }
-  const TypeB new_content{ "new contents" };
-  uut = new_content;
+}
+
+TEST_F(QualifiedItemTests, CopyAssignment)
+{
   {
+    AnonymizedDataHolder uut;
+    ASSERT_FALSE(uut.is<TypeA>());
+    ASSERT_FALSE(uut.is<TypeB>());
+    const TypeB new_content{ "new contents" };
+    uut = new_content;
+    ASSERT_FALSE(uut.is<TypeA>());
+    ASSERT_TRUE(uut.is<TypeB>());
     const auto& recovered_contents = uut.as<TypeB>();
     ASSERT_EQ(recovered_contents.data, new_content.data);
+  }
+
+  {
+    const TypeA original_content{ 42 };
+    AnonymizedDataHolder uut{ original_content };
+    {
+      const auto& recovered_contents = uut.as<TypeA>();
+      ASSERT_EQ(recovered_contents.data, original_content.data);
+    }
+    const TypeB new_content{ "new contents" };
+    uut = new_content;
+    {
+      const auto& recovered_contents = uut.as<TypeB>();
+      ASSERT_EQ(recovered_contents.data, new_content.data);
+    }
   }
 }
 

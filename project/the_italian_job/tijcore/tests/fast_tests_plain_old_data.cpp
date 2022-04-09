@@ -8,9 +8,10 @@
 // tijcore
 #include <tijcore/datatypes/AssemblyShipment.hpp>
 #include <tijcore/datatypes/KittingShipment.hpp>
-#include <tijcore/datatypes/ObservedModel.hpp>
+#include <tijcore/datatypes/ObservedItem.hpp>
 #include <tijcore/datatypes/Order.hpp>
 #include <tijcore/datatypes/ProductRequest.hpp>
+#include <tijcore/datatypes/QualifiedPartInfo.hpp>
 #include <tijcore/datatypes/ShipmentType.hpp>
 
 namespace tijcore
@@ -50,9 +51,9 @@ TEST_F(PlainOldDataTests, Order)
   Order uut{ OrderId{ "order_0_update" }, {}, {} };
 }
 
-TEST_F(PlainOldDataTests, ObservedModel)
+TEST_F(PlainOldDataTests, ObservedItem)
 {
-  ObservedModel uut{ PartId::UnkownPartId, tijmath::RelativePose3::Origin };
+  ObservedItem uut{ QualifiedPartInfo{ PartId::UnkownPartId }, tijmath::RelativePose3::Origin };
 }
 
 }  // namespace

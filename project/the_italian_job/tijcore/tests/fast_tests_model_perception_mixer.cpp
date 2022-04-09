@@ -13,6 +13,8 @@
 
 // tijcore
 #include <tijcore/coremodels/ModelPerceptionMixer.hpp>
+#include <tijcore/datatypes/QualifiedPartInfo.hpp>
+#include <tijlogger/logger.hpp>
 
 // mocks
 #include "mocks/ModelPerceptionMixerMock.hpp"
@@ -31,18 +33,18 @@ using ::testing::Test;
 class ModelPerceptionMixerTests : public Test
 {
 public:
-  using VectorOfModels = std::vector<ObservedModel>;
+  using VectorOfModels = std::vector<ObservedItem>;
 };
 
 TEST_F(ModelPerceptionMixerTests, EmptyItemsInVector)
 {
   auto mock_camera_0 = std::make_unique<ModelPerceptionMock>();
   VectorOfModels camera_0_0 = {
-    { PartId("assembly_pump_red"), {} },
-    { PartId("assembly_pump_blue"), {} },
+    { QualifiedPartInfo{ PartId("assembly_pump_red") }, {} },
+    { QualifiedPartInfo{ PartId("assembly_pump_blue") }, {} },
   };
   VectorOfModels camera_0_1 = {
-    { PartId("assembly_sensor_blue"), {} },
+    { QualifiedPartInfo{ PartId("assembly_sensor_blue") }, {} },
   };
   VectorOfModels camera_0_2 = {};
   VectorOfModels camera_0_3 = {};
@@ -55,12 +57,12 @@ TEST_F(ModelPerceptionMixerTests, EmptyItemsInVector)
 
   auto mock_camera_1 = std::make_unique<ModelPerceptionMock>();
   VectorOfModels camera_1_0 = {
-    { PartId("assembly_battery_red"), {} },
-    { PartId("assembly_regulator_blue"), {} },
+    { QualifiedPartInfo{ PartId("assembly_battery_red") }, {} },
+    { QualifiedPartInfo{ PartId("assembly_regulator_blue") }, {} },
   };
   VectorOfModels camera_1_1 = {};
   VectorOfModels camera_1_2 = {
-    { PartId("assembly_regulator_blue"), {} },
+    { QualifiedPartInfo{ PartId("assembly_regulator_blue") }, {} },
   };
   VectorOfModels camera_1_3 = {};
 
@@ -76,27 +78,29 @@ TEST_F(ModelPerceptionMixerTests, EmptyItemsInVector)
   auto uut = std::make_unique<ModelPerceptionMixer>(std::move(cameras));
 
   VectorOfModels expected_models_0 = {
-    { PartId("assembly_pump_red"), {} },
-    { PartId("assembly_pump_blue"), {} },
-    { PartId("assembly_battery_red"), {} },
-    { PartId("assembly_regulator_blue"), {} },
+    { QualifiedPartInfo{ PartId("assembly_pump_red") }, {} },
+    { QualifiedPartInfo{ PartId("assembly_pump_blue") }, {} },
+    { QualifiedPartInfo{ PartId("assembly_battery_red") }, {} },
+    { QualifiedPartInfo{ PartId("assembly_regulator_blue") }, {} },
   };
   VectorOfModels expected_models_1 = {
-    { PartId("assembly_sensor_blue"), {} },
+    { QualifiedPartInfo{ PartId("assembly_sensor_blue") }, {} },
   };
   VectorOfModels expected_models_2 = {
-    { PartId("assembly_regulator_blue"), {} },
+    { QualifiedPartInfo{ PartId("assembly_regulator_blue") }, {} },
   };
   VectorOfModels expected_models_3 = {};
 
-  const auto part_ids_match = [](const auto& v1, const auto& v2) {
+  const auto part_ids_match = [](const VectorOfModels& v1, const VectorOfModels& v2) {
     if (v1.size() != v2.size())
     {
       return false;
     }
     for (auto it1 = v1.cbegin(), it2 = v2.cbegin(); it1 != v1.end(); ++it1, ++it2)
     {
-      if (it1->type != it2->type)
+      const auto& part_id_1 = it1->item.as<QualifiedPartInfo>().part_type;
+      const auto& part_id_2 = it2->item.as<QualifiedPartInfo>().part_type;
+      if (part_id_1 != part_id_2)
       {
         return false;
       }

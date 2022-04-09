@@ -24,7 +24,7 @@ class LogicalCameraModelPerception : public tijcore::ModelPerceptionInterface
 public:
   LogicalCameraModelPerception(const ros::NodeHandle& nh, const std::string& logical_sensor_name);
 
-  std::vector<tijcore::ObservedModel> getObservedModels() const override;
+  std::vector<tijcore::ObservedItem> getObservedModels() const override;
 
 private:
   mutable std::mutex mutex_;
@@ -37,7 +37,7 @@ private:
 
   tijutils::Timer timer_;
 
-  std::vector<tijcore::ObservedModel> models_;
+  std::vector<tijcore::ObservedItem> models_;
 
   void cameraCallback(nist_gear::LogicalCameraImage::ConstPtr msg);
 

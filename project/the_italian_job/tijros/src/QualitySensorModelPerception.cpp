@@ -35,7 +35,7 @@ QualityControlSensorModelPerception::QualityControlSensorModelPerception(
   timer_.start(timer_interval_);
 }
 
-std::vector<tijcore::ObservedModel> QualityControlSensorModelPerception::getObservedModels() const
+std::vector<tijcore::ObservedItem> QualityControlSensorModelPerception::getObservedModels() const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   return models_;
@@ -55,7 +55,7 @@ void QualityControlSensorModelPerception::cameraCallback(
                                 utils::convertGeoPoseToCorePose(geo_pose) };
     const auto part_id = tijcore::PartId::UnkownPartId;
     // quality sensor only report faulty parts
-    const tijcore::ObservedModel core_model{ part_id, relative_core_pose, true };
+    const tijcore::ObservedItem core_model{ part_id, relative_core_pose, true };
     models_.emplace_back(core_model);
   }
 }

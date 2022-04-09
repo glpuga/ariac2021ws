@@ -14,7 +14,7 @@
 // tijcore
 #include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
 #include <tijcore/coremodels/SubmissionTrayAdapter.hpp>
-#include <tijcore/datatypes/ObservedModel.hpp>
+#include <tijcore/datatypes/ObservedItem.hpp>
 #include <tijcore/datatypes/WorkRegionId.hpp>
 #include <tijcore/resources/ManagedLocus.hpp>
 #include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
@@ -49,7 +49,7 @@ public:
   virtual std::optional<ManagedLocusHandle>
   getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) = 0;
 
-  virtual void updateSensorData(const std::vector<ObservedModel>& observed_models) = 0;
+  virtual void updateSensorData(const std::vector<ObservedItem>& observed_models) = 0;
 
   virtual void logKnownLoci()
   {
