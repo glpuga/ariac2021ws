@@ -12,6 +12,7 @@
 #include <tijcore/datatypes/AnonymizedDataHolder.hpp>
 #include <tijcore/datatypes/PartId.hpp>
 #include <tijmath/RelativePose3.hpp>
+#include <tijutils/UniqueId.hpp>
 
 namespace tijcore
 {
@@ -25,11 +26,15 @@ public:
 
   static void TransferPartFromHereToThere(ManagedLocus& here, ManagedLocus& there);
 
-  static ManagedLocus CreateEmptySpace(const std::string& parent_container,
-                                       const tijmath::RelativePose3& pose);
-  static ManagedLocus CreateOccupiedSpace(const std::string& parent_container,
-                                          const tijmath::RelativePose3& pose, const PartId& part_id,
-                                          const bool broken);
+  static ManagedLocus CreateEmptySpace(     //
+      const std::string& parent_container,  //
+      const tijmath::RelativePose3& pose);  //
+
+  static ManagedLocus CreateOccupiedSpace(  //
+      const std::string& parent_container,  //
+      const tijmath::RelativePose3& pose,   //
+      const PartId& part_id,                //
+      const bool broken);                   //
 
   bool isEmpty() const;
 
@@ -47,7 +52,7 @@ public:
 
   std::string parentName() const;
 
-  int32_t uniqueId() const;
+  tijutils::UniqueId uniqueId() const;
 
 private:
   struct QualifiedEmptyLocusInfo
@@ -58,17 +63,10 @@ private:
                const AnonymizedDataHolder& locus_contents);
 
   std::string parent_container_;
-
   tijmath::RelativePose3 pose_;
-
   AnonymizedDataHolder locus_contents_;
 
-  int32_t unique_id_{ generateUniqueId() };
-  static int32_t unique_id_counter_;
-  static int32_t generateUniqueId()
-  {
-    return ++unique_id_counter_;
-  }
+  tijutils::UniqueId unique_id_{ tijutils::UniqueId::CreateNewId() };
 };
 
 }  // namespace tijcore
