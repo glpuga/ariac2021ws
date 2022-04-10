@@ -145,9 +145,9 @@ TIJChallenger::createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox_
   INFO(" - Loading bin data");
   for (const auto& item : config_->getListOfBins())
   {
-    INFO("   - {} @ {} ({})", item.name, item.frame_id, item.work_region);
+    INFO("   - {} @ {} ({})", item.name, item.frame_id);
     containers.emplace_back(std::make_unique<tijcore::BinModelContainer>(
-        item.name, item.frame_id, item.work_region, item.shared_access_space_id));
+        item.name, item.frame_id, item.shared_access_space_id));
   }
 
   INFO(" - Loading conveyor belts data");
