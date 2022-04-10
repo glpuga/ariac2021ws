@@ -48,21 +48,6 @@ bool AgvModelContainer::isSubmissionTray() const
   return true;
 }
 
-WorkRegionId AgvModelContainer::region() const
-{
-  std::lock_guard<std::mutex> lock{ mutex_ };
-  // agvs can be located in one region or another, even during the same
-  // simulation
-  auto process_manager = toolbox_->getProcessManager();
-  auto current_station = process_manager->getAgvStation(agv::fromString(name()));
-
-  if (station_id::isKittingStation(current_station))
-  {
-    return WorkRegionId::kitting_agvs;
-  }
-  return WorkRegionId::assembly;
-}
-
 void AgvModelContainer::setEnabled(const bool state)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };

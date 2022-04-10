@@ -39,8 +39,6 @@ public:
   MOCK_CONST_METHOD0(isSubmissionTray, bool());
 
   MOCK_METHOD1(setEnabled, void(const bool state));
-
-  MOCK_CONST_METHOD0(region, WorkRegionId());
 };
 
 }  // namespace tijcore

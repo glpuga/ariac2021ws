@@ -9,7 +9,6 @@
 #include <string>
 
 // tijcore
-#include <tijcore/datatypes/WorkRegionId.hpp>
 #include <tijcore/resources/ResourceHandle.hpp>
 #include <tijcore/utils/CuboidVolume.hpp>
 #include <tijmath/RelativePose3.hpp>
@@ -32,8 +31,6 @@ public:
   virtual bool enabled() const = 0;
 
   virtual bool isSubmissionTray() const = 0;
-
-  virtual WorkRegionId region() const = 0;
 
   virtual void setEnabled(const bool state) = 0;
 

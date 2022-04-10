@@ -12,7 +12,6 @@
 
 // tijcore
 #include <tijcore/datatypes/PartTypeId.hpp>
-#include <tijcore/datatypes/WorkRegionId.hpp>
 #include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijmath/RelativePose3.hpp>
 
@@ -48,8 +47,6 @@ public:
   virtual bool gripperHasPartAttached() const = 0;
 
   virtual bool enabled() const = 0;
-
-  virtual std::set<WorkRegionId> supportedRegions() const = 0;
 
   virtual std::string name() const = 0;
 

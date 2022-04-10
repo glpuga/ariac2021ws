@@ -42,12 +42,6 @@ bool ConveyorBeltModelContainer::isSubmissionTray() const
   return false;
 }
 
-WorkRegionId ConveyorBeltModelContainer::region() const
-{
-  // bin can be located in one region or another
-  return WorkRegionId::conveyor_belt;
-}
-
 void ConveyorBeltModelContainer::setEnabled(const bool /*state*/)
 {
   ERROR(

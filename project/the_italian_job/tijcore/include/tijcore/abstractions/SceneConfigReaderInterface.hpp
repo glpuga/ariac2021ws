@@ -10,7 +10,6 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/datatypes/WorkRegionId.hpp>
 #include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijmath/RelativePose3.hpp>
 
@@ -45,7 +44,6 @@ public:
     std::string name;
     std::string frame_id;
     std::string shared_access_space_id;
-    tijcore::WorkRegionId work_region;
   };
 
   virtual const std::string& getWorldFrameId() const = 0;

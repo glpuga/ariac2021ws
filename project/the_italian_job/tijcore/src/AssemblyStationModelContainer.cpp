@@ -44,13 +44,6 @@ bool AssemblyStationModelContainer::isSubmissionTray() const
   return true;
 }
 
-WorkRegionId AssemblyStationModelContainer::region() const
-{
-  std::lock_guard<std::mutex> lock{ mutex_ };
-  // assembly stations always in the assembly region
-  return WorkRegionId::assembly;
-}
-
 void AssemblyStationModelContainer::setEnabled(const bool state)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };

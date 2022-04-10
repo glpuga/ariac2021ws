@@ -15,7 +15,6 @@
 #include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
 #include <tijcore/coremodels/SubmissionTrayAdapter.hpp>
 #include <tijcore/datatypes/ObservedItem.hpp>
-#include <tijcore/datatypes/WorkRegionId.hpp>
 #include <tijcore/resources/ManagedLocus.hpp>
 #include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijcore/resources/ModelTraySharedAccessSpaceResource.hpp>
@@ -43,8 +42,7 @@ public:
   virtual std::vector<ManagedLocusHandle>
   findManagedLociByParent(const std::string& parent_name) = 0;
 
-  virtual std::optional<PickAndPlaceRobotHandle>
-  getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& regions) = 0;
+  virtual std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle() = 0;
 
   virtual std::optional<ManagedLocusHandle>
   getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) = 0;

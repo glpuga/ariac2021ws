@@ -37,8 +37,7 @@ public:
 
   std::vector<ManagedLocusHandle> findManagedLociByParent(const std::string& parent_name) override;
 
-  std::optional<PickAndPlaceRobotHandle>
-  getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& regions) override;
+  std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle() override;
 
   std::optional<ManagedLocusHandle>
   getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) override;

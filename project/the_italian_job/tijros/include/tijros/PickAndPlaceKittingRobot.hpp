@@ -22,8 +22,6 @@ public:
 
   bool enabled() const override;
 
-  std::set<tijcore::WorkRegionId> supportedRegions() const override;
-
   std::string name() const override;
 
   bool gripperHasPartAttached() const override;

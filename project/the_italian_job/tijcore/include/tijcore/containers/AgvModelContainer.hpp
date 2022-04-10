@@ -28,8 +28,6 @@ public:
 
   bool isSubmissionTray() const override;
 
-  WorkRegionId region() const override;
-
   void setEnabled(const bool state) override;
 
 private:

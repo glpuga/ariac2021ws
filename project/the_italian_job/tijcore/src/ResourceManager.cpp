@@ -176,33 +176,11 @@ ResourceManager::findManagedLociByParent(const std::string& parent_name)
 }
 
 std::optional<ResourceManagerInterface::PickAndPlaceRobotHandle>
-ResourceManager::getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& regions)
+ResourceManager::getPickAndPlaceRobotHandle()
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
 
-  // Determine the fitness index of the robot to a task. nullopt means
-  // unable to perform; if not nullopt, the smaller the number the better.
-  auto calculate_robot_to_task_fitness_to_task =
-      [](const std::set<WorkRegionId>& task_regions,
-         const std::set<WorkRegionId>& robot_supported_regions) -> std::optional<size_t> {
-    bool can_do{ true };
-    for (const auto& region : task_regions)
-    {
-      can_do = can_do && (robot_supported_regions.count(region) > 0);
-    }
-    if (!can_do)
-    {
-      // the robot does not have reach the minimum set of regions required
-      // by the task
-      return std::nullopt;
-    }
-    // the robot can do the task, so the fitness now measures how tightly the
-    // regions supported by the robot fit the ones required by the task
-    return robot_supported_regions.size() - task_regions.size();
-  };
-
   std::optional<PickAndPlaceRobotHandle> current_selection_opt;
-  size_t current_selection_fitness_level{ 0 };
 
   for (auto& pap_robot_handle : pick_and_place_robots_)
   {
@@ -218,18 +196,10 @@ ResourceManager::getPickAndPlaceRobotHandle(const std::set<WorkRegionId>& region
       continue;
     }
 
-    auto robot_supported_regions = pap_robot_handle.resource()->supportedRegions();
-
-    auto fitness_level_opt =
-        calculate_robot_to_task_fitness_to_task(regions, robot_supported_regions);
-
-    if (fitness_level_opt &&
-        (!current_selection_opt || (current_selection_fitness_level > fitness_level_opt.value())))
-    {
-      current_selection_opt = pap_robot_handle;
-      current_selection_fitness_level = fitness_level_opt.value();
-    }
+    current_selection_opt = pap_robot_handle;
+    break;
   }
+
   return current_selection_opt;
 }
 
