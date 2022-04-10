@@ -31,20 +31,21 @@ public:
                   std::vector<ModelContainerInterface::Ptr>&& model_containers,
                   std::vector<PickAndPlaceRobotInterface::Ptr>&& pick_and_place_robots);
 
-  std::vector<ManagedLocusHandle> findEmptyLoci(const double free_radius) override;
+  std::vector<ManagedLocusHandle> findVacantLociCandidates(const double free_radius) override;
 
-  std::vector<ManagedLocusHandle> findManagedLociByPartId(const PartId& part_id) override;
+  std::vector<ManagedLocusHandle> findSourceLociByPartId(const PartId& part_id) override;
 
-  std::vector<ManagedLocusHandle> findManagedLociByParent(const std::string& parent_name) override;
+  std::vector<ManagedLocusHandle>
+  findSiblingLociByCommonParent(const std::string& parent_name) override;
 
   std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle() override;
 
   std::optional<ManagedLocusHandle>
-  getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) override;
+  createVacantLociAtPose(const tijmath::RelativePose3& pose) override;
 
-  void updateSensorData(const std::vector<ObservedItem>& observed_models) override;
+  void processInputSensorData(const std::vector<ObservedItem>& observed_models) override;
 
-  void logKnownLoci() override;
+  void logCurrentResourceManagerState() override;
 
 private:
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;

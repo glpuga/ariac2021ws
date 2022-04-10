@@ -61,7 +61,7 @@ ResourceManager::ResourceManager(
 }
 
 std::vector<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::findEmptyLoci(const double free_radius)
+ResourceManager::findVacantLociCandidates(const double free_radius)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
@@ -117,7 +117,7 @@ ResourceManager::findEmptyLoci(const double free_radius)
 }
 
 std::vector<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::findManagedLociByPartId(const PartId& part_id)
+ResourceManager::findSourceLociByPartId(const PartId& part_id)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
@@ -149,7 +149,7 @@ ResourceManager::findManagedLociByPartId(const PartId& part_id)
 }
 
 std::vector<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::findManagedLociByParent(const std::string& parent_name)
+ResourceManager::findSiblingLociByCommonParent(const std::string& parent_name)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
@@ -204,7 +204,7 @@ ResourceManager::getPickAndPlaceRobotHandle()
 }
 
 std::optional<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::getManagedLocusHandleForPose(const tijmath::RelativePose3& pose)
+ResourceManager::createVacantLociAtPose(const tijmath::RelativePose3& pose)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
@@ -332,7 +332,7 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(const std::string& 
   return surface_manager;
 }
 
-void ResourceManager::updateSensorData(const std::vector<ObservedItem>& observed_models)
+void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& observed_models)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
 
@@ -582,7 +582,7 @@ void ResourceManager::clearNonAllocatedEmptyLoci()
                     model_loci_.end());
 }
 
-void ResourceManager::logKnownLoci()
+void ResourceManager::logCurrentResourceManagerState()
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();

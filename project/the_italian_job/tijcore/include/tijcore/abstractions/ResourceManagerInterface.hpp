@@ -35,21 +35,21 @@ public:
 
   virtual ~ResourceManagerInterface() = default;
 
-  virtual std::vector<ManagedLocusHandle> findEmptyLoci(const double free_radius) = 0;
+  virtual std::vector<ManagedLocusHandle> findVacantLociCandidates(const double free_radius) = 0;
 
-  virtual std::vector<ManagedLocusHandle> findManagedLociByPartId(const PartId& part_id) = 0;
+  virtual std::vector<ManagedLocusHandle> findSourceLociByPartId(const PartId& part_id) = 0;
 
   virtual std::vector<ManagedLocusHandle>
-  findManagedLociByParent(const std::string& parent_name) = 0;
+  findSiblingLociByCommonParent(const std::string& parent_name) = 0;
 
   virtual std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle() = 0;
 
   virtual std::optional<ManagedLocusHandle>
-  getManagedLocusHandleForPose(const tijmath::RelativePose3& pose) = 0;
+  createVacantLociAtPose(const tijmath::RelativePose3& pose) = 0;
 
-  virtual void updateSensorData(const std::vector<ObservedItem>& observed_models) = 0;
+  virtual void processInputSensorData(const std::vector<ObservedItem>& observed_models) = 0;
 
-  virtual void logKnownLoci()
+  virtual void logCurrentResourceManagerState()
   {
   }  // default non-implementation
 };
