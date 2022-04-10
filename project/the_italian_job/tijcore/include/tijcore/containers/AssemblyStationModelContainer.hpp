@@ -20,7 +20,6 @@ class AssemblyStationModelContainer : public ModelContainerInterface
 {
 public:
   AssemblyStationModelContainer(const std::string& name, const std::string& local_frame_id,
-                                const std::string& model_tray_shared_access_space_id,
                                 const Toolbox::SharedPtr toolbox);
 
   bool enabled() const override;

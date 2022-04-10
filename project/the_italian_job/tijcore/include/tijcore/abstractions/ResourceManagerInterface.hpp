@@ -16,8 +16,6 @@
 #include <tijcore/coremodels/SubmissionTrayAdapter.hpp>
 #include <tijcore/datatypes/ObservedItem.hpp>
 #include <tijcore/resources/ManagedLocus.hpp>
-#include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
-#include <tijcore/resources/ModelTraySharedAccessSpaceResource.hpp>
 #include <tijcore/resources/ResourceHandle.hpp>
 
 namespace tijcore
@@ -30,7 +28,6 @@ public:
 
   using ManagedLocusHandle = ResourceHandle<ManagedLocus>;
   using PickAndPlaceRobotHandle = ResourceHandle<PickAndPlaceRobotInterface>;
-  using ExclusionZoneHandle = ResourceHandle<ModelTraySharedAccessSpaceResource>;
   using SubmissionTrayHandle = ResourceHandle<SubmissionTrayAdapter>;
 
   virtual ~ResourceManagerInterface() = default;

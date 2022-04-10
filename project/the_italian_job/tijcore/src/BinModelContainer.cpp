@@ -21,11 +21,9 @@ const CuboidVolume bin_container_volume_{
 
 }  // namespace
 
-BinModelContainer::BinModelContainer(const std::string& name, const std::string& local_frame_id,
-                                     const std::string& model_tray_shared_access_space_id)
+BinModelContainer::BinModelContainer(const std::string& name, const std::string& local_frame_id)
   : ModelContainerInterface(name, local_frame_id, local_frame_id,
-                            tijmath::RelativePose3{ local_frame_id, {} }, bin_container_volume_,
-                            model_tray_shared_access_space_id)
+                            tijmath::RelativePose3{ local_frame_id, {} }, bin_container_volume_)
 {
 }
 

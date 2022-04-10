@@ -12,7 +12,6 @@
 
 // tijcore
 #include <tijcore/datatypes/PartTypeId.hpp>
-#include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
@@ -51,12 +50,6 @@ public:
   virtual std::string name() const = 0;
 
   virtual void cancelAction() = 0;
-
-  virtual void
-  markAsInaccessible(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors) = 0;
-
-  virtual void
-  markAsAccessible(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors) = 0;
 
 protected:
   virtual std::string getRobotPlanningGroup() const = 0;

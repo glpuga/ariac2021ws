@@ -17,7 +17,6 @@
 // tijcore
 #include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
-#include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijmath/RelativePose3.hpp>
 
 namespace tijros
@@ -49,12 +48,6 @@ public:
 
   void cancelAction() override;
 
-  void markAsInaccessible(
-      const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
-
-  void markAsAccessible(
-      const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors) override;
-
 private:
   tijcore::Toolbox::SharedPtr toolbox_;
 
@@ -64,10 +57,6 @@ private:
   moveit::planning_interface::MoveGroupInterface* getMoveItGroupHandlePtr() const;
 
   void setupObjectConstraints() const;
-
-  void
-  markAsCommanded(const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors,
-                  const int command);
 
   void alignEndEffectorWithTarget(tijmath::RelativePose3& target_in_world) const;
 
