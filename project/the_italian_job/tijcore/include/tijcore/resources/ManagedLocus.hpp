@@ -9,6 +9,7 @@
 #include <string>
 
 // tijcore
+#include <tijcore/datatypes/AnonymizedDataHolder.hpp>
 #include <tijcore/datatypes/PartId.hpp>
 #include <tijmath/RelativePose3.hpp>
 
@@ -31,40 +32,39 @@ public:
                                           const bool broken);
 
   bool isEmpty() const;
+
   bool isModel() const;
 
   void setBroken(const bool is_broken);
 
   PartId partId() const;
+
   bool broken() const;
 
   tijmath::RelativePose3& pose();
+
   const tijmath::RelativePose3& pose() const;
 
   std::string parentName() const;
 
-  int32_t uniqueId() const
-  {
-    return unique_id_;
-  }
+  int32_t uniqueId() const;
 
 private:
-  ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose);
+  struct QualifiedEmptyLocusInfo
+  {
+  };
+
   ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose,
-               const PartId& part_id, const bool broken);
+               const AnonymizedDataHolder& locus_contents);
 
   std::string parent_container_;
 
   tijmath::RelativePose3 pose_;
-  PartId part_id_;
-  bool is_model_;
-  bool is_broken_;
 
-  int32_t difficulty_{ 0 };
+  AnonymizedDataHolder locus_contents_;
+
   int32_t unique_id_{ generateUniqueId() };
-
   static int32_t unique_id_counter_;
-
   static int32_t generateUniqueId()
   {
     return ++unique_id_counter_;
