@@ -43,5 +43,5 @@ docker run \
     export PATH=/usr/lib/ccache:\$PATH && \
     catkin_make && \
     catkin_make run_tests && \
-    catkin_test_results
+    catkin_test_results --verbose
   "
