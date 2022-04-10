@@ -423,7 +423,7 @@ void ResourceManager::updateSensorData(const std::vector<ObservedItem>& observed
     new_model_loci.emplace_back(std::move(new_model_locus));
   }
 
-  std::set<int32_t> loci_to_keep;
+  std::set<tijutils::UniqueId> loci_to_keep;
 
   //
   // move over the known loci in allocated containers, since we'll have

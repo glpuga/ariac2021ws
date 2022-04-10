@@ -12,8 +12,6 @@
 
 namespace tijcore
 {
-int32_t ManagedLocus::unique_id_counter_;
-
 ManagedLocus ManagedLocus::CreateEmptySpace(const std::string& parent_container,
                                             const tijmath::RelativePose3& pose)
 {
@@ -103,7 +101,7 @@ std::string ManagedLocus::parentName() const
   return parent_container_;
 }
 
-int32_t ManagedLocus::uniqueId() const
+tijutils::UniqueId ManagedLocus::uniqueId() const
 {
   return unique_id_;
 }
