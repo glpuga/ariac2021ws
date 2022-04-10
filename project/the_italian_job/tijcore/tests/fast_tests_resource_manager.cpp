@@ -70,7 +70,6 @@ public:
   const tijmath::RelativePose3 table_1_pose_{ "world", tijmath::Position::fromVector(0, 0, 1), {} };
   ModelContainerMock::Ptr table_1_container_mock_;
   CuboidVolume table_1_container_volume_{ table_container_volume };
-  const std::string table_1_exclusion_volume_{ "table1_exclusion_zone" };
 
   // table 2
   const std::string table_2_name_{ "table2_name" };
@@ -78,7 +77,6 @@ public:
   const tijmath::RelativePose3 table_2_pose_{ "world", tijmath::Position::fromVector(1, 0, 1), {} };
   ModelContainerMock::Ptr table_2_container_mock_;
   CuboidVolume table_2_container_volume_{ table_container_volume };
-  const std::string table_2_exclusion_volume_{ "table2_exclusion_zone" };
 
   // table 3
   const std::string table_3_name_{ "table3_name" };
@@ -86,7 +84,6 @@ public:
   const tijmath::RelativePose3 table_3_pose_{ "world", tijmath::Position::fromVector(2, 0, 1), {} };
   ModelContainerMock::Ptr table_3_container_mock_;
   CuboidVolume table_3_container_volume_{ table_container_volume };
-  const std::string table_3_exclusion_volume_{ "table3_exclusion_zone" };
 
   // robots
   PickAndPlaceRobotMock::Ptr kitting_robot_mock_;
@@ -109,17 +106,17 @@ public:
             { table_3_frame_id_, table_3_pose_ },
         });
 
-    table_1_container_mock_ = std::make_unique<ModelContainerMock>(
-        table_1_name_, table_1_frame_id_, table_1_frame_id_, table_1_pose_,
-        table_1_container_volume_, table_1_exclusion_volume_);
+    table_1_container_mock_ =
+        std::make_unique<ModelContainerMock>(table_1_name_, table_1_frame_id_, table_1_frame_id_,
+                                             table_1_pose_, table_1_container_volume_);
 
-    table_2_container_mock_ = std::make_unique<ModelContainerMock>(
-        table_2_name_, table_2_frame_id_, table_2_frame_id_, table_2_pose_,
-        table_2_container_volume_, table_2_exclusion_volume_);
+    table_2_container_mock_ =
+        std::make_unique<ModelContainerMock>(table_2_name_, table_2_frame_id_, table_2_frame_id_,
+                                             table_2_pose_, table_2_container_volume_);
 
-    table_3_container_mock_ = std::make_unique<ModelContainerMock>(
-        table_3_name_, table_3_frame_id_, table_3_frame_id_, table_3_pose_,
-        table_3_container_volume_, table_3_exclusion_volume_);
+    table_3_container_mock_ =
+        std::make_unique<ModelContainerMock>(table_3_name_, table_3_frame_id_, table_3_frame_id_,
+                                             table_3_pose_, table_3_container_volume_);
 
     kitting_robot_mock_ = std::make_unique<PickAndPlaceRobotMock>();
     assembly_robot_mock_ = std::make_unique<PickAndPlaceRobotMock>();

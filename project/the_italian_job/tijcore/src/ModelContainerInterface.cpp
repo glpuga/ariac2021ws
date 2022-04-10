@@ -14,14 +14,12 @@ ModelContainerInterface::ModelContainerInterface(const std::string& name,
                                                  const std::string& container_reference_frame_id,
                                                  const std::string& surface_reference_frame_id,
                                                  const tijmath::RelativePose3& pose,
-                                                 const CuboidVolume& container_volume,
-                                                 const std::string& shared_workspace_id)
+                                                 const CuboidVolume& container_volume)
   : name_{ name }
   , container_reference_frame_id_{ container_reference_frame_id }
   , surface_reference_frame_id_{ surface_reference_frame_id }
   , pose_{ pose }
   , container_volume_{ container_volume }
-  , shared_workspace_id_{ shared_workspace_id }
 {
 }
 
@@ -48,11 +46,6 @@ tijmath::RelativePose3 ModelContainerInterface::pose() const
 CuboidVolume ModelContainerInterface::containerVolume() const
 {
   return container_volume_;
-}
-
-std::string ModelContainerInterface::exclusionZoneId() const
-{
-  return shared_workspace_id_;
 }
 
 }  // namespace tijcore

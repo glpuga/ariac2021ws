@@ -23,8 +23,7 @@ public:
 
   ModelContainerInterface(const std::string& name, const std::string& container_reference_frame_id_,
                           const std::string& surface_reference_frame_id_,
-                          const tijmath::RelativePose3& pose, const CuboidVolume& container_volume,
-                          const std::string& shared_workspace_id);
+                          const tijmath::RelativePose3& pose, const CuboidVolume& container_volume);
 
   virtual ~ModelContainerInterface() = default;
 
@@ -47,15 +46,12 @@ public:
 
   CuboidVolume containerVolume() const;
 
-  std::string exclusionZoneId() const;
-
 private:
   std::string name_;
   std::string container_reference_frame_id_;
   std::string surface_reference_frame_id_;
   tijmath::RelativePose3 pose_;
   CuboidVolume container_volume_;
-  std::string shared_workspace_id_;
 };
 
 }  // namespace tijcore

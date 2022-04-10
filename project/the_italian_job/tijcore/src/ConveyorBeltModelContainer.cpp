@@ -21,12 +21,11 @@ const CuboidVolume bin_container_volume_{
 
 }  // namespace
 
-ConveyorBeltModelContainer::ConveyorBeltModelContainer(
-    const std::string& name, const std::string& container_frame_id,
-    const std::string& surface_frame_id, const std::string& model_tray_shared_access_space_id)
+ConveyorBeltModelContainer::ConveyorBeltModelContainer(const std::string& name,
+                                                       const std::string& container_frame_id,
+                                                       const std::string& surface_frame_id)
   : ModelContainerInterface(name, container_frame_id, surface_frame_id,
-                            tijmath::RelativePose3{ container_frame_id, {} }, bin_container_volume_,
-                            model_tray_shared_access_space_id)
+                            tijmath::RelativePose3{ container_frame_id, {} }, bin_container_volume_)
 {
 }
 

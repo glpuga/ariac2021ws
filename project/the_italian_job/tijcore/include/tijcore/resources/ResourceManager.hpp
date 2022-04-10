@@ -19,7 +19,6 @@
 #include <tijcore/abstractions/ModelContainerInterface.hpp>
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
-#include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijcore/resources/SurfaceManager.hpp>
 
 namespace tijcore

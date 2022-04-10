@@ -20,8 +20,7 @@ class ConveyorBeltModelContainer : public ModelContainerInterface
 {
 public:
   ConveyorBeltModelContainer(const std::string& name, const std::string& container_frame_id,
-                             const std::string& surface_frame_id,
-                             const std::string& model_tray_shared_access_space_id);
+                             const std::string& surface_frame_id);
 
   bool enabled() const override;
 

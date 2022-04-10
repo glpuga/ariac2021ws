@@ -63,12 +63,6 @@ public:
   MOCK_METHOD0(cancelAction, void());
 
   MOCK_CONST_METHOD0(dropPartWhereYouStand, bool());
-
-  MOCK_METHOD1(markAsInaccessible,
-               void(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors));
-
-  MOCK_METHOD1(markAsAccessible,
-               void(const std::vector<ModelTraySharedAccessSpaceDescription>& descriptors));
 };
 
 }  // namespace tijcore

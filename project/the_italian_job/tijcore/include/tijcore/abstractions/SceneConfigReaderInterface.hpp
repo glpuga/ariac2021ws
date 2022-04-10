@@ -10,7 +10,6 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
@@ -27,7 +26,6 @@ public:
   {
     std::string name;
     std::string frame_id;
-    std::string shared_access_space_id;
   };
 
   struct ConveyorBeltData
@@ -35,7 +33,6 @@ public:
     std::string name;
     std::string container_frame_id;
     std::string surface_frame_id;
-    std::string shared_access_space_id;
     double meters_per_second{ 0.0 };
   };
 
@@ -43,7 +40,6 @@ public:
   {
     std::string name;
     std::string frame_id;
-    std::string shared_access_space_id;
   };
 
   virtual const std::string& getWorldFrameId() const = 0;
@@ -61,9 +57,6 @@ public:
   virtual const std::vector<DeviceData>& getListOfAssemblyStations() const = 0;
 
   virtual const std::vector<ConveyorBeltData>& getListOfConveyorBelts() const = 0;
-
-  virtual const std::vector<ModelTraySharedAccessSpaceDescription>&
-  getListOfSharedAccessSpaceDescriptions() const = 0;
 
   virtual const std::vector<tijmath::RelativePose3>& getListOfGantryPlanningHints() const = 0;
 

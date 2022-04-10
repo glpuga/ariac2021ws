@@ -130,8 +130,8 @@ TIJChallenger::createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox_
   for (const auto& item : config_->getListOfAgvs())
   {
     INFO("   - {} @ {}", item.name, item.frame_id);
-    containers.emplace_back(std::make_unique<tijcore::AgvModelContainer>(
-        item.name, item.frame_id, item.shared_access_space_id, toolbox_));
+    containers.emplace_back(
+        std::make_unique<tijcore::AgvModelContainer>(item.name, item.frame_id, toolbox_));
   }
 
   INFO(" - Loading assembly station data");
@@ -139,15 +139,14 @@ TIJChallenger::createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox_
   {
     INFO("   - {} @ {}", item.name, item.frame_id);
     containers.emplace_back(std::make_unique<tijcore::AssemblyStationModelContainer>(
-        item.name, item.frame_id, item.shared_access_space_id, toolbox_));
+        item.name, item.frame_id, toolbox_));
   }
 
   INFO(" - Loading bin data");
   for (const auto& item : config_->getListOfBins())
   {
     INFO("   - {} @ {} ({})", item.name, item.frame_id);
-    containers.emplace_back(std::make_unique<tijcore::BinModelContainer>(
-        item.name, item.frame_id, item.shared_access_space_id));
+    containers.emplace_back(std::make_unique<tijcore::BinModelContainer>(item.name, item.frame_id));
   }
 
   INFO(" - Loading conveyor belts data");
@@ -156,7 +155,7 @@ TIJChallenger::createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox_
     INFO("   - {} @ {}/{} (speed {})", item.name, item.container_frame_id, item.surface_frame_id,
          item.meters_per_second);
     containers.emplace_back(std::make_unique<tijcore::ConveyorBeltModelContainer>(
-        item.name, item.container_frame_id, item.surface_frame_id, item.shared_access_space_id));
+        item.name, item.container_frame_id, item.surface_frame_id));
   }
 
   return containers;

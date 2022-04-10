@@ -17,7 +17,6 @@
 
 // tijcore
 #include <tijcore/datatypes/QualifiedPartInfo.hpp>
-#include <tijcore/resources/ModelTraySharedAccessSpaceDescription.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
 #include <tijcore/resources/SurfaceManager.hpp>
 #include <tijcore/utils/CuboidVolume.hpp>

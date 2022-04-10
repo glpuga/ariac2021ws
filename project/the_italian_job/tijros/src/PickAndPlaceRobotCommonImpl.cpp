@@ -815,39 +815,6 @@ void PickAndPlaceRobotCommonImpl::setupObjectConstraints() const
   planning_scene_ptr_->applyCollisionObjects(collision_objects);
 }
 
-void PickAndPlaceRobotCommonImpl::markAsCommanded(
-    const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors,
-    const int command)
-{
-  // TODO(glpuga) improve this
-  // this method call is needed to generate the pointers if planning_scene_ptr_
-  // has not been populated yet.
-  getMoveItGroupHandlePtr();
-
-  std::vector<moveit_msgs::CollisionObject> collision_objects;
-  for (const auto& item : descriptors)
-  {
-    const auto& frame_id = item.center.frameId();
-    const auto& offsets = item.center.position().vector();
-    collision_objects.push_back(createCollisionBox("access", item.id, frame_id, item.x_size,
-                                                   item.y_size, item.z_size, offsets.x(),
-                                                   offsets.y(), offsets.z(), command));
-  }
-  planning_scene_ptr_->applyCollisionObjects(collision_objects);
-}
-
-void PickAndPlaceRobotCommonImpl::markAsInaccessible(
-    const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors)
-{
-  markAsCommanded(descriptors, moveit_msgs::CollisionObject::ADD);
-}
-
-void PickAndPlaceRobotCommonImpl::markAsAccessible(
-    const std::vector<tijcore::ModelTraySharedAccessSpaceDescription>& descriptors)
-{
-  markAsCommanded(descriptors, moveit_msgs::CollisionObject::REMOVE);
-}
-
 void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
     tijmath::RelativePose3& end_effector_target_pose) const
 {

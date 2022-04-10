@@ -19,8 +19,7 @@ namespace tijcore
 class BinModelContainer : public ModelContainerInterface
 {
 public:
-  BinModelContainer(const std::string& name, const std::string& local_frame_id,
-                    const std::string& model_tray_shared_access_space_id);
+  BinModelContainer(const std::string& name, const std::string& local_frame_id);
 
   bool enabled() const override;
 
