@@ -94,14 +94,6 @@ RobotTaskOutcome PickAndPlaceTask::run()
          destination_.resource()->pose());
   }
 
-  // if we failed the task at some point, we lost certainty about where the
-  // source part is
-  if (result != RobotTaskOutcome::TASK_SUCCESS)
-  {
-    // increase the difficulty of the piece
-    source_.resource()->correctDifficulty(1);
-  }
-
   // try to get in a resting pose to remove the robot from the way
   robot.dropPartWhereYouStand();
   robot.getInSafePose();

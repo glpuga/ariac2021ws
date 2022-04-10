@@ -43,15 +43,6 @@ public:
 
   std::string parentName() const;
 
-  // TODO(glpuga) test these functions
-  int32_t difficulty() const
-  {
-    return difficulty_;
-  };
-  void correctDifficulty(const int32_t delta)
-  {
-    difficulty_ += delta;
-  }
   int32_t uniqueId() const
   {
     return unique_id_;
