@@ -37,22 +37,46 @@ const tijmath::RelativePose3& SceneConfigReader::getDropBucketPose() const
 const std::vector<SceneConfigReader::BinData>& SceneConfigReader::getListOfBins() const
 {
   static const std::vector<BinData> data{
-    { "bin1", "bin1_frame", "agv12_near_kitting_access_space",
-      tijcore::WorkRegionId::kitting_near_bins },
-    { "bin2", "bin2_frame", "agv12_near_kitting_access_space",
-      tijcore::WorkRegionId::kitting_near_bins },
-    { "bin3", "bin3_frame", "agv12_far_kitting_access_space",
-      tijcore::WorkRegionId::kitting_far_bins },
-    { "bin4", "bin4_frame", "agv12_far_kitting_access_space",
-      tijcore::WorkRegionId::kitting_far_bins },
-    { "bin5", "bin5_frame", "agv34_near_kitting_access_space",
-      tijcore::WorkRegionId::kitting_near_bins },
-    { "bin6", "bin6_frame", "agv34_near_kitting_access_space",
-      tijcore::WorkRegionId::kitting_near_bins },
-    { "bin7", "bin7_frame", "agv34_far_kitting_access_space",
-      tijcore::WorkRegionId::kitting_far_bins },
-    { "bin8", "bin8_frame", "agv34_far_kitting_access_space",
-      tijcore::WorkRegionId::kitting_far_bins },
+    {
+        "bin1",
+        "bin1_frame",
+        "agv12_near_kitting_access_space",
+    },
+    {
+        "bin2",
+        "bin2_frame",
+        "agv12_near_kitting_access_space",
+    },
+    {
+        "bin3",
+        "bin3_frame",
+        "agv12_far_kitting_access_space",
+    },
+    {
+        "bin4",
+        "bin4_frame",
+        "agv12_far_kitting_access_space",
+    },
+    {
+        "bin5",
+        "bin5_frame",
+        "agv34_near_kitting_access_space",
+    },
+    {
+        "bin6",
+        "bin6_frame",
+        "agv34_near_kitting_access_space",
+    },
+    {
+        "bin7",
+        "bin7_frame",
+        "agv34_far_kitting_access_space",
+    },
+    {
+        "bin8",
+        "bin8_frame",
+        "agv34_far_kitting_access_space",
+    },
   };
   return data;
 }

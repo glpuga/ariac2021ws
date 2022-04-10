@@ -64,7 +64,6 @@ add_library(${PROJECT_NAME}
   src/SubmitAssemblyShipmentTask.cpp
   src/SubmitKittingShipmentTask.cpp
   src/SurfaceManager.cpp
-  src/WorkRegionId.cpp
 )
 
 add_dependencies(

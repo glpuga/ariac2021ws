@@ -27,8 +27,7 @@ public:
   MOCK_METHOD1(findManagedLociByParent,
                std::vector<ManagedLocusHandle>(const std::string& part_id));
 
-  MOCK_METHOD1(getPickAndPlaceRobotHandle,
-               std::optional<PickAndPlaceRobotHandle>(const std::set<WorkRegionId>& regions));
+  MOCK_METHOD0(getPickAndPlaceRobotHandle, std::optional<PickAndPlaceRobotHandle>());
 
   MOCK_METHOD1(getManagedLocusHandleForPose,
                std::optional<ManagedLocusHandle>(const tijmath::RelativePose3& pose));
