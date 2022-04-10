@@ -7,6 +7,7 @@
 #include <utility>
 
 // tijcore
+#include <tijcore/datatypes/QualifiedPartInfo.hpp>
 #include <tijcore/resources/ManagedLocus.hpp>
 
 namespace tijcore
@@ -17,7 +18,7 @@ ManagedLocus ManagedLocus::CreateEmptySpace(const std::string& parent_container,
                                             const tijmath::RelativePose3& pose)
 {
   // can't use make shared because constructor is private
-  return ManagedLocus(parent_container, pose);
+  return ManagedLocus(parent_container, pose, AnonymizedDataHolder{ QualifiedEmptyLocusInfo{} });
 }
 
 ManagedLocus ManagedLocus::CreateOccupiedSpace(const std::string& parent_container,
@@ -25,71 +26,57 @@ ManagedLocus ManagedLocus::CreateOccupiedSpace(const std::string& parent_contain
                                                const PartId& part_id, const bool broken)
 {
   // can't use make shared because constructor is private
-  return ManagedLocus(parent_container, pose, part_id, broken);
+  return ManagedLocus(parent_container, pose,
+                      AnonymizedDataHolder{ QualifiedPartInfo{ part_id, broken } });
 }
 
 void ManagedLocus::TransferPartFromHereToThere(ManagedLocus& here, ManagedLocus& there)
 {
-  if (!here.isModel())
+  if (here.isEmpty())
   {
     throw std::logic_error{ "Can't move part from an empty space" };
   }
-  if (!there.isEmpty())
+  else if (!there.isEmpty())
   {
     throw std::logic_error{ "Can't move part to an occupied space" };
   }
-  std::swap(here.part_id_, there.part_id_);
-  std::swap(here.is_model_, there.is_model_);
-  std::swap(here.is_broken_, there.is_broken_);
-  // note that the difficulty attribute does not get swapped, because its tied
-  // to the pose
-}
-
-ManagedLocus::ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose)
-  : parent_container_{ parent_container }
-  , pose_{ pose }
-  , part_id_{ PartId(PartTypeId::pump, PartColorId::red) }
-  , is_model_{ false }
-  , is_broken_{ false }
-{
+  AnonymizedDataHolder tmp{ std::move(there.locus_contents_) };
+  there.locus_contents_ = std::move(here.locus_contents_);
+  here.locus_contents_ = std::move(tmp);
 }
 
 ManagedLocus::ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose,
-                           const PartId& part_id, const bool broken)
-  : parent_container_{ parent_container }
-  , pose_{ pose }
-  , part_id_{ part_id }
-  , is_model_{ true }
-  , is_broken_{ broken }
+                           const AnonymizedDataHolder& locus_contents)
+  : parent_container_{ parent_container }, pose_{ pose }, locus_contents_{ locus_contents }
 {
 }
 
 bool ManagedLocus::isEmpty() const
 {
-  return !is_model_;
+  return locus_contents_.is<QualifiedEmptyLocusInfo>();
 }
 
 bool ManagedLocus::isModel() const
 {
-  return is_model_;
+  return locus_contents_.is<QualifiedPartInfo>();
 }
 
 void ManagedLocus::setBroken(const bool is_broken)
 {
-  if (isEmpty())
+  if (!isModel())
   {
-    throw std::logic_error{ "Tried to set broken property of empty space" };
+    throw std::logic_error{ "Unable to set the broken status of not-a-part" };
   }
-  is_broken_ = is_broken;
+  locus_contents_.as<QualifiedPartInfo>().part_is_broken = is_broken;
 }
 
 PartId ManagedLocus::partId() const
 {
-  if (isEmpty())
+  if (!isModel())
   {
-    throw std::logic_error{ "Requested part id from empty space" };
+    throw std::logic_error{ "Unable to retrieve the party type of not-a-part" };
   }
-  return part_id_;
+  return locus_contents_.as<QualifiedPartInfo>().part_type;
 }
 
 bool ManagedLocus::broken() const
@@ -98,7 +85,7 @@ bool ManagedLocus::broken() const
   {
     throw std::logic_error{ "Requested broken status from empty space" };
   }
-  return is_broken_;
+  return locus_contents_.as<QualifiedPartInfo>().part_is_broken;
 }
 
 const tijmath::RelativePose3& ManagedLocus::pose() const
@@ -114,6 +101,11 @@ tijmath::RelativePose3& ManagedLocus::pose()
 std::string ManagedLocus::parentName() const
 {
   return parent_container_;
+}
+
+int32_t ManagedLocus::uniqueId() const
+{
+  return unique_id_;
 }
 
 }  // namespace tijcore
