@@ -418,15 +418,6 @@ void ResourceManager::updateSensorData(const std::vector<ObservedItem>& observed
         tijmath::RelativePose3{ surface_frame_id, local_frame_pose }, observed_part.part_type,
         observed_part.part_is_broken);
 
-    // TODO(glpuga) Conveyor belt hack. I artificially increase the difficulty
-    // of parts on conveyor belts to reduce their chances to be picked if there
-    // are static parts.
-    const auto parent_frame_id = parent_container->resource()->containerReferenceFrameId();
-    if (parent_frame_id != surface_frame_id)
-    {
-      new_model_locus.correctDifficulty(conveyor_belt_start_difficulty_);
-    }
-
     // notice that I discard the previously created ManagedLocus instance
     // because it had no parent name.
     new_model_loci.emplace_back(std::move(new_model_locus));
@@ -516,8 +507,6 @@ void ResourceManager::updateSensorData(const std::vector<ObservedItem>& observed
           // option.
           known_broken = known_broken || new_broken;
 
-          const auto difficulty_value = known_model_locus.difficulty();
-
           // we always update the pose information with the new information.
           // We know that position is the same, but rotation might have
           // changed.
@@ -525,9 +514,6 @@ void ResourceManager::updateSensorData(const std::vector<ObservedItem>& observed
 
           known_model_locus = ManagedLocus::CreateOccupiedSpace(
               new_model_locus.parentName(), known_pose, known_part_id, known_broken);
-
-          // TODO(glpuga) this is hackish, fix
-          known_model_locus.correctDifficulty(difficulty_value);
 
           loci_to_keep.emplace(known_model_locus.uniqueId());
         }
@@ -646,17 +632,15 @@ void ResourceManager::logKnownLoci()
     };
     if (known_model_locus.isEmpty())
     {
-      INFO(" - empty at {} (allocated: {}, diff: {}, uid: {})", pose_in_parent,
-           known_model_locus_handle.allocated(), known_model_locus.difficulty(),
-           known_model_locus.uniqueId());
+      INFO(" - empty at {} (allocated: {}, uid: {})", pose_in_parent,
+           known_model_locus_handle.allocated(), known_model_locus.uniqueId());
     }
     else
     {
       const auto known_model_part_id = known_model_locus.partId();
       const auto broken = known_model_locus.broken();
-      INFO(" - {} at {} (broken: {} , allocated: {}, diff: {}, uid: {})",
-           known_model_part_id.codedString(), pose_in_parent, broken,
-           known_model_locus_handle.allocated(), known_model_locus.difficulty(),
+      INFO(" - {} at {} (broken: {} , allocated: {}, uid: {})", known_model_part_id.codedString(),
+           pose_in_parent, broken, known_model_locus_handle.allocated(),
            known_model_locus.uniqueId());
     }
   }
