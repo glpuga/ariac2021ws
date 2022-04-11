@@ -28,31 +28,43 @@ namespace
 constexpr char topic_prefix_[] = "/ariac/";
 constexpr int default_queue_len_ = 10;
 
-constexpr std::chrono::seconds timer_interval_{ 1 };
-
 }  // namespace
 
 LogicalCameraModelPerception::LogicalCameraModelPerception(const ros::NodeHandle& nh,
-                                                           const std::string& logical_sensor_name)
-  : nh_{ nh }, logical_sensor_name_{ logical_sensor_name }, timer_{ [this] { timerCallback(); } }
+                                                           const std::string& logical_sensor_name,
+                                                           const ros::Duration& retention_interval)
+  : logical_sensor_name_{ logical_sensor_name }
+  , retention_interval_{ retention_interval }
+  , nh_{ nh }
+
 {
   const std::string topic_id{ topic_prefix_ + logical_sensor_name_ };
   camera_sub_ = nh_.subscribe(topic_id, default_queue_len_,
                               &LogicalCameraModelPerception::cameraCallback, this);
-  timer_.start(timer_interval_);
 }
 
 std::vector<tijcore::ObservedItem> LogicalCameraModelPerception::getObservedModels() const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
+  const auto now = ros::Time::now();
+  if (now - latest_update_timestamp_ > retention_interval_)
+  {
+    return {};
+  }
   return models_;
 }
 
 void LogicalCameraModelPerception::cameraCallback(nist_gear::LogicalCameraImage::ConstPtr msg)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
-  update_received_ = true;
+
+  latest_update_timestamp_ = ros::Time::now();
+  const auto timestamp =
+      std::chrono::system_clock::time_point(std::chrono::seconds{ latest_update_timestamp_.sec }) +
+      std::chrono::nanoseconds{ latest_update_timestamp_.nsec };
+
   models_.clear();
+
   for (const auto& ros_model : msg->models)
   {
     const auto& geo_pose = ros_model.pose;
@@ -71,23 +83,14 @@ void LogicalCameraModelPerception::cameraCallback(nist_gear::LogicalCameraImage:
     {
       const auto movable_tray_id = tijcore::movable_tray::fromString(ros_model.type);
       const tijcore::ObservedItem core_model{ tijcore::QualifiedMovableTrayInfo{ movable_tray_id },
-                                              relative_core_pose };
+                                              relative_core_pose, timestamp };
       models_.emplace_back(core_model);
-    } else {
+    }
+    else
+    {
       ERROR("{} is not a valid part or movable tray id", ros_model.type);
     }
   }
-}
-
-void LogicalCameraModelPerception::timerCallback()
-{
-  std::lock_guard<std::mutex> lock{ mutex_ };
-  if (!update_received_)
-  {
-    WARNING("No updates on {}, possibly going through a sensor blackout", logical_sensor_name_);
-    models_.clear();
-  }
-  update_received_ = false;
 }
 
 }  // namespace tijros

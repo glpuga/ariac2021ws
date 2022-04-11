@@ -22,26 +22,24 @@ namespace tijros
 class LogicalCameraModelPerception : public tijcore::ModelPerceptionInterface
 {
 public:
-  LogicalCameraModelPerception(const ros::NodeHandle& nh, const std::string& logical_sensor_name);
+  LogicalCameraModelPerception(const ros::NodeHandle& nh, const std::string& logical_sensor_name,
+                               const ros::Duration& retention_interval);
 
   std::vector<tijcore::ObservedItem> getObservedModels() const override;
 
 private:
   mutable std::mutex mutex_;
 
+  std::string logical_sensor_name_;
+  ros::Duration retention_interval_;
+
   ros::NodeHandle nh_;
   ros::Subscriber camera_sub_;
 
-  bool update_received_{ false };
-  std::string logical_sensor_name_;
-
-  tijutils::Timer timer_;
-
   std::vector<tijcore::ObservedItem> models_;
+  ros::Time latest_update_timestamp_{ 0 };
 
   void cameraCallback(nist_gear::LogicalCameraImage::ConstPtr msg);
-
-  void timerCallback();
 };
 
 }  // namespace tijros

@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME}
   src/ManagedLocus.cpp
   src/ModelContainerInterface.cpp
   src/ModelPerceptionMixer.cpp
+  src/ModelPerceptionSpatialFilter.cpp
   src/MovableTrayId.cpp
   src/OrderId.cpp
   src/PartColorId.cpp
