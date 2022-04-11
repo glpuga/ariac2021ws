@@ -17,7 +17,7 @@
 #include <tijlogger/logger.hpp>
 
 // mocks
-#include "mocks/ModelPerceptionMixerMock.hpp"
+#include "mocks/ModelPerceptionMock.hpp"
 
 namespace tijcore
 {

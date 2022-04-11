@@ -1,4 +1,4 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  * Author: Gerardo Puga */
 
