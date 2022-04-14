@@ -5,13 +5,13 @@
 #pragma once
 
 // tijcore
-#include <tijcore/datatypes/MovableTrayTypeId.hpp>
+#include <tijcore/datatypes/MovableTrayId.hpp>
 
 namespace tijcore
 {
 struct QualifiedMovableTrayInfo
 {
-  MovableTrayTypeId tray_type;
+  MovableTrayId tray_type;
 };
 
 }  // namespace tijcore

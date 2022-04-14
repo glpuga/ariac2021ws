@@ -9,7 +9,7 @@
 
 namespace tijcore
 {
-enum class MovableTrayTypeId
+enum class MovableTrayId
 {
   movable_tray_dark_wood,
   movable_tray_light_wood,
@@ -19,14 +19,14 @@ enum class MovableTrayTypeId
 
 namespace movable_tray
 {
-MovableTrayTypeId fromString(const std::string& sid);
+MovableTrayId fromString(const std::string& sid);
 
-std::string toString(const MovableTrayTypeId& id);
+std::string toString(const MovableTrayId& id);
 
 bool isValid(const std::string& sid);
 
 }  // namespace movable_tray
 
-std::ostream& operator<<(std::ostream& os, MovableTrayTypeId id);
+std::ostream& operator<<(std::ostream& os, MovableTrayId id);
 
 }  // namespace tijcore
