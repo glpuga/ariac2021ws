@@ -158,8 +158,8 @@ void ROSRobotActuators::kittingArmGripperStateCallback(nist_gear::VacuumGripperS
 void ROSRobotActuators::robotHealthCallback(nist_gear::RobotHealth::ConstPtr msg)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
-  latest_robot_health_data_.kitting_robot_enabled = msg->kitting_robot_enabled;
-  latest_robot_health_data_.assembly_robot_enabled = msg->assembly_robot_enabled;
+  latest_robot_health_data_.kitting_robot_enabled = msg->kitting_robot_health;
+  latest_robot_health_data_.assembly_robot_enabled = msg->assembly_robot_health;
 }
 
 }  // namespace tijros

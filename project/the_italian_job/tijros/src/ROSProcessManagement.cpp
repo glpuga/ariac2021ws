@@ -14,9 +14,9 @@
 #include <std_srvs/Trigger.h>
 
 // competition
-#include <nist_gear/AGVToAssemblyStation.h>
 #include <nist_gear/AssemblyStationSubmitShipment.h>
 #include <nist_gear/Order.h>
+#include <nist_gear/SubmitKittingShipment.h>
 
 // tijcore
 #include <tijlogger/logger.hpp>
@@ -160,7 +160,7 @@ ProcessManagementInterface::ErrorWithReason ROSProcessManagement::submitAgvToAss
     const std::string& shipment_type) const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
-  nist_gear::AGVToAssemblyStation msg;
+  nist_gear::SubmitKittingShipment msg;
   msg.request.assembly_station_name = tijcore::station_id::toString(destination_station);
   msg.request.shipment_type = shipment_type;
 
@@ -288,26 +288,27 @@ void ROSProcessManagement::ordersCallback(nist_gear::Order::ConstPtr msg)
   tijcore::Order new_order;
   new_order.order_id = tijcore::OrderId(msg->order_id);
 
-  auto convert_ros_product_to_core_product =
-      [](const nist_gear::Product& ros_msg_product_description, const std::string& tray_frame_id) {
-        return tijcore::ProductRequest{
-          tijcore::PartId(ros_msg_product_description.type),
-          tijmath::RelativePose3{
-              tray_frame_id, utils::convertGeoPoseToCorePose(ros_msg_product_description.pose) }
-        };
-      };
+  auto convert_ros_product_to_core_product = [](const auto& ros_msg_product_description,
+                                                const std::string& tray_frame_id) {
+    return tijcore::ProductRequest{
+      tijcore::PartId(ros_msg_product_description.type),
+      tijmath::RelativePose3{ tray_frame_id,
+                              utils::convertGeoPoseToCorePose(ros_msg_product_description.pose) }
+    };
+  };
 
   for (const auto& input_kitting_shipment : msg->kitting_shipments)
   {
     tijcore::KittingShipment output_kitting_shipment;
-    output_kitting_shipment.agv_id = tijcore::agv::fromString(input_kitting_shipment.agv_id);
-    output_kitting_shipment.station_id =
-        tijcore::station_id::fromString(input_kitting_shipment.station_id);
     output_kitting_shipment.shipment_type = input_kitting_shipment.shipment_type;
+    output_kitting_shipment.station_id =
+        tijcore::station_id::fromString(input_kitting_shipment.assembly_station);
+    output_kitting_shipment.agv_id =
+        tijcore::agv::fromString(input_kitting_shipment.tray_content.kit_tray);
 
     auto kit_tray_frame_id = utils::convertAgvIdToKitTrayFrameId(output_kitting_shipment.agv_id);
 
-    for (const auto& input_product : input_kitting_shipment.products)
+    for (const auto& input_product : input_kitting_shipment.tray_content.products)
     {
       output_kitting_shipment.products.push_back(
           convert_ros_product_to_core_product(input_product, kit_tray_frame_id));

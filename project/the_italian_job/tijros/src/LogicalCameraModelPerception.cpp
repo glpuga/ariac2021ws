@@ -56,7 +56,8 @@ void LogicalCameraModelPerception::cameraCallback(nist_gear::LogicalCameraImage:
         tijmath::RelativePose3{ logical_sensor_name_ + "_frame",
                                 utils::convertGeoPoseToCorePose(geo_pose) };
     const tijcore::PartId part_id{ ros_model.type };
-    const tijcore::ObservedItem core_model{ part_id, relative_core_pose, false };
+    const tijcore::ObservedItem core_model{ tijcore::QualifiedPartInfo{ part_id, false },
+                                            relative_core_pose };
     models_.emplace_back(core_model);
   }
 }

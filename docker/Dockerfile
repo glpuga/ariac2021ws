@@ -83,6 +83,7 @@ RUN apt update \
     ros-melodic-moveit-ros-move-group \
     ros-melodic-moveit-ros-visualization \
     ros-melodic-moveit-setup-assistant \
+    ros-melodic-moveit-visual-tools \
  && apt clean
 
 # Additional ros-control dependencies not installed by the previous stages
