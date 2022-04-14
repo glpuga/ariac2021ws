@@ -53,10 +53,10 @@ void QualityControlSensorModelPerception::cameraCallback(
     const auto relative_core_pose =
         tijmath::RelativePose3{ quality_sensor_name_ + "_frame",
                                 utils::convertGeoPoseToCorePose(geo_pose) };
-    const auto part_id = tijcore::PartId::UnkownPartId;
     // quality sensor only report faulty parts
-    const tijcore::ObservedItem core_model{ tijcore::QualifiedPartInfo{ part_id, true },
-                                            relative_core_pose };
+    const tijcore::ObservedItem core_model{
+      tijcore::QualifiedPartInfo{ tijcore::PartId::UnkownPartId, true }, relative_core_pose
+    };
     models_.emplace_back(core_model);
   }
 }

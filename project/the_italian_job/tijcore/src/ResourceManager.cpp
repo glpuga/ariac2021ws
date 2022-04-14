@@ -350,8 +350,10 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
   {
     if (!observed_item_entry.item.is<QualifiedPartInfo>())
     {
+      WARNING("Observed item is not a qualified part info in the resource manager input!");
       continue;
     }
+
     const auto& observed_part = observed_item_entry.item.as<QualifiedPartInfo>();
     auto model_locus = ManagedLocus::CreateOccupiedSpace(
         "", observed_item_entry.pose, observed_part.part_type, observed_part.part_is_broken);
