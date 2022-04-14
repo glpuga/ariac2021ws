@@ -306,7 +306,17 @@ void ROSProcessManagement::ordersCallback(nist_gear::Order::ConstPtr msg)
     output_kitting_shipment.agv_id =
         tijcore::agv::fromString(input_kitting_shipment.tray_content.kit_tray);
 
+    output_kitting_shipment.movable_tray_id = tijcore::movable_tray::fromString(
+        input_kitting_shipment.tray_content.movable_tray.movable_tray_type);
+    output_kitting_shipment.movable_tray_name =
+        input_kitting_shipment.tray_content.movable_tray.movable_tray_name;
+
     auto kit_tray_frame_id = utils::convertAgvIdToKitTrayFrameId(output_kitting_shipment.agv_id);
+
+    output_kitting_shipment.movable_tray_pose = tijmath::RelativePose3{
+      kit_tray_frame_id, utils::convertGeoPoseToCorePose(
+                             input_kitting_shipment.tray_content.movable_tray.movable_tray_pose)
+    };
 
     for (const auto& input_product : input_kitting_shipment.tray_content.products)
     {

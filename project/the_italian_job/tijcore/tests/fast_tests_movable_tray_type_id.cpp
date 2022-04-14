@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include <tijcore/datatypes/MovableTrayTypeId.hpp>
+#include <tijcore/datatypes/MovableTrayId.hpp>
 
 namespace tijcore
 {
@@ -26,13 +26,13 @@ struct MovableTrayTypeIdTests : public Test
 
 TEST_F(MovableTrayTypeIdTests, TestFromString)
 {
-  ASSERT_EQ(MovableTrayTypeId::movable_tray_dark_wood,              //
+  ASSERT_EQ(MovableTrayId::movable_tray_dark_wood,                  //
             movable_tray::fromString("movable_tray_dark_wood"));    //
-  ASSERT_EQ(MovableTrayTypeId::movable_tray_light_wood,             //
+  ASSERT_EQ(MovableTrayId::movable_tray_light_wood,                 //
             movable_tray::fromString("movable_tray_light_wood"));   //
-  ASSERT_EQ(MovableTrayTypeId::movable_tray_metal_rusty,            //
+  ASSERT_EQ(MovableTrayId::movable_tray_metal_rusty,                //
             movable_tray::fromString("movable_tray_metal_rusty"));  //
-  ASSERT_EQ(MovableTrayTypeId::movable_tray_metal_shiny,            //
+  ASSERT_EQ(MovableTrayId::movable_tray_metal_shiny,                //
             movable_tray::fromString("movable_tray_metal_shiny"));  //
   ASSERT_THROW(movable_tray::fromString("bongo"), std::invalid_argument);
 }
@@ -40,23 +40,23 @@ TEST_F(MovableTrayTypeIdTests, TestFromString)
 TEST_F(MovableTrayTypeIdTests, TestToString)
 {
   ASSERT_EQ("movable_tray_dark_wood",
-            movable_tray::toString(MovableTrayTypeId::movable_tray_dark_wood));
+            movable_tray::toString(MovableTrayId::movable_tray_dark_wood));
   ASSERT_EQ("movable_tray_light_wood",
-            movable_tray::toString(MovableTrayTypeId::movable_tray_light_wood));
+            movable_tray::toString(MovableTrayId::movable_tray_light_wood));
   ASSERT_EQ("movable_tray_metal_rusty",
-            movable_tray::toString(MovableTrayTypeId::movable_tray_metal_rusty));
+            movable_tray::toString(MovableTrayId::movable_tray_metal_rusty));
   ASSERT_EQ("movable_tray_metal_shiny",
-            movable_tray::toString(MovableTrayTypeId::movable_tray_metal_shiny));
+            movable_tray::toString(MovableTrayId::movable_tray_metal_shiny));
 }
 
 TEST_F(MovableTrayTypeIdTests, TestStreamOperator)
 {
   std::ostringstream os;
 
-  os << MovableTrayTypeId::movable_tray_dark_wood << "\n"
-     << MovableTrayTypeId::movable_tray_light_wood << "\n"
-     << MovableTrayTypeId::movable_tray_metal_rusty << "\n"
-     << MovableTrayTypeId::movable_tray_metal_shiny << "\n";
+  os << MovableTrayId::movable_tray_dark_wood << "\n"
+     << MovableTrayId::movable_tray_light_wood << "\n"
+     << MovableTrayId::movable_tray_metal_rusty << "\n"
+     << MovableTrayId::movable_tray_metal_shiny << "\n";
 
   ASSERT_EQ(
       "movable_tray_dark_wood\n"
