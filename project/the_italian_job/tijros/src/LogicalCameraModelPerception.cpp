@@ -13,6 +13,10 @@
 #include <ros/ros.h>
 
 // tijcore
+#include <tijcore/datatypes/MovableTrayId.hpp>
+#include <tijcore/datatypes/PartId.hpp>
+#include <tijcore/datatypes/QualifiedMovableTrayInfo.hpp>
+#include <tijcore/datatypes/QualifiedPartInfo.hpp>
 #include <tijlogger/logger.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
 #include <tijros/utils/utils.hpp>
@@ -55,10 +59,23 @@ void LogicalCameraModelPerception::cameraCallback(nist_gear::LogicalCameraImage:
     const auto relative_core_pose =
         tijmath::RelativePose3{ logical_sensor_name_ + "_frame",
                                 utils::convertGeoPoseToCorePose(geo_pose) };
-    const tijcore::PartId part_id{ ros_model.type };
-    const tijcore::ObservedItem core_model{ tijcore::QualifiedPartInfo{ part_id, false },
-                                            relative_core_pose };
-    models_.emplace_back(core_model);
+
+    if (tijcore::PartId::isValid(ros_model.type))
+    {
+      const tijcore::PartId part_id{ ros_model.type };
+      const tijcore::ObservedItem core_model{ tijcore::QualifiedPartInfo{ part_id, false },
+                                              relative_core_pose };
+      models_.emplace_back(core_model);
+    }
+    else if (tijcore::movable_tray::isValid(ros_model.type))
+    {
+      const auto movable_tray_id = tijcore::movable_tray::fromString(ros_model.type);
+      const tijcore::ObservedItem core_model{ tijcore::QualifiedMovableTrayInfo{ movable_tray_id },
+                                              relative_core_pose };
+      models_.emplace_back(core_model);
+    } else {
+      ERROR("{} is not a valid part or movable tray id", ros_model.type);
+    }
   }
 }
 

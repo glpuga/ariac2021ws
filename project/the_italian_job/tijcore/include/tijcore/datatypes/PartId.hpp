@@ -28,6 +28,8 @@ public:
 
   std::string codedString() const;
 
+  static bool isValid(const std::string& coded_part_str);
+
   bool defined() const
   {
     return !undefined_;

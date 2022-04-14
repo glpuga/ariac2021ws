@@ -23,14 +23,12 @@ const PartId PartId::UnkownPartId = PartId{};
 
 PartId::PartId(const std::string& coded_part_str)
 {
-  auto tokens =
-      tijutils::string_utils::splitStringByChar(coded_part_str, coded_part_string_separator_);
-
-  if ((tokens.size() != 3) || tokens[0] != coded_part_string_prefix_ ||
-      !part_type::isValid(tokens[1]) || !part_color::isValid(tokens[2]))
+  if (!isValid(coded_part_str))
   {
     throw std::invalid_argument{ coded_part_str + " is not a valid coded part descriptor" };
   }
+  auto tokens =
+      tijutils::string_utils::splitStringByChar(coded_part_str, coded_part_string_separator_);
 
   type_ = part_type::fromString(tokens[1]);
   color_ = part_color::fromString(tokens[2]);
@@ -86,6 +84,19 @@ bool PartId::operator==(const PartId& rhs) const
 bool PartId::operator!=(const PartId& rhs) const
 {
   return !(*this == rhs);
+}
+
+bool PartId::isValid(const std::string& coded_part_str)
+{
+  const auto tokens =
+      tijutils::string_utils::splitStringByChar(coded_part_str, coded_part_string_separator_);
+
+  if ((tokens.size() != 3) || tokens[0] != coded_part_string_prefix_ ||
+      !part_type::isValid(tokens[1]) || !part_color::isValid(tokens[2]))
+  {
+    return false;
+  }
+  return true;
 }
 
 }  // namespace tijcore
