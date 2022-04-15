@@ -10,7 +10,8 @@
 
 // tijcore
 #include <tijcore/datatypes/AnonymizedDataHolder.hpp>
-#include <tijcore/datatypes/PartId.hpp>
+#include <tijcore/datatypes/QualifiedMovableTrayInfo.hpp>
+#include <tijcore/datatypes/QualifiedPartInfo.hpp>
 #include <tijmath/RelativePose3.hpp>
 #include <tijutils/UniqueId.hpp>
 
@@ -23,33 +24,36 @@ public:
 
   static void TransferPartFromHereToThere(ManagedLocus& here, ManagedLocus& there);
 
-  static ManagedLocus CreateEmptySpace(     //
+  static ManagedLocus CreateEmptyLocus(     //
       const std::string& parent_container,  //
       const tijmath::RelativePose3& pose);  //
 
-  static ManagedLocus CreateOccupiedSpace(  //
+  static ManagedLocus CreatePartLocus(      //
       const std::string& parent_container,  //
       const tijmath::RelativePose3& pose,   //
       const PartId& part_id,                //
       const bool broken);                   //
 
-  bool isEmpty() const;
-
-  bool isModel() const;
-
-  void setBroken(const bool is_broken);
-
-  PartId partId() const;
-
-  bool broken() const;
-
-  tijmath::RelativePose3& pose();
-
-  const tijmath::RelativePose3& pose() const;
+  static ManagedLocus CreateMovableTrayLocus(  //
+      const std::string& parent_container,     //
+      const tijmath::RelativePose3& pose,      //
+      const MovableTrayId& movable_tray_id);   //
 
   std::string parentName() const;
 
   tijutils::UniqueId uniqueId() const;
+
+  const tijmath::RelativePose3& pose() const;
+
+  bool isEmptyLocus() const;
+
+  bool isLocusWithPart() const;
+
+  bool isLocusWithMovableTray() const;
+
+  const QualifiedPartInfo& qualifiedPartInfo() const;
+
+  const QualifiedMovableTrayInfo& qualifiedMovableTrayInfo() const;
 
 private:
   struct QualifiedEmptyLocusInfo

@@ -1,46 +1,57 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  * Author: Gerardo Puga */
 
 // Standard library
+#include <stdexcept>
 #include <string>
 #include <utility>
 
 // tijcore
+#include <tijcore/datatypes/QualifiedMovableTrayInfo.hpp>
 #include <tijcore/datatypes/QualifiedPartInfo.hpp>
 #include <tijcore/resources/ManagedLocus.hpp>
 
 namespace tijcore
 {
-ManagedLocus ManagedLocus::CreateEmptySpace(const std::string& parent_container,
+ManagedLocus ManagedLocus::CreateEmptyLocus(const std::string& parent_container,
                                             const tijmath::RelativePose3& pose)
 {
   // can't use make shared because constructor is private
   return ManagedLocus(parent_container, pose, AnonymizedDataHolder{ QualifiedEmptyLocusInfo{} });
 }
 
-ManagedLocus ManagedLocus::CreateOccupiedSpace(const std::string& parent_container,
-                                               const tijmath::RelativePose3& pose,
-                                               const PartId& part_id, const bool broken)
+ManagedLocus ManagedLocus::CreatePartLocus(const std::string& parent_container,
+                                           const tijmath::RelativePose3& pose,
+                                           const PartId& part_id, const bool broken)
 {
   // can't use make shared because constructor is private
   return ManagedLocus(parent_container, pose,
                       AnonymizedDataHolder{ QualifiedPartInfo{ part_id, broken } });
 }
 
+ManagedLocus ManagedLocus::CreateMovableTrayLocus(const std::string& parent_container,
+                                                  const tijmath::RelativePose3& pose,
+                                                  const MovableTrayId& movable_tray_id)
+{
+  // can't use make shared because constructor is private
+  return ManagedLocus(parent_container, pose,
+                      AnonymizedDataHolder{ QualifiedMovableTrayInfo{ movable_tray_id } });
+}
+
 void ManagedLocus::TransferPartFromHereToThere(ManagedLocus& here, ManagedLocus& there)
 {
-  if (here.isEmpty())
+  if (here.isEmptyLocus())
   {
     throw std::logic_error{ "Can't move part from an empty space" };
   }
-  else if (!there.isEmpty())
+  else if (!there.isEmptyLocus())
   {
     throw std::logic_error{ "Can't move part to an occupied space" };
   }
-  AnonymizedDataHolder tmp{ std::move(there.locus_contents_) };
+  AnonymizedDataHolder aux{ std::move(there.locus_contents_) };
   there.locus_contents_ = std::move(here.locus_contents_);
-  here.locus_contents_ = std::move(tmp);
+  here.locus_contents_ = std::move(aux);
 }
 
 ManagedLocus::ManagedLocus(const std::string& parent_container, const tijmath::RelativePose3& pose,
@@ -49,49 +60,40 @@ ManagedLocus::ManagedLocus(const std::string& parent_container, const tijmath::R
 {
 }
 
-bool ManagedLocus::isEmpty() const
+bool ManagedLocus::isEmptyLocus() const
 {
   return locus_contents_.is<QualifiedEmptyLocusInfo>();
 }
 
-bool ManagedLocus::isModel() const
+bool ManagedLocus::isLocusWithPart() const
 {
   return locus_contents_.is<QualifiedPartInfo>();
 }
 
-void ManagedLocus::setBroken(const bool is_broken)
+bool ManagedLocus::isLocusWithMovableTray() const
 {
-  if (!isModel())
-  {
-    throw std::logic_error{ "Unable to set the broken status of not-a-part" };
-  }
-  locus_contents_.as<QualifiedPartInfo>().part_is_broken = is_broken;
+  return locus_contents_.is<QualifiedMovableTrayInfo>();
 }
 
-PartId ManagedLocus::partId() const
+const QualifiedPartInfo& ManagedLocus::qualifiedPartInfo() const
 {
-  if (!isModel())
+  if (!isLocusWithPart())
   {
-    throw std::logic_error{ "Unable to retrieve the party type of not-a-part" };
+    throw std::logic_error{ "Unable to retrieve the qualified part info " };
   }
-  return locus_contents_.as<QualifiedPartInfo>().part_type;
+  return locus_contents_.as<QualifiedPartInfo>();
 }
 
-bool ManagedLocus::broken() const
+const QualifiedMovableTrayInfo& ManagedLocus::qualifiedMovableTrayInfo() const
 {
-  if (isEmpty())
+  if (!isLocusWithMovableTray())
   {
-    throw std::logic_error{ "Requested broken status from empty space" };
+    throw std::logic_error{ "Unable to retrieve the qualified movable tray info " };
   }
-  return locus_contents_.as<QualifiedPartInfo>().part_is_broken;
+  return locus_contents_.as<QualifiedMovableTrayInfo>();
 }
 
 const tijmath::RelativePose3& ManagedLocus::pose() const
-{
-  return pose_;
-}
-
-tijmath::RelativePose3& ManagedLocus::pose()
 {
   return pose_;
 }

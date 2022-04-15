@@ -32,15 +32,17 @@ public:
 
   std::vector<ManagedLocusHandle> findVacantLociCandidates(const double free_radius) override;
 
-  std::vector<ManagedLocusHandle> findSourceLociByPartId(const PartId& part_id) override;
+  std::vector<ManagedLocusHandle> getPartSourceListByType(const PartId& part_id) override;
+
+  std::vector<ManagedLocusHandle>
+  getMovableTraySourceListByType(const MovableTrayId& movable_tray_type) override;
 
   std::vector<ManagedLocusHandle>
   findSiblingLociByCommonParent(const std::string& parent_name) override;
 
   std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle() override;
 
-  std::optional<ManagedLocusHandle>
-  createVacantLociAtPose(const tijmath::RelativePose3& pose) override;
+  std::optional<ManagedLocusHandle> getLocusAtPose(const tijmath::RelativePose3& pose) override;
 
   void processInputSensorData(const std::vector<ObservedItem>& observed_models) override;
 
@@ -49,10 +51,8 @@ public:
 private:
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;
 
-  int32_t sensor_update_count_{ 0 };
-
-  const double position_tolerance_{ 0.024 };  // TODO(glpuga) analyze what value should be used for
-                                              // this
+  const double locus_identity_position_tolerance_{ 0.024 };  // TODO(glpuga) analyze what value
+                                                             // should be used for this
   const double default_occupancy_radius_{ 0.02 };  // TODO(glpuga) this fixed value should be
                                                    // replaced by the footprint of a given part, or
                                                    // at least be a function of part size.
@@ -67,8 +67,6 @@ private:
 
   std::vector<PickAndPlaceRobotHandle> pick_and_place_robots_;
 
-  const ModelContainerHandle* findLociContainer(const ManagedLocus& locus) const;
-
   void clearEmptyLoci();
 
   tijmath::Pose3 transformPoseToContainerLocalPose(const tijmath::RelativePose3& relative_pose,
@@ -81,9 +79,21 @@ private:
 
   SurfaceManager buildContainerSurfaceManager(const std::string& parent_name) const;
 
-  bool locusWithinVolume(const ManagedLocus& locus, const ModelContainerHandle& container) const;
+  const ModelContainerHandle* getPoseParentContainerPtr(const tijmath::RelativePose3& pose) const;
+
+  bool poseIsOnPartContainer(const tijmath::RelativePose3& pose,
+                             const ModelContainerHandle& container) const;
+
+  std::vector<ManagedLocus>
+  createObservedLociListFromObservedModels(const std::vector<ObservedItem>& observed_models) const;
 
   void clearNonAllocatedEmptyLoci();
+
+  ManagedLocus mergeOldAndNewPartLocusInformation(const ManagedLocus& known_locus_data,
+                                                  const ManagedLocus& new_locus_data) const;
+
+  ManagedLocus mergeOldAndNewMovableTrayLocusInformation(const ManagedLocus& known_locus_data,
+                                                         const ManagedLocus& new_locus_data) const;
 };
 
 }  // namespace tijcore

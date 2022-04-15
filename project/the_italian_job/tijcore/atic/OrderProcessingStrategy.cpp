@@ -209,7 +209,7 @@ OrderProcessingStrategy::processUniversalShipment(
     auto& locus = *handle.resource();
 
     // if the place is empty, store in missing parts
-    if (locus.isEmpty())
+    if (locus.isEmptyLocus())
     {
       // notice that since I own a handle now, asking whether the handle is
       // allocated or not does not tell me if it was allocated before. Using a

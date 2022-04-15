@@ -39,21 +39,21 @@ public:
 
 TEST_F(ManagedLocusTests, EmptySpaceConstruction)
 {
-  auto uut = ManagedLocus::CreateEmptySpace(parent_, pose_);
-  ASSERT_TRUE(uut.isEmpty());
-  ASSERT_FALSE(uut.isModel());
-  ASSERT_THROW({ uut.partId(); }, std::logic_error);
+  auto uut = ManagedLocus::CreateEmptyLocus(parent_, pose_);
+  ASSERT_TRUE(uut.isEmptyLocus());
+  ASSERT_FALSE(uut.isLocusWithPart());
+  ASSERT_THROW({ uut.qualifiedPartInfo().part_type; }, std::logic_error);
   ASSERT_NEAR(pose_.position().vector().x(), uut.pose().position().vector().x(), tolerance_);
   ASSERT_EQ(parent_, uut.parentName());
 }
 
 TEST_F(ManagedLocusTests, NonEmptySpaceConstructionNonBroken)
 {
-  auto uut = ManagedLocus::CreateOccupiedSpace(parent_, pose_, part_id_, false);
-  ASSERT_FALSE(uut.isEmpty());
-  ASSERT_TRUE(uut.isModel());
-  const auto part_id = uut.partId();
-  const auto broken = uut.broken();
+  auto uut = ManagedLocus::CreatePartLocus(parent_, pose_, part_id_, false);
+  ASSERT_FALSE(uut.isEmptyLocus());
+  ASSERT_TRUE(uut.isLocusWithPart());
+  const auto part_id = uut.qualifiedPartInfo().part_type;
+  const auto broken = uut.qualifiedPartInfo().part_is_broken;
   ASSERT_EQ(part_id_, part_id);
   ASSERT_EQ(false, broken);
   ASSERT_NEAR(pose_.position().vector().x(), uut.pose().position().vector().x(), tolerance_);
@@ -62,41 +62,15 @@ TEST_F(ManagedLocusTests, NonEmptySpaceConstructionNonBroken)
 
 TEST_F(ManagedLocusTests, NonEmptySpaceConstructionBroken)
 {
-  auto uut = ManagedLocus::CreateOccupiedSpace(parent_, pose_, part_id_, true);
-  ASSERT_FALSE(uut.isEmpty());
-  ASSERT_TRUE(uut.isModel());
-  const auto part_id = uut.partId();
-  const auto broken = uut.broken();
+  auto uut = ManagedLocus::CreatePartLocus(parent_, pose_, part_id_, true);
+  ASSERT_FALSE(uut.isEmptyLocus());
+  ASSERT_TRUE(uut.isLocusWithPart());
+  const auto part_id = uut.qualifiedPartInfo().part_type;
+  const auto broken = uut.qualifiedPartInfo().part_is_broken;
   ASSERT_EQ(part_id_, part_id);
   ASSERT_EQ(true, broken);
   ASSERT_NEAR(pose_.position().vector().x(), uut.pose().position().vector().x(), tolerance_);
   ASSERT_EQ(parent_, uut.parentName());
-}
-
-TEST_F(ManagedLocusTests, SetBrokenStateWorks)
-{
-  auto uut = ManagedLocus::CreateOccupiedSpace(parent_, pose_, part_id_, false);
-  auto part_id = uut.partId();
-  auto broken = uut.broken();
-
-  ASSERT_EQ(part_id_, part_id);
-  ASSERT_EQ(false, broken);
-
-  uut.setBroken(true);
-
-  part_id = uut.partId();
-  broken = uut.broken();
-
-  ASSERT_EQ(part_id_, part_id);
-  ASSERT_EQ(true, broken);
-
-  uut.setBroken(false);
-
-  part_id = uut.partId();
-  broken = uut.broken();
-
-  ASSERT_EQ(part_id_, part_id);
-  ASSERT_EQ(false, broken);
 }
 
 TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
@@ -105,7 +79,7 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
     bool retval;
     try
     {
-      retval = uut.isEmpty() && !uut.isModel();
+      retval = uut.isEmptyLocus() && !uut.isLocusWithPart();
     }
     catch (...)
     {
@@ -119,9 +93,9 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
     bool retval;
     try
     {
-      const auto part_id = uut.partId();
-      const auto broken = uut.broken();
-      retval = !uut.isEmpty() && uut.isModel() && (expected_part_id == part_id) &&
+      const auto part_id = uut.qualifiedPartInfo().part_type;
+      const auto broken = uut.qualifiedPartInfo().part_is_broken;
+      retval = !uut.isEmptyLocus() && uut.isLocusWithPart() && (expected_part_id == part_id) &&
                (expected_broken_value == broken);
     }
     catch (...)
@@ -164,8 +138,8 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
 
   {
     // From occupied to emtpy, should work just fine
-    auto src = ManagedLocus::CreateOccupiedSpace(src_parent, src_pose, part_id_, true);
-    auto dst = ManagedLocus::CreateEmptySpace(dst_parent, dst_pose);
+    auto src = ManagedLocus::CreatePartLocus(src_parent, src_pose, part_id_, true);
+    auto dst = ManagedLocus::CreateEmptyLocus(dst_parent, dst_pose);
 
     ASSERT_TRUE(is_occupied_space(src, part_id_, true));
     ASSERT_TRUE(is_the_same_pose(src_pose, src.pose(), tolerance_));
@@ -186,8 +160,8 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
 
   {
     // From empty to occupied, should throw
-    auto src = ManagedLocus::CreateEmptySpace(src_parent, src_pose);
-    auto dst = ManagedLocus::CreateOccupiedSpace(dst_parent, dst_pose, part_id_, true);
+    auto src = ManagedLocus::CreateEmptyLocus(src_parent, src_pose);
+    auto dst = ManagedLocus::CreatePartLocus(dst_parent, dst_pose, part_id_, true);
     ASSERT_TRUE(is_empty_space(src));
     ASSERT_TRUE(is_the_same_pose(src_pose, src.pose(), tolerance_));
     ASSERT_EQ(src_parent, src.parentName());
@@ -200,8 +174,8 @@ TEST_F(ManagedLocusTests, TransferPartFromHereToThereWorks)
 
   {
     // From occupied to occupied, should throw
-    auto src = ManagedLocus::CreateOccupiedSpace(src_parent, src_pose, part_id_, true);
-    auto dst = ManagedLocus::CreateOccupiedSpace(dst_parent, dst_pose, part_id_, true);
+    auto src = ManagedLocus::CreatePartLocus(src_parent, src_pose, part_id_, true);
+    auto dst = ManagedLocus::CreatePartLocus(dst_parent, dst_pose, part_id_, true);
     ASSERT_TRUE(is_occupied_space(src, part_id_, true));
     ASSERT_TRUE(is_the_same_pose(src_pose, src.pose(), tolerance_));
     ASSERT_EQ(src_parent, src.parentName());
