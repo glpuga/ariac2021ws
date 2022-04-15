@@ -27,8 +27,6 @@ namespace tijcore
 namespace
 {
 constexpr std::chrono::milliseconds blocking_methods_sleep_interval_{ 200 };
-
-constexpr int32_t conveyor_belt_start_difficulty_ = 3;
 }  // namespace
 
 ResourceManager::ResourceManager(
@@ -71,7 +69,9 @@ ResourceManager::findVacantLociCandidates(const double free_radius)
     // Only consider containers that are not currently allocated to some task,
     // and not disabled
     auto& model_container_handle = model_container_entry.second;
-    if (!model_container_handle.allocated() && model_container_handle.resource()->enabled())
+    if (!model_container_handle.allocated() &&
+        model_container_handle.resource()->enabled())  // TODO(glpuga) Do I still need to keept the
+                                                       // "allocated" for surfaces?
     {
       surface_occupancy_maps.emplace(std::make_pair(
           model_container_entry.first, buildContainerSurfaceManager(model_container_entry.first)));
@@ -102,7 +102,7 @@ ResourceManager::findVacantLociCandidates(const double free_radius)
       {
         ManagedLocusHandle new_handle{ std::make_shared<ManagedLocus>(
             ManagedLocus::CreateEmptySpace(container_name, pose)) };
-        model_loci_.emplace_back(new_handle);
+        known_loci_resource_state_.emplace_back(new_handle);
         found_loci.emplace_back(std::move(new_handle));
       }
     }
@@ -143,7 +143,8 @@ ResourceManager::findSourceLociByPartId(const PartId& part_id)
   };
 
   std::vector<ResourceManagerInterface::ManagedLocusHandle> output;
-  std::copy_if(model_loci_.begin(), model_loci_.end(), std::back_inserter(output), filter);
+  std::copy_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(),
+               std::back_inserter(output), filter);
   return output;
 }
 
@@ -170,7 +171,8 @@ ResourceManager::findSiblingLociByCommonParent(const std::string& parent_name)
   };
 
   std::vector<ResourceManagerInterface::ManagedLocusHandle> output;
-  std::copy_if(model_loci_.begin(), model_loci_.end(), std::back_inserter(output), filter);
+  std::copy_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(),
+               std::back_inserter(output), filter);
   return output;
 }
 
@@ -231,11 +233,12 @@ ResourceManager::createVacantLociAtPose(const tijmath::RelativePose3& pose)
     return lhs_distance < rhs_distance;
   };
 
-  if (model_loci_.size())
+  if (known_loci_resource_state_.size())
   {
     // determine the model that's closest to the requested pose
     const auto closest_part =
-        std::min_element(model_loci_.begin(), model_loci_.end(), shortest_distance_to_pose);
+        std::min_element(known_loci_resource_state_.begin(), known_loci_resource_state_.end(),
+                         shortest_distance_to_pose);
 
     // get both poses in the same reference frame
     auto reframed_closest_part_pose =
@@ -298,7 +301,7 @@ ResourceManager::createVacantLociAtPose(const tijmath::RelativePose3& pose)
   auto target_locus_handle = ResourceManagerInterface::ManagedLocusHandle(
       std::make_shared<ManagedLocus>(ManagedLocus::CreateEmptySpace(parent_name, pose)));
 
-  model_loci_.emplace_back(target_locus_handle);
+  known_loci_resource_state_.emplace_back(target_locus_handle);
 
   return std::optional<ManagedLocusHandle>{ std::move(target_locus_handle) };
 }
@@ -321,7 +324,7 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(const std::string& 
 
   auto surface_manager = volumeToSurface(handle_ptr->containerVolume());
 
-  for (const auto& model_locus : model_loci_)
+  for (const auto& model_locus : known_loci_resource_state_)
   {
     auto [x, y, r] =
         poseToOccupancy(model_locus.resource()->pose(), handle_ptr->containerReferenceFrameId());
@@ -364,17 +367,8 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
     {
       WARNING(
           "A model at {} appears in sensor input but could not be matched "
-          "to a model tray",
+          "to a known surface",
           observed_item_entry.pose);
-      continue;
-    }
-
-    // TODO(glpuga) this may be more detrimental than not, now that robots take
-    // turns for the airspace above containers
-    if (parent_container->allocated())
-    {
-      // we ignore model information in allocated containers, because a robot
-      // may be moving stuff around
       continue;
     }
 
@@ -394,27 +388,17 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
     new_model_loci.emplace_back(std::move(new_model_locus));
   }
 
-  std::set<tijutils::UniqueId> loci_to_keep;
+  // This will be a list of the elements that we want to keep in the state vector
+  std::set<tijutils::UniqueId> uids_of_the_loci_to_keep;
 
   //
-  // move over the known loci in allocated containers, since we'll have
-  // no information about those from the camera.
-  for (auto& known_model_locus_handle : model_loci_)
+  // move over known allocated loci. We won't be updating those from input information
+  for (auto& known_model_locus_handle : known_loci_resource_state_)
   {
     // allocated objects need to be carried over, both empty and non-empty ones
     if (known_model_locus_handle.allocated())
     {
-      loci_to_keep.insert(known_model_locus_handle.resource()->uniqueId());
-      continue;
-    }
-
-    // models in allocated containers are ignored in the input, so
-    // we carry them over assuming they are still there.
-    auto& known_model_locus = *known_model_locus_handle.resource();
-    auto parent_container = findLociContainer(known_model_locus);
-    if (parent_container->allocated())
-    {
-      loci_to_keep.insert(known_model_locus_handle.resource()->uniqueId());
+      uids_of_the_loci_to_keep.insert(known_model_locus_handle.resource()->uniqueId());
       continue;
     }
   }
@@ -426,7 +410,7 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
   {
     bool found{ false };
 
-    for (auto& known_model_locus_handle : model_loci_)
+    for (auto& known_model_locus_handle : known_loci_resource_state_)
     {
       auto& known_model_locus = *known_model_locus_handle.resource();
 
@@ -455,7 +439,7 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
 
         if (known_model_locus.isEmpty())
         {
-          // if we knew nothing, then any new information is valid
+          // if we knew nothing, then any new that we got information is valid
           known_model_locus = new_model_locus;
         }
         else
@@ -467,6 +451,7 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
           const auto new_part_id = new_model_locus.partId();
           const auto new_broken = new_model_locus.broken();
 
+          // unless the new information is less specific than what was already knonw, update
           if (new_part_id != PartId::UnkownPartId)
           {
             known_part_id = new_part_id;
@@ -480,42 +465,47 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
 
           // we always update the pose information with the new information.
           // We know that position is the same, but rotation might have
-          // changed.
+          // changed. This will also update changes within tolerance.
           auto known_pose = new_model_locus.pose();
 
+          // Create the updated locus with the new information
+          // and add it to the list of loci that are part of the updated state
           known_model_locus = ManagedLocus::CreateOccupiedSpace(
               new_model_locus.parentName(), known_pose, known_part_id, known_broken);
-
-          loci_to_keep.emplace(known_model_locus.uniqueId());
+          uids_of_the_loci_to_keep.emplace(known_model_locus.uniqueId());
         }
 
         // one way or the other, we already had information on this locus that
-        // we merged with new data.
+        // we merged with new data, so stop looking for it.
         found = true;
         break;
       }
     }
 
+    // if we didn't find a match, then we need to add a new locus
     if (!found)
     {
-      auto it = model_loci_.emplace_back(std::make_shared<ManagedLocus>(new_model_locus));
-      loci_to_keep.emplace(it.resource()->uniqueId());
+      auto it =
+          known_loci_resource_state_.emplace_back(std::make_shared<ManagedLocus>(new_model_locus));
+      uids_of_the_loci_to_keep.emplace(it.resource()->uniqueId());
     }
   }
 
-  auto filter = [&loci_to_keep](const ManagedLocusHandle& locus) {
-    // remove it if it's not currently in use and it represents
-    // an empty locus
-    return loci_to_keep.count(locus.resource()->uniqueId()) == 0;
+  // This filter will remove any locus in known_loci_resource_state_ that is not in
+  // uids_of_the_loci_to_keep
+  auto filter = [&uids_of_the_loci_to_keep](const ManagedLocusHandle& locus) {
+    return uids_of_the_loci_to_keep.count(locus.resource()->uniqueId()) == 0;
   };
 
-  // erase the loci that have not been updated or that have no special
-  // reason to be kept (empty loci)
-  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
-                    model_loci_.end());
+  // remove from the known_loci_resource_state_ list all those locus that have not been moved
+  // and that are not allocated to new tasks. Those will be empty locus and
+  // pieces that are not currently visible in the camera.
+  known_loci_resource_state_.erase(
+      std::remove_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(), filter),
+      known_loci_resource_state_.end());
 
   //
-  // model_loci_ has now:
+  // After all of the above known_loci_resource_state_ contains:
   // - Known models located in allocated containers.
   // - New models in non-allocated containers.
   // - known models in non-allocated containers visible in camera.
@@ -544,8 +534,9 @@ void ResourceManager::clearEmptyLoci()
     // an empty locus
     return !locus.allocated() && locus.resource()->isEmpty();
   };
-  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
-                    model_loci_.end());
+  known_loci_resource_state_.erase(
+      std::remove_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(), filter),
+      known_loci_resource_state_.end());
 }
 
 tijmath::Pose3 ResourceManager::transformPoseToContainerLocalPose(
@@ -579,8 +570,9 @@ void ResourceManager::clearNonAllocatedEmptyLoci()
     return !locus.allocated() && locus.resource()->isEmpty();
   };
 
-  model_loci_.erase(std::remove_if(model_loci_.begin(), model_loci_.end(), filter),
-                    model_loci_.end());
+  known_loci_resource_state_.erase(
+      std::remove_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(), filter),
+      known_loci_resource_state_.end());
 }
 
 void ResourceManager::logCurrentResourceManagerState()
@@ -588,8 +580,8 @@ void ResourceManager::logCurrentResourceManagerState()
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
 
-  WARNING("Known world state ({} loci)", model_loci_.size());
-  for (auto& known_model_locus_handle : model_loci_)
+  WARNING("Known world state ({} loci)", known_loci_resource_state_.size());
+  for (auto& known_model_locus_handle : known_loci_resource_state_)
   {
     auto& known_model_locus = *known_model_locus_handle.resource();
 
