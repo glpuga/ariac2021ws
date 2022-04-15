@@ -61,7 +61,7 @@ private:
 
   Toolbox::SharedPtr toolbox_;
 
-  std::vector<ManagedLocusHandle> model_loci_;
+  std::vector<ManagedLocusHandle> known_loci_resource_state_;
 
   std::map<std::string, ModelContainerHandle> model_containers_;
 

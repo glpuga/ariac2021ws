@@ -16,13 +16,10 @@
 
 namespace tijcore
 {
-class ModelContainerInterface;
-
 class ManagedLocus : public std::enable_shared_from_this<ManagedLocus>
 {
 public:
   using SharedPtr = std::shared_ptr<ManagedLocus>;
-  using ParentPtr = std::shared_ptr<ModelContainerInterface>;
 
   static void TransferPartFromHereToThere(ManagedLocus& here, ManagedLocus& there);
 
