@@ -158,9 +158,9 @@ TEST_F(ResourceManagerTests, StartuptState)
   auto empty_loci = uut_->findVacantLociCandidates(empty_radius_);
   ASSERT_EQ(3u, empty_loci.size());
 
-  auto rpump = uut_->findSourceLociByPartId(part_rpump_);
-  auto gpump = uut_->findSourceLociByPartId(part_gpump_);
-  auto bpump = uut_->findSourceLociByPartId(part_bpump_);
+  auto rpump = uut_->getPartSourceListByType(part_rpump_);
+  auto gpump = uut_->getPartSourceListByType(part_gpump_);
+  auto bpump = uut_->getPartSourceListByType(part_bpump_);
   ASSERT_EQ(0u, rpump.size());
   ASSERT_EQ(0u, gpump.size());
   ASSERT_EQ(0u, bpump.size());
@@ -176,7 +176,7 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataWithNoTablesInUse)
   buildUnitUnderTest();
 
   {
-    auto rpump = uut_->findSourceLociByPartId(part_rpump_);
+    auto rpump = uut_->getPartSourceListByType(part_rpump_);
     ASSERT_EQ(0u, rpump.size());
   }
 
@@ -193,14 +193,14 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataWithNoTablesInUse)
   uut_->processInputSensorData(observed_models_);
 
   {
-    auto rpump = uut_->findSourceLociByPartId(part_rpump_);
+    auto rpump = uut_->getPartSourceListByType(part_rpump_);
     ASSERT_EQ(4u, rpump.size());
   }
 
   uut_->processInputSensorData({});
 
   {
-    auto rpump = uut_->findSourceLociByPartId(part_rpump_);
+    auto rpump = uut_->getPartSourceListByType(part_rpump_);
     ASSERT_EQ(0u, rpump.size());
   }
 
@@ -219,9 +219,9 @@ TEST_F(ResourceManagerTests, DISABLED_SensorDataWithNoTablesInUse)
   uut_->processInputSensorData(observed_models_);
 
   {
-    auto rpump = uut_->findSourceLociByPartId(part_rpump_);
-    auto gpump = uut_->findSourceLociByPartId(part_gpump_);
-    auto bpump = uut_->findSourceLociByPartId(part_bpump_);
+    auto rpump = uut_->getPartSourceListByType(part_rpump_);
+    auto gpump = uut_->getPartSourceListByType(part_gpump_);
+    auto bpump = uut_->getPartSourceListByType(part_bpump_);
     ASSERT_EQ(0u, rpump.size());
     ASSERT_EQ(3u, gpump.size());
     ASSERT_EQ(2u, bpump.size());
@@ -254,10 +254,10 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
     };
     uut_->processInputSensorData(observed_models_);
 
-    auto part1_handlers = uut_->findSourceLociByPartId(part1);
-    auto part2_handlers = uut_->findSourceLociByPartId(part2);
-    auto part3_handlers = uut_->findSourceLociByPartId(part3);
-    auto part4_handlers = uut_->findSourceLociByPartId(part4);
+    auto part1_handlers = uut_->getPartSourceListByType(part1);
+    auto part2_handlers = uut_->getPartSourceListByType(part2);
+    auto part3_handlers = uut_->getPartSourceListByType(part3);
+    auto part4_handlers = uut_->getPartSourceListByType(part4);
     ASSERT_EQ(1u, part1_handlers.size());
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
@@ -281,10 +281,10 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
     };
     uut_->processInputSensorData(observed_models_);
 
-    auto part1_handlers = uut_->findSourceLociByPartId(part1);
-    auto part2_handlers = uut_->findSourceLociByPartId(part2);
-    auto part3_handlers = uut_->findSourceLociByPartId(part3);
-    auto part4_handlers = uut_->findSourceLociByPartId(part4);
+    auto part1_handlers = uut_->getPartSourceListByType(part1);
+    auto part2_handlers = uut_->getPartSourceListByType(part2);
+    auto part3_handlers = uut_->getPartSourceListByType(part3);
+    auto part4_handlers = uut_->getPartSourceListByType(part4);
     ASSERT_EQ(1u, part1_handlers.size());
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
@@ -308,10 +308,10 @@ TEST_F(ResourceManagerTests, SensorDataUpdateKnownData)
     };
     uut_->processInputSensorData(observed_models_);
 
-    auto part1_handlers = uut_->findSourceLociByPartId(part1);
-    auto part2_handlers = uut_->findSourceLociByPartId(part2);
-    auto part3_handlers = uut_->findSourceLociByPartId(part3);
-    auto part4_handlers = uut_->findSourceLociByPartId(part4);
+    auto part1_handlers = uut_->getPartSourceListByType(part1);
+    auto part2_handlers = uut_->getPartSourceListByType(part2);
+    auto part3_handlers = uut_->getPartSourceListByType(part3);
+    auto part4_handlers = uut_->getPartSourceListByType(part4);
     ASSERT_EQ(1u, part1_handlers.size());
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
@@ -353,10 +353,10 @@ TEST_F(ResourceManagerTests, SensorDataMissingKnownModelGetPurged)
     };
     uut_->processInputSensorData(observed_models_);
 
-    auto part1_handlers = uut_->findSourceLociByPartId(part1);
-    auto part2_handlers = uut_->findSourceLociByPartId(part2);
-    auto part3_handlers = uut_->findSourceLociByPartId(part3);
-    auto part4_handlers = uut_->findSourceLociByPartId(part4);
+    auto part1_handlers = uut_->getPartSourceListByType(part1);
+    auto part2_handlers = uut_->getPartSourceListByType(part2);
+    auto part3_handlers = uut_->getPartSourceListByType(part3);
+    auto part4_handlers = uut_->getPartSourceListByType(part4);
     ASSERT_EQ(1u, part1_handlers.size());
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(1u, part3_handlers.size());
@@ -379,10 +379,10 @@ TEST_F(ResourceManagerTests, SensorDataMissingKnownModelGetPurged)
     };
     uut_->processInputSensorData(observed_models_);
 
-    auto part1_handlers = uut_->findSourceLociByPartId(part1);
-    auto part2_handlers = uut_->findSourceLociByPartId(part2);
-    auto part3_handlers = uut_->findSourceLociByPartId(part3);
-    auto part4_handlers = uut_->findSourceLociByPartId(part4);
+    auto part1_handlers = uut_->getPartSourceListByType(part1);
+    auto part2_handlers = uut_->getPartSourceListByType(part2);
+    auto part3_handlers = uut_->getPartSourceListByType(part3);
+    auto part4_handlers = uut_->getPartSourceListByType(part4);
     ASSERT_EQ(1u, part1_handlers.size());
     ASSERT_EQ(1u, part2_handlers.size());
     ASSERT_EQ(0u, part3_handlers.size());
@@ -415,20 +415,20 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
 
   // Test we can allocate a target in empty space
   {
-    auto handle1 = uut_->createVacantLociAtPose(pose1);
-    auto handle2 = uut_->createVacantLociAtPose(pose2);
-    auto handle3 = uut_->createVacantLociAtPose(pose3);
-    auto handle4 = uut_->createVacantLociAtPose(pose4);
+    auto handle1 = uut_->getLocusAtPose(pose1);
+    auto handle2 = uut_->getLocusAtPose(pose2);
+    auto handle3 = uut_->getLocusAtPose(pose3);
+    auto handle4 = uut_->getLocusAtPose(pose4);
 
     ASSERT_NE(std::nullopt, handle1);
     ASSERT_NE(std::nullopt, handle2);
     ASSERT_NE(std::nullopt, handle3);
     ASSERT_NE(std::nullopt, handle4);
 
-    ASSERT_TRUE(handle1->resource()->isEmpty());
-    ASSERT_TRUE(handle2->resource()->isEmpty());
-    ASSERT_TRUE(handle3->resource()->isEmpty());
-    ASSERT_TRUE(handle4->resource()->isEmpty());
+    ASSERT_TRUE(handle1->resource()->isEmptyLocus());
+    ASSERT_TRUE(handle2->resource()->isEmptyLocus());
+    ASSERT_TRUE(handle3->resource()->isEmptyLocus());
+    ASSERT_TRUE(handle4->resource()->isEmptyLocus());
   }
 
   // test that for an existing model locus we get the handle
@@ -443,20 +443,20 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
     };
     uut_->processInputSensorData(observed_models_);
 
-    auto handle1 = uut_->createVacantLociAtPose(pose1);
-    auto handle2 = uut_->createVacantLociAtPose(pose2);
-    auto handle3 = uut_->createVacantLociAtPose(pose3);
-    auto handle4 = uut_->createVacantLociAtPose(pose4);
+    auto handle1 = uut_->getLocusAtPose(pose1);
+    auto handle2 = uut_->getLocusAtPose(pose2);
+    auto handle3 = uut_->getLocusAtPose(pose3);
+    auto handle4 = uut_->getLocusAtPose(pose4);
 
     ASSERT_NE(std::nullopt, handle1);
     ASSERT_NE(std::nullopt, handle2);
     ASSERT_NE(std::nullopt, handle3);
     ASSERT_NE(std::nullopt, handle4);
 
-    ASSERT_TRUE(handle1->resource()->isModel());
-    ASSERT_TRUE(handle2->resource()->isModel());
-    ASSERT_TRUE(handle3->resource()->isModel());
-    ASSERT_TRUE(handle4->resource()->isModel());
+    ASSERT_TRUE(handle1->resource()->isLocusWithPart());
+    ASSERT_TRUE(handle2->resource()->isLocusWithPart());
+    ASSERT_TRUE(handle3->resource()->isLocusWithPart());
+    ASSERT_TRUE(handle4->resource()->isLocusWithPart());
 
     ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(
         pose1, handle1->resource()->pose(), position_tolerance_, rotation_tolerance_));
@@ -479,23 +479,23 @@ TEST_F(ResourceManagerTests, DISABLED_CreateTargetReturnsKnownLoci)
     };
     uut_->processInputSensorData(observed_models_);
 
-    auto allocated_part1 = uut_->findSourceLociByPartId(part1);
-    auto allocated_part3 = uut_->findSourceLociByPartId(part3);
+    auto allocated_part1 = uut_->getPartSourceListByType(part1);
+    auto allocated_part3 = uut_->getPartSourceListByType(part3);
     ASSERT_EQ(1u, allocated_part1.size());
     ASSERT_EQ(1u, allocated_part3.size());
 
-    auto handle1 = uut_->createVacantLociAtPose(pose1);
-    auto handle2 = uut_->createVacantLociAtPose(pose2);
-    auto handle3 = uut_->createVacantLociAtPose(pose3);
-    auto handle4 = uut_->createVacantLociAtPose(pose4);
+    auto handle1 = uut_->getLocusAtPose(pose1);
+    auto handle2 = uut_->getLocusAtPose(pose2);
+    auto handle3 = uut_->getLocusAtPose(pose3);
+    auto handle4 = uut_->getLocusAtPose(pose4);
 
     ASSERT_EQ(std::nullopt, handle1);  // is allocated => nullopt
     ASSERT_NE(std::nullopt, handle2);
     ASSERT_EQ(std::nullopt, handle3);  // is allocated => nullopt
     ASSERT_NE(std::nullopt, handle4);
 
-    ASSERT_TRUE(handle2->resource()->isModel());
-    ASSERT_TRUE(handle4->resource()->isModel());
+    ASSERT_TRUE(handle2->resource()->isLocusWithPart());
+    ASSERT_TRUE(handle4->resource()->isLocusWithPart());
 
     ASSERT_TRUE(tijmath::RelativePose3::sameRelativePose3(
         pose2, handle2->resource()->pose(), position_tolerance_, rotation_tolerance_));
@@ -538,7 +538,7 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
     ASSERT_EQ(1u, parts_in_table3.size());
 
     auto model_only = [](const ManagedLocus* locus_ptr) {
-      auto model = locus_ptr->partId();
+      auto model = locus_ptr->qualifiedPartInfo().part_type;
       return model;
     };
     ASSERT_EQ(table1_parts, model_only(parts_in_table1[0].resource()));
@@ -548,8 +548,8 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
   }
 
   {
-    auto locus_at_pose_2 = uut_->createVacantLociAtPose(pose2);
-    auto locus_at_pose_4 = uut_->createVacantLociAtPose(pose4);
+    auto locus_at_pose_2 = uut_->getLocusAtPose(pose2);
+    auto locus_at_pose_4 = uut_->getLocusAtPose(pose4);
 
     EXPECT_NE(std::nullopt, locus_at_pose_2);
     EXPECT_NE(std::nullopt, locus_at_pose_4);
@@ -563,7 +563,7 @@ TEST_F(ResourceManagerTests, TestFindManagedLociByParent)
     ASSERT_EQ(0u, parts_in_table3.size());
 
     auto model_only = [](const ManagedLocus* locus_ptr) {
-      auto model = locus_ptr->partId();
+      auto model = locus_ptr->qualifiedPartInfo().part_type;
       return model;
     };
     ASSERT_EQ(table1_parts, model_only(parts_in_table1[0].resource()));

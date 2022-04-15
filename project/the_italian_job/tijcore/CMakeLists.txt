@@ -52,9 +52,6 @@ add_library(${PROJECT_NAME}
   src/PartColorId.cpp
   src/PartId.cpp
   src/PartTypeId.cpp
-  src/PickAndPlaceTask.cpp
-  src/PickAndTwistPartTask.cpp
-  src/RemoveBrokenPartTask.cpp
   src/ResourceHandle.cpp
   src/ResourceManager.cpp
   src/RobotTaskFactory.cpp
@@ -62,8 +59,6 @@ add_library(${PROJECT_NAME}
   src/RobotTaskOutcome.cpp
   src/StaticFrameTransformer.cpp
   src/StationId.cpp
-  src/SubmitAssemblyShipmentTask.cpp
-  src/SubmitKittingShipmentTask.cpp
   src/SurfaceManager.cpp
 )
 

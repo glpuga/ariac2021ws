@@ -82,7 +82,7 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
     result = RobotTaskOutcome::TASK_SUCCESS;
     // create an empty pose anywhere, we just need it to make the part info
     // dissapear
-    auto limbo = ManagedLocus::CreateEmptySpace("drop_bucket", scene->getDropBucketPose());
+    auto limbo = ManagedLocus::CreateEmptyLocus("drop_bucket", scene->getDropBucketPose());
     ManagedLocus::TransferPartFromHereToThere(*target_.resource(), limbo);
     INFO(
         "{} successfully removed a broken part and placed it into the "
@@ -94,7 +94,7 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   // source part is
   if (result != RobotTaskOutcome::TASK_SUCCESS)
   {
-    *target_.resource() = ManagedLocus::CreateEmptySpace(target_.resource()->parentName(),
+    *target_.resource() = ManagedLocus::CreateEmptyLocus(target_.resource()->parentName(),
                                                          target_.resource()->pose());
   }
 

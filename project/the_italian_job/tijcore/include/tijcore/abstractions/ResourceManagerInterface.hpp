@@ -34,15 +34,20 @@ public:
 
   virtual std::vector<ManagedLocusHandle> findVacantLociCandidates(const double free_radius) = 0;
 
-  virtual std::vector<ManagedLocusHandle> findSourceLociByPartId(const PartId& part_id) = 0;
+  virtual std::vector<ManagedLocusHandle> getPartSourceListByType(const PartId& part_id) = 0;
 
+  // TODO(glpuga): implement tests for this method. https://github.com/glpuga/ariac2021ws/issues/162
+  virtual std::vector<ManagedLocusHandle>
+  getMovableTraySourceListByType(const MovableTrayId& movable_tray_type) = 0;
+
+  // TODO(glpuga): remove this method, is not really being needed.
+  // https://github.com/glpuga/ariac2021ws/issues/161
   virtual std::vector<ManagedLocusHandle>
   findSiblingLociByCommonParent(const std::string& parent_name) = 0;
 
   virtual std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle() = 0;
 
-  virtual std::optional<ManagedLocusHandle>
-  createVacantLociAtPose(const tijmath::RelativePose3& pose) = 0;
+  virtual std::optional<ManagedLocusHandle> getLocusAtPose(const tijmath::RelativePose3& pose) = 0;
 
   virtual void processInputSensorData(const std::vector<ObservedItem>& observed_models) = 0;
 

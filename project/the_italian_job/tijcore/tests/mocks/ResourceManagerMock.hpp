@@ -22,14 +22,17 @@ class ResourceManagerMock : public ResourceManagerInterface
 public:
   MOCK_METHOD1(findVacantLociCandidates, std::vector<ManagedLocusHandle>(const double free_radius));
 
-  MOCK_METHOD1(findSourceLociByPartId, std::vector<ManagedLocusHandle>(const PartId& part_id));
+  MOCK_METHOD1(getPartSourceListByType, std::vector<ManagedLocusHandle>(const PartId& part_id));
+
+  MOCK_METHOD1(getMovableTraySourceListByType,
+               std::vector<ManagedLocusHandle>(const MovableTrayId& movable_tray_type));
 
   MOCK_METHOD1(findSiblingLociByCommonParent,
                std::vector<ManagedLocusHandle>(const std::string& part_id));
 
   MOCK_METHOD0(getPickAndPlaceRobotHandle, std::optional<PickAndPlaceRobotHandle>());
 
-  MOCK_METHOD1(createVacantLociAtPose,
+  MOCK_METHOD1(getLocusAtPose,
                std::optional<ManagedLocusHandle>(const tijmath::RelativePose3& pose));
 
   MOCK_METHOD1(processInputSensorData, void(const std::vector<ObservedItem>& observed_models));

@@ -63,7 +63,7 @@ public:
       const auto broken = src.broken();
       INFO("Removing {} (broken {}) from {} (@{})", part_id.codedString(), broken, src.pose(),
            src.parentName());
-      auto null_place = ManagedLocus::CreateEmptySpace(source_locus.resource()->parentName(),
+      auto null_place = ManagedLocus::CreateEmptyLocus(source_locus.resource()->parentName(),
                                                        source_locus.resource()->pose());
       ManagedLocus::TransferPartFromHereToThere(*source_locus.resource(), null_place);
       return RobotTaskOutcome::TASK_SUCCESS;

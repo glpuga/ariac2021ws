@@ -101,7 +101,7 @@ ResourceManager::findVacantLociCandidates(const double free_radius)
       // record it locally and add it to the list of free loci
       {
         ManagedLocusHandle new_handle{ std::make_shared<ManagedLocus>(
-            ManagedLocus::CreateEmptySpace(container_name, pose)) };
+            ManagedLocus::CreateEmptyLocus(container_name, pose)) };
         known_loci_resource_state_.emplace_back(new_handle);
         found_loci.emplace_back(std::move(new_handle));
       }
@@ -116,13 +116,13 @@ ResourceManager::findVacantLociCandidates(const double free_radius)
 }
 
 std::vector<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::findSourceLociByPartId(const PartId& part_id)
+ResourceManager::getPartSourceListByType(const PartId& part_id)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
 
   auto filter = [this, &part_id](const ManagedLocusHandle& handle) {
-    if (handle.allocated() || !handle.resource()->isModel())
+    if (handle.allocated() || !handle.resource()->isLocusWithPart())
     {
       return false;
     }
@@ -139,7 +139,41 @@ ResourceManager::findSourceLociByPartId(const PartId& part_id)
     {
       return false;
     }
-    return part_id == handle.resource()->partId();
+    return part_id == handle.resource()->qualifiedPartInfo().part_type;
+  };
+
+  std::vector<ResourceManagerInterface::ManagedLocusHandle> output;
+  std::copy_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(),
+               std::back_inserter(output), filter);
+  return output;
+}
+
+std::vector<ResourceManagerInterface::ManagedLocusHandle>
+ResourceManager::getMovableTraySourceListByType(const MovableTrayId& movable_tray_type)
+{
+  std::lock_guard<std::mutex> lock{ mutex_ };
+  clearNonAllocatedEmptyLoci();
+
+  auto filter = [this, &movable_tray_type](const ManagedLocusHandle& handle) {
+    if (handle.allocated() || !handle.resource()->isLocusWithMovableTray())
+
+    {
+      return false;
+    }
+
+    // TODO(glpuga) to allow or not to allow to return models in allocated
+    // containers? if I dont', it artificially makes think that there are not
+    // more sources of a given part id, and can cause shipping to be dispatched
+    // empty. If I do, robots may spend time waiting for parts because another
+    // robot is using the airspace.
+    // if the parent is allocated or disabled, do not consider it
+    // TODO(glpuga) add test case for the allocated case
+    auto& parent_handle = model_containers_.at(handle.resource()->parentName());
+    if (/* parent_handle.allocated() || */ !parent_handle.resource()->enabled())
+    {
+      return false;
+    }
+    return movable_tray_type == handle.resource()->qualifiedMovableTrayInfo().tray_type;
   };
 
   std::vector<ResourceManagerInterface::ManagedLocusHandle> output;
@@ -205,7 +239,7 @@ ResourceManager::getPickAndPlaceRobotHandle()
 }
 
 std::optional<ResourceManagerInterface::ManagedLocusHandle>
-ResourceManager::createVacantLociAtPose(const tijmath::RelativePose3& pose)
+ResourceManager::getLocusAtPose(const tijmath::RelativePose3& pose)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   clearNonAllocatedEmptyLoci();
@@ -250,7 +284,7 @@ ResourceManager::createVacantLociAtPose(const tijmath::RelativePose3& pose)
     // they get compared without rotation, because we may not know the
     // rotation value
     if (tijmath::Position::samePosition(reframed_closest_part_pose.position(), pose.position(),
-                                        position_tolerance_))
+                                        locus_identity_position_tolerance_))
     {
       return *closest_part;
     }
@@ -258,10 +292,7 @@ ResourceManager::createVacantLociAtPose(const tijmath::RelativePose3& pose)
 
   // none of the existing parts could be matched to the requeste pose.
   // Create a new locus for an empty space.
-
-  auto temporary_locus_handle = ManagedLocus::CreateEmptySpace("", pose);
-
-  auto parent_container = findLociContainer(temporary_locus_handle);
+  auto parent_container = getPoseParentContainerPtr(pose);
 
   if (!parent_container)
   {
@@ -299,7 +330,7 @@ ResourceManager::createVacantLociAtPose(const tijmath::RelativePose3& pose)
 
   // we're ok, create a handle for this and return it.
   auto target_locus_handle = ResourceManagerInterface::ManagedLocusHandle(
-      std::make_shared<ManagedLocus>(ManagedLocus::CreateEmptySpace(parent_name, pose)));
+      std::make_shared<ManagedLocus>(ManagedLocus::CreateEmptyLocus(parent_name, pose)));
 
   known_loci_resource_state_.emplace_back(target_locus_handle);
 
@@ -334,34 +365,15 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(const std::string& 
   return surface_manager;
 }
 
-void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& observed_models)
+std::vector<ManagedLocus> ResourceManager::createObservedLociListFromObservedModels(
+    const std::vector<ObservedItem>& observed_models) const
 {
-  std::lock_guard<std::mutex> lock{ mutex_ };
-
-  ++sensor_update_count_;
-
-  if (!observed_models.size())
-  {
-    WARNING("No models visible on any sensor! Blackout?");
-    return;
-  }
-
   std::vector<ManagedLocus> new_model_loci;
 
   // create a list of model locus that can be matched to a container
   for (const auto& observed_item_entry : observed_models)
   {
-    if (!observed_item_entry.item.is<QualifiedPartInfo>())
-    {
-      WARNING("Observed item is not a qualified part info in the resource manager input!");
-      continue;
-    }
-
-    const auto& observed_part = observed_item_entry.item.as<QualifiedPartInfo>();
-    auto model_locus = ManagedLocus::CreateOccupiedSpace(
-        "", observed_item_entry.pose, observed_part.part_type, observed_part.part_is_broken);
-
-    auto parent_container = findLociContainer(model_locus);
+    auto parent_container = getPoseParentContainerPtr(observed_item_entry.pose);
 
     if (!parent_container)
     {
@@ -372,21 +384,57 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
       continue;
     }
 
+    // TODO(glpuga): do we still need surface relative poses?
     // this transformation makes all objects relative to the surface. This is
     // the same as the relative to the container, except for the conveyor belt.
-    const auto surface_frame_id = parent_container->resource()->surfaceReferenceFrameId();
-    auto local_frame_pose =
-        transformPoseToContainerLocalPose(observed_item_entry.pose, surface_frame_id);
+    const auto parent_surface_frame_id = parent_container->resource()->surfaceReferenceFrameId();
+    auto surface_local_frame_pose = tijmath::RelativePose3(
+        parent_surface_frame_id,
+        transformPoseToContainerLocalPose(observed_item_entry.pose, parent_surface_frame_id));
 
-    auto new_model_locus = ManagedLocus::CreateOccupiedSpace(
-        parent_container->resource()->name(),
-        tijmath::RelativePose3{ surface_frame_id, local_frame_pose }, observed_part.part_type,
-        observed_part.part_is_broken);
+    const auto parent_name = parent_container->resource()->name();
 
-    // notice that I discard the previously created ManagedLocus instance
-    // because it had no parent name.
-    new_model_loci.emplace_back(std::move(new_model_locus));
+    if (observed_item_entry.item.is<QualifiedPartInfo>())
+    {
+      const auto& observed_part = observed_item_entry.item.as<QualifiedPartInfo>();
+      auto model_locus = ManagedLocus::CreatePartLocus(  //
+          parent_name,                                   //
+          surface_local_frame_pose,                      //
+          observed_part.part_type,                       //
+          observed_part.part_is_broken);                 //
+      new_model_loci.emplace_back(std::move(model_locus));
+    }
+    else if (observed_item_entry.item.is<QualifiedMovableTrayInfo>())
+    {
+      const auto& observed_movable_tray = observed_item_entry.item.as<QualifiedMovableTrayInfo>();
+      auto model_locus = ManagedLocus::CreateMovableTrayLocus(  //
+          parent_name,                                          //
+          surface_local_frame_pose,                             //
+          observed_movable_tray.tray_type);                     //
+      new_model_loci.emplace_back(std::move(model_locus));
+    }
+    else
+    {
+      WARNING(
+          "An item at the resource manager input is of a type not known to the resource maanger "
+          "and will be ignored.");
+      continue;
+    }
   }
+  return new_model_loci;
+}
+
+void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& observed_models)
+{
+  std::lock_guard<std::mutex> lock{ mutex_ };
+
+  if (!observed_models.size())
+  {
+    WARNING("No models visible on any sensor! Blackout?");
+    return;
+  }
+
+  auto new_model_loci = createObservedLociListFromObservedModels(observed_models);
 
   // This will be a list of the elements that we want to keep in the state vector
   std::set<tijutils::UniqueId> uids_of_the_loci_to_keep;
@@ -399,7 +447,6 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
     if (known_model_locus_handle.allocated())
     {
       uids_of_the_loci_to_keep.insert(known_model_locus_handle.resource()->uniqueId());
-      continue;
     }
   }
 
@@ -425,7 +472,8 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
       // they get compared without rotation, because we may not know the
       // rotation value
       if (tijmath::Position::samePosition(new_model_locus_pose.position(),
-                                          known_model_locus_pose.position(), position_tolerance_))
+                                          known_model_locus_pose.position(),
+                                          locus_identity_position_tolerance_))
       {
         // don't update parts that are involved in active tasks
         if (known_model_locus_handle.allocated())
@@ -436,42 +484,22 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
 
         // both are one an the same (based on position), so we use the new
         // information to improve what we know already about the locus
-
-        if (known_model_locus.isEmpty())
+        if (known_model_locus.isEmptyLocus())
         {
           // if we knew nothing, then any new that we got information is valid
           known_model_locus = new_model_locus;
         }
-        else
+        else if (known_model_locus.isLocusWithPart() && new_model_locus.isLocusWithPart())
         {
-          // Combine the new and the old information
-          auto known_part_id = known_model_locus.partId();
-          auto known_broken = known_model_locus.broken();
-
-          const auto new_part_id = new_model_locus.partId();
-          const auto new_broken = new_model_locus.broken();
-
-          // unless the new information is less specific than what was already knonw, update
-          if (new_part_id != PartId::UnkownPartId)
-          {
-            known_part_id = new_part_id;
-          }
-
-          // TODO(glpuga) Once broken, a model cannot be considered non-broken
-          // again this should be fine for this competition, but not in
-          // general. Now knowing if something is broken or not should be an
-          // option.
-          known_broken = known_broken || new_broken;
-
-          // we always update the pose information with the new information.
-          // We know that position is the same, but rotation might have
-          // changed. This will also update changes within tolerance.
-          auto known_pose = new_model_locus.pose();
-
-          // Create the updated locus with the new information
-          // and add it to the list of loci that are part of the updated state
-          known_model_locus = ManagedLocus::CreateOccupiedSpace(
-              new_model_locus.parentName(), known_pose, known_part_id, known_broken);
+          known_model_locus =
+              mergeOldAndNewPartLocusInformation(known_model_locus, new_model_locus);
+          uids_of_the_loci_to_keep.emplace(known_model_locus.uniqueId());
+        }
+        else if (known_model_locus.isLocusWithMovableTray() &&
+                 new_model_locus.isLocusWithMovableTray())
+        {
+          known_model_locus =
+              mergeOldAndNewMovableTrayLocusInformation(known_model_locus, new_model_locus);
           uids_of_the_loci_to_keep.emplace(known_model_locus.uniqueId());
         }
 
@@ -515,11 +543,11 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
 }
 
 const ResourceManager::ModelContainerHandle*
-ResourceManager::findLociContainer(const ManagedLocus& locus) const
+ResourceManager::getPoseParentContainerPtr(const tijmath::RelativePose3& pose) const
 {
   for (const auto& container : model_containers_)
   {
-    if (locusWithinVolume(locus, container.second))
+    if (poseIsOnPartContainer(pose, container.second))
     {
       return &container.second;
     }
@@ -527,12 +555,51 @@ ResourceManager::findLociContainer(const ManagedLocus& locus) const
   return nullptr;
 }
 
+ManagedLocus ResourceManager::mergeOldAndNewPartLocusInformation(
+    const ManagedLocus& known_locus_data, const ManagedLocus& new_locus_data) const
+{
+  auto known_part_id = known_locus_data.qualifiedPartInfo().part_type;
+  auto known_broken = known_locus_data.qualifiedPartInfo().part_is_broken;
+
+  const auto new_part_id = new_locus_data.qualifiedPartInfo().part_type;
+  const auto new_broken = new_locus_data.qualifiedPartInfo().part_is_broken;
+
+  // unless the new information is less specific than what was already knonw, update
+  if (new_part_id != PartId::UnkownPartId)
+  {
+    known_part_id = new_part_id;
+  }
+
+  // TODO(glpuga) Once broken, a model cannot be considered non-broken
+  // again this should be fine for this competition, but not in
+  // general. Now knowing if something is broken or not should be an
+  // option.
+  known_broken = known_broken || new_broken;
+
+  // we always update the pose information with the new information.
+  // We know that position is the same, but rotation might have
+  // changed. This will also update changes within tolerance.
+  auto known_pose = new_locus_data.pose();
+
+  // Create the updated locus with the new information
+  // and add it to the list of loci that are part of the updated state
+  return ManagedLocus::CreatePartLocus(new_locus_data.parentName(), known_pose, known_part_id,
+                                       known_broken);
+}
+
+ManagedLocus ResourceManager::mergeOldAndNewMovableTrayLocusInformation(
+    const ManagedLocus& /*known_model_locus*/, const ManagedLocus& new_locus_data) const
+{
+  // nothing really to update here. We just overwrite old information with the new one.
+  return new_locus_data;
+}
+
 void ResourceManager::clearEmptyLoci()
 {
   auto filter = [](const ManagedLocusHandle& locus) {
     // remove it if it's not currently in use and it represents
     // an empty locus
-    return !locus.allocated() && locus.resource()->isEmpty();
+    return !locus.allocated() && locus.resource()->isEmptyLocus();
   };
   known_loci_resource_state_.erase(
       std::remove_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(), filter),
@@ -555,19 +622,19 @@ std::tuple<double, double, double> ResourceManager::poseToOccupancy(
   return std::make_tuple(local_vector.x(), local_vector.y(), default_occupancy_radius_);
 }
 
-bool ResourceManager::locusWithinVolume(const ManagedLocus& locus,
-                                        const ModelContainerHandle& container) const
+bool ResourceManager::poseIsOnPartContainer(const tijmath::RelativePose3& pose,
+                                            const ModelContainerHandle& container) const
 {
   const auto& container_volume = container.resource()->containerVolume();
   const auto& local_frame_id = container.resource()->containerReferenceFrameId();
-  const auto local_pose = transformPoseToContainerLocalPose(locus.pose(), local_frame_id);
+  const auto local_pose = transformPoseToContainerLocalPose(pose, local_frame_id);
   return container_volume.contains(local_pose.position());
 }
 
 void ResourceManager::clearNonAllocatedEmptyLoci()
 {
   auto filter = [](const ManagedLocusHandle& locus) {
-    return !locus.allocated() && locus.resource()->isEmpty();
+    return !locus.allocated() && locus.resource()->isEmptyLocus();
   };
 
   known_loci_resource_state_.erase(
@@ -593,18 +660,24 @@ void ResourceManager::logCurrentResourceManagerState()
     auto pose_in_parent = tijmath::RelativePose3{
       parent_frame, transformPoseToContainerLocalPose(known_model_locus_pose, parent_frame)
     };
-    if (known_model_locus.isEmpty())
+    if (known_model_locus.isEmptyLocus())
     {
       INFO(" - empty at {} (allocated: {}, uid: {})", pose_in_parent,
            known_model_locus_handle.allocated(), known_model_locus.uniqueId());
     }
-    else
+    else if (known_model_locus.isLocusWithPart())
     {
-      const auto known_model_part_id = known_model_locus.partId();
-      const auto broken = known_model_locus.broken();
-      INFO(" - {} at {} (broken: {} , allocated: {}, uid: {})", known_model_part_id.codedString(),
-           pose_in_parent, broken, known_model_locus_handle.allocated(),
+      const auto qualified_part_info = known_model_locus.qualifiedPartInfo();
+      INFO(" - {} at {} (broken: {} , allocated: {}, uid: {})",
+           qualified_part_info.part_type.codedString(), pose_in_parent,
+           qualified_part_info.part_is_broken, known_model_locus_handle.allocated(),
            known_model_locus.uniqueId());
+    }
+    else if (known_model_locus.isLocusWithMovableTray())
+    {
+      const auto qualified_movable_tray_info = known_model_locus.qualifiedMovableTrayInfo();
+      INFO(" - {} at {} (allocated: {}, uid: {})", qualified_movable_tray_info.tray_type,
+           pose_in_parent, known_model_locus_handle.allocated(), known_model_locus.uniqueId());
     }
   }
   INFO("---");
