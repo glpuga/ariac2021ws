@@ -6,6 +6,7 @@
 
 // standard library
 #include <set>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -41,6 +42,15 @@ private:
     Kitting
   };
 
+  struct InitialWorldState
+  {
+    std::vector<ResourceManagerInterface::ManagedLocusHandle> parts_in_place;
+    std::vector<std::pair<ResourceManagerInterface::ManagedLocusHandle, PartId>> missing_parts;
+
+    std::vector<ResourceManagerInterface::ManagedLocusHandle> broken_parts;
+    std::vector<ResourceManagerInterface::ManagedLocusHandle> unwanted_parts;
+  };
+
   ResourceManagerInterface::SharedPtr resource_manager_;
   RobotTaskFactoryInterface::SharedPtr robot_task_factory_;
   Toolbox::SharedPtr toolbox_;
@@ -60,6 +70,41 @@ private:
   std::pair<std::vector<RobotTaskInterface::Ptr>, bool> processAssemblyShipment(
       const OrderId& order, const AssemblyShipment& shipment, const std::set<AgvId>& agvs_in_use,
       const std::set<StationId>& stations_in_use) const;
+
+  InitialWorldState getInitialWorldState(        //
+      const std::string& target_container_name,  //
+      const std::vector<ProductRequest>& products) const;
+
+  void removeLociInTargetSurfaces(                                                      //
+      const std::set<AgvId>& agvs_in_use,                                               //
+      const std::set<StationId>& assemblies_in_use,                                     //
+      std::vector<ResourceManagerInterface::ManagedLocusHandle>& target_vector) const;  //
+
+  std::vector<RobotTaskInterface::Ptr> stageRemoveBrokenParts(  //
+      InitialWorldState& world_state) const;                    //
+
+  std::vector<RobotTaskInterface::Ptr> stageRemoveUnwantedParts(  //
+      const std::set<AgvId>& agvs_in_use,                         //
+      const std::set<StationId>& assemblies_in_use,               //
+      InitialWorldState& world_state) const;                      //
+
+  std::vector<RobotTaskInterface::Ptr> stagePlaceMissingParts(  //
+      const std::set<AgvId>& agvs_in_use,                       //
+      const std::set<StationId>& assemblies_in_use,             //
+      InitialWorldState& world_state,                           //
+      int32_t& unavailable_part_count) const;                   //
+
+  std::vector<RobotTaskInterface::Ptr> stageSubmitShipping(  //
+      const std::string& target_container_name,              //
+      const ShipmentClass shipment_class,                    //
+      const ShipmentType& shipment_type,                     //
+      const StationId& station_id,                           //
+      InitialWorldState& world_state,                        //
+      bool& shipping_done) const;                            //
+
+  void stableSortByDistanceToReferencePose(                                                  //
+      const tijmath::RelativePose3& reference_pose,                                          //
+      std::vector<ResourceManagerInterface::ManagedLocusHandle>& target_loci_vector) const;  //
 };
 
 }  // namespace tijcore

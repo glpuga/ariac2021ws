@@ -53,6 +53,12 @@ public:
     return (resource_.use_count() > 1);
   }
 
+  // TODO(glpuga) test this
+  std::size_t allocationCount() const
+  {
+    return resource_.use_count();
+  }
+
 private:
   ResourceSharedPtr resource_;
 };

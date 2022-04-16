@@ -4,6 +4,9 @@
 
 #pragma once
 
+// standard library
+#include <string>
+
 // tijcore
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/abstractions/RobotTaskInterface.hpp>
@@ -15,7 +18,7 @@ class SubmitAssemblyShipmentTask : public RobotTaskInterface
 {
 public:
   SubmitAssemblyShipmentTask(const Toolbox::SharedPtr& toolbox,
-                             ResourceManagerInterface::SubmissionTrayHandle&& tray,
+                             const std::string& assembly_tray_name,
                              const ShipmentType& shipment_type);
 
   RobotTaskOutcome run() override;
@@ -24,7 +27,7 @@ public:
 
 private:
   const Toolbox::SharedPtr toolbox_;
-  ResourceManagerInterface::SubmissionTrayHandle tray_;
+  std::string assembly_tray_name_;
   ShipmentType shipment_type_;
 };
 

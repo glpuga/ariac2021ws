@@ -49,6 +49,7 @@ add_library(${PROJECT_NAME}
   src/ModelPerceptionSpatialFilter.cpp
   src/MovableTrayId.cpp
   src/OrderId.cpp
+  src/OrderProcessingStrategy.cpp
   src/PartColorId.cpp
   src/PartId.cpp
   src/PartTypeId.cpp

@@ -6,6 +6,7 @@
 
 // standard library
 #include <memory>
+#include <string>
 
 // tijcore
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
@@ -37,13 +38,12 @@ public:
                           ResourceManagerInterface::ManagedLocusHandle&& destination,
                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
-  virtual RobotTaskInterface::Ptr getSubmitKittingShipmentTask(
-      ResourceManagerInterface::SubmissionTrayHandle&& tray, const StationId& station_id,
-      const ShipmentType& shipment_type) const = 0;
-
   virtual RobotTaskInterface::Ptr
-  getSubmitAssemblyShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                                const ShipmentType& shipment_type) const = 0;
+  getSubmitKittingShipmentTask(const std::string& kitting_tray_name, const StationId& station_id,
+                               const ShipmentType& shipment_type) const = 0;
+
+  virtual RobotTaskInterface::Ptr getSubmitAssemblyShipmentTask(
+      const std::string& assembly_tray_name, const ShipmentType& shipment_type) const = 0;
 };
 
 }  // namespace tijcore

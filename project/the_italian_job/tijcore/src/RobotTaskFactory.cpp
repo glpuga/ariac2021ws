@@ -5,6 +5,7 @@
 // Standard library
 #include <chrono>
 #include <memory>
+#include <string>
 #include <utility>
 
 // tijcore
@@ -48,7 +49,7 @@ RobotTaskInterface::Ptr RobotTaskFactory::getPickAndTwistPartTask(
 }
 
 RobotTaskInterface::Ptr RobotTaskFactory::getSubmitKittingShipmentTask(
-    ResourceManagerInterface::SubmissionTrayHandle&& tray, const StationId& destination_station,
+    const std::string& kitting_tray_name, const StationId& destination_station,
     const ShipmentType& shipment_type) const
 {
   // if (!agv::isValid(tray.resource()->name()))
@@ -62,7 +63,7 @@ RobotTaskInterface::Ptr RobotTaskFactory::getSubmitKittingShipmentTask(
 }
 
 RobotTaskInterface::Ptr RobotTaskFactory::getSubmitAssemblyShipmentTask(
-    ResourceManagerInterface::SubmissionTrayHandle&& tray, const ShipmentType& shipment_type) const
+    const std::string& assembly_tray_name, const ShipmentType& shipment_type) const
 {
   // if (!station_id::isValid(tray.resource()->name()))
   // {

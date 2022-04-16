@@ -3,6 +3,7 @@
  * Author: Gerardo Puga */
 
 // standard library
+#include <string>
 #include <utility>
 
 // tijcore
@@ -11,18 +12,18 @@
 
 namespace tijcore
 {
-SubmitAssemblyShipmentTask::SubmitAssemblyShipmentTask(
-    const Toolbox::SharedPtr& toolbox, ResourceManagerInterface::SubmissionTrayHandle&& tray,
-    const ShipmentType& shipment_type)
-  : toolbox_{ toolbox }, tray_{ std::move(tray) }, shipment_type_{ shipment_type }
+SubmitAssemblyShipmentTask::SubmitAssemblyShipmentTask(const Toolbox::SharedPtr& toolbox,
+                                                       const std::string& assembly_tray_name,
+                                                       const ShipmentType& shipment_type)
+  : toolbox_{ toolbox }, assembly_tray_name_{ assembly_tray_name }, shipment_type_{ shipment_type }
 {
 }
 
 RobotTaskOutcome SubmitAssemblyShipmentTask::run()
 {
   auto proces_manager = toolbox_->getProcessManager();
-  INFO("Submitting shipment {} on {}", shipment_type_, tray_.resource()->name());
-  proces_manager->submitAssemblyStation(station_id::fromString(tray_.resource()->name()),
+  INFO("Submitting shipment {} on {}", shipment_type_, assembly_tray_name_);
+  proces_manager->submitAssemblyStation(station_id::fromString(assembly_tray_name_),
                                         shipment_type_);
   return RobotTaskOutcome::TASK_SUCCESS;
 }
