@@ -197,7 +197,7 @@ ResourceManager::findSiblingLociByCommonParent(const std::string& parent_name)
   }
 
   auto filter = [this, &parent_name](const ManagedLocusHandle& handle) {
-    if (handle.allocated())
+    if (handle.allocated() || !handle.resource()->isLocusWithPart())
     {
       return false;
     }

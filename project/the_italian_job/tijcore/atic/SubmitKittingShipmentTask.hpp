@@ -4,6 +4,9 @@
 
 #pragma once
 
+// standard library
+#include <string>
+
 // tijcore
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/abstractions/RobotTaskInterface.hpp>
@@ -25,7 +28,7 @@ public:
 
 private:
   Toolbox::SharedPtr toolbox_;
-  ResourceManagerInterface::SubmissionTrayHandle tray_;
+  std::string kitting_tray_name_;
   StationId destination_station_;
   ShipmentType shipment_type_;
 };

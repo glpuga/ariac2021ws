@@ -4,6 +4,7 @@
 
 // standard library
 #include <chrono>
+#include <string>
 #include <thread>
 #include <utility>
 
@@ -18,11 +19,12 @@ namespace
 std::chrono::seconds anti_ghosting_delay{ 10 };
 }
 
-SubmitKittingShipmentTask::SubmitKittingShipmentTask(
-    const Toolbox::SharedPtr& toolbox, ResourceManagerInterface::SubmissionTrayHandle&& tray,
-    const StationId& destination_station, const ShipmentType& shipment_type)
+SubmitKittingShipmentTask::SubmitKittingShipmentTask(const Toolbox::SharedPtr& toolbox,
+                                                     const std::string& kitting_tray_name,
+                                                     const StationId& destination_station,
+                                                     const ShipmentType& shipment_type)
   : toolbox_{ toolbox }
-  , tray_{ std::move(tray) }
+  , kitting_tray_name_{ kitting_tray_name }
   , destination_station_{ destination_station }
   , shipment_type_{ shipment_type }
 {
@@ -31,8 +33,8 @@ SubmitKittingShipmentTask::SubmitKittingShipmentTask(
 RobotTaskOutcome SubmitKittingShipmentTask::run()
 {
   auto proces_manager = toolbox_->getProcessManager();
-  INFO("Submitting shipment {} on {}", shipment_type_, tray_.resource()->name());
-  proces_manager->submitAgvToAssemblyStation(agv::fromString(tray_.resource()->name()),
+  INFO("Submitting shipment {} on {}", shipment_type_, kitting_tray_name_);
+  proces_manager->submitAgvToAssemblyStation(agv::fromString(kitting_tray_name_),
                                              destination_station_, shipment_type_);
 
   INFO("The kitting shipment is on the move...");

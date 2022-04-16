@@ -28,7 +28,6 @@ public:
 
   using ManagedLocusHandle = ResourceHandle<ManagedLocus>;
   using PickAndPlaceRobotHandle = ResourceHandle<PickAndPlaceRobotInterface>;
-  using SubmissionTrayHandle = ResourceHandle<SubmissionTrayAdapter>;
 
   virtual ~ResourceManagerInterface() = default;
 

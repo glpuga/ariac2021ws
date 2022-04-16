@@ -4,6 +4,9 @@
 
 #pragma once
 
+// standard library
+#include <string>
+
 // tijcore
 #include <tijcore/abstractions/RobotTaskFactoryInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
@@ -32,12 +35,11 @@ public:
                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
 
   RobotTaskInterface::Ptr getSubmitKittingShipmentTask(
-      ResourceManagerInterface::SubmissionTrayHandle&& tray, const StationId& destination_station,
+      const std::string& kitting_tray_name, const StationId& destination_station,
       const ShipmentType& shipment_type) const override;
 
-  RobotTaskInterface::Ptr
-  getSubmitAssemblyShipmentTask(ResourceManagerInterface::SubmissionTrayHandle&& tray,
-                                const ShipmentType& shipment_type) const override;
+  RobotTaskInterface::Ptr getSubmitAssemblyShipmentTask(
+      const std::string& assembly_tray_name, const ShipmentType& shipment_type) const override;
 
 private:
   ResourceManagerInterface::SharedPtr resource_manager_;
