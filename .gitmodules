@@ -10,3 +10,6 @@
 [submodule "external/BehaviorTreeExtras"]
 	path = external/BehaviorTreeExtras
 	url = git@github.com:glpuga/BehaviorTreeExtras.git
+[submodule "external/moveit_task_constructor"]
+	path = external/moveit_task_constructor
+	url = git@github.com:ros-planning/moveit_task_constructor.git
