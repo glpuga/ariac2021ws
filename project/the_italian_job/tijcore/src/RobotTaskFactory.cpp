@@ -28,13 +28,21 @@ RobotTaskInterface::Ptr RobotTaskFactory::getRemoveBrokenPartTask(
   return nullptr;
 }
 
-RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlaceTask(
+RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlacePartTask(
     ResourceManagerInterface::ManagedLocusHandle&& source,
     ResourceManagerInterface::ManagedLocusHandle&& destination,
     ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
 {
   // return std::make_unique<PickAndPlaceTask>(resource_manager_, std::move(source),
   //                                           std::move(destination), std::move(robot));
+  return nullptr;
+}
+
+RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlaceMovableTrayTask(
+    ResourceManagerInterface::ManagedLocusHandle&& source,
+    ResourceManagerInterface::ManagedLocusHandle&& destination,
+    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
+{
   return nullptr;
 }
 

@@ -29,9 +29,14 @@ public:
                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
   virtual RobotTaskInterface::Ptr
-  getPickAndPlaceTask(ResourceManagerInterface::ManagedLocusHandle&& source,
-                      ResourceManagerInterface::ManagedLocusHandle&& destination,
-                      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
+  getPickAndPlacePartTask(ResourceManagerInterface::ManagedLocusHandle&& source,
+                          ResourceManagerInterface::ManagedLocusHandle&& destination,
+                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
+
+  virtual RobotTaskInterface::Ptr getPickAndPlaceMovableTrayTask(
+      ResourceManagerInterface::ManagedLocusHandle&& source,
+      ResourceManagerInterface::ManagedLocusHandle&& destination,
+      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
   virtual RobotTaskInterface::Ptr
   getPickAndTwistPartTask(ResourceManagerInterface::ManagedLocusHandle&& target,

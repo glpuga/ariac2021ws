@@ -366,7 +366,7 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageRemoveUnwante
             robot_handle_opt->resource()->name(), part.resource()->pose(),
             closest_empty_spot.resource()->pose());
 
-        output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
+        output_actions.emplace_back(robot_task_factory_->getPickAndPlacePartTask(
             std::move(part), std::move(closest_empty_spot), std::move(*robot_handle_opt)));
         break;
       }
@@ -414,7 +414,7 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stagePlaceMissingP
             "{} and into {}",
             robot_handle_opt->resource()->name(), selected_source_part.resource()->pose(),
             missing_part_locus.resource()->pose());
-        output_actions.emplace_back(robot_task_factory_->getPickAndPlaceTask(
+        output_actions.emplace_back(robot_task_factory_->getPickAndPlacePartTask(
             std::move(selected_source_part), std::move(missing_part_locus),
             std::move(*robot_handle_opt)));
       }
@@ -456,6 +456,90 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageSubmitShippin
   return output_actions;
 }
 
+std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageBringAMovableTray(  //
+    MovableTrayId movable_tray_id,                                                     //
+    tijmath::RelativePose3 movable_tray_pose,                                          //
+    const std::set<AgvId>& agvs_in_use,                                                //
+    const std::set<StationId>& assemblies_in_use,                                      //
+    const std::string& target_container_name) const
+{
+  std::vector<RobotTaskInterface::Ptr> output_actions;
+
+  // create a locus for the target pose
+  auto target_locus_opt = resource_manager_->getLocusAtPose(movable_tray_pose);
+  auto& target_locus_handle = target_locus_opt.value();
+
+  if (!target_locus_handle.resource()->isEmptyLocus())
+  {
+    // TODO(glpuga): according to the specification, this should not happen, but keep in mind...
+    ERROR("There seems to be a part in the target pose of the movable tray at {}",
+          movable_tray_pose);
+    return {};
+  }
+
+  auto potential_sources = resource_manager_->getMovableTraySourceListByType(movable_tray_id);
+
+  // remove parts in agvs that are currently targeted by orders
+  removeLociInTargetSurfaces(agvs_in_use, assemblies_in_use, potential_sources);
+
+  // sort by distance (larger distance first, closest at the end)
+  stableSortByDistanceToReferencePose(movable_tray_pose, potential_sources);
+
+  // Choose the first one of the remaining lot, if any
+  if (!potential_sources.empty())
+  {
+    // select the closest part
+    auto& selected_source_movable_tray = *(potential_sources.end() - 1);
+
+    auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle();
+
+    if (robot_handle_opt)
+    {
+      WARNING(
+          "Creating a PickAndPlaceMovableTrayTask for {} to provide a part from "
+          "{} and into {}",
+          robot_handle_opt->resource()->name(), selected_source_movable_tray.resource()->pose(),
+          movable_tray_pose);
+      output_actions.emplace_back(robot_task_factory_->getPickAndPlaceMovableTrayTask(
+          std::move(selected_source_movable_tray), std::move(target_locus_handle),
+          std::move(*robot_handle_opt)));
+    }
+  }
+
+  return output_actions;
+}
+
+bool OrderProcessingStrategy::movableTrayIsInPlace(MovableTrayId movable_tray_id,
+                                                   tijmath::RelativePose3 movable_tray_pose) const
+{
+  auto handle_opt = resource_manager_->getLocusAtPose(movable_tray_pose);
+  if (!handle_opt)
+  {
+    // there's nothing near the pose of the movable tray
+    return false;
+  }
+
+  auto& handle = *handle_opt;
+  auto& locus = *handle.resource();
+
+  // TODO(glpuga): this will not handle what happens if there's a superposition of a movable tray
+  // with a part
+  if (!locus.isLocusWithMovableTray())
+  {
+    // the locus is not a movable tray
+    return false;
+  }
+
+  if (locus.qualifiedMovableTrayInfo().tray_type != movable_tray_id)
+  {
+    // the movable tray is not of the expected type
+    return false;
+  }
+
+  // the movable tray is in place and is the right type
+  return true;
+}
+
 std::pair<std::vector<RobotTaskInterface::Ptr>, bool>
 OrderProcessingStrategy::processKittingShipment(const OrderId& order,
                                                 const KittingShipment& shipment,
@@ -465,6 +549,14 @@ OrderProcessingStrategy::processKittingShipment(const OrderId& order,
   const std::string target_container_name = agv::toString(shipment.agv_id);
 
   auto world_state = getInitialWorldState(target_container_name, shipment.products);
+
+  if (!movableTrayIsInPlace(shipment.movable_tray_id, shipment.movable_tray_pose))
+  {
+    return std::make_pair(stageBringAMovableTray(shipment.movable_tray_id,
+                                                 shipment.movable_tray_pose, agvs_in_use,
+                                                 stations_in_use, target_container_name),
+                          false);
+  }
 
   //
   // with highest priority of all, we need to remove broken pieces

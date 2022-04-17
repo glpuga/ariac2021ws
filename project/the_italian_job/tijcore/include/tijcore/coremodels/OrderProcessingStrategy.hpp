@@ -96,9 +96,19 @@ private:
       InitialWorldState& world_state,                        //
       bool& shipping_done) const;                            //
 
+  std::vector<RobotTaskInterface::Ptr> stageBringAMovableTray(  //
+      MovableTrayId movable_tray_id,                            //
+      tijmath::RelativePose3 movable_tray_pose,                 //
+      const std::set<AgvId>& agvs_in_use,                       //
+      const std::set<StationId>& assemblies_in_use,             //
+      const std::string& target_container_name) const;
+
   void stableSortByDistanceToReferencePose(                                                  //
       const tijmath::RelativePose3& reference_pose,                                          //
       std::vector<ResourceManagerInterface::ManagedLocusHandle>& target_loci_vector) const;  //
+
+  bool movableTrayIsInPlace(MovableTrayId movable_tray_id,
+                            tijmath::RelativePose3 movable_tray_pose) const;
 };
 
 }  // namespace tijcore
