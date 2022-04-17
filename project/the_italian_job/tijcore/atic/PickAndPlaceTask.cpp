@@ -108,10 +108,6 @@ RobotTaskOutcome PickAndPlaceTask::run()
       (void)destroy_src;
       (void)destroy_dst;
     }
-    WARNING(
-        "Task failed, will release resource but hold the robot to allow "
-        "other robots to give the task a try");
-    std::this_thread::sleep_for(sleep_interval_);
   }
 
   return result;

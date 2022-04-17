@@ -24,24 +24,19 @@ public:
 
   virtual ~PickAndPlaceRobotInterface() = default;
 
-  virtual bool getInSafePose() const = 0;
+  virtual bool getArmInRestingPose() const = 0;
 
   virtual bool getInSafePoseNearTarget(const tijmath::RelativePose3& target) const = 0;
 
-  virtual bool getToGraspingPoseHint(const tijmath::RelativePose3& target) const = 0;
-
-  virtual bool getInLandingSpot(const tijmath::RelativePose3& target) const = 0;
-
-  virtual bool graspPartFromAbove(const tijmath::RelativePose3& target,
-                                  const tijcore::PartTypeId& part_type_id) const = 0;
+  virtual bool contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
+                                            const tijcore::PartTypeId& part_type_id) const = 0;
 
   virtual bool placePartFromAbove(const tijmath::RelativePose3& target,
                                   const tijcore::PartTypeId& part_type_id) const = 0;
 
-  virtual bool twistPartInPlace(tijmath::RelativePose3& target,
-                                const tijcore::PartTypeId& part_type_id) const = 0;
+  virtual bool turnOnGripper() const = 0;
 
-  virtual bool dropPartWhereYouStand() const = 0;
+  virtual bool turnOffGripper() const = 0;
 
   virtual bool gripperHasPartAttached() const = 0;
 
@@ -49,7 +44,7 @@ public:
 
   virtual std::string name() const = 0;
 
-  virtual void cancelAction() = 0;
+  virtual void abortCurrentAction() const = 0;
 
 protected:
   virtual std::string getRobotPlanningGroup() const = 0;
@@ -58,16 +53,13 @@ protected:
 
   // TODO(glpuga) these three might better belong in the common implementation
   // class.
-  virtual void patchJointStateValuesForRestingPose(std::vector<double>&) const = 0;
+  virtual void patchJointStateValuesForArmInRestingPose(std::vector<double>&) const = 0;
 
-  virtual void patchJointStateValuesToGetCloseToTarget(
+  virtual void patchJointStateValuesToGetCloseToTargetPose(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const = 0;
 
   virtual void patchJointStateValuesGraspingHingPoseNearTarget(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const = 0;
-
-  virtual void
-  patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const = 0;
 };
 
 }  // namespace tijcore

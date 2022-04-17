@@ -54,7 +54,7 @@ void PickAndPlaceKittingRobot::setSuctionGripper(const bool state) const
   robot_actuator_->setKittingGripperSuction(state);
 }
 
-void PickAndPlaceKittingRobot::patchJointStateValuesForRestingPose(
+void PickAndPlaceKittingRobot::patchJointStateValuesForArmInRestingPose(
     std::vector<double>& joint_states) const
 {
   if (joint_states.size() != 7)
@@ -99,7 +99,7 @@ void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
   }
 }
 
-void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(
+void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTargetPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
   if (joint_states.size() != 7)
@@ -124,17 +124,6 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTarget(
     joint_states[0] -= 1.0 * sign;
     joint_states[1] = degreesToRadians(90) * sign;
   }
-}
-
-void PickAndPlaceKittingRobot::patchJointStateValuesForAlignedZeroWrist(
-    std::vector<double>& joint_states) const
-{
-  if (joint_states.size() != 7)
-  {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
-  }
-  joint_states[6] = degreesToRadians(0);
 }
 
 }  // namespace tijros

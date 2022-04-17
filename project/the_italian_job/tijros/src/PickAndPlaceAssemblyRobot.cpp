@@ -63,7 +63,7 @@ void PickAndPlaceAssemblyRobot::setSuctionGripper(const bool state) const
   robot_actuator_->setGantryGripperSuction(state);
 }
 
-void PickAndPlaceAssemblyRobot::patchJointStateValuesForRestingPose(
+void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
     std::vector<double>& joint_states) const
 {
   if (joint_states.size() != 9)
@@ -86,10 +86,10 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForRestingPose(
   tijmath::RelativePose3 current_pose_estimation{
     long_rail_frame_id_, tijmath::Position::fromVector(joint_states[1], joint_states[0], 0.0), {}
   };
-  patchJointStateValuesToGetCloseToTarget(joint_states, current_pose_estimation);
+  patchJointStateValuesToGetCloseToTargetPose(joint_states, current_pose_estimation);
 }
 
-void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTarget(
+void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTargetPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
   patchJointStateValuesToGetNearPose(joint_states, target,
@@ -145,28 +145,6 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
   // this is the direction of the x director vector
   const auto x_director_in_rail = rotation_matrix.col(0);
   joint_states[2] = std::atan2(-x_director_in_rail.x(), x_director_in_rail.y());
-
-  // TODO(glpuga) test code, remove this if this does not pan out
-  if (closest_hint->position().vector().z() > 5)
-  {
-    joint_states[3] = degreesToRadians(180);
-    joint_states[4] = degreesToRadians(00);
-    joint_states[5] = degreesToRadians(-90);
-    joint_states[6] = degreesToRadians(-90);
-    joint_states[7] = degreesToRadians(90);
-    joint_states[8] = degreesToRadians(0);
-  }
-}
-
-void PickAndPlaceAssemblyRobot::patchJointStateValuesForAlignedZeroWrist(
-    std::vector<double>& joint_states) const
-{
-  if (joint_states.size() != 9)
-  {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
-  }
-  joint_states[8] = degreesToRadians(0);
 }
 
 }  // namespace tijros
