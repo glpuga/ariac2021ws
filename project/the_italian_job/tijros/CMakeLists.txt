@@ -11,6 +11,7 @@ find_package(
     moveit_core
     moveit_ros_planning
     moveit_ros_planning_interface
+    moveit_task_constructor_core
     moveit_visual_tools
     nist_gear
     nist_gear

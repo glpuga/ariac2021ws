@@ -80,6 +80,7 @@ RUN apt update \
     ros-melodic-moveit-fake-controller-manager \
     ros-melodic-moveit-kinematics \
     ros-melodic-moveit-planners-ompl \
+    ros-melodic-moveit-resources-panda-moveit-config \
     ros-melodic-moveit-ros-move-group \
     ros-melodic-moveit-ros-visualization \
     ros-melodic-moveit-setup-assistant \
