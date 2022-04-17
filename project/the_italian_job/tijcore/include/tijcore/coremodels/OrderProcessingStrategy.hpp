@@ -57,12 +57,6 @@ private:
 
   FrameTransformerInterface::SharedPtr frame_transformer_;
 
-  std::pair<std::vector<RobotTaskInterface::Ptr>, bool> processUniversalShipment(
-      const ShipmentClass shipment_class, const OrderId& order, const ShipmentType& shipment_type,
-      const std::optional<AgvId>& agv_id, const StationId& station_id,
-      const std::vector<ProductRequest>& products, const std::set<AgvId>& agvs_in_use,
-      const std::set<StationId>& stations_in_use) const;
-
   std::pair<std::vector<RobotTaskInterface::Ptr>, bool> processKittingShipment(
       const OrderId& order, const KittingShipment& shipment, const std::set<AgvId>& agvs_in_use,
       const std::set<StationId>& stations_in_use) const;

@@ -457,21 +457,14 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageSubmitShippin
 }
 
 std::pair<std::vector<RobotTaskInterface::Ptr>, bool>
-OrderProcessingStrategy::processUniversalShipment(       //
-    const ShipmentClass shipment_class,                  //
-    const OrderId& order,                                //
-    const ShipmentType& shipment_type,                   //
-    const std::optional<AgvId>& agv_id,                  //
-    const StationId& station_id,                         //
-    const std::vector<ProductRequest>& products,         //
-    const std::set<AgvId>& agvs_in_use,                  //
-    const std::set<StationId>& assemblies_in_use) const  //
+OrderProcessingStrategy::processKittingShipment(const OrderId& order,
+                                                const KittingShipment& shipment,
+                                                const std::set<AgvId>& agvs_in_use,
+                                                const std::set<StationId>& stations_in_use) const
 {
-  const std::string target_container_name = shipment_class == ShipmentClass::Assembly ?
-                                                station_id::toString(station_id) :
-                                                agv::toString(agv_id.value());
+  const std::string target_container_name = agv::toString(shipment.agv_id);
 
-  auto world_state = getInitialWorldState(target_container_name, products);
+  auto world_state = getInitialWorldState(target_container_name, shipment.products);
 
   //
   // with highest priority of all, we need to remove broken pieces
@@ -484,7 +477,7 @@ OrderProcessingStrategy::processUniversalShipment(       //
   // somewhere else.
   if (world_state.unwanted_parts.size())
   {
-    return std::make_pair(stageRemoveUnwantedParts(agvs_in_use, assemblies_in_use, world_state),
+    return std::make_pair(stageRemoveUnwantedParts(agvs_in_use, stations_in_use, world_state),
                           false);
   }
 
@@ -494,7 +487,7 @@ OrderProcessingStrategy::processUniversalShipment(       //
   if (world_state.missing_parts.size())
   {
     return std::make_pair(
-        stagePlaceMissingParts(agvs_in_use, assemblies_in_use, world_state, unavailable_part_count),
+        stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count),
         false);
   }
 
@@ -502,25 +495,15 @@ OrderProcessingStrategy::processUniversalShipment(       //
 
   // if there's nothing missing, then submit the shipping
   if ((world_state.broken_parts.size() == 0) && (world_state.unwanted_parts.size() == 0) &&
-      (products.size() == world_state.parts_in_place.size() + unavailable_part_count))
+      (shipment.products.size() == world_state.parts_in_place.size() + unavailable_part_count))
   {
-    return std::make_pair(stageSubmitShipping(target_container_name, shipment_class, shipment_type,
-                                              station_id, world_state, shipping_done),
+    return std::make_pair(stageSubmitShipping(target_container_name, ShipmentClass::Kitting,
+                                              shipment.shipment_type, shipment.station_id,
+                                              world_state, shipping_done),
                           false);
   }
 
   return std::make_pair(std::vector<RobotTaskInterface::Ptr>{}, false);
-}
-
-std::pair<std::vector<RobotTaskInterface::Ptr>, bool>
-OrderProcessingStrategy::processKittingShipment(const OrderId& order,
-                                                const KittingShipment& shipment,
-                                                const std::set<AgvId>& agvs_in_use,
-                                                const std::set<StationId>& stations_in_use) const
-{
-  return processUniversalShipment(ShipmentClass::Kitting, order, shipment.shipment_type,
-                                  shipment.agv_id, shipment.station_id, shipment.products,
-                                  agvs_in_use, stations_in_use);
 }
 
 std::pair<std::vector<RobotTaskInterface::Ptr>, bool>
@@ -529,9 +512,48 @@ OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
                                                  const std::set<AgvId>& agvs_in_use,
                                                  const std::set<StationId>& stations_in_use) const
 {
-  return processUniversalShipment(ShipmentClass::Assembly, order, shipment.shipment_type,
-                                  std::nullopt, shipment.station_id, shipment.products, agvs_in_use,
-                                  stations_in_use);
+  const std::string target_container_name = station_id::toString(shipment.station_id);
+
+  auto world_state = getInitialWorldState(target_container_name, shipment.products);
+
+  //
+  // with highest priority of all, we need to remove broken pieces
+  if (world_state.broken_parts.size())
+  {
+    return std::make_pair(stageRemoveBrokenParts(world_state), false);
+  }
+
+  // next deal with unwanted pieces present in the container. Relocate them
+  // somewhere else.
+  if (world_state.unwanted_parts.size())
+  {
+    return std::make_pair(stageRemoveUnwantedParts(agvs_in_use, stations_in_use, world_state),
+                          false);
+  }
+
+  int32_t unavailable_part_count{ 0 };
+
+  // only move parts into the container if there's nothing moving out
+  if (world_state.missing_parts.size())
+  {
+    return std::make_pair(
+        stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count),
+        false);
+  }
+
+  bool shipping_done{ false };
+
+  // if there's nothing missing, then submit the shipping
+  if ((world_state.broken_parts.size() == 0) && (world_state.unwanted_parts.size() == 0) &&
+      (shipment.products.size() == world_state.parts_in_place.size() + unavailable_part_count))
+  {
+    return std::make_pair(stageSubmitShipping(target_container_name, ShipmentClass::Assembly,
+                                              shipment.shipment_type, shipment.station_id,
+                                              world_state, shipping_done),
+                          false);
+  }
+
+  return std::make_pair(std::vector<RobotTaskInterface::Ptr>{}, false);
 }
 
 void OrderProcessingStrategy::stableSortByDistanceToReferencePose(                        //
