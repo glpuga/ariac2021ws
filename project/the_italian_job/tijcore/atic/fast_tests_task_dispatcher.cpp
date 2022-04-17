@@ -74,9 +74,9 @@ public:
   }
 
   RobotTaskInterface::Ptr
-  getPickAndPlaceTask(ResourceManagerInterface::ManagedLocusHandle&& source,
-                      ResourceManagerInterface::ManagedLocusHandle&& destination,
-                      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override
+  getPickAndPlacePartTask(ResourceManagerInterface::ManagedLocusHandle&& source,
+                          ResourceManagerInterface::ManagedLocusHandle&& destination,
+                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override
   {
     auto executor = [source = std::move(source), destination = std::move(destination),
                      robot = std::move(robot)]() mutable {

@@ -25,9 +25,14 @@ public:
                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
 
   RobotTaskInterface::Ptr
-  getPickAndPlaceTask(ResourceManagerInterface::ManagedLocusHandle&& source,
-                      ResourceManagerInterface::ManagedLocusHandle&& destination,
-                      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
+  getPickAndPlacePartTask(ResourceManagerInterface::ManagedLocusHandle&& source,
+                          ResourceManagerInterface::ManagedLocusHandle&& destination,
+                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
+
+  RobotTaskInterface::Ptr getPickAndPlaceMovableTrayTask(
+      ResourceManagerInterface::ManagedLocusHandle&& source,
+      ResourceManagerInterface::ManagedLocusHandle&& destination,
+      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
 
   RobotTaskInterface::Ptr
   getPickAndTwistPartTask(ResourceManagerInterface::ManagedLocusHandle&& target,
