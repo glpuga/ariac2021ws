@@ -23,22 +23,15 @@ class PickAndPlaceRobotMock : public PickAndPlaceRobotInterface
 public:
   using Ptr = std::unique_ptr<PickAndPlaceRobotMock>;
 
-  MOCK_CONST_METHOD0(getInSafePose, bool());
+  MOCK_CONST_METHOD0(getArmInRestingPose, bool());
 
   MOCK_CONST_METHOD1(getInSafePoseNearTarget, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD1(getToGraspingPoseHint, bool(const tijmath::RelativePose3& target));
-
-  MOCK_CONST_METHOD1(getInLandingSpot, bool(const tijmath::RelativePose3& target));
-
-  MOCK_CONST_METHOD2(graspPartFromAbove, bool(const tijmath::RelativePose3& target,
-                                              const tijcore::PartTypeId& part_type_id));
+  MOCK_CONST_METHOD2(contactPartFromAboveAndGrasp, bool(const tijmath::RelativePose3& target,
+                                                        const tijcore::PartTypeId& part_type_id));
 
   MOCK_CONST_METHOD2(placePartFromAbove, bool(const tijmath::RelativePose3& target,
                                               const tijcore::PartTypeId& part_type_id));
-
-  MOCK_CONST_METHOD2(twistPartInPlace,
-                     bool(tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id));
 
   MOCK_CONST_METHOD0(enabled, bool());
 
@@ -50,19 +43,19 @@ public:
 
   MOCK_CONST_METHOD1(setSuctionGripper, void(const bool state));
 
-  MOCK_CONST_METHOD1(patchJointStateValuesForRestingPose, void(std::vector<double>&));
+  MOCK_CONST_METHOD1(patchJointStateValuesForArmInRestingPose, void(std::vector<double>&));
 
-  MOCK_CONST_METHOD2(patchJointStateValuesToGetCloseToTarget,
+  MOCK_CONST_METHOD2(patchJointStateValuesToGetCloseToTargetPose,
                      void(std::vector<double>& joint_states, const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD2(patchJointStateValuesGraspingHingPoseNearTarget,
                      void(std::vector<double>& joint_states, const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD1(patchJointStateValuesForAlignedZeroWrist, void(std::vector<double>&));
+  MOCK_CONST_METHOD0(abortCurrentAction, void());
 
-  MOCK_METHOD0(cancelAction, void());
+  MOCK_CONST_METHOD0(turnOnGripper, bool());
 
-  MOCK_CONST_METHOD0(dropPartWhereYouStand, bool());
+  MOCK_CONST_METHOD0(turnOffGripper, bool());
 };
 
 }  // namespace tijcore

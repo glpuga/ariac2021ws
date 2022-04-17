@@ -36,10 +36,10 @@ private:
 
   void setSuctionGripper(const bool state) const override;
 
-  void patchJointStateValuesForRestingPose(std::vector<double>&) const override;
+  void patchJointStateValuesForArmInRestingPose(std::vector<double>&) const override;
 
-  void patchJointStateValuesToGetCloseToTarget(std::vector<double>& joint_states,
-                                               const tijmath::RelativePose3& target) const override;
+  void patchJointStateValuesToGetCloseToTargetPose(
+      std::vector<double>& joint_states, const tijmath::RelativePose3& target) const override;
 
   void patchJointStateValuesGraspingHingPoseNearTarget(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const override;
@@ -47,8 +47,6 @@ private:
   void patchJointStateValuesToGetNearPose(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target,
       const std::vector<tijmath::RelativePose3>& pose_hints) const;
-
-  void patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const override;
 };
 
 }  // namespace tijros

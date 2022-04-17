@@ -26,27 +26,21 @@ class PickAndPlaceRobotCommonImpl : public tijcore::PickAndPlaceRobotInterface
 public:
   explicit PickAndPlaceRobotCommonImpl(const tijcore::Toolbox::SharedPtr& toolbox);
 
-  bool getInSafePose() const override;
+  bool getArmInRestingPose() const override;
 
   bool getInSafePoseNearTarget(const tijmath::RelativePose3& target) const override;
 
-  bool getToGraspingPoseHint(const tijmath::RelativePose3& target) const override;
-
-  bool getInLandingSpot(const tijmath::RelativePose3& target) const override;
-
-  bool graspPartFromAbove(const tijmath::RelativePose3& target,
-                          const tijcore::PartTypeId& part_type_id) const override;
+  bool contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
+                                    const tijcore::PartTypeId& part_type_id) const override;
 
   bool placePartFromAbove(const tijmath::RelativePose3& target,
                           const tijcore::PartTypeId& part_type_id) const override;
 
-  bool twistPartInPlace(tijmath::RelativePose3& target,
+  bool turnOnGripper() const override;
 
-                        const tijcore::PartTypeId& part_type_id) const override;
+  bool turnOffGripper() const override;
 
-  bool dropPartWhereYouStand() const override;
-
-  void cancelAction() override;
+  void abortCurrentAction() const override;
 
 private:
   tijcore::Toolbox::SharedPtr toolbox_;
@@ -54,13 +48,13 @@ private:
   mutable std::unique_ptr<moveit::planning_interface::MoveGroupInterface> move_group_ptr_;
   mutable std::unique_ptr<moveit::planning_interface::PlanningSceneInterface> planning_scene_ptr_;
 
-  moveit::planning_interface::MoveGroupInterface* getMoveItGroupHandlePtr() const;
+  moveit::planning_interface::MoveGroupInterface* buildMoveItGroupHandle() const;
 
-  void setupObjectConstraints() const;
+  void buildObstacleSceneFromDescription() const;
 
   void alignEndEffectorWithTarget(tijmath::RelativePose3& target_in_world) const;
 
-  void configureGoalTolerances(const bool tight_mode) const;
+  void useNarrowTolerances(const bool tight_mode) const;
 };
 
 }  // namespace tijros
