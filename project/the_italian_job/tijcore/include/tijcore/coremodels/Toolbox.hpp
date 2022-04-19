@@ -14,6 +14,7 @@
 #include <tijcore/abstractions/ProcessManagementInterface.hpp>
 #include <tijcore/abstractions/RobotActuatorsInterface.hpp>
 #include <tijcore/abstractions/SceneConfigReaderInterface.hpp>
+#include <tijcore/abstractions/SpatialMutualExclusionManagerInterface.hpp>
 
 namespace tijcore
 {
@@ -28,6 +29,7 @@ public:
     RobotActuatorsInterface::SharedPtr robot_actuator_instance;
     ProcessManagementInterface::SharedPtr process_manager_instance;
     SceneConfigReaderInterface::SharedPtr scene_config_reader_instance;
+    SpatialMutualExclusionManagerInterface::SharedPtr volume_mutual_exclusion_manager;
   };
 
   explicit Toolbox(Contents&& contents) : contents_{ std::move(contents) }

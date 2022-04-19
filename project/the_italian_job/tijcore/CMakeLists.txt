@@ -58,6 +58,7 @@ add_library(${PROJECT_NAME}
   src/RobotTaskFactory.cpp
   src/RobotTaskGroupRunner.cpp
   src/RobotTaskOutcome.cpp
+  src/SpatialMutualExclusionManager.cpp
   src/StaticFrameTransformer.cpp
   src/StationId.cpp
   src/SurfaceManager.cpp
