@@ -83,6 +83,33 @@ TEST_F(InUseMarkHandlerTests, UniqueNullResourceThrows)
       std::invalid_argument);
 }
 
+TEST_F(InUseMarkHandlerTests, TheResourceCanBeReleased)
+{
+  ResourceHandle<SomeResourse> uut{ std::make_shared<SomeResourse>() };
+  ASSERT_EQ(1u, uut.allocationCount());
+  ResourceHandle<SomeResourse> user_copy = uut;
+  ASSERT_EQ(2u, uut.allocationCount());
+  ASSERT_EQ(2u, user_copy.allocationCount());
+  user_copy.release();
+  ASSERT_EQ(1u, uut.allocationCount());
+}
+
+TEST_F(InUseMarkHandlerTests, ResourcePointerThrowsAfterRelease)
+{
+  ResourceHandle<SomeResourse> uut{ std::make_shared<SomeResourse>() };
+  {
+    ResourceHandle<SomeResourse> user_copy = uut;
+    user_copy.release();
+    ASSERT_THROW({ user_copy.resource(); }, std::invalid_argument);
+  }
+  {
+    ResourceHandle<SomeResourse> user_copy = uut;
+    const auto& const_user_copy = user_copy;
+    user_copy.release();
+    ASSERT_THROW({ const_user_copy.resource(); }, std::invalid_argument);
+  }
+}
+
 }  // namespace
 
 }  // namespace test
