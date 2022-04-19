@@ -40,11 +40,19 @@ public:
 
   ResourceType* resource()
   {
+    if (!resource_)
+    {
+      throw std::invalid_argument("The resource has already been released");
+    }
     return resource_.get();
   }
 
   const ResourceType* resource() const
   {
+    if (!resource_)
+    {
+      throw std::invalid_argument("The resource has already been released");
+    }
     return resource_.get();
   }
 
@@ -53,10 +61,14 @@ public:
     return (resource_.use_count() > 1);
   }
 
-  // TODO(glpuga) test this
   std::size_t allocationCount() const
   {
     return resource_.use_count();
+  }
+
+  void release()
+  {
+    resource_.reset();
   }
 
 private:
