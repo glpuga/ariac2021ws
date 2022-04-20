@@ -11,7 +11,6 @@
 #include <tijcore/abstractions/RobotTaskFactoryInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
-
 namespace tijcore
 {
 class RobotTaskFactory : public RobotTaskFactoryInterface
@@ -33,11 +32,6 @@ public:
       ResourceManagerInterface::ManagedLocusHandle&& source,
       ResourceManagerInterface::ManagedLocusHandle&& destination,
       ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
-
-  RobotTaskInterface::Ptr
-  getPickAndTwistPartTask(ResourceManagerInterface::ManagedLocusHandle&& target,
-                          ResourceManagerInterface::ManagedLocusHandle&& destination,
-                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
 
   RobotTaskInterface::Ptr getSubmitKittingShipmentTask(
       const std::string& kitting_tray_name, const StationId& destination_station,

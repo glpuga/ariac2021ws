@@ -10,7 +10,11 @@
 
 // tijcore
 
+#include <tijcore/tasking/PickAndPlaceTask.hpp>
+#include <tijcore/tasking/RemoveBrokenPartTask.hpp>
 #include <tijcore/tasking/RobotTaskFactory.hpp>
+// #include <tijcore/tasking/SubmitAssemblyShipmentTask.hpp>
+// #include <tijcore/tasking/SubmitKittingShipmentTask.hpp>
 #include <tijlogger/logger.hpp>
 
 namespace tijcore
@@ -43,16 +47,6 @@ RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlaceMovableTrayTask(
     ResourceManagerInterface::ManagedLocusHandle&& destination,
     ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
 {
-  return nullptr;
-}
-
-RobotTaskInterface::Ptr RobotTaskFactory::getPickAndTwistPartTask(
-    ResourceManagerInterface::ManagedLocusHandle&& target,
-    ResourceManagerInterface::ManagedLocusHandle&& destination,
-    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
-{
-  // return std::make_unique<PickAndTwistPartTask>(resource_manager_, std::move(target),
-  //                                               std::move(destination), std::move(robot));
   return nullptr;
 }
 

@@ -39,11 +39,6 @@ public:
       ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
   virtual RobotTaskInterface::Ptr
-  getPickAndTwistPartTask(ResourceManagerInterface::ManagedLocusHandle&& target,
-                          ResourceManagerInterface::ManagedLocusHandle&& destination,
-                          ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
-
-  virtual RobotTaskInterface::Ptr
   getSubmitKittingShipmentTask(const std::string& kitting_tray_name, const StationId& station_id,
                                const ShipmentType& shipment_type) const = 0;
 
