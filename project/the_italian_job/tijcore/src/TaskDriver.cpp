@@ -42,8 +42,8 @@ void TaskDriver::perceptionCallback()
   std::lock_guard<std::mutex> lock{ mutex_ };
   auto observed_models = perception_input_->getObservedModels();
   INFO("Updating sensor information with {} observed models", observed_models.size());
-  resource_manager_->updateSensorData(observed_models);
-  resource_manager_->logKnownLoci();
+  resource_manager_->processInputSensorData(observed_models);
+  resource_manager_->logCurrentResourceManagerState();
 }
 
 void TaskDriver::processingCallback()

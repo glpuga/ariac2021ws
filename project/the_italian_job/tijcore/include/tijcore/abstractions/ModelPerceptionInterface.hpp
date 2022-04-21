@@ -17,6 +17,7 @@ class ModelPerceptionInterface
 {
 public:
   using Ptr = std::unique_ptr<ModelPerceptionInterface>;
+  using SharedPtr = std::shared_ptr<ModelPerceptionInterface>;
 
   virtual ~ModelPerceptionInterface() = default;
   virtual std::vector<ObservedItem> getObservedModels() const = 0;
