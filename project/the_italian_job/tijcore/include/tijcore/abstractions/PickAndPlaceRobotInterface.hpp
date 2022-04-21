@@ -28,6 +28,8 @@ public:
 
   virtual bool getInSafePoseNearTarget(const tijmath::RelativePose3& target) const = 0;
 
+  virtual bool getInLandingSpot(const tijmath::RelativePose3& target) const = 0;
+
   virtual bool contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
                                             const tijcore::PartTypeId& part_type_id) const = 0;
 

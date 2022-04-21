@@ -27,6 +27,8 @@ public:
 
   MOCK_CONST_METHOD1(getInSafePoseNearTarget, bool(const tijmath::RelativePose3& target));
 
+  MOCK_CONST_METHOD1(getInLandingSpot, bool(const tijmath::RelativePose3& target));
+
   MOCK_CONST_METHOD2(contactPartFromAboveAndGrasp, bool(const tijmath::RelativePose3& target,
                                                         const tijcore::PartTypeId& part_type_id));
 
