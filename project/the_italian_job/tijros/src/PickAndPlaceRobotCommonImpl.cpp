@@ -195,6 +195,61 @@ bool PickAndPlaceRobotCommonImpl::getArmInRestingPose() const
   return true;
 }
 
+bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3& target) const
+{
+  const auto action_name = "getInLandingSpot";
+
+  if (!enabled())
+  {
+    return false;
+  }
+
+  auto move_group_ptr = buildMoveItGroupHandle();
+  move_group_ptr->setPoseReferenceFrame(world_frame);
+
+  // Convert the target pose to the world reference frame, and set the
+  // orientation pointing to the part
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  auto end_effector_target_pose = frame_transformer->transformPoseToFrame(target, world_frame);
+  alignEndEffectorWithTarget(end_effector_target_pose);
+
+  auto approximation_pose_in_world = end_effector_target_pose;
+  approximation_pose_in_world.position().vector().z() += landing_pose_height_;
+
+  INFO("{}: {} approximation pose at {}", action_name, name(), approximation_pose_in_world);
+
+  moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
+  {
+    INFO("{}: {} is generating the moveit plan", action_name, name());
+    auto target_geo_pose = utils::convertCorePoseToGeoPose(approximation_pose_in_world.pose());
+    move_group_ptr->setPoseTarget(target_geo_pose);
+    move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
+
+    bool success = (move_group_ptr->plan(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (!success)
+    {
+      ERROR("{}: {} failed to generate a plan to arrive at the approximation pose", action_name,
+            name());
+      return false;
+    }
+  }
+
+  {
+    INFO("{}: {} is executing the movement", action_name, name());
+    auto success = (move_group_ptr->execute(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (!success)
+    {
+      ERROR("{}: {} failed to arrive at the approximation pose", action_name, name());
+      return false;
+    }
+  }
+
+  INFO("{}: {} arrived at the approximation pose", action_name, name());
+  return true;
+}
+
 bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(
     const tijmath::RelativePose3& target) const
 {
