@@ -17,8 +17,7 @@ namespace tijcore
 class SubmitKittingShipmentTask : public RobotTaskInterface
 {
 public:
-  SubmitKittingShipmentTask(const Toolbox::SharedPtr& toolbox,
-                            ResourceManagerInterface::SubmissionTrayHandle&& tray,
+  SubmitKittingShipmentTask(const Toolbox::SharedPtr& toolbox, const std::string& kitting_tray_name,
                             const StationId& destination_station,
                             const ShipmentType& shipment_type);
 
