@@ -45,7 +45,8 @@ RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlaceMovableTrayTask(
     ResourceManagerInterface::ManagedLocusHandle&& destination,
     ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
 {
-  return nullptr;
+  return std::make_unique<PickAndPlaceTask>(resource_manager_, std::move(source),
+                                            std::move(destination), std::move(robot));
 }
 
 RobotTaskInterface::Ptr RobotTaskFactory::getSubmitKittingShipmentTask(
