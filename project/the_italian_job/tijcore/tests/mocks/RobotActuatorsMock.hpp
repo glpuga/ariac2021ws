@@ -27,6 +27,8 @@ public:
 
   MOCK_CONST_METHOD1(setGantryGripperSuction, bool(const bool enable));
 
+  MOCK_CONST_METHOD1(setGantryGripperTool, bool(const tijcore::GripperTypeId new_type));
+
   MOCK_CONST_METHOD0(getKittingGripperState, VacuumGripperState());
 
   MOCK_CONST_METHOD1(setKittingGripperSuction, bool(const bool enable));
@@ -34,6 +36,8 @@ public:
   MOCK_CONST_METHOD1(setGantryTrayLockState, bool(const bool lock_state));
 
   MOCK_CONST_METHOD0(getRobotHealthStatus, RobotHealthStatus());
+
+  MOCK_CONST_METHOD0(getGripperType, tijcore::GripperTypeId());
 };
 
 }  // namespace tijcore

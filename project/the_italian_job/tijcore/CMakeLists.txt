@@ -43,6 +43,7 @@ add_library(${PROJECT_NAME}
   src/BinModelContainer.cpp
   src/ConveyorBeltModelContainer.cpp
   src/CuboidVolume.cpp
+  src/GripperTypeId.cpp
   src/ManagedLocus.cpp
   src/ModelContainerInterface.cpp
   src/ModelPerceptionMixer.cpp
