@@ -7,6 +7,9 @@
 // standard library
 #include <memory>
 
+// project
+#include <tijcore/datatypes/GripperTypeId.hpp>
+
 namespace tijcore
 {
 class RobotActuatorsInterface
@@ -41,6 +44,8 @@ public:
 
   virtual bool setGantryGripperSuction(const bool enable) const = 0;
 
+  virtual bool setGantryGripperTool(const tijcore::GripperTypeId new_type) const = 0;
+
   virtual VacuumGripperState getKittingGripperState() const = 0;
 
   virtual bool setKittingGripperSuction(const bool enable) const = 0;
@@ -48,6 +53,8 @@ public:
   virtual bool setGantryTrayLockState(const bool lock_state) const = 0;
 
   virtual RobotHealthStatus getRobotHealthStatus() const = 0;
+
+  virtual tijcore::GripperTypeId getGripperType() const = 0;
 };
 
 }  // namespace tijcore

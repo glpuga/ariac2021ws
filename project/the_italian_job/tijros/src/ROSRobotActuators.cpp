@@ -10,12 +10,15 @@
 #include <std_srvs/Trigger.h>
 
 // competition
+#include <nist_gear/ChangeGripper.h>
 #include <nist_gear/ConveyorBeltState.h>
 #include <nist_gear/RobotHealth.h>
 #include <nist_gear/VacuumGripperControl.h>
 #include <nist_gear/VacuumGripperState.h>
+#include <std_msgs/String.h>
 
 // tijcore
+#include <tijcore/datatypes/GripperTypeId.hpp>
 #include <tijlogger/logger.hpp>
 #include <tijros/ROSRobotActuators.hpp>
 
@@ -38,7 +41,11 @@ constexpr char kitting_arm_gripper_control_service[] = "/ariac/kitting/arm/gripp
 constexpr char gantry_tray_lock_models_service[] = "/ariac/gantry_tray/lock_models";
 constexpr char gantry_tray_unlock_models_service[] = "/ariac/gantry_tray/unlock_models";
 
+constexpr char gantry_arm_gripper_tool_change_service[] = "/ariac/gantry/arm/gripper/change";
+
 constexpr char robot_health_topic[] = "/ariac/robot_health";
+
+constexpr char gripper_type_topic[] = "/ariac/gantry/arm/gripper/type";
 
 };  // namespace
 
@@ -57,6 +64,9 @@ ROSRobotActuators::ROSRobotActuators(const ros::NodeHandle nh) : nh_{ nh }
 
   robot_health_sub_ = nh_.subscribe(robot_health_topic, default_queue_len,
                                     &ROSRobotActuators::robotHealthCallback, this);
+
+  gripper_type_sub_ = nh_.subscribe(gripper_type_topic, default_queue_len,
+                                    &ROSRobotActuators::gripperTypeCallback, this);
 }
 
 RobotActuatorsInterface::ConveyorState ROSRobotActuators::getConveyorState() const
@@ -83,6 +93,22 @@ bool ROSRobotActuators::setGantryGripperSuction(const bool enable) const
     return false;
   }
   INFO("Updated gantry gripper state:", enable);
+  return true;
+}
+
+bool ROSRobotActuators::setGantryGripperTool(const tijcore::GripperTypeId new_type) const
+{
+  std::lock_guard<std::mutex> lock{ mutex_ };
+  nist_gear::ChangeGripper msg;
+  msg.request.gripper_type = tijcore::gripper_type::toString(new_type);
+  ros::service::call(gantry_arm_gripper_tool_change_service, msg);
+  if (!msg.response.success)
+  {
+    ERROR("Failed to set a new gantry gripper tool to {}, error msg: {}", new_type,
+          msg.response.message);
+    return false;
+  }
+  INFO("Updated gantry gripper tool to:", new_type);
   return true;
 }
 
@@ -134,6 +160,12 @@ RobotActuatorsInterface::RobotHealthStatus ROSRobotActuators::getRobotHealthStat
   return latest_robot_health_data_;
 }
 
+tijcore::GripperTypeId ROSRobotActuators::getGripperType() const
+{
+  std::lock_guard<std::mutex> lock{ mutex_ };
+  return latest_gripper_type_data_;
+}
+
 void ROSRobotActuators::conveyorStateCallback(nist_gear::ConveyorBeltState::ConstPtr msg)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
@@ -160,6 +192,24 @@ void ROSRobotActuators::robotHealthCallback(nist_gear::RobotHealth::ConstPtr msg
   std::lock_guard<std::mutex> lock{ mutex_ };
   latest_robot_health_data_.kitting_robot_enabled = msg->kitting_robot_health;
   latest_robot_health_data_.assembly_robot_enabled = msg->assembly_robot_health;
+}
+
+void ROSRobotActuators::gripperTypeCallback(std_msgs::String::ConstPtr msg)
+{
+  std::lock_guard<std::mutex> lock{ mutex_ };
+  if (tijcore::gripper_type::isValid(msg->data))
+  {
+    const auto new_gripper_type_value = tijcore::gripper_type::fromString(msg->data);
+    if (new_gripper_type_value != latest_gripper_type_data_)
+    {
+      latest_gripper_type_data_ = new_gripper_type_value;
+      INFO("Updated gripper type to {}", new_gripper_type_value);
+    }
+  }
+  else
+  {
+    ERROR("Received invalid gripper type: {}", msg->data);
+  }
 }
 
 }  // namespace tijros

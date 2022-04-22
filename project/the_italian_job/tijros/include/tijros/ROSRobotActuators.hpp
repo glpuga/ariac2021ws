@@ -31,6 +31,8 @@ public:
 
   bool setGantryGripperSuction(const bool enable) const override;
 
+  bool setGantryGripperTool(const tijcore::GripperTypeId new_type) const override;
+
   VacuumGripperState getKittingGripperState() const override;
 
   bool setKittingGripperSuction(const bool enable) const override;
@@ -38,6 +40,8 @@ public:
   bool setGantryTrayLockState(const bool lock_state) const override;
 
   RobotHealthStatus getRobotHealthStatus() const override;
+
+  tijcore::GripperTypeId getGripperType() const override;
 
 private:
   mutable std::mutex mutex_;
@@ -48,11 +52,13 @@ private:
   ros::Subscriber gantry_arm_gripper_state_sub_;
   ros::Subscriber kitting_arm_gripper_state_sub_;
   ros::Subscriber robot_health_sub_;
+  ros::Subscriber gripper_type_sub_;
 
   ConveyorState latest_conveyor_state_data_;
   VacuumGripperState latest_gantry_arm_gripper_state_data_;
   VacuumGripperState latest_kitting_arm_gripper_state_data_;
   RobotHealthStatus latest_robot_health_data_;
+  tijcore::GripperTypeId latest_gripper_type_data_;
 
   void conveyorStateCallback(nist_gear::ConveyorBeltState::ConstPtr msg);
 
@@ -61,6 +67,8 @@ private:
   void kittingArmGripperStateCallback(nist_gear::VacuumGripperState::ConstPtr msg);
 
   void robotHealthCallback(nist_gear::RobotHealth::ConstPtr msg);
+
+  void gripperTypeCallback(std_msgs::String::ConstPtr msg);
 };
 
 }  // namespace tijros
