@@ -31,24 +31,37 @@ RobotTaskOutcome PickAndPlaceTask::run()
   auto& robot = *robot_.resource();
 
   tijcore::PartTypeId part_type_id;
+  const auto source_pose = source_.resource()->pose();
+
+  if (source_.resource()->isLocusWithPart())
   {
     const auto part_type = source_.resource()->qualifiedPartInfo().part_type;
     part_type_id = part_type.type();
   }
+  else if (source_.resource()->isLocusWithMovableTray())
+  {
+    // TODO(glpuga) hacky way to implement moving trays using flat pieces until
+    // we have a better solution
+    part_type_id = tijcore::PartTypeId::regulator;
+  }
+  else
+  {
+    return RobotTaskOutcome::TASK_FAILURE;
+  }
 
-  if (!robot.getInSafePoseNearTarget(source_.resource()->pose()))
+  if (!robot.getInSafePoseNearTarget(source_pose))
   {
     ERROR("{} failed to get in resting pose", robot.name());
   }
-  else if (!robot.getInLandingSpot(source_.resource()->pose()))
+  else if (!robot.getInLandingSpot(source_pose))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.name());
   }
-  else if (!robot.contactPartFromAboveAndGrasp(source_.resource()->pose(), part_type_id))
+  else if (!robot.contactPartFromAboveAndGrasp(source_pose, part_type_id))
   {
     ERROR("{} failed to grasp the part form the surface", robot.name());
   }
-  else if (!robot.getInLandingSpot(source_.resource()->pose()))
+  else if (!robot.getInLandingSpot(source_pose))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.name());
   }
@@ -80,7 +93,7 @@ RobotTaskOutcome PickAndPlaceTask::run()
     result = RobotTaskOutcome::TASK_SUCCESS;
     ManagedLocus::TransferPartFromHereToThere(*source_.resource(), *destination_.resource());
     robot.getInSafePoseNearTarget(destination_.resource()->pose());
-    INFO("{} successfully moved the part from {} to {}", robot.name(), source_.resource()->pose(),
+    INFO("{} successfully moved the part from {} to {}", robot.name(), source_pose,
          destination_.resource()->pose());
   }
 
