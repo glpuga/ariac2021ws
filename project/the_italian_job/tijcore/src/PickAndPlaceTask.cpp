@@ -14,10 +14,12 @@
 namespace tijcore
 {
 PickAndPlaceTask::PickAndPlaceTask(const ResourceManagerInterface::SharedPtr& resource_manager,
+                                   const Toolbox::SharedPtr& toolbox,
                                    ResourceManagerInterface::ManagedLocusHandle&& source,
                                    ResourceManagerInterface::ManagedLocusHandle&& destination,
                                    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot)
   : resource_manager_{ resource_manager }
+  , toolbox_{ toolbox }
   , source_{ std::move(source) }
   , destination_{ std::move(destination) }
   , robot_{ std::move(robot) }
@@ -31,25 +33,51 @@ RobotTaskOutcome PickAndPlaceTask::run()
   auto& robot = *robot_.resource();
 
   tijcore::PartTypeId part_type_id;
+  tijcore::GripperTypeId required_gripper_type;
   const auto source_pose = source_.resource()->pose();
+
+  auto scene = toolbox_->getSceneConfigReader();
 
   if (source_.resource()->isLocusWithPart())
   {
     const auto part_type = source_.resource()->qualifiedPartInfo().part_type;
     part_type_id = part_type.type();
+    required_gripper_type = tijcore::GripperTypeId::gripper_part;
   }
   else if (source_.resource()->isLocusWithMovableTray())
   {
     // TODO(glpuga) hacky way to implement moving trays using flat pieces until
     // we have a better solution
     part_type_id = tijcore::PartTypeId::regulator;
+    required_gripper_type = tijcore::GripperTypeId::gripper_tray;
   }
   else
   {
     return RobotTaskOutcome::TASK_FAILURE;
   }
 
-  if (!robot.getInSafePoseNearTarget(source_pose))
+  const auto initial_tool_type = robot.getGripperToolType();
+
+  if ((initial_tool_type != required_gripper_type) &&
+      !robot.getInLandingSpot(scene->getGripperToolSwappingTablePose()))
+  {
+    ERROR("{} was unable to go to the gripper swapping area to change from tool type from {} to {}",
+          robot.name(), initial_tool_type, required_gripper_type);
+  }
+  if ((initial_tool_type != required_gripper_type) && !robot.setGripperToolType(required_gripper_type))
+  {
+    ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.name(),
+          initial_tool_type, required_gripper_type);
+  }
+  if ((initial_tool_type != required_gripper_type) &&
+      (robot.getGripperToolType() != required_gripper_type))
+  {
+    ERROR(
+        "{} was unable to check that the tool type is the one needed for the operation, from {} to "
+        "{}",
+        robot.name(), initial_tool_type, required_gripper_type);
+  }
+  else if (!robot.getInSafePoseNearTarget(source_pose))
   {
     ERROR("{} failed to get in resting pose", robot.name());
   }

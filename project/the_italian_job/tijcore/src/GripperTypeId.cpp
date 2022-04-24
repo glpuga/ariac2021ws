@@ -19,7 +19,7 @@ GripperTypeId fromString(const std::string& sid)
 {
   static std::unordered_map<std::string, GripperTypeId> id_map = {
     { "gripper_tray", GripperTypeId::gripper_tray },
-    { "gripper_type", GripperTypeId::gripper_type },
+    { "gripper_part", GripperTypeId::gripper_part },
   };
 
   auto it = id_map.find(sid);
@@ -35,7 +35,7 @@ std::string toString(const GripperTypeId& id)
 {
   static const std::unordered_map<GripperTypeId, std::string> id_map = {
     { GripperTypeId::gripper_tray, "gripper_tray" },
-    { GripperTypeId::gripper_type, "gripper_type" },
+    { GripperTypeId::gripper_part, "gripper_part" },
   };
 
   auto it = id_map.find(id);

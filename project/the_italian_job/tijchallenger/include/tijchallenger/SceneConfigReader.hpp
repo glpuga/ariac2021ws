@@ -20,6 +20,8 @@ public:
 
   const tijmath::RelativePose3& getDropBucketPose() const override;
 
+  const tijmath::RelativePose3& getGripperToolSwappingTablePose() const override;
+
   const std::vector<BinData>& getListOfBins() const override;
 
   const std::vector<DeviceData>& getListOfLogicalCameras() const override;

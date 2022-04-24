@@ -63,6 +63,26 @@ void PickAndPlaceAssemblyRobot::setSuctionGripper(const bool state) const
   robot_actuator_->setGantryGripperSuction(state);
 }
 
+bool PickAndPlaceAssemblyRobot::setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const
+{
+  if (!robot_actuator_->setGantryGripperToolType(new_type))
+  {
+    return false;
+  }
+  while (robot_actuator_->getGantryGripperToolType() != new_type)
+  {
+    INFO("Waiting for gripper tool to be updated");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+  INFO("Gantry gripper tool updated to {}", robot_actuator_->getGantryGripperToolType());
+  return true;
+}
+
+tijcore::GripperTypeId PickAndPlaceAssemblyRobot::getGripperToolTypeImpl() const
+{
+  return robot_actuator_->getGantryGripperToolType();
+}
+
 void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
     std::vector<double>& joint_states) const
 {

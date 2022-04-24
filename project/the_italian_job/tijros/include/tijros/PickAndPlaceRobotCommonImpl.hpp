@@ -44,6 +44,10 @@ public:
 
   void abortCurrentAction() const override;
 
+  bool setGripperToolType(const tijcore::GripperTypeId new_type) const override;
+
+  tijcore::GripperTypeId getGripperToolType() const override;
+
 private:
   tijcore::Toolbox::SharedPtr toolbox_;
 

@@ -44,7 +44,7 @@ public:
 
   virtual bool setGantryGripperSuction(const bool enable) const = 0;
 
-  virtual bool setGantryGripperTool(const tijcore::GripperTypeId new_type) const = 0;
+  virtual bool setGantryGripperToolType(const tijcore::GripperTypeId new_type) const = 0;
 
   virtual VacuumGripperState getKittingGripperState() const = 0;
 
@@ -54,7 +54,7 @@ public:
 
   virtual RobotHealthStatus getRobotHealthStatus() const = 0;
 
-  virtual tijcore::GripperTypeId getGripperType() const = 0;
+  virtual tijcore::GripperTypeId getGantryGripperToolType() const = 0;
 };
 
 }  // namespace tijcore

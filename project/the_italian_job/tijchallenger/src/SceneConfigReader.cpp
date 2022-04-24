@@ -34,6 +34,14 @@ const tijmath::RelativePose3& SceneConfigReader::getDropBucketPose() const
   return data;
 }
 
+const tijmath::RelativePose3& SceneConfigReader::getGripperToolSwappingTablePose() const
+{
+  static const tijmath::RelativePose3 data{
+    world_frame_id_, tijmath::Pose3{ tijmath::Position::fromVector(-3.71, 6.26, 1.5), {} }
+  };
+  return data;
+}
+
 const std::vector<SceneConfigReader::BinData>& SceneConfigReader::getListOfBins() const
 {
   static const std::vector<BinData> data{

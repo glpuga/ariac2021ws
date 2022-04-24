@@ -12,7 +12,7 @@ namespace tijcore
 enum class GripperTypeId
 {
   gripper_tray,
-  gripper_type,
+  gripper_part,
 };
 
 namespace gripper_type

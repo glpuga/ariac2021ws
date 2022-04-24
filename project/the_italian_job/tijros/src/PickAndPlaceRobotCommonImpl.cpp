@@ -462,6 +462,18 @@ bool PickAndPlaceRobotCommonImpl::turnOffGripper() const
   return true;
 }
 
+bool PickAndPlaceRobotCommonImpl::setGripperToolType(const tijcore::GripperTypeId new_type) const
+{
+  const auto action_name = "switchToolType";
+  INFO("{}: {} is changing the tool type to {}", action_name, name(), new_type);
+  return setGripperToolTypeImpl(new_type);
+}
+
+tijcore::GripperTypeId PickAndPlaceRobotCommonImpl::getGripperToolType() const
+{
+  return getGripperToolTypeImpl();
+}
+
 void PickAndPlaceRobotCommonImpl::abortCurrentAction() const
 {
   const auto action_name = "abortCurrentAction";
