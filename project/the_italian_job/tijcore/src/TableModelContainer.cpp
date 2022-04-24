@@ -15,8 +15,10 @@ namespace tijcore
 namespace
 {
 const CuboidVolume bin_container_volume_{
-  tijmath::Vector3(-0.50, -0.75, 0.8),
-  tijmath::Vector3(0.50, 0.75, 1.2),
+  tijmath::Vector3(-0.50, -0.75, 0.8 + 0.45),  // 0.45 is a vertical offset because the table frame
+                                               // is below the ground
+  tijmath::Vector3(0.50, 0.75, 1.2 + 0.45),    // 0.45 is a vertical offset because the table frame
+                                               // is below the ground
 };
 
 }  // namespace

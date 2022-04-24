@@ -40,25 +40,25 @@ sensors:
   logical_camera_as1:
     type: logical_camera
     pose:
-      xyz: [-7.50, 3.00, 2.1]
+      xyz: [-7.50, 3.00, 2.25]
       rpy: [0, 'pi/2', 'pi/2']
 
   logical_camera_as2:
     type: logical_camera
     pose:
-      xyz: [-12.50, 3.00, 2.1]
+      xyz: [-12.50, 3.00, 2.25]
       rpy: [0, 'pi/2', 'pi/2']
 
   logical_camera_as3:
     type: logical_camera
     pose:
-      xyz: [-7.50, -3.00, 2.1]
+      xyz: [-7.50, -3.00, 2.25]
       rpy: [0, 'pi/2', 'pi/2']
 
   logical_camera_as4:
     type: logical_camera
     pose:
-      xyz: [-12.50, -3.00, 2.1]
+      xyz: [-12.50, -3.00, 2.25]
       rpy: [0, 'pi/2', 'pi/2']
 
   #
@@ -123,14 +123,14 @@ sensors:
       xyz: [-6.092189, 6.166299, 2.051140]
       rpy: [3.141593, 1.570792, 0.000000]
 
-  #
-  # Robot-mounted cameras
-  #
+#
+# Robot-mounted cameras
+#
 
-  # TODO(glpuga) remove these as they will not be used during the competition
+# TODO(glpuga) remove these as they will not be used during the competition
 
-  gantry_bin_camera:
-    enable: true
+gantry_bin_camera:
+  enable: true
 
-  gantry_tray_camera:
-    enable: true
+gantry_tray_camera:
+  enable: true

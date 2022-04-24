@@ -57,9 +57,6 @@ TIJChallenger::TIJChallenger()
   INFO(" - Instantiating scene configuration");
   config_ = std::make_shared<SceneConfigReader>();
 
-  INFO(" - Creating conveyor belt frame broadcasters");
-  containers_ = createConveyorBeltTransformBroadcasters();
-
   INFO(" - Creating Toolbox");
   toolbox_ = createToolbox();
 
@@ -209,7 +206,7 @@ TIJChallenger::createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr& toolb
 {
   INFO(" - Creating robot puppeteers");
   std::vector<tijcore::PickAndPlaceRobotInterface::Ptr> robots;
-  robots.emplace_back(std::make_unique<tijros::PickAndPlaceKittingRobot>(toolbox_));
+  //  robots.emplace_back(std::make_unique<tijros::PickAndPlaceKittingRobot>(toolbox_));
   robots.emplace_back(std::make_unique<tijros::PickAndPlaceAssemblyRobot>(toolbox_));
   return robots;
 }

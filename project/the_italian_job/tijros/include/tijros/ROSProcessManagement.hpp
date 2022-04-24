@@ -12,7 +12,7 @@
 #include <vector>
 
 // roscpp
-#include <nist_gear/Order.h>
+#include <nist_gear/Orders.h>
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 
@@ -72,7 +72,7 @@ private:
 
   void competitionStateCallback(std_msgs::String::ConstPtr msg);
 
-  void ordersCallback(nist_gear::Order::ConstPtr msg);
+  void ordersCallback(nist_gear::Orders::ConstPtr msg);
 
   void agv1StateCallback(std_msgs::String::ConstPtr msg);
 

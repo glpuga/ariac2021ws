@@ -34,8 +34,6 @@ private:
   ros::NodeHandle nh_;
   tijcore::SceneConfigReaderInterface::SharedPtr config_;
 
-  std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr> containers_;
-
   tijcore::Toolbox::SharedPtr toolbox_;
   tijcore::TaskDriver::Ptr task_driver_;
 

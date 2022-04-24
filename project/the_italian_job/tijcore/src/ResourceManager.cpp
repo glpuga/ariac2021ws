@@ -390,7 +390,7 @@ std::vector<ManagedLocus> ResourceManager::createObservedLociListFromObservedMod
       WARNING(
           "A model at {} appears in sensor input but could not be matched "
           "to a known surface",
-          observed_item_entry.pose);
+          transformPoseToContainerLocalPose(observed_item_entry.pose, "world"));
       continue;
     }
 

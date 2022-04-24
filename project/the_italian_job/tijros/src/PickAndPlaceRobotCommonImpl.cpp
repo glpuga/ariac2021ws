@@ -126,6 +126,8 @@ PickAndPlaceRobotCommonImpl::buildMoveItGroupHandle() const
   // errors in one of the joints, in both robots(!)
   const auto custom_moveit_namespace = "/ariac/custom/" + name();
 
+  WARNING("Creating moveit group handle for robot: {}", name());
+
   move_group_ptr_.reset();
   if (!move_group_ptr_)
   {

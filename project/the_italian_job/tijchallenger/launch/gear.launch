@@ -19,7 +19,7 @@
   <arg unless="$(arg load_prebuilt_moveit)" name="load_prebuilt_moveit_args" value="" />
   <arg if="$(arg load_prebuilt_moveit)" name="load_prebuilt_moveit_args" value="--load-moveit" />
 
-  <arg name="trial_config" default="sample_kitting.yaml" />
+  <arg name="trial_config" default="manufacturing_tasks/kitting_sample.yaml" />
 
   <node name="ariac_sim" pkg="nist_gear" type="gear.py"
         args="--development-mode

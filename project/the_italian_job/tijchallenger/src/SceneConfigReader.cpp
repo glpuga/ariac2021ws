@@ -77,14 +77,6 @@ const std::vector<SceneConfigReader::BinData>& SceneConfigReader::getListOfBins(
         "bin8",
         "bin8_frame",
     },
-    {
-        "tray_table1",
-        "tray_table1_frame",
-    },
-    {
-        "tray_table2",
-        "tray_table2_frame",
-    },
   };
   return data;
 }

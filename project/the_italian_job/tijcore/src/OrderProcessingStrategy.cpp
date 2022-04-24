@@ -305,6 +305,8 @@ void OrderProcessingStrategy::removeLociInTargetSurfaces(                       
 std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageRemoveBrokenParts(  //
     InitialWorldState& world_state) const                                              //
 {
+  INFO("Executing RemoveBrokenParts");
+
   // now we begin creation actions to deal with stuff
   std::vector<RobotTaskInterface::Ptr> output_actions;
   for (auto& part : world_state.broken_parts)
@@ -326,6 +328,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageRemoveUnwante
     const std::set<StationId>& assemblies_in_use,                                        //
     InitialWorldState& world_state) const                                                //
 {
+  INFO("Executing RemoveUnwantedParts");
+
   std::vector<RobotTaskInterface::Ptr> output_actions;
   std::vector<ResourceManagerInterface::ManagedLocusHandle> empty_loci;
 
@@ -382,6 +386,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stagePlaceMissingP
     InitialWorldState& world_state,                                                    //
     int32_t& unavailable_part_count) const                                             //
 {
+  INFO("Executing PlaceMissingParts");
+
   std::vector<RobotTaskInterface::Ptr> output_actions;
 
   for (auto& [missing_part_locus, part_id] : world_state.missing_parts)
@@ -432,6 +438,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageSubmitShippin
     InitialWorldState& world_state,                                                 //
     bool& shipping_done) const                                                      //
 {
+  INFO("Executing SubmitShipping");
+
   std::vector<RobotTaskInterface::Ptr> output_actions;
 
   // release these pieces or we won't be able to capture the tray
@@ -463,6 +471,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageBringAMovable
     const std::set<StationId>& assemblies_in_use,                                      //
     const std::string& target_container_name) const
 {
+  INFO("Executing BringAMovableTrayTask for {}", movable_tray_id);
+
   std::vector<RobotTaskInterface::Ptr> output_actions;
 
   // create a locus for the target pose

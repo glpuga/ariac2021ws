@@ -15,7 +15,7 @@
 
 // competition
 #include <nist_gear/AssemblyStationSubmitShipment.h>
-#include <nist_gear/Order.h>
+#include <nist_gear/Orders.h>
 #include <nist_gear/SubmitKittingShipment.h>
 
 // tijcore
@@ -282,7 +282,7 @@ void ROSProcessManagement::competitionStateCallback(std_msgs::String::ConstPtr m
   latest_competition_state_data_ = msg->data;
 }
 
-void ROSProcessManagement::ordersCallback(nist_gear::Order::ConstPtr msg)
+void ROSProcessManagement::ordersCallback(nist_gear::Orders::ConstPtr msg)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   tijcore::Order new_order;
@@ -303,22 +303,18 @@ void ROSProcessManagement::ordersCallback(nist_gear::Order::ConstPtr msg)
     output_kitting_shipment.shipment_type = input_kitting_shipment.shipment_type;
     output_kitting_shipment.station_id =
         tijcore::station_id::fromString(input_kitting_shipment.assembly_station);
-    output_kitting_shipment.agv_id =
-        tijcore::agv::fromString(input_kitting_shipment.tray_content.kit_tray);
+    output_kitting_shipment.agv_id = tijcore::agv::fromString(input_kitting_shipment.agv);
 
-    output_kitting_shipment.movable_tray_id = tijcore::movable_tray::fromString(
-        input_kitting_shipment.tray_content.movable_tray.movable_tray_type);
-    output_kitting_shipment.movable_tray_name =
-        input_kitting_shipment.tray_content.movable_tray.movable_tray_name;
+    output_kitting_shipment.movable_tray_id =
+        tijcore::movable_tray::fromString(input_kitting_shipment.movable_tray.movable_tray_type);
 
     auto kit_tray_frame_id = utils::convertAgvIdToKitTrayFrameId(output_kitting_shipment.agv_id);
 
     output_kitting_shipment.movable_tray_pose = tijmath::RelativePose3{
-      kit_tray_frame_id, utils::convertGeoPoseToCorePose(
-                             input_kitting_shipment.tray_content.movable_tray.movable_tray_pose)
+      kit_tray_frame_id, utils::convertGeoPoseToCorePose(input_kitting_shipment.movable_tray.pose)
     };
 
-    for (const auto& input_product : input_kitting_shipment.tray_content.products)
+    for (const auto& input_product : input_kitting_shipment.products)
     {
       output_kitting_shipment.products.push_back(
           convert_ros_product_to_core_product(input_product, kit_tray_frame_id));
