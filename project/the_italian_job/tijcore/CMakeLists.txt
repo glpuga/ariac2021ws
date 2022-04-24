@@ -67,6 +67,7 @@ add_library(${PROJECT_NAME}
   src/SubmitAssemblyShipmentTask.cpp
   src/SubmitKittingShipmentTask.cpp
   src/SurfaceManager.cpp
+  src/TableModelContainer.cpp
   src/TaskDispatcher.cpp
   src/TaskDriver.cpp
 )
