@@ -4,6 +4,16 @@
 
 # ARIAC 2022 TheItalianJob workspace
 
+## ARIAC 2022
+
+Links and documents:
+
+* [ARIAC main site](https://www.nist.gov/el/intelligent-systems-division-73500/agile-robotics-industrial-automation-competition).
+* [ARIAC code repository](https://github.com/usnistgov/ARIAC).
+* [ARIAC competition server code](https://github.com/osrf/ariac-docker).
+* [Project](https://github.com/glpuga/ariac2021ws/projects/1)
+
+
 ## Quick usage
 
 In the host system, clone the repo:
@@ -47,12 +57,4 @@ roslaunch tijchallenger challenger.launch
 ```
 
 The node will start the competition mode and the robots will begin completing the orders in the trial configuration file.
-
-## ARIAC 2022
-
-Links and documents:
-
-* [ARIAC main site](https://www.nist.gov/el/intelligent-systems-division-73500/agile-robotics-industrial-automation-competition).
-* [ARIAC code repository](https://github.com/usnistgov/ARIAC).
-* [ARIAC competition server code](https://github.com/osrf/ariac-docker).
 
