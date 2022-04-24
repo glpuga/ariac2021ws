@@ -96,7 +96,7 @@ bool ROSRobotActuators::setGantryGripperSuction(const bool enable) const
   return true;
 }
 
-bool ROSRobotActuators::setGantryGripperTool(const tijcore::GripperTypeId new_type) const
+bool ROSRobotActuators::setGantryGripperToolType(const tijcore::GripperTypeId new_type) const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   nist_gear::ChangeGripper msg;
@@ -160,7 +160,7 @@ RobotActuatorsInterface::RobotHealthStatus ROSRobotActuators::getRobotHealthStat
   return latest_robot_health_data_;
 }
 
-tijcore::GripperTypeId ROSRobotActuators::getGripperType() const
+tijcore::GripperTypeId ROSRobotActuators::getGantryGripperToolType() const
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
   return latest_gripper_type_data_;

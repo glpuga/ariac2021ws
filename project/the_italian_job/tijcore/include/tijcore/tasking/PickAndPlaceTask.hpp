@@ -7,6 +7,7 @@
 // tijcore
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/abstractions/RobotTaskInterface.hpp>
+#include <tijcore/coremodels/Toolbox.hpp>
 
 namespace tijcore
 {
@@ -14,6 +15,7 @@ class PickAndPlaceTask : public RobotTaskInterface
 {
 public:
   PickAndPlaceTask(const ResourceManagerInterface::SharedPtr& resource_manager,
+                   const Toolbox::SharedPtr& toolbox,
                    ResourceManagerInterface::ManagedLocusHandle&& source,
                    ResourceManagerInterface::ManagedLocusHandle&& destination,
                    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot);
@@ -24,6 +26,7 @@ public:
 
 private:
   ResourceManagerInterface::SharedPtr resource_manager_;
+  Toolbox::SharedPtr toolbox_;
   ResourceManagerInterface::ManagedLocusHandle source_;
   ResourceManagerInterface::ManagedLocusHandle destination_;
   ResourceManagerInterface::PickAndPlaceRobotHandle robot_;

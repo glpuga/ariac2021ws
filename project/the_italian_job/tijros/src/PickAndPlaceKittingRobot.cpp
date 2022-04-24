@@ -126,4 +126,20 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTargetPose(
   }
 }
 
+bool PickAndPlaceKittingRobot::setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const
+{
+  if (new_type != tijcore::GripperTypeId::gripper_part)
+  {
+    ERROR("The gripper type type {} is not supported by the kitting robot...", new_type);
+    return false;
+  }
+  WARNING("Requested a change of gripper tool to the kitting robot, with no effect");
+  return true;
+}
+
+tijcore::GripperTypeId PickAndPlaceKittingRobot::getGripperToolTypeImpl() const
+{
+  return tijcore::GripperTypeId::gripper_part;
+}
+
 }  // namespace tijros

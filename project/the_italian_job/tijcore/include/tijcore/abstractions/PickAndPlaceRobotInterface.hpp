@@ -11,6 +11,7 @@
 #include <vector>
 
 // tijcore
+#include <tijcore/datatypes/GripperTypeId.hpp>
 #include <tijcore/datatypes/PartTypeId.hpp>
 #include <tijmath/RelativePose3.hpp>
 
@@ -48,10 +49,18 @@ public:
 
   virtual void abortCurrentAction() const = 0;
 
+  virtual bool setGripperToolType(const tijcore::GripperTypeId new_type) const = 0;
+
+  virtual tijcore::GripperTypeId getGripperToolType() const = 0;
+
 protected:
   virtual std::string getRobotPlanningGroup() const = 0;
 
   virtual void setSuctionGripper(const bool state) const = 0;
+
+  virtual bool setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const = 0;
+
+  virtual tijcore::GripperTypeId getGripperToolTypeImpl() const = 0;
 
   // TODO(glpuga) these three might better belong in the common implementation
   // class.

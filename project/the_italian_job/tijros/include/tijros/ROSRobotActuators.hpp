@@ -31,7 +31,7 @@ public:
 
   bool setGantryGripperSuction(const bool enable) const override;
 
-  bool setGantryGripperTool(const tijcore::GripperTypeId new_type) const override;
+  bool setGantryGripperToolType(const tijcore::GripperTypeId new_type) const override;
 
   VacuumGripperState getKittingGripperState() const override;
 
@@ -41,7 +41,7 @@ public:
 
   RobotHealthStatus getRobotHealthStatus() const override;
 
-  tijcore::GripperTypeId getGripperType() const override;
+  tijcore::GripperTypeId getGantryGripperToolType() const override;
 
 private:
   mutable std::mutex mutex_;
