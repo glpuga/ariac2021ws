@@ -66,6 +66,8 @@ public:
   MOCK_CONST_METHOD1(setGripperToolTypeImpl, bool(const tijcore::GripperTypeId new_type));
 
   MOCK_CONST_METHOD0(getGripperToolTypeImpl, tijcore::GripperTypeId());
+
+  MOCK_CONST_METHOD1(canReach, bool(const tijmath::RelativePose3& target));
 };
 
 }  // namespace tijcore

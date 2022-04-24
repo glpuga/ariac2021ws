@@ -30,7 +30,9 @@ public:
   MOCK_METHOD1(findSiblingLociByCommonParent,
                std::vector<ManagedLocusHandle>(const std::string& part_id));
 
-  MOCK_METHOD0(getPickAndPlaceRobotHandle, std::optional<PickAndPlaceRobotHandle>());
+  MOCK_METHOD1(
+      getPickAndPlaceRobotHandle,
+      std::optional<PickAndPlaceRobotHandle>(const std::vector<tijmath::RelativePose3>& waypoints));
 
   MOCK_METHOD1(getLocusAtPose,
                std::optional<ManagedLocusHandle>(const tijmath::RelativePose3& pose));

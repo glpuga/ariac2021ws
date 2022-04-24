@@ -211,27 +211,37 @@ ResourceManager::findSiblingLociByCommonParent(const std::string& parent_name)
 }
 
 std::optional<ResourceManagerInterface::PickAndPlaceRobotHandle>
-ResourceManager::getPickAndPlaceRobotHandle()
+ResourceManager::getPickAndPlaceRobotHandle(const std::vector<tijmath::RelativePose3>& waypoints)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
 
   std::optional<PickAndPlaceRobotHandle> current_selection_opt;
 
-  for (auto& pap_robot_handle : pick_and_place_robots_)
+  for (auto& pick_and_place_robot_handle : pick_and_place_robots_)
   {
     // discard robots that have already been allocated to a task
-    if (pap_robot_handle.allocated())
+    if (pick_and_place_robot_handle.allocated())
     {
       continue;
     }
 
     // discard robots that that have been disabled
-    if (!pap_robot_handle.resource()->enabled())
+    if (!pick_and_place_robot_handle.resource()->enabled())
     {
       continue;
     }
 
-    current_selection_opt = pap_robot_handle;
+    // discard robots that are unable to reach one or more waypoints
+    auto reachability_test =
+        [&pick_and_place_robot_handle](const tijmath::RelativePose3& waypoint) {
+          return pick_and_place_robot_handle.resource()->canReach(waypoint);
+        };
+    if (!std::all_of(waypoints.begin(), waypoints.end(), reachability_test))
+    {
+      continue;
+    }
+
+    current_selection_opt = pick_and_place_robot_handle;
     break;
   }
 

@@ -64,7 +64,8 @@ RobotTaskOutcome PickAndPlaceTask::run()
     ERROR("{} was unable to go to the gripper swapping area to change from tool type from {} to {}",
           robot.name(), initial_tool_type, required_gripper_type);
   }
-  if ((initial_tool_type != required_gripper_type) && !robot.setGripperToolType(required_gripper_type))
+  if ((initial_tool_type != required_gripper_type) &&
+      !robot.setGripperToolType(required_gripper_type))
   {
     ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.name(),
           initial_tool_type, required_gripper_type);

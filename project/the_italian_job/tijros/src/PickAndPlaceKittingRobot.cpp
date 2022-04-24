@@ -108,6 +108,7 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTargetPose(
             name());
   }
 
+  // TODO(glpuga): this should be generalized so that "world" is not hardcoded
   const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");
   joint_states[0] = target_in_world.position().vector().y();
 
@@ -140,6 +141,14 @@ bool PickAndPlaceKittingRobot::setGripperToolTypeImpl(const tijcore::GripperType
 tijcore::GripperTypeId PickAndPlaceKittingRobot::getGripperToolTypeImpl() const
 {
   return tijcore::GripperTypeId::gripper_part;
+}
+
+bool PickAndPlaceKittingRobot::canReach(const tijmath::RelativePose3& target) const
+{
+  // TODO(glpuga): this should be generalized so that "world" is not hardcoded
+  const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");
+  const auto target_in_world_x = target_in_world.position().vector().x();
+  return (-2.65 < target_in_world_x) && (target_in_world_x < 0.0);
 }
 
 }  // namespace tijros

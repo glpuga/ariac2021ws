@@ -26,6 +26,8 @@ public:
 
   bool gripperHasPartAttached() const override;
 
+  bool canReach(const tijmath::RelativePose3& target) const override;
+
 private:
   tijcore::FrameTransformerInterface::SharedPtr frame_transformer_;
   tijcore::RobotActuatorsInterface::SharedPtr robot_actuator_;
