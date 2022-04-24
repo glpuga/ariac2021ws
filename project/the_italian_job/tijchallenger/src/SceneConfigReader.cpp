@@ -77,6 +77,29 @@ const std::vector<SceneConfigReader::BinData>& SceneConfigReader::getListOfBins(
         "bin8",
         "bin8_frame",
     },
+    {
+        "tray_table1",
+        "tray_table1_frame",
+    },
+    {
+        "tray_table2",
+        "tray_table2_frame",
+    },
+  };
+  return data;
+}
+
+const std::vector<SceneConfigReader::TableData>& SceneConfigReader::getListOfTables() const
+{
+  static const std::vector<TableData> data{
+    {
+        "tray_table1",
+        "tray_table1_frame",
+    },
+    {
+        "tray_table2",
+        "tray_table2_frame",
+    },
   };
   return data;
 }
@@ -100,8 +123,7 @@ const std::vector<SceneConfigReader::DeviceData>& SceneConfigReader::getListOfLo
     { "logical_camera_agv3_as4", "logical_camera_agv3_as4_frame" },
     { "logical_camera_agv4_as3", "logical_camera_agv4_as3_frame" },
     { "logical_camera_agv4_as4", "logical_camera_agv4_as4_frame" },
-    { "logical_camera_conveyor_belt_1", "logical_camera_conveyor_belt_1_frame" },
-    { "logical_camera_conveyor_belt_2", "logical_camera_conveyor_belt_2_frame" },
+    { "logical_camera_bin_trays", "logical_camera_bin_trays_frame" },
   };
   return data;
 }

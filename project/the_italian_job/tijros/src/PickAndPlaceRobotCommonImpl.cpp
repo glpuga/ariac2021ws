@@ -88,10 +88,10 @@ double estimatePartHeight(const tijmath::Matrix3& orientation_in_world,
                           const tijcore::PartTypeId& id)
 {
   const auto part_dimensions = tijcore::part_type::dimensions(id);
-  const double estimated_height =
-      std::abs(tijmath::Vector3{ 0, 0, 1 }.dot(part_dimensions[0] * orientation_in_world.col(0) +
-                                               part_dimensions[1] * orientation_in_world.col(1) +
-                                               part_dimensions[2] * orientation_in_world.col(2)));
+  const double estimated_height = std::abs(
+      tijmath::Vector3{ 0.0, 0.0, 1 }.dot(part_dimensions[0] * orientation_in_world.col(0) +
+                                          part_dimensions[1] * orientation_in_world.col(1) +
+                                          part_dimensions[2] * orientation_in_world.col(2)));
   return estimated_height;
 }
 
@@ -494,7 +494,7 @@ void PickAndPlaceRobotCommonImpl::buildObstacleSceneFromDescription() const
   for (const auto& item : scene_configuration->getListOfAgvs())
   {
     collision_objects.push_back(createCollisionBox(item.name, "surface", item.frame_id, 0.5, 0.7,
-                                                   z_offset, 0, 0, 0, operation));
+                                                   z_offset, 0.0, 0.0, 0.0, operation));
     collision_objects.push_back(createCollisionBox(item.name, "tower_foot", item.frame_id, 0.23,
                                                    0.23, 0.22, 0.0, -0.45, 0.11, operation));
     collision_objects.push_back(createCollisionBox(item.name, "tower_head", item.frame_id, 0.15,
@@ -526,7 +526,7 @@ void PickAndPlaceRobotCommonImpl::buildObstacleSceneFromDescription() const
   for (const auto& item : scene_configuration->getListOfBins())
   {
     collision_objects.push_back(createCollisionBox(item.name, "surface", item.frame_id, 0.6, 0.6,
-                                                   z_offset, 0, 0, 0, operation));
+                                                   z_offset, 0.0, 0.0, 0.0, operation));
 
     collision_objects.push_back(createCollisionBox(item.name, "wall_1", item.frame_id, 0.64, 0.06,
                                                    0.08, 0.0, 0.31, 0.04, operation));
@@ -538,11 +538,18 @@ void PickAndPlaceRobotCommonImpl::buildObstacleSceneFromDescription() const
                                                    0.08, -0.31, 0.0, 0.04, operation));
   }
 
+  DEBUG(" - adding table representatives");
+  for (const auto& item : scene_configuration->getListOfTables())
+  {
+    collision_objects.push_back(createCollisionBox(item.name, "surface", item.frame_id, 1.0, 1.5,
+                                                   z_offset, 0.0, 0.0, 0.0, operation));
+  }
+
   DEBUG(" - adding conveyor belt representatives");
   for (const auto& item : scene_configuration->getListOfConveyorBelts())
   {
     collision_objects.push_back(createCollisionBox(item.name, "surface", item.container_frame_id,
-                                                   0.63, 9, z_offset, 0, 0, 0, operation));
+                                                   0.63, 9.0, z_offset, 0.0, 0.0, 0.0, operation));
   }
 
   // kitting rail
@@ -560,7 +567,7 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
     tijmath::RelativePose3& end_effector_target_pose) const
 {
   const auto orientation = end_effector_target_pose.rotation().rotationMatrix();
-  const auto x_director = tijmath::Vector3{ 0, 0, -1 };
+  const auto x_director = tijmath::Vector3{ 0.0, 0.0, -1 };
 
   auto original_x_director = orientation.col(0);
   auto original_y_director = orientation.col(1);

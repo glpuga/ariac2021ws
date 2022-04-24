@@ -21,6 +21,7 @@
 #include <tijcore/containers/AssemblyStationModelContainer.hpp>
 #include <tijcore/containers/BinModelContainer.hpp>
 #include <tijcore/containers/ConveyorBeltModelContainer.hpp>
+#include <tijcore/containers/TableModelContainer.hpp>
 #include <tijcore/coremodels/ModelPerceptionMixer.hpp>
 #include <tijcore/coremodels/ModelPerceptionSpatialFilter.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
@@ -165,6 +166,14 @@ TIJChallenger::createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox_
   {
     INFO("   - {} @ {} ({})", item.name, item.frame_id);
     containers.emplace_back(std::make_unique<tijcore::BinModelContainer>(item.name, item.frame_id));
+  }
+
+  INFO(" - Loading table data");
+  for (const auto& item : config_->getListOfTables())
+  {
+    INFO("   - {} @ {} ({})", item.name, item.frame_id);
+    containers.emplace_back(
+        std::make_unique<tijcore::TableModelContainer>(item.name, item.frame_id));
   }
 
   INFO(" - Loading conveyor belts data");

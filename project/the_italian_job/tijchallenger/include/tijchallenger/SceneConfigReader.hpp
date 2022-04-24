@@ -24,6 +24,8 @@ public:
 
   const std::vector<BinData>& getListOfBins() const override;
 
+  const std::vector<TableData>& getListOfTables() const override;
+
   const std::vector<DeviceData>& getListOfLogicalCameras() const override;
 
   const std::vector<DeviceData>& getListOfQualityControlSensors() const override;

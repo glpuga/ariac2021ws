@@ -42,6 +42,12 @@ public:
     std::string frame_id;
   };
 
+  struct TableData
+  {
+    std::string name;
+    std::string frame_id;
+  };
+
   virtual const std::string& getWorldFrameId() const = 0;
 
   virtual const tijmath::RelativePose3& getDropBucketPose() const = 0;
@@ -49,6 +55,8 @@ public:
   virtual const tijmath::RelativePose3& getGripperToolSwappingTablePose() const = 0;
 
   virtual const std::vector<BinData>& getListOfBins() const = 0;
+
+  virtual const std::vector<TableData>& getListOfTables() const = 0;
 
   virtual const std::vector<DeviceData>& getListOfLogicalCameras() const = 0;
 
