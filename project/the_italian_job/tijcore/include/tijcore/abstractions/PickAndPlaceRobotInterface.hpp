@@ -53,6 +53,8 @@ public:
 
   virtual tijcore::GripperTypeId getGripperToolType() const = 0;
 
+  virtual bool canReach(const tijmath::RelativePose3& target) const = 0;
+
 protected:
   virtual std::string getRobotPlanningGroup() const = 0;
 

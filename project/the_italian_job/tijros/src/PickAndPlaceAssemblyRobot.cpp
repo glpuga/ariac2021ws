@@ -167,4 +167,9 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
   joint_states[2] = std::atan2(-x_director_in_rail.x(), x_director_in_rail.y());
 }
 
+bool PickAndPlaceAssemblyRobot::canReach(const tijmath::RelativePose3& /*target*/) const
+{
+  return true;
+}
+
 }  // namespace tijros

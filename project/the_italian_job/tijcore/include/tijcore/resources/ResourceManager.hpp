@@ -40,7 +40,8 @@ public:
   std::vector<ManagedLocusHandle>
   findSiblingLociByCommonParent(const std::string& parent_name) override;
 
-  std::optional<PickAndPlaceRobotHandle> getPickAndPlaceRobotHandle() override;
+  std::optional<PickAndPlaceRobotHandle>
+  getPickAndPlaceRobotHandle(const std::vector<tijmath::RelativePose3>& waypoints) override;
 
   std::optional<ManagedLocusHandle> getLocusAtPose(const tijmath::RelativePose3& pose) override;
 
