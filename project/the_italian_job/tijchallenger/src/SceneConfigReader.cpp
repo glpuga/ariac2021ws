@@ -48,42 +48,34 @@ const std::vector<SceneConfigReader::BinData>& SceneConfigReader::getListOfBins(
     {
         "bin1",
         "bin1_frame",
-        "agv12_near_kitting_access_space",
     },
     {
         "bin2",
         "bin2_frame",
-        "agv12_near_kitting_access_space",
     },
     {
         "bin3",
         "bin3_frame",
-        "agv12_far_kitting_access_space",
     },
     {
         "bin4",
         "bin4_frame",
-        "agv12_far_kitting_access_space",
     },
     {
         "bin5",
         "bin5_frame",
-        "agv34_near_kitting_access_space",
     },
     {
         "bin6",
         "bin6_frame",
-        "agv34_near_kitting_access_space",
     },
     {
         "bin7",
         "bin7_frame",
-        "agv34_far_kitting_access_space",
     },
     {
         "bin8",
         "bin8_frame",
-        "agv34_far_kitting_access_space",
     },
   };
   return data;
@@ -129,10 +121,10 @@ SceneConfigReader::getListOfQualityControlSensors() const
 const std::vector<SceneConfigReader::DeviceData>& SceneConfigReader::getListOfAgvs() const
 {
   static const std::vector<SceneConfigReader::DeviceData> data{
-    { "agv1", "kit_tray_1", "agv12_near_kitting_access_space" },
-    { "agv2", "kit_tray_2", "agv12_near_kitting_access_space" },
-    { "agv3", "kit_tray_3", "agv34_near_kitting_access_space" },
-    { "agv4", "kit_tray_4", "agv34_near_kitting_access_space" },
+    { "agv1", "kit_tray_1" },
+    { "agv2", "kit_tray_2" },
+    { "agv3", "kit_tray_3" },
+    { "agv4", "kit_tray_4" },
   };
   return data;
 }
@@ -141,10 +133,10 @@ const std::vector<SceneConfigReader::DeviceData>&
 SceneConfigReader::getListOfAssemblyStations() const
 {
   static const std::vector<DeviceData> data{
-    { "as1", "briefcase_1", "as1_access_space" },
-    { "as2", "briefcase_2", "as2_access_space" },
-    { "as3", "briefcase_3", "as3_access_space" },
-    { "as4", "briefcase_4", "as4_access_space" },
+    { "as1", "briefcase_1" },
+    { "as2", "briefcase_2" },
+    { "as3", "briefcase_3" },
+    { "as4", "briefcase_4" },
   };
   return data;
 }
@@ -153,8 +145,7 @@ const std::vector<SceneConfigReader::ConveyorBeltData>&
 SceneConfigReader::getListOfConveyorBelts() const
 {
   static const std::vector<ConveyorBeltData> data{
-    { "conveyor_belt", "corrected_belt_frame", "belt_frame_surface", "conveyor_belt_access_space",
-      0.2 },
+    { "conveyor_belt", "corrected_belt_frame", "belt_frame_surface", 0.2 },
   };
   return data;
 }

@@ -22,11 +22,14 @@
 #include <tijcore/containers/BinModelContainer.hpp>
 #include <tijcore/containers/ConveyorBeltModelContainer.hpp>
 #include <tijcore/coremodels/ModelPerceptionMixer.hpp>
+#include <tijcore/coremodels/ModelPerceptionSpatialFilter.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
+#include <tijcore/resources/SpatialMutualExclusionManager.hpp>
 #include <tijcore/tasking/RobotTaskFactory.hpp>
 #include <tijcore/tasking/RobotTaskGroupRunner.hpp>
 #include <tijcore/tasking/TaskDispatcher.hpp>
 #include <tijcore/tasking/TaskDriver.hpp>
+#include <tijcore/utils/BlindVolumeTracker.hpp>
 #include <tijlogger/logger.hpp>
 #include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
@@ -42,7 +45,9 @@ namespace tijchallenger
 namespace
 {
 std::chrono::seconds system_load_delay_{ 5 };
-}
+
+ros::Duration camera_retention_interval_{ 1.0 };
+}  // namespace
 
 TIJChallenger::TIJChallenger()
 {
@@ -59,8 +64,7 @@ TIJChallenger::TIJChallenger()
 
   INFO(" - Creating ResourceManager");
   auto resource_manager = std::make_shared<tijcore::ResourceManager>(
-      toolbox_, config_->getListOfSharedAccessSpaceDescriptions(), createModelContainers(toolbox_),
-      createPickAndPlaceRobots(toolbox_));
+      toolbox_, createModelContainers(toolbox_), createPickAndPlaceRobots(toolbox_));
 
   INFO(" - Creating RobotTaskFactory");
   auto task_master = std::make_unique<tijcore::TaskDispatcher>(
@@ -98,18 +102,29 @@ tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createModelPerceptionMixer
   for (const auto& item : config_->getListOfLogicalCameras())
   {
     INFO("   - {} @ {}", item.name, item.frame_id);
-    cameras.emplace_back(std::make_unique<tijros::LogicalCameraModelPerception>(nh_, item.name));
+    cameras.emplace_back(std::make_unique<tijros::LogicalCameraModelPerception>(
+        nh_, item.name, camera_retention_interval_));
   }
 
   INFO(" - Loading quality control sensors information");
   for (const auto& item : config_->getListOfQualityControlSensors())
   {
     INFO("   - {} @ {}", item.name, item.frame_id);
-    cameras.emplace_back(
-        std::make_unique<tijros::QualityControlSensorModelPerception>(nh_, item.name));
+    cameras.emplace_back(std::make_unique<tijros::QualityControlSensorModelPerception>(
+        nh_, item.name, camera_retention_interval_));
   }
 
-  return std::make_unique<tijcore::ModelPerceptionMixer>(std::move(cameras));
+  auto perception_mixer = std::make_unique<tijcore::ModelPerceptionMixer>(std::move(cameras));
+
+  auto perception_spatial_filter = std::make_unique<tijcore::ModelPerceptionSpatialFilter>(
+      toolbox_, std::move(perception_mixer));
+
+  perception_spatial_filter->addBlindVolumeTracker(std::make_unique<tijcore::BlindVolumeTracker>(
+      tijmath::RelativePose3{ "vacuum_gripper_link", {} }, 0.2));
+  perception_spatial_filter->addBlindVolumeTracker(std::make_unique<tijcore::BlindVolumeTracker>(
+      tijmath::RelativePose3{ "gantry_arm_vacuum_gripper_link", {} }, 0.2));
+
+  return std::move(perception_spatial_filter);
 }
 
 tijcore::Toolbox::SharedPtr TIJChallenger::createToolbox() const
@@ -120,8 +135,8 @@ tijcore::Toolbox::SharedPtr TIJChallenger::createToolbox() const
   contents.process_manager_instance = std::make_shared<tijros::ROSProcessManagement>(nh_);
   contents.scene_config_reader_instance = config_;
   contents.volume_mutual_exclusion_manager =
-      std::make_shared<tijcore::SpatialMutualExclusionManagerInterface>(
-          config_->getWorldFrameId(), contents.frame_transformer_instance);
+      std::make_shared<tijcore::SpatialMutualExclusionManager>(config_->getWorldFrameId(),
+                                                               contents.frame_transformer_instance);
   return std::make_shared<tijcore::Toolbox>(std::move(contents));
 }
 
