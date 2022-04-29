@@ -311,7 +311,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageRemoveBrokenP
   std::vector<RobotTaskInterface::Ptr> output_actions;
   for (auto& part : world_state.broken_parts)
   {
-    auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle({});
+    auto robot_handle_opt =
+        resource_manager_->getPickAndPlaceRobotHandle({ part.resource()->pose() });
     if (robot_handle_opt)
     {
       INFO("Creating a RemoveBrokenPartTask for {} for {}", robot_handle_opt->resource()->name(),
@@ -360,7 +361,10 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageRemoveUnwante
       auto closest_empty_spot = std::move(*last_it);
       empty_loci.erase(last_it);
 
-      auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle({});
+      auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle({
+          part.resource()->pose(),
+          closest_empty_spot.resource()->pose(),
+      });
 
       if (robot_handle_opt)
       {
@@ -411,7 +415,10 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stagePlaceMissingP
       // select the closest part
       auto& selected_source_part = *(potential_sources.end() - 1);
 
-      auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle({});
+      auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle({
+          selected_source_part.resource()->pose(),
+          missing_part_locus.resource()->pose(),
+      });
 
       if (robot_handle_opt)
       {
@@ -501,7 +508,10 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageBringAMovable
     // select the closest part
     auto& selected_source_movable_tray = *(potential_sources.end() - 1);
 
-    auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle({});
+    auto robot_handle_opt = resource_manager_->getPickAndPlaceRobotHandle({
+        selected_source_movable_tray.resource()->pose(),
+        target_locus_handle.resource()->pose(),
+    });
 
     if (robot_handle_opt)
     {
