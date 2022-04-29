@@ -37,14 +37,33 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
 
   const auto target_parent_name = target_.resource()->parentName();
 
-  if (!robot.getInSafePoseNearTarget(target_.resource()->pose()))
+  const auto required_gripper_type = tijcore::GripperTypeId::gripper_part;
+  const auto initial_tool_type = robot.getGripperToolType();
+
+  if ((initial_tool_type != required_gripper_type) &&
+      !robot.getInSafePoseNearTarget(scene->getGripperToolSwappingTablePose()))
   {
-    ERROR("{} failed to get in resting pose", robot.name());
+    ERROR("{} was unable to go to the gripper swapping area to change from tool type from {} to {}",
+          robot.name(), initial_tool_type, required_gripper_type);
   }
-  else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()))
+  else if ((initial_tool_type != required_gripper_type) &&
+           !robot.setGripperToolType(required_gripper_type))
   {
-    ERROR("{} failed to get closer to target", robot.name());
+    ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.name(),
+          initial_tool_type, required_gripper_type);
   }
+  else if ((initial_tool_type != required_gripper_type) &&
+           (robot.getGripperToolType() != required_gripper_type))
+  {
+    ERROR(
+        "{} was unable to check that the tool type is the one needed for the operation, from {} to "
+        "{}",
+        robot.name(), initial_tool_type, required_gripper_type);
+  }
+  // else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()))
+  // {
+  //   ERROR("{} failed to get in resting pose", robot.name());
+  // }
   else if (!robot.getInLandingSpot(target_.resource()->pose()))
   {
     ERROR("{} failed to get into the approximation pose to remove a broken part", robot.name());

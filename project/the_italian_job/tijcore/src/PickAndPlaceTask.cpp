@@ -59,29 +59,29 @@ RobotTaskOutcome PickAndPlaceTask::run()
   const auto initial_tool_type = robot.getGripperToolType();
 
   if ((initial_tool_type != required_gripper_type) &&
-      !robot.getInLandingSpot(scene->getGripperToolSwappingTablePose()))
+      !robot.getInSafePoseNearTarget(scene->getGripperToolSwappingTablePose()))
   {
     ERROR("{} was unable to go to the gripper swapping area to change from tool type from {} to {}",
           robot.name(), initial_tool_type, required_gripper_type);
   }
-  if ((initial_tool_type != required_gripper_type) &&
-      !robot.setGripperToolType(required_gripper_type))
+  else if ((initial_tool_type != required_gripper_type) &&
+           !robot.setGripperToolType(required_gripper_type))
   {
     ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.name(),
           initial_tool_type, required_gripper_type);
   }
-  if ((initial_tool_type != required_gripper_type) &&
-      (robot.getGripperToolType() != required_gripper_type))
+  else if ((initial_tool_type != required_gripper_type) &&
+           (robot.getGripperToolType() != required_gripper_type))
   {
     ERROR(
         "{} was unable to check that the tool type is the one needed for the operation, from {} to "
         "{}",
         robot.name(), initial_tool_type, required_gripper_type);
   }
-  else if (!robot.getInSafePoseNearTarget(source_pose))
-  {
-    ERROR("{} failed to get in resting pose", robot.name());
-  }
+  // else if (!robot.getInSafePoseNearTarget(source_pose))
+  // {
+  //   ERROR("{} failed to get in resting pose", robot.name());
+  // }
   else if (!robot.getInLandingSpot(source_pose))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.name());
