@@ -37,7 +37,7 @@ const tijmath::RelativePose3& SceneConfigReader::getDropBucketPose() const
 const tijmath::RelativePose3& SceneConfigReader::getGripperToolSwappingTablePose() const
 {
   static const tijmath::RelativePose3 data{
-    world_frame_id_, tijmath::Pose3{ tijmath::Position::fromVector(-3.71, 6.26, 1.5), {} }
+    world_frame_id_, tijmath::Pose3{ tijmath::Position::fromVector(-3.71, 6.46, 1.5), {} }
   };
   return data;
 }
@@ -209,6 +209,8 @@ const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfSafeWaiti
       tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
     { world_frame_id_, tijmath::Position::fromVector(-10, -3.0, 0),
       tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    // HACK
+    getGripperToolSwappingTablePose(),
   };
   return data;
 }
