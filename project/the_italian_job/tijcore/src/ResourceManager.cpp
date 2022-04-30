@@ -367,6 +367,13 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(const std::string& 
 
   for (const auto& model_locus : known_loci_resource_state_)
   {
+    // TODO(glpuga) This is hacky and potentially dangerous
+    // only consider loci for part in the part layer
+    if (getComponentLayer(*model_locus.resource()) == ComponentLayer::PartLayer)
+    {
+      continue;
+    }
+
     auto [x, y, r] =
         poseToOccupancy(model_locus.resource()->pose(), handle_ptr->containerReferenceFrameId());
     surface_manager.markAsOccupied(x, y, r);
@@ -485,6 +492,12 @@ void ResourceManager::processInputSensorData(const std::vector<ObservedItem>& ob
                                           known_model_locus_pose.position(),
                                           locus_identity_position_tolerance_))
       {
+        // if they belong in different layers, don't bother going any further
+        if (getComponentLayer(new_model_locus) != getComponentLayer(known_model_locus))
+        {
+          continue;
+        }
+
         // don't update parts that are involved in active tasks
         if (known_model_locus_handle.allocated())
         {
@@ -563,6 +576,17 @@ ResourceManager::getPoseParentContainerPtr(const tijmath::RelativePose3& pose) c
     }
   }
   return nullptr;
+}
+
+ResourceManager::ComponentLayer ResourceManager::getComponentLayer(const ManagedLocus& locus) const
+{
+  if (locus.isLocusWithMovableTray())
+  {
+    return ComponentLayer::MovableTrayLayer;
+  }
+  // else
+
+  return ComponentLayer::PartLayer;
 }
 
 ManagedLocus ResourceManager::mergeOldAndNewPartLocusInformation(

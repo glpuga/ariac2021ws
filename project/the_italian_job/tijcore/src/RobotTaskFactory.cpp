@@ -53,9 +53,9 @@ RobotTaskInterface::Ptr RobotTaskFactory::getSubmitKittingShipmentTask(
     const std::string& kitting_tray_name, const StationId& destination_station,
     const ShipmentType& shipment_type) const
 {
-  if (!station_id::isValid(kitting_tray_name))
+  if (!agv::isValid(kitting_tray_name))
   {
-    throw std::invalid_argument{ kitting_tray_name + " is not a kitting station id!" };
+    throw std::invalid_argument{ kitting_tray_name + " is not a valid agv name!" };
   }
   return std::make_unique<SubmitKittingShipmentTask>(toolbox_, kitting_tray_name,
                                                      destination_station, shipment_type);
