@@ -11,8 +11,8 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>roslint</depend>
-  <depend>gantry_moveit_config</depend>
-  <depend>kitting_moveit_config</depend>
+  <depend>custom_gantry_moveit_config</depend>
+  <depend>custom_kitting_moveit_config</depend>
 
   <depend>python-catkin-lint</depend>
 

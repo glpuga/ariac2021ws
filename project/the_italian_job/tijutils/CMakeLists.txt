@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0.2)
 project(tijutils)
 
 find_package(catkin REQUIRED COMPONENTS
-  gantry_moveit_config
-  kitting_moveit_config
+  custom_gantry_moveit_config
+  custom_kitting_moveit_config
   roslint
 )
 
@@ -13,8 +13,8 @@ catkin_package(
   LIBRARIES
     ${PROJECT_NAME}
   CATKIN_DEPENDS
-    gantry_moveit_config
-    kitting_moveit_config
+    custom_gantry_moveit_config
+    custom_kitting_moveit_config
     roslint
 )
 
