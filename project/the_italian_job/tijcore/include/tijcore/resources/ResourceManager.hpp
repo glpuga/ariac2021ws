@@ -52,6 +52,12 @@ public:
 private:
   using ModelContainerHandle = ResourceHandle<ModelContainerInterface>;
 
+  enum class ComponentLayer
+  {
+    MovableTrayLayer,
+    PartLayer,
+  };
+
   const double locus_identity_position_tolerance_{ 0.024 };  // TODO(glpuga) analyze what value
                                                              // should be used for this
   const double default_occupancy_radius_{ 0.02 };  // TODO(glpuga) this fixed value should be
@@ -95,6 +101,8 @@ private:
 
   ManagedLocus mergeOldAndNewMovableTrayLocusInformation(const ManagedLocus& known_locus_data,
                                                          const ManagedLocus& new_locus_data) const;
+
+  ComponentLayer getComponentLayer(const ManagedLocus& locus) const;
 };
 
 }  // namespace tijcore

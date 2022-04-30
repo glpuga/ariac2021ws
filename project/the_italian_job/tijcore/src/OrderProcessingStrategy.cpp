@@ -445,7 +445,7 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageSubmitShippin
     InitialWorldState& world_state,                                                 //
     bool& shipping_done) const                                                      //
 {
-  INFO("Executing SubmitShipping");
+  INFO("Executing stageSubmitShipping");
 
   std::vector<RobotTaskInterface::Ptr> output_actions;
 
@@ -612,7 +612,7 @@ OrderProcessingStrategy::processKittingShipment(const OrderId& order,
     return std::make_pair(stageSubmitShipping(target_container_name, ShipmentClass::Kitting,
                                               shipment.shipment_type, shipment.station_id,
                                               world_state, shipping_done),
-                          false);
+                          true);
   }
 
   return std::make_pair(std::vector<RobotTaskInterface::Ptr>{}, false);
@@ -662,7 +662,7 @@ OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
     return std::make_pair(stageSubmitShipping(target_container_name, ShipmentClass::Assembly,
                                               shipment.shipment_type, shipment.station_id,
                                               world_state, shipping_done),
-                          false);
+                          true);
   }
 
   return std::make_pair(std::vector<RobotTaskInterface::Ptr>{}, false);

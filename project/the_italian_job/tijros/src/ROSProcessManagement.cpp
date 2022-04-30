@@ -36,20 +36,20 @@ constexpr char competition_state_topic[] = "/ariac/competition_state";
 
 constexpr char orders_topic[] = "/ariac/orders";
 
-constexpr char agv1_submit_shipment_service[] = "/ariac/agv1/submit_shipment";
-constexpr char agv2_submit_shipment_service[] = "/ariac/agv2/submit_shipment";
-constexpr char agv3_submit_shipment_service[] = "/ariac/agv3/submit_shipment";
-constexpr char agv4_submit_shipment_service[] = "/ariac/agv4/submit_shipment";
+constexpr char agv1_submit_shipment_service[] = "/ariac/agv1/submit_kitting_shipment";
+constexpr char agv2_submit_shipment_service[] = "/ariac/agv2/submit_kitting_shipment";
+constexpr char agv3_submit_shipment_service[] = "/ariac/agv3/submit_kitting_shipment";
+constexpr char agv4_submit_shipment_service[] = "/ariac/agv4/submit_kitting_shipment";
 
 constexpr char agv1_state_topic[] = "/ariac/agv1/state";
 constexpr char agv2_state_topic[] = "/ariac/agv2/state";
 constexpr char agv3_state_topic[] = "/ariac/agv3/state";
 constexpr char agv4_state_topic[] = "/ariac/agv4/state";
 
-constexpr char as1_submit_shipment_service[] = "/ariac/as1/submit_shipment";
-constexpr char as2_submit_shipment_service[] = "/ariac/as2/submit_shipment";
-constexpr char as3_submit_shipment_service[] = "/ariac/as3/submit_shipment";
-constexpr char as4_submit_shipment_service[] = "/ariac/as4/submit_shipment";
+constexpr char as1_submit_shipment_service[] = "/ariac/as1/submit_assembly_shipment";
+constexpr char as2_submit_shipment_service[] = "/ariac/as2/submit_assembly_shipment";
+constexpr char as3_submit_shipment_service[] = "/ariac/as3/submit_assembly_shipment";
+constexpr char as4_submit_shipment_service[] = "/ariac/as4/submit_assembly_shipment";
 
 constexpr char agv1_station_topic[] = "/ariac/agv1/station";
 constexpr char agv2_station_topic[] = "/ariac/agv2/station";
