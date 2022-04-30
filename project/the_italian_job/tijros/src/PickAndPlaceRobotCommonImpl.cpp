@@ -147,6 +147,7 @@ PickAndPlaceRobotCommonImpl::buildMoveItGroupHandle() const
     move_group_ptr_->setMaxVelocityScalingFactor(1.0);
   }
 
+  planning_scene_ptr_.reset();
   if (!planning_scene_ptr_)
   {
     planning_scene_ptr_ = std::make_unique<moveit::planning_interface::PlanningSceneInterface>(
@@ -543,8 +544,8 @@ void PickAndPlaceRobotCommonImpl::buildObstacleSceneFromDescription() const
   DEBUG(" - adding table representatives");
   for (const auto& item : scene_configuration->getListOfTables())
   {
-    collision_objects.push_back(createCollisionBox(item.name, "surface", item.frame_id, 1.0, 1.5,
-                                                   z_offset, 0.0, 0.0, 0.0, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "envelope", item.frame_id, 0.9, 1.5,
+                                                   1.0, 0.0, 0.0, 0.95, operation));
   }
 
   DEBUG(" - adding conveyor belt representatives");
@@ -554,13 +555,19 @@ void PickAndPlaceRobotCommonImpl::buildObstacleSceneFromDescription() const
                                                    0.63, 9.0, z_offset, 0.0, 0.0, 0.0, operation));
   }
 
+  DEBUG(" - adding static obstacles");
+
   // kitting rail
-  collision_objects.push_back(
-      createCollisionBox("kitting", "rail", "world", 0.4, 10.0, 0.10, -1.3, 0.0, 0.93, operation));
+  collision_objects.push_back(createCollisionBox("static", "kittingrail", "world", 0.4, 10.0, 0.10,
+                                                 -1.3, 0.0, 0.93, operation));
 
   // Imaginary divider
   collision_objects.push_back(
-      createCollisionBox("divider", "rail", "world", 0.05, 10.0, 0.1, -1.4, 0.0, 2.7, operation));
+      createCollisionBox("static", "divider", "world", 0.05, 10.0, 0.1, -1.4, 0.0, 2.7, operation));
+
+  // tool-swapping table
+  collision_objects.push_back(createCollisionBox("static", "toolswappingtable", "world", 1.0, 1.5,
+                                                 1.0, -3.7, 6.26, 0.5, operation));
 
   planning_scene_ptr_->applyCollisionObjects(collision_objects);
 }
