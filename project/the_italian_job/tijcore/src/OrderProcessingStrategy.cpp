@@ -614,8 +614,11 @@ OrderProcessingStrategy::processKittingShipment(const OrderId& order,
     auto actions =
         stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count);
 
-    WARNING("{} parts needed to complete the shipping in {} are missing from the scene",
-            unavailable_part_count, target_container_name);
+    if (unavailable_part_count)
+    {
+      WARNING("Missing {} part{} needed to complete the order in {}", unavailable_part_count,
+              unavailable_part_count > 1 ? "s" : "", target_container_name);
+    }
 
     // only return (and therefore not check if we can submit) if there are not tasks crated by this
     // step. It may be that there are no more parts to complete the order.
@@ -675,8 +678,11 @@ OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
     auto actions =
         stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count);
 
-    WARNING("{} parts needed to complete the shipping in {} are missing from the scene",
-            unavailable_part_count, target_container_name);
+    if (unavailable_part_count)
+    {
+      WARNING("Missing {} part{} needed to complete the order in {}", unavailable_part_count,
+              unavailable_part_count > 1 ? "s" : "", target_container_name);
+    }
 
     // only return (and therefore not check if we can submit) if there are not tasks crated by this
     // step. It may be that there are no more parts to complete the order.
