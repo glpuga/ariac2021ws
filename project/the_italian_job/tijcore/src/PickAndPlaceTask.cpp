@@ -78,6 +78,10 @@ RobotTaskOutcome PickAndPlaceTask::run()
         "{}",
         robot.name(), initial_tool_type, required_gripper_type);
   }
+  else if (!robot.getInSafePoseNearTarget(source_pose))
+  {
+    ERROR("{} failed to get closer to target", robot.name());
+  }
   else if (!robot.getInLandingSpot(source_pose))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.name());
