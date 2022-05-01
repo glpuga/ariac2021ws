@@ -206,7 +206,7 @@ TIJChallenger::createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr& toolb
 {
   INFO(" - Creating robot puppeteers");
   std::vector<tijcore::PickAndPlaceRobotInterface::Ptr> robots;
-  //  robots.emplace_back(std::make_unique<tijros::PickAndPlaceKittingRobot>(toolbox_));
+  robots.emplace_back(std::make_unique<tijros::PickAndPlaceKittingRobot>(toolbox_));
   robots.emplace_back(std::make_unique<tijros::PickAndPlaceAssemblyRobot>(toolbox_));
   return robots;
 }
