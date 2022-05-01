@@ -594,15 +594,16 @@ OrderProcessingStrategy::processKittingShipment(const OrderId& order,
   // with highest priority of all, we need to remove broken pieces
   if (world_state.broken_parts.size())
   {
-    return std::make_pair(stageRemoveBrokenParts(world_state), false);
+    auto actions = stageRemoveBrokenParts(world_state);
+    return std::make_pair(std::move(actions), false);
   }
 
   // next deal with unwanted pieces present in the container. Relocate them
   // somewhere else.
   if (world_state.unwanted_parts.size())
   {
-    return std::make_pair(stageRemoveUnwantedParts(agvs_in_use, stations_in_use, world_state),
-                          false);
+    auto actions = stageRemoveUnwantedParts(agvs_in_use, stations_in_use, world_state);
+    return std::make_pair(std::move(actions), false);
   }
 
   int32_t unavailable_part_count{ 0 };
@@ -610,11 +611,21 @@ OrderProcessingStrategy::processKittingShipment(const OrderId& order,
   // only move parts into the container if there's nothing moving out
   if (world_state.missing_parts.size())
   {
-    return std::make_pair(
-        stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count),
-        false);
+    auto actions =
+        stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count);
+
+    WARNING("{} parts needed to complete the shipping in {} are missing from the scene",
+            unavailable_part_count, target_container_name);
+
+    // only return (and therefore not check if we can submit) if there are not tasks crated by this
+    // step. It may be that there are no more parts to complete the order.
+    if (actions.size())
+    {
+      return std::make_pair(std::move(actions), false);
+    }
   }
 
+  // TODO(glpuga): this variable is no longer useful.
   bool shipping_done{ false };
 
   // if there's nothing missing, then submit the shipping
@@ -644,15 +655,16 @@ OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
   // with highest priority of all, we need to remove broken pieces
   if (world_state.broken_parts.size())
   {
-    return std::make_pair(stageRemoveBrokenParts(world_state), false);
+    auto actions = stageRemoveBrokenParts(world_state);
+    return std::make_pair(std::move(actions), false);
   }
 
   // next deal with unwanted pieces present in the container. Relocate them
   // somewhere else.
   if (world_state.unwanted_parts.size())
   {
-    return std::make_pair(stageRemoveUnwantedParts(agvs_in_use, stations_in_use, world_state),
-                          false);
+    auto actions = stageRemoveUnwantedParts(agvs_in_use, stations_in_use, world_state);
+    return std::make_pair(std::move(actions), false);
   }
 
   int32_t unavailable_part_count{ 0 };
@@ -660,11 +672,21 @@ OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
   // only move parts into the container if there's nothing moving out
   if (world_state.missing_parts.size())
   {
-    return std::make_pair(
-        stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count),
-        false);
+    auto actions =
+        stagePlaceMissingParts(agvs_in_use, stations_in_use, world_state, unavailable_part_count);
+
+    WARNING("{} parts needed to complete the shipping in {} are missing from the scene",
+            unavailable_part_count, target_container_name);
+
+    // only return (and therefore not check if we can submit) if there are not tasks crated by this
+    // step. It may be that there are no more parts to complete the order.
+    if (actions.size())
+    {
+      return std::make_pair(std::move(actions), false);
+    }
   }
 
+  // TODO(glpuga): this variable is no longer useful.
   bool shipping_done{ false };
 
   // if there's nothing missing, then submit the shipping

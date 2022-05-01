@@ -16,7 +16,7 @@ namespace
 {
 const CuboidVolume briefcase_container_volume_{
   tijmath::Vector3(-0.25, -0.25, -0.1),
-  tijmath::Vector3(0.25, 0.25, 0.30),
+  tijmath::Vector3(0.45, 0.25, 0.30),
 };
 
 }  // namespace
