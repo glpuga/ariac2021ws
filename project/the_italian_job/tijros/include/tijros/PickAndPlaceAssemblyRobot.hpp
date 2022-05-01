@@ -50,6 +50,9 @@ private:
       std::vector<double>& joint_states, const tijmath::RelativePose3& target,
       const std::vector<tijmath::RelativePose3>& pose_hints) const;
 
+  void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
+                                         const tijmath::RelativePose3& target) const override;
+
   bool setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const override;
 
   tijcore::GripperTypeId getGripperToolTypeImpl() const override;

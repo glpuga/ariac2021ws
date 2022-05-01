@@ -35,6 +35,8 @@ public:
   MOCK_CONST_METHOD2(placePartFromAbove, bool(const tijmath::RelativePose3& target,
                                               const tijcore::PartTypeId& part_type_id));
 
+  MOCK_CONST_METHOD1(goTo2DPose, bool(const tijmath::RelativePose3& target));
+
   MOCK_CONST_METHOD0(enabled, bool());
 
   MOCK_CONST_METHOD0(name, std::string());
@@ -51,6 +53,9 @@ public:
                      void(std::vector<double>& joint_states, const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD2(patchJointStateValuesGraspingHingPoseNearTarget,
+                     void(std::vector<double>& joint_states, const tijmath::RelativePose3& target));
+
+  MOCK_CONST_METHOD2(patchJointStateValuesToGoTo2DPose,
                      void(std::vector<double>& joint_states, const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD0(abortCurrentAction, void());
