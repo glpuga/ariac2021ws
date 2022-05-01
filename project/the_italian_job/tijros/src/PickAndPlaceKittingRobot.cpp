@@ -102,6 +102,12 @@ void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
 void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTargetPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
+  patchJointStateValuesToGoTo2DPose(joint_states, target);
+}
+
+void PickAndPlaceKittingRobot::patchJointStateValuesToGoTo2DPose(
+    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
+{
   if (joint_states.size() != 7)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),

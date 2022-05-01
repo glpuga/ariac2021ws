@@ -99,14 +99,6 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
   joint_states[6] = degreesToRadians(0);
   joint_states[7] = degreesToRadians(90);
   joint_states[8] = degreesToRadians(0);
-
-  // reuse current_pose_estimation to get us to the closest safe pose from where
-  // we are now. This requires recovering the coordinates in the rail frame from
-  // the current rail values.
-  tijmath::RelativePose3 current_pose_estimation{
-    long_rail_frame_id_, tijmath::Position::fromVector(joint_states[1], joint_states[0], 0.0), {}
-  };
-  patchJointStateValuesToGetCloseToTargetPose(joint_states, current_pose_estimation);
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTargetPose(
@@ -127,11 +119,6 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target,
     const std::vector<tijmath::RelativePose3>& pose_hints) const
 {
-  if (joint_states.size() != 9)
-  {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
-  }
   const auto target_in_world =
       frame_transformer_->transformPoseToFrame(target, scene_config_->getWorldFrameId());
 
@@ -152,10 +139,22 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
     return squared_distance_left < squared_distance_right;
   };
 
-  const auto closest_hint =
+  const auto closest_hint_it =
       std::min_element(pose_hints.begin(), pose_hints.end(), shortest_distance_to_reference_sorter);
-  const auto target_in_rail =
-      frame_transformer_->transformPoseToFrame(*closest_hint, long_rail_frame_id_);
+
+  patchJointStateValuesToGoTo2DPose(joint_states, *closest_hint_it);
+}
+
+void PickAndPlaceAssemblyRobot::patchJointStateValuesToGoTo2DPose(
+    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
+{
+  if (joint_states.size() != 9)
+  {
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            name());
+  }
+
+  const auto target_in_rail = frame_transformer_->transformPoseToFrame(target, long_rail_frame_id_);
 
   // pay attention to the conversion from rail pose to rail values!
   joint_states[0] = target_in_rail.position().vector().y();

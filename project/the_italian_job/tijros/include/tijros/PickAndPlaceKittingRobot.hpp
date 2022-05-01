@@ -44,6 +44,9 @@ private:
   void patchJointStateValuesGraspingHingPoseNearTarget(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const override;
 
+  void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
+                                         const tijmath::RelativePose3& target) const override;
+
   bool setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const override;
 
   tijcore::GripperTypeId getGripperToolTypeImpl() const override;

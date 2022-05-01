@@ -37,6 +37,8 @@ public:
   virtual bool placePartFromAbove(const tijmath::RelativePose3& target,
                                   const tijcore::PartTypeId& part_type_id) const = 0;
 
+  virtual bool goTo2DPose(const tijmath::RelativePose3& target) const = 0;
+
   virtual bool turnOnGripper() const = 0;
 
   virtual bool turnOffGripper() const = 0;
@@ -73,6 +75,9 @@ protected:
 
   virtual void patchJointStateValuesGraspingHingPoseNearTarget(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const = 0;
+
+  virtual void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
+                                                 const tijmath::RelativePose3& target) const = 0;
 };
 
 }  // namespace tijcore

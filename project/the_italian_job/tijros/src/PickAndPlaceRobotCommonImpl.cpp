@@ -232,24 +232,72 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3&
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to generate a plan to arrive at the approximation pose", action_name,
-            name());
+      ERROR("{}: {} failed to generate a plan", action_name, name());
       return false;
     }
   }
 
   {
-    INFO("{}: {} is executing the movement", action_name, name());
+    INFO("{}: {} is executing the plan", action_name, name());
     auto success = (move_group_ptr->execute(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to arrive at the approximation pose", action_name, name());
+      ERROR("{}: {} failed to execute the plan", action_name, name());
       return false;
     }
   }
 
-  INFO("{}: {} arrived at the approximation pose", action_name, name());
+  INFO("{}: {} completed the execution of the plan", action_name, name());
+  return true;
+}
+
+bool PickAndPlaceRobotCommonImpl::goTo2DPose(const tijmath::RelativePose3& target) const
+{
+  const auto action_name = "goTo2DPose";
+  if (!enabled())
+  {
+    INFO("{}: {} failed to execute because the robot is disabled", action_name, name());
+    return false;
+  }
+  auto move_group_ptr = buildMoveItGroupHandle();
+  const robot_state::JointModelGroup* joint_model_group =
+      move_group_ptr->getCurrentState()->getJointModelGroup(getRobotPlanningGroup());
+  {
+    INFO("{}: {} is calculating the target", action_name, name());
+    moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
+    std::vector<double> joint_group_positions;
+    current_state->copyJointGroupPositions(joint_model_group,
+
+                                           joint_group_positions);
+    patchJointStateValuesForArmInRestingPose(joint_group_positions);
+    patchJointStateValuesToGoTo2DPose(joint_group_positions, target);
+
+    move_group_ptr->setJointValueTarget(joint_group_positions);
+    move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
+  }
+  moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
+  {
+    INFO("{}: {} is planning", action_name, name());
+    auto success = (move_group_ptr->plan(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (!success)
+    {
+      ERROR("{}: {} failed to generate a plan", action_name, name());
+      return false;
+    }
+  }
+  {
+    INFO("{}: {} is executing", action_name, name());
+    auto success = (move_group_ptr->execute(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (!success)
+    {
+      ERROR("{}: {} failed to execute", action_name, name());
+      return false;
+    }
+  }
+  INFO("{}: {} finished execution", action_name, name());
   return true;
 }
 
@@ -595,7 +643,7 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
     // TODO(glpuga) the sign inversion is because without this accessing the
     // briefcases to remove a battery fails because the full body of the robot
     // is oriented to try to match the orientation of the piece, resulting in
-    // unfeasable plans. It's likely related to the end of range of the wrist
+    // unfeasible plans. It's likely related to the end of range of the wrist
     // articulations.
     z_director = orientation.col(2) * (-1);
   }
@@ -605,7 +653,7 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
     // TODO(glpuga) the sign inversion is because without this accessing the
     // briefcases to remove a battery fails because the full body of the robot
     // is oriented to try to match the orientation of the piece, resulting in
-    // unfeasable plans. It's likely related to the end of range of the wrist
+    // unfeasible plans. It's likely related to the end of range of the wrist
     // articulations.
     z_director = orientation.col(0) * (-1);
   }
