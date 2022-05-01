@@ -201,13 +201,17 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
     auto& handle = *handle_opt;
     auto& locus = *handle.resource();
 
+    // Notice that since I own a handle now, asking whether the handle is
+    // allocated or not does not tell me if it was allocated before.
+    // There will be either two copies (if the handle was allocated before)
+    // if the resources was not allocate before (my copy and the one in the resource manager)
+    // or three copies if there's some task holding an additional copy
+    const bool part_is_part_of_active_task = (handle.activeCopiesCount() >= 3);
+
     // if the place is empty, store in missing parts
     if (locus.isEmptyLocus())
     {
-      // notice that since I own a handle now, asking whether the handle is
-      // allocated or not does not tell me if it was allocated before. Using a
-      // pointer instead of optional would cause other issues.
-      if (handle.allocationCount() <= 2)
+      if (!part_is_part_of_active_task)
       {
         // the handle we have here is the only one besides the one internally
         // stored by the resource manager.
@@ -224,7 +228,7 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
     }
 
     // if the part is broken or not the correct type, ignore it, it will be
-    // dealt with later
+    // dealt with later. Notice that we count them even if they allocated to a task!
     const auto part_id = locus.qualifiedPartInfo().part_type;
     const auto broken = locus.qualifiedPartInfo().part_is_broken;
     if (broken || (part_id != desired_part_id))
@@ -236,8 +240,16 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
 
     // If we got here, the part is correctly located, so we keep the handle to
     // mark the piece as in use
-    INFO("In-pose part at {} ({})", desired_pose, part_id.codedString());
-    initial_world_state.parts_in_place.emplace_back(std::move(handle));
+    if (part_is_part_of_active_task)
+    {
+      INFO("In-pose part at {} ({}) ignored because is part of an active task", desired_pose,
+           part_id.codedString());
+    }
+    else
+    {
+      INFO("In-pose part at {} ({})", desired_pose, part_id.codedString());
+      initial_world_state.parts_in_place.emplace_back(std::move(handle));
+    }
   }
 
   // Get the rest of the pieces in the same containers. This will include pieces

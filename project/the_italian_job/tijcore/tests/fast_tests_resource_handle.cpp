@@ -86,12 +86,12 @@ TEST_F(InUseMarkHandlerTests, UniqueNullResourceThrows)
 TEST_F(InUseMarkHandlerTests, TheResourceCanBeReleased)
 {
   ResourceHandle<SomeResourse> uut{ std::make_shared<SomeResourse>() };
-  ASSERT_EQ(1u, uut.allocationCount());
+  ASSERT_EQ(1u, uut.activeCopiesCount());
   ResourceHandle<SomeResourse> user_copy = uut;
-  ASSERT_EQ(2u, uut.allocationCount());
-  ASSERT_EQ(2u, user_copy.allocationCount());
+  ASSERT_EQ(2u, uut.activeCopiesCount());
+  ASSERT_EQ(2u, user_copy.activeCopiesCount());
   user_copy.release();
-  ASSERT_EQ(1u, uut.allocationCount());
+  ASSERT_EQ(1u, uut.activeCopiesCount());
 }
 
 TEST_F(InUseMarkHandlerTests, ResourcePointerThrowsAfterRelease)

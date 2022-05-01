@@ -61,7 +61,7 @@ public:
     return (resource_.use_count() > 1);
   }
 
-  std::size_t allocationCount() const
+  std::size_t activeCopiesCount() const
   {
     return resource_.use_count();
   }
