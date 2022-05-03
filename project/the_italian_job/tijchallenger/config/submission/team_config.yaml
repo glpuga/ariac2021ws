@@ -127,10 +127,8 @@ sensors:
 # Robot-mounted cameras
 #
 
-# TODO(glpuga) remove these as they will not be used during the competition
+# gantry_bin_camera:
+#   enable: true
 
-gantry_bin_camera:
-  enable: true
-
-gantry_tray_camera:
-  enable: true
+# gantry_tray_camera:
+#   enable: true
