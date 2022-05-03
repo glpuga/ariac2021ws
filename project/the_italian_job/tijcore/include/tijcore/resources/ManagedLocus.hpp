@@ -55,6 +55,8 @@ public:
 
   const QualifiedMovableTrayInfo& qualifiedMovableTrayInfo() const;
 
+  void resetUniqueId(const tijutils::UniqueId& new_unique_id);
+
 private:
   struct QualifiedEmptyLocusInfo
   {

@@ -108,4 +108,9 @@ tijutils::UniqueId ManagedLocus::uniqueId() const
   return unique_id_;
 }
 
+void ManagedLocus::resetUniqueId(const tijutils::UniqueId& new_unique_id)
+{
+  unique_id_ = new_unique_id;
+}
+
 }  // namespace tijcore
