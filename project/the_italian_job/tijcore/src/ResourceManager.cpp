@@ -617,15 +617,20 @@ ManagedLocus ResourceManager::mergeOldAndNewPartLocusInformation(
 
   // Create the updated locus with the new information
   // and add it to the list of loci that are part of the updated state
-  return ManagedLocus::CreatePartLocus(new_locus_data.parentName(), known_pose, known_part_id,
-                                       known_broken);
+  // take care to keep the same uniqueId
+  auto updated_locus = ManagedLocus::CreatePartLocus(new_locus_data.parentName(), known_pose,
+                                                     known_part_id, known_broken);
+  updated_locus.resetUniqueId(known_locus_data.uniqueId());
+  return updated_locus;
 }
 
 ManagedLocus ResourceManager::mergeOldAndNewMovableTrayLocusInformation(
-    const ManagedLocus& /*known_model_locus*/, const ManagedLocus& new_locus_data) const
+    const ManagedLocus& known_locus_data, const ManagedLocus& new_locus_data) const
 {
   // nothing really to update here. We just overwrite old information with the new one.
-  return new_locus_data;
+  auto updated_locus_data = new_locus_data;
+  updated_locus_data.resetUniqueId(known_locus_data.uniqueId());
+  return updated_locus_data;
 }
 
 void ResourceManager::clearEmptyLoci()

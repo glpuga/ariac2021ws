@@ -118,9 +118,13 @@ tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createModelPerceptionMixer
       toolbox_, std::move(perception_mixer));
 
   perception_spatial_filter->addBlindVolumeTracker(std::make_unique<tijcore::BlindVolumeTracker>(
-      tijmath::RelativePose3{ "vacuum_gripper_link", {} }, 0.2));
+      tijmath::RelativePose3{
+          "vacuum_gripper_link", tijmath::Position::fromVector(0.0, 0.0, -0.08), {} },
+      0.1));
   perception_spatial_filter->addBlindVolumeTracker(std::make_unique<tijcore::BlindVolumeTracker>(
-      tijmath::RelativePose3{ "gantry_arm_vacuum_gripper_link", {} }, 0.2));
+      tijmath::RelativePose3{
+          "gantry_arm_vacuum_gripper_link", tijmath::Position::fromVector(0.0, 0.0, -0.08), {} },
+      0.1));
 
   return std::move(perception_spatial_filter);
 }
