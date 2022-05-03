@@ -496,6 +496,13 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageBringAMovable
 
   // create a locus for the target pose
   auto target_locus_opt = resource_manager_->getLocusAtPose(movable_tray_pose);
+  if (!target_locus_opt)
+  {
+    ERROR("Failed to generate a managed locus for the target pose of the tray {}",
+          movable_tray_pose);
+    return {};
+  }
+
   auto& target_locus_handle = target_locus_opt.value();
 
   if (!target_locus_handle.resource()->isEmptyLocus())
