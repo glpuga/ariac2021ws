@@ -83,7 +83,7 @@ sudo apt update &&
       ros-melodic-moveit-commander &&
    sudo apt clean
 
-RUN rosdep update
+rosdep update
 
 # #############################################################################
 #
@@ -96,17 +96,20 @@ mkdir -p ~/tij_team_ws/src/
 # Fetch the competition code
 mkdir -p ~/tij_team_ws/src
 cd ~/tij_team_ws/src
-git clone https://github.com/glpuga/ariac2021ws.git
-cd ariac2021ws
-git checkout $RELEASE_TAG
+git clone https://github.com/glpuga/ariac2021ws.git -b $RELEASE_TAG
 
 # Download the extra code (using submodules for this is a pain)
 mkdir -p ~/tij_team_ws/src/ariac2021ws/external
 cd ~/tij_team_ws/src/ariac2021ws/external
-git clone https://github.com/glpuga/ARIAC.git
-cd ARIAC
-# Checkout the correct branch
-git checkout $RELEASE_TAG
+git clone https://github.com/glpuga/ARIAC.git -b $RELEASE_TAG
+
+# Download the extra code (using submodules for this is a pain)
+mkdir -p ~/tij_team_ws/src/ariac2021ws/external
+cd ~/tij_team_ws/src/ariac2021ws/external
+git clone https://github.com/glpuga/BehaviorTree.CPP.git && cd BehaviorTree.CPP && git checkout 40baf90 && cd ..
+git clone https://github.com/glpuga/BehaviorTreeExtras.git && cd BehaviorTreeExtras && git checkout b94884a && cd ..
+git clone https://github.com/ros-planning/moveit_task_constructor.git && cd moveit_task_constructor && git checkout 8beb0f4 && cd ..
+git clone https://github.com/ros/roslint.git && cd roslint && git checkout be2160f && cd ..
 
 # Build the competition code
 cd ~/tij_team_ws
