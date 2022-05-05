@@ -9,7 +9,7 @@ options:
   insert_models_over_stations: false
   gazebo_state_logging: true
   # mandatory: gripper_tray or gripper_part
-  current_gripper_type: gripper_part
+  current_gripper_type: gripper_tray
 time_limit: -1
 
 aisle_layout:
