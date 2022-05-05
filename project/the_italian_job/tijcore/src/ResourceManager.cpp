@@ -369,7 +369,7 @@ SurfaceManager ResourceManager::buildContainerSurfaceManager(const std::string& 
   {
     // TODO(glpuga) This is hacky and potentially dangerous
     // only consider loci for part in the part layer
-    if (getComponentLayer(*model_locus.resource()) == ComponentLayer::PartLayer)
+    if (getComponentLayer(*model_locus.resource()) != ComponentLayer::PartLayer)
     {
       continue;
     }
