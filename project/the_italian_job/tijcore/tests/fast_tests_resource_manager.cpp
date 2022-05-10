@@ -134,7 +134,7 @@ public:
     containers_.emplace_back(std::move(table_2_container_mock_));
     containers_.emplace_back(std::move(table_3_container_mock_));
 
-    std::vector<PickAndPlaceRobotInterface::Ptr> robots_;
+    std::vector<PickAndPlaceRobotMovementsInterface::Ptr> robots_;
     robots_.push_back(std::move(kitting_robot_mock_));
     robots_.push_back(std::move(assembly_robot_mock_));
 

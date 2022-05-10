@@ -56,79 +56,79 @@ RobotTaskOutcome PickAndPlaceTask::run()
     return RobotTaskOutcome::TASK_FAILURE;
   }
 
-  const auto initial_tool_type = robot.getGripperToolType();
+  const auto initial_tool_type = robot.getRobotGripperToolType();
 
   if ((initial_tool_type != required_gripper_type) &&
-      !robot.goTo2DPose(scene->getGripperToolSwappingTablePose()))
+      !robot.getRobotTo2DPose(scene->getGripperToolSwappingTablePose()))
   {
     ERROR("{} was unable to go to the gripper swapping area to change from tool type from {} to {}",
-          robot.name(), initial_tool_type, required_gripper_type);
+          robot.getRobotName(), initial_tool_type, required_gripper_type);
   }
   else if ((initial_tool_type != required_gripper_type) &&
-           !robot.setGripperToolType(required_gripper_type))
+           !robot.setRobotGripperToolType(required_gripper_type))
   {
-    ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.name(),
+    ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.getRobotName(),
           initial_tool_type, required_gripper_type);
   }
   else if ((initial_tool_type != required_gripper_type) &&
-           (robot.getGripperToolType() != required_gripper_type))
+           (robot.getRobotGripperToolType() != required_gripper_type))
   {
     ERROR(
         "{} was unable to check that the tool type is the one needed for the operation, from {} to "
         "{}",
-        robot.name(), initial_tool_type, required_gripper_type);
+        robot.getRobotName(), initial_tool_type, required_gripper_type);
   }
-  else if (!robot.getInSafePoseNearTarget(source_pose))
+  else if (!robot.getRobotInSafePoseNearTarget(source_pose))
   {
-    ERROR("{} failed to get closer to target", robot.name());
+    ERROR("{} failed to get closer to target", robot.getRobotName());
   }
-  else if (!robot.getInLandingSpot(source_pose))
+  else if (!robot.getGripperInLandingSpot(source_pose))
   {
-    ERROR("{} failed to get into the landing pose prior to grasping", robot.name());
+    ERROR("{} failed to get into the landing pose prior to grasping", robot.getRobotName());
   }
   else if (!robot.contactPartFromAboveAndGrasp(source_pose, part_type_id))
   {
-    ERROR("{} failed to grasp the part form the surface", robot.name());
+    ERROR("{} failed to grasp the part form the surface", robot.getRobotName());
   }
-  else if (!robot.getInLandingSpot(source_pose))
+  else if (!robot.getGripperInLandingSpot(source_pose))
   {
-    ERROR("{} failed to get into the landing pose prior to grasping", robot.name());
+    ERROR("{} failed to get into the landing pose prior to grasping", robot.getRobotName());
   }
-  else if (!robot.gripperHasPartAttached())
+  else if (!robot.getRobotGripperAttachementState())
   {
     ERROR(
         "{} failed to get into the landing pose post grasping with the part "
         "grasped",
-        robot.name());
+        robot.getRobotName());
   }
-  else if (!robot.getInSafePoseNearTarget(destination_.resource()->pose()))
+  else if (!robot.getRobotInSafePoseNearTarget(destination_.resource()->pose()))
   {
-    ERROR("{} failed to get closer to target", robot.name());
+    ERROR("{} failed to get closer to target", robot.getRobotName());
   }
-  else if (!robot.getInLandingSpot(destination_.resource()->pose()) ||
-           !robot.gripperHasPartAttached())
+  else if (!robot.getGripperInLandingSpot(destination_.resource()->pose()) ||
+           !robot.getRobotGripperAttachementState())
   {
     ERROR(
         "{} failed to get to the destination landing pose with the part "
         "grasped",
-        robot.name());
+        robot.getRobotName());
   }
   else if (!robot.placePartFromAbove(destination_.resource()->pose(), part_type_id))
   {
-    ERROR("{} failed to place the part in the destination pose", robot.name());
+    ERROR("{} failed to place the part in the destination pose", robot.getRobotName());
   }
   else
   {
     result = RobotTaskOutcome::TASK_SUCCESS;
     ManagedLocus::TransferPartFromHereToThere(*source_.resource(), *destination_.resource());
-    robot.getInSafePoseNearTarget(destination_.resource()->pose());
-    INFO("{} successfully moved the part from {} to {}", robot.name(), source_pose,
+    robot.getRobotInSafePoseNearTarget(destination_.resource()->pose());
+    INFO("{} successfully moved the part from {} to {}", robot.getRobotName(), source_pose,
          destination_.resource()->pose());
   }
 
   // try to get in a resting pose to remove the robot from the way
-  robot.turnOffGripper();
-  robot.getInSafePoseNearTarget(destination_.resource()->pose());
+  robot.getRobotGripperOff();
+  robot.getRobotInSafePoseNearTarget(destination_.resource()->pose());
 
   if (result != RobotTaskOutcome::TASK_SUCCESS)
   {

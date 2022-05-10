@@ -15,7 +15,7 @@
 // project
 #include <tijcore/abstractions/ModelContainerInterface.hpp>
 #include <tijcore/abstractions/ModelPerceptionInterface.hpp>
-#include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
+#include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
 #include <tijcore/abstractions/SceneConfigReaderInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
 #include <tijcore/tasking/TaskDriver.hpp>
@@ -47,7 +47,7 @@ private:
   std::vector<tijros::ConveyorBeltSurfaceFrameBroadcaster::Ptr>
   createConveyorBeltTransformBroadcasters() const;
 
-  std::vector<tijcore::PickAndPlaceRobotInterface::Ptr>
+  std::vector<tijcore::PickAndPlaceRobotMovementsInterface::Ptr>
   createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr& toolbox) const;
 };
 

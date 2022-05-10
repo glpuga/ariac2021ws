@@ -55,7 +55,7 @@ RobotTaskInterface::Ptr RobotTaskFactory::getSubmitKittingShipmentTask(
 {
   if (!agv::isValid(kitting_tray_name))
   {
-    throw std::invalid_argument{ kitting_tray_name + " is not a valid agv name!" };
+    throw std::invalid_argument{ kitting_tray_name + " is not a valid agv getRobotName()!" };
   }
   return std::make_unique<SubmitKittingShipmentTask>(toolbox_, kitting_tray_name,
                                                      destination_station, shipment_type);

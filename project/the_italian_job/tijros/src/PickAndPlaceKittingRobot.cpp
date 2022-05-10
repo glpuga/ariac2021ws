@@ -1,10 +1,9 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  * Author: Gerardo Puga */
 
 // Standard library
 #include <chrono>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -21,19 +20,18 @@ namespace tijros
 using tijmath::utils::angles::degreesToRadians;
 
 PickAndPlaceKittingRobot::PickAndPlaceKittingRobot(const tijcore::Toolbox::SharedPtr& toolbox)
-  : PickAndPlaceRobotCommonImpl(toolbox)
-  , frame_transformer_{ toolbox->getFrameTransformer() }
+  : frame_transformer_{ toolbox->getFrameTransformer() }
   , robot_actuator_{ toolbox->getRobotActuator() }
 {
 }
 
-bool PickAndPlaceKittingRobot::enabled() const
+bool PickAndPlaceKittingRobot::getRobotHealthState() const
 {
   auto health_status = robot_actuator_->getRobotHealthStatus();
   return health_status.kitting_robot_enabled;
 }
 
-std::string PickAndPlaceKittingRobot::name() const
+std::string PickAndPlaceKittingRobot::getRobotName() const
 {
   return "kitting";
 }
@@ -43,13 +41,13 @@ std::string PickAndPlaceKittingRobot::getRobotPlanningGroup() const
   return "kitting_arm";
 }
 
-bool PickAndPlaceKittingRobot::gripperHasPartAttached() const
+bool PickAndPlaceKittingRobot::getRobotGripperAttachementState() const
 {
   auto gripper_state = robot_actuator_->getKittingGripperState();
   return gripper_state.attached;
 }
 
-void PickAndPlaceKittingRobot::setSuctionGripper(const bool state) const
+void PickAndPlaceKittingRobot::setRobotGripperState(const bool state) const
 {
   robot_actuator_->setKittingGripperSuction(state);
 }
@@ -60,7 +58,7 @@ void PickAndPlaceKittingRobot::patchJointStateValuesForArmInRestingPose(
   if (joint_states.size() != 7)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
+            getRobotName());
   }
   // these correspond to the positions of the rest position of the arm,
   // excluding the linear rail
@@ -79,7 +77,7 @@ void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
   if (joint_states.size() != 7)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
+            getRobotName());
   }
   const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");
   joint_states[0] = target_in_world.position().vector().y();
@@ -111,7 +109,7 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGoTo2DPose(
   if (joint_states.size() != 7)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
+            getRobotName());
   }
 
   // TODO(glpuga): this should be generalized so that "world" is not hardcoded
@@ -149,7 +147,7 @@ tijcore::GripperTypeId PickAndPlaceKittingRobot::getGripperToolTypeImpl() const
   return tijcore::GripperTypeId::gripper_part;
 }
 
-bool PickAndPlaceKittingRobot::canReach(const tijmath::RelativePose3& target) const
+bool PickAndPlaceKittingRobot::testIfRobotReachesPose(const tijmath::RelativePose3& target) const
 {
   // TODO(glpuga): this should be generalized so that "world" is not hardcoded
   const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");

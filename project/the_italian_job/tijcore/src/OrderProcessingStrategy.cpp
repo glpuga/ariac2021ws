@@ -327,8 +327,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageRemoveBrokenP
         resource_manager_->getPickAndPlaceRobotHandle({ part.resource()->pose() });
     if (robot_handle_opt)
     {
-      INFO("Creating a RemoveBrokenPartTask for {} for {}", robot_handle_opt->resource()->name(),
-           part.resource()->pose());
+      INFO("Creating a RemoveBrokenPartTask for {} for {}",
+           robot_handle_opt->resource()->getRobotName(), part.resource()->pose());
       output_actions.emplace_back(robot_task_factory_->getRemoveBrokenPartTask(
           std::move(part), std::move(*robot_handle_opt)));
     }
@@ -383,7 +383,7 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageRemoveUnwante
         WARNING(
             "Creating a PickAndPlaceTask for {} to move an unwanted piece "
             "from {} to {}",
-            robot_handle_opt->resource()->name(), part.resource()->pose(),
+            robot_handle_opt->resource()->getRobotName(), part.resource()->pose(),
             closest_empty_spot.resource()->pose());
 
         output_actions.emplace_back(robot_task_factory_->getPickAndPlacePartTask(
@@ -437,7 +437,7 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stagePlaceMissingP
         WARNING(
             "Creating a PickAndPlaceTask for {} to provide a part from "
             "{} and into {}",
-            robot_handle_opt->resource()->name(), selected_source_part.resource()->pose(),
+            robot_handle_opt->resource()->getRobotName(), selected_source_part.resource()->pose(),
             missing_part_locus.resource()->pose());
         output_actions.emplace_back(robot_task_factory_->getPickAndPlacePartTask(
             std::move(selected_source_part), std::move(missing_part_locus),
@@ -537,8 +537,8 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageBringAMovable
       WARNING(
           "Creating a PickAndPlaceMovableTrayTask for {} to provide a part from "
           "{} and into {}",
-          robot_handle_opt->resource()->name(), selected_source_movable_tray.resource()->pose(),
-          movable_tray_pose);
+          robot_handle_opt->resource()->getRobotName(),
+          selected_source_movable_tray.resource()->pose(), movable_tray_pose);
       output_actions.emplace_back(robot_task_factory_->getPickAndPlaceMovableTrayTask(
           std::move(selected_source_movable_tray), std::move(target_locus_handle),
           std::move(*robot_handle_opt)));

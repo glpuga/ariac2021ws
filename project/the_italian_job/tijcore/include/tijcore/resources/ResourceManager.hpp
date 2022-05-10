@@ -28,7 +28,7 @@ class ResourceManager : public ResourceManagerInterface
 public:
   ResourceManager(const Toolbox::SharedPtr& toolbox,
                   std::vector<ModelContainerInterface::Ptr>&& model_containers,
-                  std::vector<PickAndPlaceRobotInterface::Ptr>&& pick_and_place_robots);
+                  std::vector<PickAndPlaceRobotMovementsInterface::Ptr>&& pick_and_place_robots);
 
   std::vector<ManagedLocusHandle> findVacantLociCandidates(const double free_radius) override;
 
