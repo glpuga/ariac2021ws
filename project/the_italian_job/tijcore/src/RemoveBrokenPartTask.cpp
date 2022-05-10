@@ -38,59 +38,61 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   const auto target_parent_name = target_.resource()->parentName();
 
   const auto required_gripper_type = tijcore::GripperTypeId::gripper_part;
-  const auto initial_tool_type = robot.getGripperToolType();
+  const auto initial_tool_type = robot.getRobotGripperToolType();
 
   if ((initial_tool_type != required_gripper_type) &&
-      !robot.getInSafePoseNearTarget(scene->getGripperToolSwappingTablePose()))
+      !robot.getRobotInSafePoseNearTarget(scene->getGripperToolSwappingTablePose()))
   {
     ERROR("{} was unable to go to the gripper swapping area to change from tool type from {} to {}",
-          robot.name(), initial_tool_type, required_gripper_type);
+          robot.getRobotName(), initial_tool_type, required_gripper_type);
   }
   else if ((initial_tool_type != required_gripper_type) &&
-           !robot.setGripperToolType(required_gripper_type))
+           !robot.setRobotGripperToolType(required_gripper_type))
   {
-    ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.name(),
+    ERROR("{} was unable to switch the gripper tool type from {} to {}", robot.getRobotName(),
           initial_tool_type, required_gripper_type);
   }
   else if ((initial_tool_type != required_gripper_type) &&
-           (robot.getGripperToolType() != required_gripper_type))
+           (robot.getRobotGripperToolType() != required_gripper_type))
   {
     ERROR(
         "{} was unable to check that the tool type is the one needed for the operation, from {} to "
         "{}",
-        robot.name(), initial_tool_type, required_gripper_type);
+        robot.getRobotName(), initial_tool_type, required_gripper_type);
   }
-  // else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()))
+  // else if (!robot.getRobotInSafePoseNearTarget(target_.resource()->pose()))
   // {
-  //   ERROR("{} failed to get in resting pose", robot.name());
+  //   ERROR("{} failed to get in resting pose", robot.getRobotName());
   // }
-  else if (!robot.getInLandingSpot(target_.resource()->pose()))
+  else if (!robot.getGripperInLandingSpot(target_.resource()->pose()))
   {
-    ERROR("{} failed to get into the approximation pose to remove a broken part", robot.name());
+    ERROR("{} failed to get into the approximation pose to remove a broken part",
+          robot.getRobotName());
   }
   else if (!robot.contactPartFromAboveAndGrasp(target_.resource()->pose(), part_type_id))
   {
-    ERROR("{} failed to pick up the broken part while trying to remove it", robot.name());
+    ERROR("{} failed to pick up the broken part while trying to remove it", robot.getRobotName());
   }
-  else if (!robot.getInSafePoseNearTarget(target_.resource()->pose()) ||
-           !robot.gripperHasPartAttached())
+  else if (!robot.getRobotInSafePoseNearTarget(target_.resource()->pose()) ||
+           !robot.getRobotGripperAttachementState())
   {
-    ERROR("{} failed to get the broken part ready for transport to the bucket", robot.name());
+    ERROR("{} failed to get the broken part ready for transport to the bucket",
+          robot.getRobotName());
   }
-  else if (!robot.getInSafePoseNearTarget(scene->getDropBucketPose()))
+  else if (!robot.getRobotInSafePoseNearTarget(scene->getDropBucketPose()))
   {
-    ERROR("{} failed to get closer to target", robot.name());
+    ERROR("{} failed to get closer to target", robot.getRobotName());
   }
-  else if (!robot.getInLandingSpot(scene->getDropBucketPose()))
+  else if (!robot.getGripperInLandingSpot(scene->getDropBucketPose()))
   {
     ERROR(
         "{} failed to get in the approximation pose to drop the broken "
         "part into the bucket",
-        robot.name());
+        robot.getRobotName());
   }
-  else if (!robot.turnOffGripper())
+  else if (!robot.getRobotGripperOff())
   {
-    ERROR("{} failed to drop the broken part into the bucket", robot.name());
+    ERROR("{} failed to drop the broken part into the bucket", robot.getRobotName());
   }
   else
   {
@@ -102,7 +104,7 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
     INFO(
         "{} successfully removed a broken part and placed it into the "
         "bucket",
-        robot.name());
+        robot.getRobotName());
   }
 
   // if we failed the task at some point, we lost certainty about where the
@@ -114,8 +116,8 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   }
 
   // try to get in a resting pose to remove the robot from the way
-  robot.turnOffGripper();
-  robot.getArmInRestingPose();
+  robot.getRobotGripperOff();
+  robot.getRobotArmInRestingPose();
   return result;
 }
 

@@ -12,7 +12,7 @@
 #include <vector>
 
 // tijcore
-#include <tijcore/abstractions/PickAndPlaceRobotInterface.hpp>
+#include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
 #include <tijcore/coremodels/SubmissionTrayAdapter.hpp>
 #include <tijcore/datatypes/ObservedItem.hpp>
 #include <tijcore/resources/ManagedLocus.hpp>
@@ -27,7 +27,7 @@ public:
   using SharedPtr = std::shared_ptr<ResourceManagerInterface>;
 
   using ManagedLocusHandle = ResourceHandle<ManagedLocus>;
-  using PickAndPlaceRobotHandle = ResourceHandle<PickAndPlaceRobotInterface>;
+  using PickAndPlaceRobotHandle = ResourceHandle<PickAndPlaceRobotMovementsInterface>;
 
   virtual ~ResourceManagerInterface() = default;
 

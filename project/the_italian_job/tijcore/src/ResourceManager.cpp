@@ -31,7 +31,7 @@ constexpr std::chrono::milliseconds blocking_methods_sleep_interval_{ 200 };
 
 ResourceManager::ResourceManager(
     const Toolbox::SharedPtr& toolbox, std::vector<ModelContainerInterface::Ptr>&& model_containers,
-    std::vector<PickAndPlaceRobotInterface::Ptr>&& pick_and_place_robots)
+    std::vector<PickAndPlaceRobotMovementsInterface::Ptr>&& pick_and_place_robots)
   : toolbox_{ toolbox }
 {
   for (auto& container : model_containers)
@@ -226,7 +226,7 @@ ResourceManager::getPickAndPlaceRobotHandle(const std::vector<tijmath::RelativeP
     }
 
     // discard robots that that have been disabled
-    if (!pick_and_place_robot_handle.resource()->enabled())
+    if (!pick_and_place_robot_handle.resource()->getRobotHealthState())
     {
       continue;
     }
@@ -234,7 +234,7 @@ ResourceManager::getPickAndPlaceRobotHandle(const std::vector<tijmath::RelativeP
     // discard robots that are unable to reach one or more waypoints
     auto reachability_test =
         [&pick_and_place_robot_handle](const tijmath::RelativePose3& waypoint) {
-          return pick_and_place_robot_handle.resource()->canReach(waypoint);
+          return pick_and_place_robot_handle.resource()->testIfRobotReachesPose(waypoint);
         };
     if (!std::all_of(waypoints.begin(), waypoints.end(), reachability_test))
     {

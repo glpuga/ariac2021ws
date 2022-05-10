@@ -36,6 +36,7 @@
 #include <tijros/LogicalCameraModelPerception.hpp>
 #include <tijros/PickAndPlaceAssemblyRobot.hpp>
 #include <tijros/PickAndPlaceKittingRobot.hpp>
+#include <tijros/PickAndPlaceRobotMovements.hpp>
 #include <tijros/QualityControlSensorModelPerception.hpp>
 #include <tijros/ROSFrameTransformer.hpp>
 #include <tijros/ROSProcessManagement.hpp>
@@ -205,13 +206,15 @@ TIJChallenger::createConveyorBeltTransformBroadcasters() const
   return containers;
 }
 
-std::vector<tijcore::PickAndPlaceRobotInterface::Ptr>
+std::vector<tijcore::PickAndPlaceRobotMovementsInterface::Ptr>
 TIJChallenger::createPickAndPlaceRobots(const tijcore::Toolbox::SharedPtr& toolbox_) const
 {
   INFO(" - Creating robot puppeteers");
-  std::vector<tijcore::PickAndPlaceRobotInterface::Ptr> robots;
-  robots.emplace_back(std::make_unique<tijros::PickAndPlaceKittingRobot>(toolbox_));
-  robots.emplace_back(std::make_unique<tijros::PickAndPlaceAssemblyRobot>(toolbox_));
+  std::vector<tijcore::PickAndPlaceRobotMovementsInterface::Ptr> robots;
+  robots.emplace_back(std::make_unique<tijros::PickAndPlaceRobotMovements>(
+      std::make_unique<tijros::PickAndPlaceKittingRobot>(toolbox_), toolbox_));
+  robots.emplace_back(std::make_unique<tijros::PickAndPlaceRobotMovements>(
+      std::make_unique<tijros::PickAndPlaceAssemblyRobot>(toolbox_), toolbox_));
   return robots;
 }
 

@@ -1,14 +1,12 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  * Author: Gerardo Puga */
 
 // Standard library
 #include <chrono>
 #include <cmath>
-#include <future>
 #include <memory>
 #include <string>
-#include <thread>
 #include <utility>
 #include <vector>
 
@@ -25,7 +23,7 @@
 // project
 #include <tijlogger/logger.hpp>
 #include <tijmath/math_utilities.hpp>
-#include <tijros/PickAndPlaceRobotCommonImpl.hpp>
+#include <tijros/PickAndPlaceRobotMovements.hpp>
 #include <tijros/utils/utils.hpp>
 
 namespace tijros
@@ -97,12 +95,14 @@ double estimatePartHeight(const tijmath::Matrix3& orientation_in_world,
 
 }  // namespace
 
-PickAndPlaceRobotCommonImpl::PickAndPlaceRobotCommonImpl(const tijcore::Toolbox::SharedPtr& toolbox)
-  : toolbox_{ toolbox }
+PickAndPlaceRobotMovements::PickAndPlaceRobotMovements(
+    tijcore::PickAndPlaceRobotSpecificInterface::Ptr robot_specific_interface,
+    const tijcore::Toolbox::SharedPtr& toolbox)
+  : robot_specific_interface_{ std::move(robot_specific_interface) }, toolbox_{ toolbox }
 {
 }
 
-void PickAndPlaceRobotCommonImpl::useNarrowTolerances(const bool tight_mode) const
+void PickAndPlaceRobotMovements::useNarrowTolerances(const bool tight_mode) const
 {
   if (tight_mode)
   {
@@ -117,23 +117,23 @@ void PickAndPlaceRobotCommonImpl::useNarrowTolerances(const bool tight_mode) con
 }
 
 moveit::planning_interface::MoveGroupInterface*
-PickAndPlaceRobotCommonImpl::buildMoveItGroupHandle() const
+PickAndPlaceRobotMovements::buildMoveItGroupHandle() const
 {
   // if the setup had not been performed before, do it now
   // Ugly AF, need to find a better solution.
 
   // TODO(glpuga) for some reason, keeping state in this object causes
   // errors in one of the joints, in both robots(!)
-  const auto custom_moveit_namespace = "/ariac/custom/" + name();
+  const auto custom_moveit_namespace = "/ariac/custom/" + getRobotName();
 
-  WARNING("Creating moveit group handle for robot: {}", name());
+  WARNING("Creating moveit group handle for robot: {}", getRobotName());
 
   move_group_ptr_.reset();
   if (!move_group_ptr_)
   {
     moveit::planning_interface::MoveGroupInterface::Options options{
-      getRobotPlanningGroup(), custom_moveit_namespace + "/robot_description",
-      ros::NodeHandle(custom_moveit_namespace)
+      robot_specific_interface_->getRobotPlanningGroup(),
+      custom_moveit_namespace + "/robot_description", ros::NodeHandle(custom_moveit_namespace)
     };
     move_group_ptr_ = std::make_unique<moveit::planning_interface::MoveGroupInterface>(options);
     move_group_ptr_->setPlanningTime(max_planning_time_);
@@ -158,51 +158,52 @@ PickAndPlaceRobotCommonImpl::buildMoveItGroupHandle() const
   return move_group_ptr_.get();
 }
 
-bool PickAndPlaceRobotCommonImpl::getArmInRestingPose() const
+bool PickAndPlaceRobotMovements::getRobotArmInRestingPose() const
 {
-  const auto action_name = "getArmInRestingPose";
+  const auto action_name = "getRobotArmInRestingPose";
   auto move_group_ptr = buildMoveItGroupHandle();
   const robot_state::JointModelGroup* joint_model_group =
-      move_group_ptr->getCurrentState()->getJointModelGroup(getRobotPlanningGroup());
+      move_group_ptr->getCurrentState()->getJointModelGroup(
+          robot_specific_interface_->getRobotPlanningGroup());
   {
-    INFO("{}: {} is calculating the target", action_name, name());
+    INFO("{}: {} is calculating the target", action_name, getRobotName());
     moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
     std::vector<double> joint_group_positions;
     current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
-    patchJointStateValuesForArmInRestingPose(joint_group_positions);
+    robot_specific_interface_->patchJointStateValuesForArmInRestingPose(joint_group_positions);
     move_group_ptr->setJointValueTarget(joint_group_positions);
     move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
   }
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
-    INFO("{}: {} is planning", action_name, name());
+    INFO("{}: {} is planning", action_name, getRobotName());
     auto success = (move_group_ptr->plan(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to generate a plan", action_name, name());
+      ERROR("{}: {} failed to generate a plan", action_name, getRobotName());
       return false;
     }
   }
   {
-    INFO("{}: {} is executing", action_name, name());
+    INFO("{}: {} is executing", action_name, getRobotName());
     auto success = (move_group_ptr->execute(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to execute", action_name, name());
+      ERROR("{}: {} failed to execute", action_name, getRobotName());
       return false;
     }
   }
-  INFO("{}: {} finished execution", action_name, name());
+  INFO("{}: {} finished execution", action_name, getRobotName());
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3& target) const
+bool PickAndPlaceRobotMovements::getGripperInLandingSpot(const tijmath::RelativePose3& target) const
 {
-  const auto action_name = "getInLandingSpot";
+  const auto action_name = "getGripperInLandingSpot";
 
-  if (!enabled())
+  if (!getRobotHealthState())
   {
     return false;
   }
@@ -219,11 +220,11 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3&
   auto approximation_pose_in_world = end_effector_target_pose;
   approximation_pose_in_world.position().vector().z() += landing_pose_height_;
 
-  INFO("{}: {} approximation pose at {}", action_name, name(), approximation_pose_in_world);
+  INFO("{}: {} approximation pose at {}", action_name, getRobotName(), approximation_pose_in_world);
 
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
-    INFO("{}: {} is generating the moveit plan", action_name, name());
+    INFO("{}: {} is generating the moveit plan", action_name, getRobotName());
     auto target_geo_pose = utils::convertCorePoseToGeoPose(approximation_pose_in_world.pose());
     move_group_ptr->setPoseTarget(target_geo_pose);
     move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
@@ -232,143 +233,146 @@ bool PickAndPlaceRobotCommonImpl::getInLandingSpot(const tijmath::RelativePose3&
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to generate a plan", action_name, name());
+      ERROR("{}: {} failed to generate a plan", action_name, getRobotName());
       return false;
     }
   }
 
   {
-    INFO("{}: {} is executing the plan", action_name, name());
+    INFO("{}: {} is executing the plan", action_name, getRobotName());
     auto success = (move_group_ptr->execute(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to execute the plan", action_name, name());
+      ERROR("{}: {} failed to execute the plan", action_name, getRobotName());
       return false;
     }
   }
 
-  INFO("{}: {} completed the execution of the plan", action_name, name());
+  INFO("{}: {} completed the execution of the plan", action_name, getRobotName());
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::goTo2DPose(const tijmath::RelativePose3& target) const
+bool PickAndPlaceRobotMovements::getRobotTo2DPose(const tijmath::RelativePose3& target) const
 {
-  const auto action_name = "goTo2DPose";
-  if (!enabled())
+  const auto action_name = "getRobotTo2DPose";
+  if (!getRobotHealthState())
   {
-    INFO("{}: {} failed to execute because the robot is disabled", action_name, name());
+    INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
   auto move_group_ptr = buildMoveItGroupHandle();
   const robot_state::JointModelGroup* joint_model_group =
-      move_group_ptr->getCurrentState()->getJointModelGroup(getRobotPlanningGroup());
+      move_group_ptr->getCurrentState()->getJointModelGroup(
+          robot_specific_interface_->getRobotPlanningGroup());
   {
-    INFO("{}: {} is calculating the target", action_name, name());
+    INFO("{}: {} is calculating the target", action_name, getRobotName());
     moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
     std::vector<double> joint_group_positions;
     current_state->copyJointGroupPositions(joint_model_group,
 
                                            joint_group_positions);
-    patchJointStateValuesForArmInRestingPose(joint_group_positions);
-    patchJointStateValuesToGoTo2DPose(joint_group_positions, target);
+    robot_specific_interface_->patchJointStateValuesForArmInRestingPose(joint_group_positions);
+    robot_specific_interface_->patchJointStateValuesToGoTo2DPose(joint_group_positions, target);
 
     move_group_ptr->setJointValueTarget(joint_group_positions);
     move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
   }
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
-    INFO("{}: {} is planning", action_name, name());
+    INFO("{}: {} is planning", action_name, getRobotName());
     auto success = (move_group_ptr->plan(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to generate a plan", action_name, name());
+      ERROR("{}: {} failed to generate a plan", action_name, getRobotName());
       return false;
     }
   }
   {
-    INFO("{}: {} is executing", action_name, name());
+    INFO("{}: {} is executing", action_name, getRobotName());
     auto success = (move_group_ptr->execute(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to execute", action_name, name());
+      ERROR("{}: {} failed to execute", action_name, getRobotName());
       return false;
     }
   }
-  INFO("{}: {} finished execution", action_name, name());
+  INFO("{}: {} finished execution", action_name, getRobotName());
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::getInSafePoseNearTarget(
+bool PickAndPlaceRobotMovements::getRobotInSafePoseNearTarget(
     const tijmath::RelativePose3& target) const
 {
-  const auto action_name = "getInSafePoseNearTarget";
-  if (!enabled())
+  const auto action_name = "getRobotInSafePoseNearTarget";
+  if (!getRobotHealthState())
   {
-    INFO("{}: {} failed to execute because the robot is disabled", action_name, name());
+    INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
   auto move_group_ptr = buildMoveItGroupHandle();
   const robot_state::JointModelGroup* joint_model_group =
-      move_group_ptr->getCurrentState()->getJointModelGroup(getRobotPlanningGroup());
+      move_group_ptr->getCurrentState()->getJointModelGroup(
+          robot_specific_interface_->getRobotPlanningGroup());
   {
-    INFO("{}: {} is calculating the target", action_name, name());
+    INFO("{}: {} is calculating the target", action_name, getRobotName());
     moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
     std::vector<double> joint_group_positions;
     current_state->copyJointGroupPositions(joint_model_group,
 
                                            joint_group_positions);
-    patchJointStateValuesForArmInRestingPose(joint_group_positions);
-    patchJointStateValuesToGetCloseToTargetPose(joint_group_positions, target);
+    robot_specific_interface_->patchJointStateValuesForArmInRestingPose(joint_group_positions);
+    robot_specific_interface_->patchJointStateValuesToGetCloseToTargetPose(joint_group_positions,
+                                                                           target);
 
     move_group_ptr->setJointValueTarget(joint_group_positions);
     move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
   }
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
-    INFO("{}: {} is planning", action_name, name());
+    INFO("{}: {} is planning", action_name, getRobotName());
     auto success = (move_group_ptr->plan(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to generate a plan", action_name, name());
+      ERROR("{}: {} failed to generate a plan", action_name, getRobotName());
       return false;
     }
   }
   {
-    INFO("{}: {} is executing", action_name, name());
+    INFO("{}: {} is executing", action_name, getRobotName());
     auto success = (move_group_ptr->execute(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (!success)
     {
-      ERROR("{}: {} failed to execute", action_name, name());
+      ERROR("{}: {} failed to execute", action_name, getRobotName());
       return false;
     }
   }
-  INFO("{}: {} finished execution", action_name, name());
+  INFO("{}: {} finished execution", action_name, getRobotName());
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::contactPartFromAboveAndGrasp(
+bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
     const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const
 {
   const auto action_name = "contactPartFromAboveAndGrasp";
-  if (!enabled())
+  if (!getRobotHealthState())
   {
-    INFO("{}: {} failed to execute because the robot is disabled", action_name, name());
+    INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
   auto move_group_ptr = buildMoveItGroupHandle();
 
-  INFO("{}: {} is calculating the approximation trajectory", action_name, name());
+  INFO("{}: {} is calculating the approximation trajectory", action_name, getRobotName());
   // configure tighter tolerances for this
   useNarrowTolerances(true);
   // make sure we trade in world poses only
   move_group_ptr->setPoseReferenceFrame(world_frame);
   // turn on the gripper
-  setSuctionGripper(true);
+  setRobotGripperState(true);
 
   auto frame_transformer = toolbox_->getFrameTransformer();
   const auto target_in_world_pose = frame_transformer->transformPoseToFrame(target, world_frame);
@@ -392,13 +396,13 @@ bool PickAndPlaceRobotCommonImpl::contactPartFromAboveAndGrasp(
       pick_search_length_ * 0.5;
   end_effector_target_pose_in_world.position().vector().z() = run_top;
 
-  while (!gripperHasPartAttached() &&
+  while (!getRobotGripperAttachementState() &&
          (end_effector_target_pose_in_world.position().vector().z() > run_bottom))
   {
     // decrease the gripper one step
     end_effector_target_pose_in_world.position().vector().z() -= pickup_displacement_step_;
 
-    INFO("{}: {}  is generating the step moveit plan", action_name, name());
+    INFO("{}: {}  is generating the step moveit plan", action_name, getRobotName());
     moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
     {
       auto target_geo_pose_in_world =
@@ -410,37 +414,38 @@ bool PickAndPlaceRobotCommonImpl::contactPartFromAboveAndGrasp(
                       moveit::planning_interface::MoveItErrorCode::SUCCESS);
       if (!success)
       {
-        ERROR("{}: {} failed to generate a plan for step, aborting grasping", action_name, name());
+        ERROR("{}: {} failed to generate a plan for step, aborting grasping", action_name,
+              getRobotName());
         return false;
       }
     }
 
-    INFO("{}: {} is executing the step moveit plan", action_name, name());
+    INFO("{}: {} is executing the step moveit plan", action_name, getRobotName());
     move_group_ptr->execute(movement_plan);
   }
 
-  if (gripperHasPartAttached())
+  if (getRobotGripperAttachementState())
   {
-    INFO("{}: {} succeeded to grasp the part", action_name, name());
+    INFO("{}: {} succeeded to grasp the part", action_name, getRobotName());
     return true;
   }
 
-  INFO("{}: {} failed to grasp the part", action_name, name());
+  INFO("{}: {} failed to grasp the part", action_name, getRobotName());
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::placePartFromAbove(const tijmath::RelativePose3& target,
-                                                     const tijcore::PartTypeId& part_type_id) const
+bool PickAndPlaceRobotMovements::placePartFromAbove(const tijmath::RelativePose3& target,
+                                                    const tijcore::PartTypeId& part_type_id) const
 {
   const auto action_name = "placePartFromAbove";
-  if (!enabled())
+  if (!getRobotHealthState())
   {
-    INFO("{}: {} failed to execute because the robot is disabled", action_name, name());
+    INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
   auto move_group_ptr = buildMoveItGroupHandle();
 
-  INFO("Place movement: {} is calculating the pickup trajectory", name());
+  INFO("Place movement: {} is calculating the pickup trajectory", getRobotName());
 
   // make sure we trade in world poses only
   move_group_ptr->setPoseReferenceFrame(world_frame);
@@ -467,73 +472,74 @@ bool PickAndPlaceRobotCommonImpl::placePartFromAbove(const tijmath::RelativePose
     INFO("Place will drop the part once we are at {} in {} frame",
          utils::convertGeoPoseToCorePose(waypoints.at(0)), world_frame);
 
-    INFO("Place movement: {} is generating the moveit plan", name());
+    INFO("Place movement: {} is generating the moveit plan", getRobotName());
     moveit_msgs::RobotTrajectory trajectory;
     {
       const double fraction = move_group_ptr->computeCartesianPath(
           waypoints, pickup_displacement_step_, pickup_displacement_jump_threshold_, trajectory);
-      DEBUG("Place movement: cartesian planner plan fraction for {}: {}", name(), fraction);
+      DEBUG("Place movement: cartesian planner plan fraction for {}: {}", getRobotName(), fraction);
       bool success = (fraction > 0.95);
       if (!success)
       {
         ERROR(
             "{} failed to generate a plan to the drop point "
             "(fraction: {})",
-            name(), fraction);
+            getRobotName(), fraction);
         WARNING("{} will release the part here");
-        setSuctionGripper(false);
+        setRobotGripperState(false);
         return false;
       }
     }
 
     // we don't check the return value because it's going to return failure once
     // we hit the table
-    INFO("Place movement: {} is executing the movement", name());
+    INFO("Place movement: {} is executing the movement", getRobotName());
     move_group_ptr->execute(trajectory);
   }
 
-  setSuctionGripper(false);
-  INFO("{} placed the part that the destination", name());
+  setRobotGripperState(false);
+  INFO("{} placed the part that the destination", getRobotName());
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::turnOnGripper() const
+bool PickAndPlaceRobotMovements::getRobotGripperOn() const
 {
-  const auto action_name = "turnOnGripper";
-  INFO("{}: {} is turning on the gripper", action_name, name());
-  setSuctionGripper(true);
+  const auto action_name = "getRobotGripperOn";
+  INFO("{}: {} is turning on the gripper", action_name, getRobotName());
+  setRobotGripperState(true);
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::turnOffGripper() const
+bool PickAndPlaceRobotMovements::getRobotGripperOff() const
 {
-  const auto action_name = "turnOffGripper";
-  INFO("{}: {} is turning off the gripper", action_name, name());
-  setSuctionGripper(false);
+  const auto action_name = "getRobotGripperOff";
+  INFO("{}: {} is turning off the gripper", action_name, getRobotName());
+  setRobotGripperState(false);
   return true;
 }
 
-bool PickAndPlaceRobotCommonImpl::setGripperToolType(const tijcore::GripperTypeId new_type) const
+bool PickAndPlaceRobotMovements::setRobotGripperToolType(
+    const tijcore::GripperTypeId new_type) const
 {
   const auto action_name = "switchToolType";
-  INFO("{}: {} is changing the tool type to {}", action_name, name(), new_type);
-  return setGripperToolTypeImpl(new_type);
+  INFO("{}: {} is changing the tool type to {}", action_name, getRobotName(), new_type);
+  return robot_specific_interface_->setGripperToolTypeImpl(new_type);
 }
 
-tijcore::GripperTypeId PickAndPlaceRobotCommonImpl::getGripperToolType() const
+tijcore::GripperTypeId PickAndPlaceRobotMovements::getRobotGripperToolType() const
 {
-  return getGripperToolTypeImpl();
+  return robot_specific_interface_->getGripperToolTypeImpl();
 }
 
-void PickAndPlaceRobotCommonImpl::abortCurrentAction() const
+void PickAndPlaceRobotMovements::abortCurrentAction() const
 {
   const auto action_name = "abortCurrentAction";
   auto move_group_ptr = buildMoveItGroupHandle();
-  WARNING("{}: {} is aborting", action_name, name());
+  WARNING("{}: {} is aborting", action_name, getRobotName());
   move_group_ptr->stop();
 }
 
-void PickAndPlaceRobotCommonImpl::buildObstacleSceneFromDescription() const
+void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
 {
   std::vector<moveit_msgs::CollisionObject> collision_objects;
   const int operation = moveit_msgs::CollisionObject::ADD;
@@ -620,7 +626,7 @@ void PickAndPlaceRobotCommonImpl::buildObstacleSceneFromDescription() const
   planning_scene_ptr_->applyCollisionObjects(collision_objects);
 }
 
-void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
+void PickAndPlaceRobotMovements::alignEndEffectorWithTarget(
     tijmath::RelativePose3& end_effector_target_pose) const
 {
   const auto orientation = end_effector_target_pose.rotation().rotationMatrix();
@@ -674,6 +680,31 @@ void PickAndPlaceRobotCommonImpl::alignEndEffectorWithTarget(
           .trans();
 
   end_effector_target_pose.rotation() = tijmath::Rotation{ end_effector_orientation };
+}
+
+bool PickAndPlaceRobotMovements::getRobotGripperAttachementState() const
+{
+  return robot_specific_interface_->getRobotGripperAttachementState();
+}
+
+bool PickAndPlaceRobotMovements::getRobotHealthState() const
+{
+  return robot_specific_interface_->getRobotHealthState();
+}
+
+std::string PickAndPlaceRobotMovements::getRobotName() const
+{
+  return robot_specific_interface_->getRobotName();
+}
+
+bool PickAndPlaceRobotMovements::testIfRobotReachesPose(const tijmath::RelativePose3& target) const
+{
+  return robot_specific_interface_->testIfRobotReachesPose(target);
+}
+
+void PickAndPlaceRobotMovements::setRobotGripperState(const bool state) const
+{
+  robot_specific_interface_->setRobotGripperState(state);
 }
 
 }  // namespace tijros

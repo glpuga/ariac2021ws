@@ -1,4 +1,4 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  * Author: Gerardo Puga */
 
@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -29,20 +28,19 @@ constexpr char long_rail_frame_id_[] = "long_rail_1";
 using tijmath::utils::angles::degreesToRadians;
 
 PickAndPlaceAssemblyRobot::PickAndPlaceAssemblyRobot(const tijcore::Toolbox::SharedPtr& toolbox)
-  : PickAndPlaceRobotCommonImpl(toolbox)
-  , frame_transformer_{ toolbox->getFrameTransformer() }
+  : frame_transformer_{ toolbox->getFrameTransformer() }
   , scene_config_{ toolbox->getSceneConfigReader() }
   , robot_actuator_{ toolbox->getRobotActuator() }
 {
 }
 
-bool PickAndPlaceAssemblyRobot::enabled() const
+bool PickAndPlaceAssemblyRobot::getRobotHealthState() const
 {
   auto health_status = robot_actuator_->getRobotHealthStatus();
   return health_status.assembly_robot_enabled;
 }
 
-std::string PickAndPlaceAssemblyRobot::name() const
+std::string PickAndPlaceAssemblyRobot::getRobotName() const
 {
   return "gantry";
 }
@@ -52,13 +50,13 @@ std::string PickAndPlaceAssemblyRobot::getRobotPlanningGroup() const
   return "gantry_full";
 }
 
-bool PickAndPlaceAssemblyRobot::gripperHasPartAttached() const
+bool PickAndPlaceAssemblyRobot::getRobotGripperAttachementState() const
 {
   auto gripper_state = robot_actuator_->getGantryGripperState();
   return gripper_state.attached;
 }
 
-void PickAndPlaceAssemblyRobot::setSuctionGripper(const bool state) const
+void PickAndPlaceAssemblyRobot::setRobotGripperState(const bool state) const
 {
   robot_actuator_->setGantryGripperSuction(state);
 }
@@ -89,7 +87,7 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
   if (joint_states.size() != 9)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
+            getRobotName());
   }
   // Note that rail coordinates are relative to the rail, not to world
   joint_states[2] = 0.0;
@@ -151,7 +149,7 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGoTo2DPose(
   if (joint_states.size() != 9)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            name());
+            getRobotName());
   }
 
   const auto target_in_rail = frame_transformer_->transformPoseToFrame(target, long_rail_frame_id_);
@@ -166,7 +164,8 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToGoTo2DPose(
   joint_states[2] = std::atan2(-x_director_in_rail.x(), x_director_in_rail.y());
 }
 
-bool PickAndPlaceAssemblyRobot::canReach(const tijmath::RelativePose3& /*target*/) const
+bool PickAndPlaceAssemblyRobot::testIfRobotReachesPose(
+    const tijmath::RelativePose3& /*target*/) const
 {
   return true;
 }

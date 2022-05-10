@@ -71,7 +71,7 @@ add_library(${PROJECT_NAME}
   src/LogicalCameraModelPerception.cpp
   src/PickAndPlaceAssemblyRobot.cpp
   src/PickAndPlaceKittingRobot.cpp
-  src/PickAndPlaceRobotCommonImpl.cpp
+  src/PickAndPlaceRobotMovements.cpp
   src/QualitySensorModelPerception.cpp
   src/ROSFrameTransformer.cpp
   src/ROSProcessManagement.cpp
