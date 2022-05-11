@@ -27,7 +27,7 @@ public:
 
   MOCK_CONST_METHOD1(getRobotInSafePoseNearTarget, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD1(getGripperInLandingSpot, bool(const tijmath::RelativePose3& target));
+  MOCK_CONST_METHOD1(getGripperIn3DPose, bool(const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD2(contactPartFromAboveAndGrasp, bool(const tijmath::RelativePose3& target,
                                                         const tijcore::PartTypeId& part_type_id));
@@ -56,6 +56,9 @@ public:
   MOCK_CONST_METHOD0(getRobotGripperToolType, tijcore::GripperTypeId());
 
   MOCK_CONST_METHOD1(testIfRobotReachesPose, bool(const tijmath::RelativePose3& target));
+
+  MOCK_CONST_METHOD1(calculateVerticalLandingPose,
+                     tijmath::RelativePose3(const tijmath::RelativePose3& target));
 };
 
 }  // namespace tijcore

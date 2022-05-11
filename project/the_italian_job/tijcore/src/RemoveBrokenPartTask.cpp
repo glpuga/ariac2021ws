@@ -64,7 +64,8 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   // {
   //   ERROR("{} failed to get in resting pose", robot.getRobotName());
   // }
-  else if (!robot.getGripperInLandingSpot(target_.resource()->pose()))
+  else if (!robot.getGripperIn3DPose(
+               robot.calculateVerticalLandingPose(target_.resource()->pose())))
   {
     ERROR("{} failed to get into the approximation pose to remove a broken part",
           robot.getRobotName());
@@ -83,7 +84,8 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   {
     ERROR("{} failed to get closer to target", robot.getRobotName());
   }
-  else if (!robot.getGripperInLandingSpot(scene->getDropBucketPose()))
+  else if (!robot.getGripperIn3DPose(
+               robot.calculateVerticalLandingPose(scene->getDropBucketPose())))
   {
     ERROR(
         "{} failed to get in the approximation pose to drop the broken "

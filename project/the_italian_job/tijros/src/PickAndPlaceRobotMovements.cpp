@@ -199,9 +199,9 @@ bool PickAndPlaceRobotMovements::getRobotArmInRestingPose() const
   return true;
 }
 
-bool PickAndPlaceRobotMovements::getGripperInLandingSpot(const tijmath::RelativePose3& target) const
+bool PickAndPlaceRobotMovements::getGripperIn3DPose(const tijmath::RelativePose3& target) const
 {
-  const auto action_name = "getGripperInLandingSpot";
+  const auto action_name = "getGripperIn3DPose";
 
   if (!getRobotHealthState())
   {
@@ -211,21 +211,12 @@ bool PickAndPlaceRobotMovements::getGripperInLandingSpot(const tijmath::Relative
   auto move_group_ptr = buildMoveItGroupHandle();
   move_group_ptr->setPoseReferenceFrame(world_frame);
 
-  // Convert the target pose to the world reference frame, and set the
-  // orientation pointing to the part
-  auto frame_transformer = toolbox_->getFrameTransformer();
-  auto end_effector_target_pose = frame_transformer->transformPoseToFrame(target, world_frame);
-  alignEndEffectorWithTarget(end_effector_target_pose);
-
-  auto approximation_pose_in_world = end_effector_target_pose;
-  approximation_pose_in_world.position().vector().z() += landing_pose_height_;
-
-  INFO("{}: {} approximation pose at {}", action_name, getRobotName(), approximation_pose_in_world);
+  INFO("{}: {} target gripper pose at {}", action_name, getRobotName(), target);
 
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
     INFO("{}: {} is generating the moveit plan", action_name, getRobotName());
-    auto target_geo_pose = utils::convertCorePoseToGeoPose(approximation_pose_in_world.pose());
+    auto target_geo_pose = utils::convertCorePoseToGeoPose(target.pose());
     move_group_ptr->setPoseTarget(target_geo_pose);
     move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
@@ -680,6 +671,21 @@ void PickAndPlaceRobotMovements::alignEndEffectorWithTarget(
           .trans();
 
   end_effector_target_pose.rotation() = tijmath::Rotation{ end_effector_orientation };
+}
+
+tijmath::RelativePose3
+PickAndPlaceRobotMovements::calculateVerticalLandingPose(const tijmath::RelativePose3& target) const
+{
+  // Convert the target pose to the world reference frame, and set the
+  // orientation pointing to the part
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  auto end_effector_target_pose = frame_transformer->transformPoseToFrame(target, world_frame);
+  alignEndEffectorWithTarget(end_effector_target_pose);
+
+  auto approximation_pose_in_world = end_effector_target_pose;
+  approximation_pose_in_world.position().vector().z() += landing_pose_height_;
+
+  return approximation_pose_in_world;
 }
 
 bool PickAndPlaceRobotMovements::getRobotGripperAttachementState() const
