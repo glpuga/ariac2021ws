@@ -29,7 +29,7 @@ public:
 
   virtual bool getRobotInSafePoseNearTarget(const tijmath::RelativePose3& target) const = 0;
 
-  virtual bool getGripperInLandingSpot(const tijmath::RelativePose3& target) const = 0;
+  virtual bool getGripperIn3DPose(const tijmath::RelativePose3& target) const = 0;
 
   virtual bool contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
                                             const tijcore::PartTypeId& part_type_id) const = 0;
@@ -58,6 +58,9 @@ public:
   virtual bool testIfRobotReachesPose(const tijmath::RelativePose3& target) const = 0;
 
   virtual void setRobotGripperState(const bool state) const = 0;
+
+  virtual tijmath::RelativePose3
+  calculateVerticalLandingPose(const tijmath::RelativePose3& target) const = 0;
 };
 
 }  // namespace tijcore

@@ -82,7 +82,7 @@ RobotTaskOutcome PickAndPlaceTask::run()
   {
     ERROR("{} failed to get closer to target", robot.getRobotName());
   }
-  else if (!robot.getGripperInLandingSpot(source_pose))
+  else if (!robot.getGripperIn3DPose(robot.calculateVerticalLandingPose(source_pose)))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.getRobotName());
   }
@@ -90,7 +90,7 @@ RobotTaskOutcome PickAndPlaceTask::run()
   {
     ERROR("{} failed to grasp the part form the surface", robot.getRobotName());
   }
-  else if (!robot.getGripperInLandingSpot(source_pose))
+  else if (!robot.getGripperIn3DPose(robot.calculateVerticalLandingPose(source_pose)))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.getRobotName());
   }
@@ -105,7 +105,8 @@ RobotTaskOutcome PickAndPlaceTask::run()
   {
     ERROR("{} failed to get closer to target", robot.getRobotName());
   }
-  else if (!robot.getGripperInLandingSpot(destination_.resource()->pose()) ||
+  else if (!robot.getGripperIn3DPose(
+               robot.calculateVerticalLandingPose(destination_.resource()->pose())) ||
            !robot.getRobotGripperAttachementState())
   {
     ERROR(
