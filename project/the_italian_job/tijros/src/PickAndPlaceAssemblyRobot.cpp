@@ -102,45 +102,9 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTargetPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
-  patchJointStateValuesToGetNearPose(joint_states, target,
-                                     scene_config_->getListOfSafeWaitingSpotHints());
-}
-
-void PickAndPlaceAssemblyRobot::patchJointStateValuesGraspingHingPoseNearTarget(
-    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
-{
-  patchJointStateValuesToGetNearPose(joint_states, target,
-                                     scene_config_->getListOfGantryPlanningHints());
-}
-
-void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetNearPose(
-    std::vector<double>& joint_states, const tijmath::RelativePose3& target,
-    const std::vector<tijmath::RelativePose3>& pose_hints) const
-{
-  const auto target_in_world =
-      frame_transformer_->transformPoseToFrame(target, scene_config_->getWorldFrameId());
-
-  auto shortest_distance_to_reference_sorter = [this, &reference = target_in_world](
-                                                   const tijmath::RelativePose3& lhs,
-                                                   const tijmath::RelativePose3& rhs) {
-    const auto lhs_in_world =
-        frame_transformer_->transformPoseToFrame(lhs, scene_config_->getWorldFrameId());
-    const auto rhs_in_world =
-        frame_transformer_->transformPoseToFrame(rhs, scene_config_->getWorldFrameId());
-    auto distance_vector_left = (reference.position().vector() - lhs_in_world.position().vector());
-    auto distance_vector_right = (reference.position().vector() - rhs_in_world.position().vector());
-    // ignore height differences
-    distance_vector_left.z() = 0.0;
-    distance_vector_right.z() = 0.0;
-    const auto squared_distance_left = distance_vector_left.norm();
-    const auto squared_distance_right = distance_vector_right.norm();
-    return squared_distance_left < squared_distance_right;
-  };
-
-  const auto closest_hint_it =
-      std::min_element(pose_hints.begin(), pose_hints.end(), shortest_distance_to_reference_sorter);
-
-  patchJointStateValuesToGoTo2DPose(joint_states, *closest_hint_it);
+  patchJointStateValuesToGoTo2DPose(
+      joint_states,
+      findPoseClosestToTarget(target, scene_config_->getListOfSafeWaitingSpotHints()));
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGoTo2DPose(
@@ -168,6 +132,36 @@ bool PickAndPlaceAssemblyRobot::testIfRobotReachesPose(
     const tijmath::RelativePose3& /*target*/) const
 {
   return true;
+}
+
+tijmath::RelativePose3 PickAndPlaceAssemblyRobot::findPoseClosestToTarget(
+    const tijmath::RelativePose3& target,
+    const std::vector<tijmath::RelativePose3>& pose_hints) const
+{
+  const auto target_in_world =
+      frame_transformer_->transformPoseToFrame(target, scene_config_->getWorldFrameId());
+
+  auto shortest_distance_to_reference_sorter = [this, &reference = target_in_world](
+                                                   const tijmath::RelativePose3& lhs,
+                                                   const tijmath::RelativePose3& rhs) {
+    const auto lhs_in_world =
+        frame_transformer_->transformPoseToFrame(lhs, scene_config_->getWorldFrameId());
+    const auto rhs_in_world =
+        frame_transformer_->transformPoseToFrame(rhs, scene_config_->getWorldFrameId());
+    auto distance_vector_left = (reference.position().vector() - lhs_in_world.position().vector());
+    auto distance_vector_right = (reference.position().vector() - rhs_in_world.position().vector());
+    // ignore height differences
+    distance_vector_left.z() = 0.0;
+    distance_vector_right.z() = 0.0;
+    const auto squared_distance_left = distance_vector_left.norm();
+    const auto squared_distance_right = distance_vector_right.norm();
+    return squared_distance_left < squared_distance_right;
+  };
+
+  const auto closest_hint_it =
+      std::min_element(pose_hints.begin(), pose_hints.end(), shortest_distance_to_reference_sorter);
+
+  return *closest_hint_it;
 }
 
 }  // namespace tijros

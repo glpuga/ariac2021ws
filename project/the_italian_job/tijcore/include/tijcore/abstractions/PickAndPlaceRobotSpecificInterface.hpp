@@ -40,9 +40,6 @@ public:
   virtual void patchJointStateValuesToGetCloseToTargetPose(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const = 0;
 
-  virtual void patchJointStateValuesGraspingHingPoseNearTarget(
-      std::vector<double>& joint_states, const tijmath::RelativePose3& target) const = 0;
-
   virtual void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
                                                  const tijmath::RelativePose3& target) const = 0;
 

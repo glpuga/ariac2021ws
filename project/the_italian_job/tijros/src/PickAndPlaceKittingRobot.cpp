@@ -71,32 +71,6 @@ void PickAndPlaceKittingRobot::patchJointStateValuesForArmInRestingPose(
   joint_states[6] = 0;
 }
 
-void PickAndPlaceKittingRobot::patchJointStateValuesGraspingHingPoseNearTarget(
-    std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
-{
-  if (joint_states.size() != 7)
-  {
-    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
-            getRobotName());
-  }
-  const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");
-  joint_states[0] = target_in_world.position().vector().y();
-
-  const auto part_in_belt = target_in_world.position().vector().x() > -1;
-  if (part_in_belt)
-  {
-    joint_states[0] -= 0.25;
-    joint_states[1] = degreesToRadians(-60);
-  }
-  else
-  {
-    // bias the location so that the robot is in a slight angle to grasp
-    const auto sign = (joint_states[0] < 0) ? -1.0 : 1.0;
-    joint_states[0] -= 1.0 * sign;
-    joint_states[1] = 1.9 * sign;  // magic numbers. MoveIt's full of them.
-  }
-}
-
 void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTargetPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {
