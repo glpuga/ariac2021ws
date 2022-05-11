@@ -199,9 +199,10 @@ bool PickAndPlaceRobotMovements::getRobotArmInRestingPose() const
   return true;
 }
 
-bool PickAndPlaceRobotMovements::getGripperIn3DPose(const tijmath::RelativePose3& target) const
+bool PickAndPlaceRobotMovements::getGripperIn3DPoseJoinSpace(
+    const tijmath::RelativePose3& target) const
 {
-  const auto action_name = "getGripperIn3DPose";
+  const auto action_name = "getGripperIn3DPoseJoinSpace";
 
   if (!getRobotHealthState())
   {
@@ -425,40 +426,42 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
   return true;
 }
 
-bool PickAndPlaceRobotMovements::placePartFromAbove(const tijmath::RelativePose3& target,
-                                                    const tijcore::PartTypeId& part_type_id) const
+tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalDropPose(
+    const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const
 {
-  const auto action_name = "placePartFromAbove";
+  auto frame_transformer = toolbox_->getFrameTransformer();
+
+  auto target_drop_pose_in_world = frame_transformer->transformPoseToFrame(target, world_frame);
+  alignEndEffectorWithTarget(target_drop_pose_in_world);
+
+  target_drop_pose_in_world.position().vector().z() +=
+      part_drop_height_ +
+      estimatePartHeight(target_drop_pose_in_world.rotation().rotationMatrix(), part_type_id);
+
+  return target_drop_pose_in_world;
+}
+
+bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
+    const tijmath::RelativePose3& target) const
+{
+  const auto action_name = "getGripperIn3DPoseCartesianSpace";
   if (!getRobotHealthState())
   {
     INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
   auto move_group_ptr = buildMoveItGroupHandle();
+  move_group_ptr->setPoseReferenceFrame(world_frame);
 
   INFO("Place movement: {} is calculating the pickup trajectory", getRobotName());
-
-  // make sure we trade in world poses only
-  move_group_ptr->setPoseReferenceFrame(world_frame);
 
   auto frame_transformer = toolbox_->getFrameTransformer();
 
   const auto target_in_world_pose = frame_transformer->transformPoseToFrame(target, world_frame);
 
-  // TODO(glpuga) this should better be a function that given the part pose,
-  // returns the estimated grasping pose
-  auto end_effector_target_pose = target_in_world_pose;
-  alignEndEffectorWithTarget(end_effector_target_pose);
-
-  auto end_effector_target_pose_in_world = end_effector_target_pose.pose();
-
-  end_effector_target_pose_in_world.position().vector().z() +=
-      part_drop_height_ +
-      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id);
-
   {
     std::vector<geometry_msgs::Pose> waypoints;
-    waypoints.push_back(utils::convertCorePoseToGeoPose(end_effector_target_pose_in_world));
+    waypoints.push_back(utils::convertCorePoseToGeoPose(target_in_world_pose.pose()));
 
     INFO("Place will drop the part once we are at {} in {} frame",
          utils::convertGeoPoseToCorePose(waypoints.at(0)), world_frame);

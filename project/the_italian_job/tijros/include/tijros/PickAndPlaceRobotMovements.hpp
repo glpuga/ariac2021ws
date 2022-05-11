@@ -32,13 +32,12 @@ public:
 
   bool getRobotInSafePoseNearTarget(const tijmath::RelativePose3& target) const override;
 
-  bool getGripperIn3DPose(const tijmath::RelativePose3& target) const override;
+  bool getGripperIn3DPoseJoinSpace(const tijmath::RelativePose3& target) const override;
 
   bool contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
                                     const tijcore::PartTypeId& part_type_id) const override;
 
-  bool placePartFromAbove(const tijmath::RelativePose3& target,
-                          const tijcore::PartTypeId& part_type_id) const override;
+  bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target) const override;
 
   bool getRobotTo2DPose(const tijmath::RelativePose3& target) const override;
 
@@ -64,6 +63,9 @@ public:
 
   tijmath::RelativePose3
   calculateVerticalLandingPose(const tijmath::RelativePose3& target) const override;
+
+  tijmath::RelativePose3 calculateVerticalDropPose(
+      const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const override;
 
 private:
   tijcore::PickAndPlaceRobotSpecificInterface::Ptr robot_specific_interface_;
