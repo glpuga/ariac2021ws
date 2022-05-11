@@ -41,13 +41,6 @@ public:
   void patchJointStateValuesToGetCloseToTargetPose(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const override;
 
-  void patchJointStateValuesGraspingHingPoseNearTarget(
-      std::vector<double>& joint_states, const tijmath::RelativePose3& target) const override;
-
-  void patchJointStateValuesToGetNearPose(
-      std::vector<double>& joint_states, const tijmath::RelativePose3& target,
-      const std::vector<tijmath::RelativePose3>& pose_hints) const;
-
   void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
                                          const tijmath::RelativePose3& target) const override;
 
@@ -55,6 +48,10 @@ private:
   tijcore::FrameTransformerInterface::SharedPtr frame_transformer_;
   tijcore::SceneConfigReaderInterface::SharedPtr scene_config_;
   tijcore::RobotActuatorsInterface::SharedPtr robot_actuator_;
+
+  tijmath::RelativePose3
+  findPoseClosestToTarget(const tijmath::RelativePose3& target,
+                          const std::vector<tijmath::RelativePose3>& pose_hints) const;
 };
 
 }  // namespace tijros

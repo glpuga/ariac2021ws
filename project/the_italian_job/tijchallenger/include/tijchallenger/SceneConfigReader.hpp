@@ -36,8 +36,6 @@ public:
 
   const std::vector<ConveyorBeltData>& getListOfConveyorBelts() const override;
 
-  const std::vector<tijmath::RelativePose3>& getListOfGantryPlanningHints() const override;
-
   const std::vector<tijmath::RelativePose3>& getListOfSafeWaitingSpotHints() const override;
 };
 

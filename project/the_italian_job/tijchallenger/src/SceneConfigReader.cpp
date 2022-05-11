@@ -164,31 +164,6 @@ SceneConfigReader::getListOfConveyorBelts() const
   return data;
 }
 
-const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfGantryPlanningHints() const
-{
-  static const std::vector<tijmath::RelativePose3> data{
-    { world_frame_id_, tijmath::Position::fromVector(-3.5, 3.1, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
-    { world_frame_id_, tijmath::Position::fromVector(-3.5, 2.9, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
-    // ---
-    { world_frame_id_, tijmath::Position::fromVector(-3.5, -2.9, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-45)) },
-    { world_frame_id_, tijmath::Position::fromVector(-3.5, -3.0, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-125)) },
-    // ---
-    { world_frame_id_, tijmath::Position::fromVector(-5, 3.0, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijmath::Position::fromVector(-5, -3.0, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijmath::Position::fromVector(-10, 3.0, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-    { world_frame_id_, tijmath::Position::fromVector(-10, -3.0, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
-  };
-  return data;
-}
-
 const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfSafeWaitingSpotHints() const
 {
   static const std::vector<tijmath::RelativePose3> data{
@@ -208,6 +183,8 @@ const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfSafeWaiti
     { world_frame_id_, tijmath::Position::fromVector(-10, 3.0, 0),
       tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
     { world_frame_id_, tijmath::Position::fromVector(-10, -3.0, 0),
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    { world_frame_id_, tijmath::Position::fromVector(-6.06, 6.16, 0),
       tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
   };
   return data;

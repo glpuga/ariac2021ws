@@ -68,8 +68,6 @@ public:
 
   virtual const std::vector<ConveyorBeltData>& getListOfConveyorBelts() const = 0;
 
-  virtual const std::vector<tijmath::RelativePose3>& getListOfGantryPlanningHints() const = 0;
-
   virtual const std::vector<tijmath::RelativePose3>& getListOfSafeWaitingSpotHints() const = 0;
 };
 

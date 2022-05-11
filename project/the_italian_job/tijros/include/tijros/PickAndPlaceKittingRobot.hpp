@@ -41,9 +41,6 @@ public:
   void patchJointStateValuesToGetCloseToTargetPose(
       std::vector<double>& joint_states, const tijmath::RelativePose3& target) const override;
 
-  void patchJointStateValuesGraspingHingPoseNearTarget(
-      std::vector<double>& joint_states, const tijmath::RelativePose3& target) const override;
-
   void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
                                          const tijmath::RelativePose3& target) const override;
 
