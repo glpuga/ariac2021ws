@@ -21,6 +21,7 @@
 #include <ros/ros.h>
 
 // project
+#include <tijcore/utils/PayloadEnvelop.hpp>
 #include <tijlogger/logger.hpp>
 #include <tijmath/math_utilities.hpp>
 #include <tijros/PickAndPlaceRobotMovements.hpp>
@@ -80,17 +81,6 @@ createCollisionBox(const std::string& id, const std::string& sub_id, const std::
   collision_object.operation = operation;
 
   return collision_object;
-}
-
-double estimatePartHeight(const tijmath::Matrix3& orientation_in_world,
-                          const tijcore::PartTypeId& id)
-{
-  const auto part_dimensions = tijcore::part_type::dimensions(id);
-  const double estimated_height = std::abs(
-      tijmath::Vector3{ 0.0, 0.0, 1 }.dot(part_dimensions[0] * orientation_in_world.col(0) +
-                                          part_dimensions[1] * orientation_in_world.col(1) +
-                                          part_dimensions[2] * orientation_in_world.col(2)));
-  return estimated_height;
 }
 
 }  // namespace
@@ -347,8 +337,8 @@ bool PickAndPlaceRobotMovements::getRobotInSafePoseNearTarget(
   return true;
 }
 
-bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
-    const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const
+bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
+                                                              const double offset_to_top) const
 {
   const auto action_name = "contactPartFromAboveAndGrasp";
   if (!getRobotHealthState())
@@ -378,14 +368,10 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
 
   // notice that part poses get detected with a height equal to about half the
   // height of the piece
-  const auto run_top =
-      end_effector_target_pose_in_world.position().vector().z() +
-      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id) * 0.5 +
-      pick_search_length_ * 0.5;
-  const auto run_bottom =
-      end_effector_target_pose_in_world.position().vector().z() +
-      estimatePartHeight(target_in_world_pose.rotation().rotationMatrix(), part_type_id) * 0.5 -
-      pick_search_length_ * 0.5;
+  const auto run_top = end_effector_target_pose_in_world.position().vector().z() +
+                       offset_to_top * 0.5 + pick_search_length_ * 0.5;
+  const auto run_bottom = end_effector_target_pose_in_world.position().vector().z() +
+                          offset_to_top * 0.5 - pick_search_length_ * 0.5;
   end_effector_target_pose_in_world.position().vector().z() = run_top;
 
   while (!getRobotGripperAttachementState() &&
@@ -427,16 +413,14 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
 }
 
 tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalDropPose(
-    const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const
+    const tijmath::RelativePose3& target, const double offset_to_top) const
 {
   auto frame_transformer = toolbox_->getFrameTransformer();
 
   auto target_drop_pose_in_world = frame_transformer->transformPoseToFrame(target, world_frame);
   alignEndEffectorWithTarget(target_drop_pose_in_world);
 
-  target_drop_pose_in_world.position().vector().z() +=
-      part_drop_height_ +
-      estimatePartHeight(target_drop_pose_in_world.rotation().rotationMatrix(), part_type_id);
+  target_drop_pose_in_world.position().vector().z() += part_drop_height_ + offset_to_top;
 
   return target_drop_pose_in_world;
 }

@@ -7,6 +7,7 @@
 
 // tijcore
 #include <tijcore/tasking/RemoveBrokenPartTask.hpp>
+#include <tijcore/utils/PayloadEnvelop.hpp>
 #include <tijlogger/logger.hpp>
 
 namespace tijcore
@@ -35,6 +36,13 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
     part_type_id = part_type.type();
   }
 
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  const auto target_pose_in_world_frame =
+      frame_transformer->transformPoseToFrame(target_.resource()->pose(), scene->getWorldFrameId());
+
+  const auto offset_to_top =
+      tijcore::PayloadEnvelope::offsetToTop(part_type_id, target_pose_in_world_frame.rotation());
+
   const auto target_parent_name = target_.resource()->parentName();
 
   const auto required_gripper_type = tijcore::GripperTypeId::gripper_part;
@@ -60,21 +68,21 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
         "{}",
         robot.getRobotName(), initial_tool_type, required_gripper_type);
   }
-  // else if (!robot.getRobotInSafePoseNearTarget(target_.resource()->pose()))
+  // else if (!robot.getRobotInSafePoseNearTarget(target_pose_in_world_frame))
   // {
   //   ERROR("{} failed to get in resting pose", robot.getRobotName());
   // }
   else if (!robot.getGripperIn3DPoseJoinSpace(
-               robot.calculateVerticalLandingPose(target_.resource()->pose())))
+               robot.calculateVerticalLandingPose(target_pose_in_world_frame)))
   {
     ERROR("{} failed to get into the approximation pose to remove a broken part",
           robot.getRobotName());
   }
-  else if (!robot.contactPartFromAboveAndGrasp(target_.resource()->pose(), part_type_id))
+  else if (!robot.contactPartFromAboveAndGrasp(target_pose_in_world_frame, offset_to_top))
   {
     ERROR("{} failed to pick up the broken part while trying to remove it", robot.getRobotName());
   }
-  else if (!robot.getRobotInSafePoseNearTarget(target_.resource()->pose()) ||
+  else if (!robot.getRobotInSafePoseNearTarget(target_pose_in_world_frame) ||
            !robot.getRobotGripperAttachementState())
   {
     ERROR("{} failed to get the broken part ready for transport to the bucket",
@@ -114,7 +122,7 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   if (result != RobotTaskOutcome::TASK_SUCCESS)
   {
     *target_.resource() = ManagedLocus::CreateEmptyLocus(target_.resource()->parentName(),
-                                                         target_.resource()->pose());
+                                                         target_pose_in_world_frame);
   }
 
   // try to get in a resting pose to remove the robot from the way

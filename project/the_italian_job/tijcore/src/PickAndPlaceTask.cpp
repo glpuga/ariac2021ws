@@ -9,6 +9,7 @@
 
 // tijcore
 #include <tijcore/tasking/PickAndPlaceTask.hpp>
+#include <tijcore/utils/PayloadEnvelop.hpp>
 #include <tijlogger/logger.hpp>
 
 namespace tijcore
@@ -31,24 +32,28 @@ RobotTaskOutcome PickAndPlaceTask::run()
   RobotTaskOutcome result{ RobotTaskOutcome::TASK_FAILURE };
 
   auto& robot = *robot_.resource();
-
-  tijcore::PartTypeId part_type_id;
-  tijcore::GripperTypeId required_gripper_type;
-  const auto source_pose = source_.resource()->pose();
-
   auto scene = toolbox_->getSceneConfigReader();
+
+  double offset_to_top = 0.0;
+
+  tijcore::GripperTypeId required_gripper_type;
+
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  const auto source_pose_in_world_frame =
+      frame_transformer->transformPoseToFrame(source_.resource()->pose(), scene->getWorldFrameId());
 
   if (source_.resource()->isLocusWithPart())
   {
     const auto part_type = source_.resource()->qualifiedPartInfo().part_type;
-    part_type_id = part_type.type();
+    const auto part_type_id = part_type.type();
+    offset_to_top =
+        tijcore::PayloadEnvelope::offsetToTop(part_type_id, source_pose_in_world_frame.rotation());
     required_gripper_type = tijcore::GripperTypeId::gripper_part;
   }
   else if (source_.resource()->isLocusWithMovableTray())
   {
-    // TODO(glpuga) hacky way to implement moving trays using flat pieces until
-    // we have a better solution
-    part_type_id = tijcore::PartTypeId::regulator;
+    const auto movable_tray_id = source_.resource()->qualifiedMovableTrayInfo().tray_type;
+    offset_to_top = tijcore::PayloadEnvelope::offsetToTop(movable_tray_id);
     required_gripper_type = tijcore::GripperTypeId::gripper_tray;
   }
   else
@@ -78,19 +83,21 @@ RobotTaskOutcome PickAndPlaceTask::run()
         "{}",
         robot.getRobotName(), initial_tool_type, required_gripper_type);
   }
-  else if (!robot.getRobotInSafePoseNearTarget(source_pose))
+  else if (!robot.getRobotInSafePoseNearTarget(source_pose_in_world_frame))
   {
     ERROR("{} failed to get closer to target", robot.getRobotName());
   }
-  else if (!robot.getGripperIn3DPoseJoinSpace(robot.calculateVerticalLandingPose(source_pose)))
+  else if (!robot.getGripperIn3DPoseJoinSpace(
+               robot.calculateVerticalLandingPose(source_pose_in_world_frame)))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.getRobotName());
   }
-  else if (!robot.contactPartFromAboveAndGrasp(source_pose, part_type_id))
+  else if (!robot.contactPartFromAboveAndGrasp(source_pose_in_world_frame, offset_to_top))
   {
     ERROR("{} failed to grasp the part form the surface", robot.getRobotName());
   }
-  else if (!robot.getGripperIn3DPoseJoinSpace(robot.calculateVerticalLandingPose(source_pose)))
+  else if (!robot.getGripperIn3DPoseJoinSpace(
+               robot.calculateVerticalLandingPose(source_pose_in_world_frame)))
   {
     ERROR("{} failed to get into the landing pose prior to grasping", robot.getRobotName());
   }
@@ -115,7 +122,7 @@ RobotTaskOutcome PickAndPlaceTask::run()
         robot.getRobotName());
   }
   else if (!robot.getGripperIn3DPoseCartesianSpace(
-               robot.calculateVerticalDropPose(destination_.resource()->pose(), part_type_id)))
+               robot.calculateVerticalDropPose(destination_.resource()->pose(), offset_to_top)))
   {
     ERROR("{} failed to place the part in the destination pose", robot.getRobotName());
   }
@@ -124,8 +131,8 @@ RobotTaskOutcome PickAndPlaceTask::run()
     result = RobotTaskOutcome::TASK_SUCCESS;
     ManagedLocus::TransferPartFromHereToThere(*source_.resource(), *destination_.resource());
     robot.getRobotInSafePoseNearTarget(destination_.resource()->pose());
-    INFO("{} successfully moved the part from {} to {}", robot.getRobotName(), source_pose,
-         destination_.resource()->pose());
+    INFO("{} successfully moved the part from {} to {}", robot.getRobotName(),
+         source_pose_in_world_frame, destination_.resource()->pose());
   }
 
   // try to get in a resting pose to remove the robot from the way
