@@ -32,7 +32,7 @@ public:
   virtual bool getGripperIn3DPoseJoinSpace(const tijmath::RelativePose3& target) const = 0;
 
   virtual bool contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
-                                            const tijcore::PartTypeId& part_type_id) const = 0;
+                                            const double offset_to_top) const = 0;
 
   virtual bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target) const = 0;
 
@@ -61,8 +61,8 @@ public:
   virtual tijmath::RelativePose3
   calculateVerticalLandingPose(const tijmath::RelativePose3& target) const = 0;
 
-  virtual tijmath::RelativePose3 calculateVerticalDropPose(
-      const tijmath::RelativePose3& target, const tijcore::PartTypeId& part_type_id) const = 0;
+  virtual tijmath::RelativePose3 calculateVerticalDropPose(const tijmath::RelativePose3& target,
+                                                           const double offset_to_top) const = 0;
 };
 
 }  // namespace tijcore
