@@ -55,6 +55,11 @@ public:
 
   MOCK_CONST_METHOD1(testIfRobotReachesPose, bool(const tijmath::RelativePose3& target));
 
+  MOCK_METHOD2(setRobotGripperPayloadEnvelope,
+               bool(const PayloadEnvelope& envelop, const tijmath::Pose3& relative_pose));
+
+  MOCK_METHOD0(removeRobotGripperPayloadEnvelope, bool());
+
   MOCK_CONST_METHOD2(calculateVerticalLandingPose,
                      tijmath::RelativePose3(const tijmath::RelativePose3& target,
                                             const double offset_to_top));
@@ -66,6 +71,10 @@ public:
   MOCK_CONST_METHOD2(calculateVerticalDropPose,
                      tijmath::RelativePose3(const tijmath::RelativePose3& target,
                                             const double offset_to_top));
+
+  MOCK_CONST_METHOD2(calculateEndEffectorToPayloadTransform,
+                     tijmath::Pose3(const tijmath::RelativePose3& end_effector_pose,
+                                    const tijmath::RelativePose3& payload_pose));
 };
 
 }  // namespace tijcore

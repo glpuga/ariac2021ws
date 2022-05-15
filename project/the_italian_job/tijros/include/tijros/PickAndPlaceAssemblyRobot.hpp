@@ -30,6 +30,8 @@ public:
 
   std::string getRobotPlanningGroup() const override;
 
+  std::string getRobotEndEffectorLinkName() const override;
+
   void setRobotGripperState(const bool state) const override;
 
   bool setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const override;

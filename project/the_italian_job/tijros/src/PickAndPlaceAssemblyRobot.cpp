@@ -50,6 +50,11 @@ std::string PickAndPlaceAssemblyRobot::getRobotPlanningGroup() const
   return "gantry_full";
 }
 
+std::string PickAndPlaceAssemblyRobot::getRobotEndEffectorLinkName() const
+{
+  return "gantry_arm_ee_link";
+}
+
 bool PickAndPlaceAssemblyRobot::getRobotGripperAttachementState() const
 {
   auto gripper_state = robot_actuator_->getGantryGripperState();

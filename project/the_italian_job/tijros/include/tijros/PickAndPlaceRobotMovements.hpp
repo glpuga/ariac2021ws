@@ -61,6 +61,11 @@ public:
 
   void setRobotGripperState(const bool state) const override;
 
+  bool setRobotGripperPayloadEnvelope(const tijcore::PayloadEnvelope& envelop,
+                                      const tijmath::Pose3& relative_pose) override;
+
+  bool removeRobotGripperPayloadEnvelope() override;
+
   tijmath::RelativePose3 calculateVerticalLandingPose(const tijmath::RelativePose3& target,
                                                       const double offset_to_top) const override;
 
@@ -70,12 +75,20 @@ public:
   tijmath::RelativePose3 calculateVerticalDropPose(const tijmath::RelativePose3& target,
                                                    const double offset_to_top) const override;
 
+  tijmath::Pose3
+  calculateEndEffectorToPayloadTransform(const tijmath::RelativePose3& end_effector_pose,
+                                         const tijmath::RelativePose3& payload_pose) const override;
+
 private:
   tijcore::PickAndPlaceRobotSpecificInterface::Ptr robot_specific_interface_;
   tijcore::Toolbox::SharedPtr toolbox_;
 
   mutable std::unique_ptr<moveit::planning_interface::MoveGroupInterface> move_group_ptr_;
   mutable std::unique_ptr<moveit::planning_interface::PlanningSceneInterface> planning_scene_ptr_;
+
+  bool enable_payload_envelope_{ false };
+  tijcore::PayloadEnvelope payload_envelope_;
+  tijmath::Pose3 ee_to_payload_pose_;
 
   moveit::planning_interface::MoveGroupInterface* buildMoveItGroupHandle() const;
 
@@ -84,6 +97,8 @@ private:
   void alignEndEffectorWithTarget(tijmath::RelativePose3& target_in_world) const;
 
   void useNarrowTolerances(const bool tight_mode) const;
+
+  void createPayloadEnvelopCollisionBox() const;
 };
 
 }  // namespace tijros

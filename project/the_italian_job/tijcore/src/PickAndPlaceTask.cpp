@@ -9,7 +9,7 @@
 
 // tijcore
 #include <tijcore/tasking/PickAndPlaceTask.hpp>
-#include <tijcore/utils/PayloadEnvelop.hpp>
+#include <tijcore/utils/PayloadEnvelope.hpp>
 #include <tijlogger/logger.hpp>
 
 namespace tijcore
@@ -42,6 +42,8 @@ RobotTaskOutcome PickAndPlaceTask::run()
   const auto source_pose_in_world_frame =
       frame_transformer->transformPoseToFrame(source_.resource()->pose(), scene->getWorldFrameId());
 
+  tijcore::PayloadEnvelope payload_envelope_info;
+
   if (source_.resource()->isLocusWithPart())
   {
     const auto part_type = source_.resource()->qualifiedPartInfo().part_type;
@@ -49,12 +51,14 @@ RobotTaskOutcome PickAndPlaceTask::run()
     offset_to_top =
         tijcore::PayloadEnvelope::offsetToTop(part_type_id, source_pose_in_world_frame.rotation());
     required_gripper_type = tijcore::GripperTypeId::gripper_part;
+    payload_envelope_info = tijcore::PayloadEnvelope::makeEnvelope(part_type_id);
   }
   else if (source_.resource()->isLocusWithMovableTray())
   {
     const auto movable_tray_id = source_.resource()->qualifiedMovableTrayInfo().tray_type;
     offset_to_top = tijcore::PayloadEnvelope::offsetToTop(movable_tray_id);
     required_gripper_type = tijcore::GripperTypeId::gripper_tray;
+    payload_envelope_info = tijcore::PayloadEnvelope::makeEnvelope(movable_tray_id);
   }
   else
   {
@@ -62,6 +66,10 @@ RobotTaskOutcome PickAndPlaceTask::run()
   }
 
   const auto initial_tool_type = robot.getRobotGripperToolType();
+
+  const auto ee_to_payload_transform = robot.calculateEndEffectorToPayloadTransform(
+      robot.calculateVerticalGripEndEffectorPose(source_pose_in_world_frame, offset_to_top),
+      source_pose_in_world_frame);
 
   if ((initial_tool_type != required_gripper_type) &&
       !robot.getRobotTo2DPose(scene->getGripperToolSwappingTablePose()))
@@ -109,6 +117,10 @@ RobotTaskOutcome PickAndPlaceTask::run()
         "grasped",
         robot.getRobotName());
   }
+  else if (!robot.setRobotGripperPayloadEnvelope(payload_envelope_info, ee_to_payload_transform))
+  {
+    ERROR("{} failed to enable the payload obstacle envelope", robot.getRobotName());
+  }
   else if (!robot.getRobotInSafePoseNearTarget(destination_.resource()->pose()))
   {
     ERROR("{} failed to get closer to target", robot.getRobotName());
@@ -121,6 +133,10 @@ RobotTaskOutcome PickAndPlaceTask::run()
         "{} failed to get to the destination landing pose with the part "
         "grasped",
         robot.getRobotName());
+  }
+  else if (!robot.removeRobotGripperPayloadEnvelope())
+  {
+    ERROR("{} failed to disable the payload obstacle envelope", robot.getRobotName());
   }
   else if (!robot.getGripperIn3DPoseCartesianSpace(
                robot.calculateVerticalDropPose(destination_.resource()->pose(), offset_to_top)))
