@@ -337,8 +337,8 @@ bool PickAndPlaceRobotMovements::getRobotInSafePoseNearTarget(
   return true;
 }
 
-bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
-                                                              const double offset_to_top) const
+bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
+    const tijmath::RelativePose3& target_end_effector_pose) const
 {
   const auto action_name = "contactPartFromAboveAndGrasp";
   if (!getRobotHealthState())
@@ -357,34 +357,28 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(const tijmath::Rel
   setRobotGripperState(true);
 
   auto frame_transformer = toolbox_->getFrameTransformer();
-  const auto target_in_world_pose = frame_transformer->transformPoseToFrame(target, world_frame);
-
-  // TODO(glpuga) this should better be an function that given the part pose,
-  // returns the estimated gripper pose
-  auto end_effector_target_pose = target_in_world_pose;
-  alignEndEffectorWithTarget(end_effector_target_pose);
-
-  auto end_effector_target_pose_in_world = end_effector_target_pose.pose();
+  auto target_end_effector_pose_in_world =
+      frame_transformer->transformPoseToFrame(target_end_effector_pose, world_frame);
 
   // notice that part poses get detected with a height equal to about half the
   // height of the piece
-  const auto run_top = end_effector_target_pose_in_world.position().vector().z() +
-                       offset_to_top * 0.5 + pick_search_length_ * 0.5;
-  const auto run_bottom = end_effector_target_pose_in_world.position().vector().z() +
-                          offset_to_top * 0.5 - pick_search_length_ * 0.5;
-  end_effector_target_pose_in_world.position().vector().z() = run_top;
+  const auto run_top =
+      target_end_effector_pose_in_world.position().vector().z() + pick_search_length_ * 0.5;
+  const auto run_bottom =
+      target_end_effector_pose_in_world.position().vector().z() - pick_search_length_ * 0.5;
+  target_end_effector_pose_in_world.position().vector().z() = run_top;
 
   while (!getRobotGripperAttachementState() &&
-         (end_effector_target_pose_in_world.position().vector().z() > run_bottom))
+         (target_end_effector_pose_in_world.position().vector().z() > run_bottom))
   {
     // decrease the gripper one step
-    end_effector_target_pose_in_world.position().vector().z() -= pickup_displacement_step_;
+    target_end_effector_pose_in_world.position().vector().z() -= pickup_displacement_step_;
 
     INFO("{}: {}  is generating the step moveit plan", action_name, getRobotName());
     moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
     {
       auto target_geo_pose_in_world =
-          utils::convertCorePoseToGeoPose(end_effector_target_pose_in_world);
+          utils::convertCorePoseToGeoPose(target_end_effector_pose_in_world.pose());
       move_group_ptr->setPoseTarget(target_geo_pose_in_world);
       move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
@@ -410,19 +404,6 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(const tijmath::Rel
 
   INFO("{}: {} failed to grasp the part", action_name, getRobotName());
   return true;
-}
-
-tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalDropPose(
-    const tijmath::RelativePose3& target, const double offset_to_top) const
-{
-  auto frame_transformer = toolbox_->getFrameTransformer();
-
-  auto target_drop_pose_in_world = frame_transformer->transformPoseToFrame(target, world_frame);
-  alignEndEffectorWithTarget(target_drop_pose_in_world);
-
-  target_drop_pose_in_world.position().vector().z() += part_drop_height_ + offset_to_top;
-
-  return target_drop_pose_in_world;
 }
 
 bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
@@ -660,19 +641,53 @@ void PickAndPlaceRobotMovements::alignEndEffectorWithTarget(
   end_effector_target_pose.rotation() = tijmath::Rotation{ end_effector_orientation };
 }
 
-tijmath::RelativePose3
-PickAndPlaceRobotMovements::calculateVerticalLandingPose(const tijmath::RelativePose3& target) const
+tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalLandingPose(
+    const tijmath::RelativePose3& target, const double offset_to_top) const
 {
-  // Convert the target pose to the world reference frame, and set the
-  // orientation pointing to the part
   auto frame_transformer = toolbox_->getFrameTransformer();
-  auto end_effector_target_pose = frame_transformer->transformPoseToFrame(target, world_frame);
-  alignEndEffectorWithTarget(end_effector_target_pose);
+  auto target_pose_in_world = frame_transformer->transformPoseToFrame(target, world_frame);
 
-  auto approximation_pose_in_world = end_effector_target_pose;
-  approximation_pose_in_world.position().vector().z() += landing_pose_height_;
+  auto vertical_approximation_pose =
+      calculateVerticalGripEndEffectorPose(target_pose_in_world, offset_to_top);
+  vertical_approximation_pose.position().vector().z() += landing_pose_height_;
 
-  return approximation_pose_in_world;
+  return vertical_approximation_pose;
+}
+
+tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalDropPose(
+    const tijmath::RelativePose3& target, const double offset_to_top) const
+{
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  auto target_pose_in_world = frame_transformer->transformPoseToFrame(target, world_frame);
+
+  auto drop_pose_in_world =
+      calculateVerticalGripEndEffectorPose(target_pose_in_world, offset_to_top);
+  drop_pose_in_world.position().vector().z() += part_drop_height_;
+
+  // hacky way to compensate for the offset being about half the height
+  drop_pose_in_world.position().vector().z() += offset_to_top;
+
+  return drop_pose_in_world;
+}
+
+tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalGripEndEffectorPose(
+    const tijmath::RelativePose3& target, const double offset_to_top) const
+{
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  auto end_effector_pose = frame_transformer->transformPoseToFrame(target, world_frame);
+
+  alignEndEffectorWithTarget(end_effector_pose);
+  end_effector_pose.position().vector().z() += offset_to_top;
+
+  // TODO(glpuga) Issue https://github.com/glpuga/ariac2021ws/issues/258
+  // The following is a hack to compensate for the fact that the end effector of
+  // kitting seems to be different from the one of gantry.
+  if (robot_specific_interface_->getRobotName() == "kitting")
+  {
+    end_effector_pose.position().vector().z() += 0.02;
+  }
+
+  return end_effector_pose;
 }
 
 bool PickAndPlaceRobotMovements::getRobotGripperAttachementState() const

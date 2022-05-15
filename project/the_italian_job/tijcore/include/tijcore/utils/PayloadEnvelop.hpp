@@ -52,7 +52,7 @@ public:
     const double estimated_height = std::abs(tijmath::Vector3{ 0.0, 0.0, 1 }.dot(
         part_dimensions[0] * rotation_matrix.col(0) + part_dimensions[1] * rotation_matrix.col(1) +
         part_dimensions[2] * rotation_matrix.col(2)));
-    return estimated_height;
+    return estimated_height * 0.5;  // part poses are centered in the body
   }
 
   static double offsetToTop(const tijcore::MovableTrayId&)
@@ -75,7 +75,7 @@ private:
       { PartTypeId::battery, tijmath::Vector3{ 0.136, 0.06, 0.05 } },
       { PartTypeId::sensor, tijmath::Vector3{ 0.125, 0.105, 0.06 } * 1.1 },
       { PartTypeId::regulator, tijmath::Vector3{ 0.093, 0.126, 0.066 } },
-      { PartTypeId::pump, tijmath::Vector3{ 0.12, 0.12, 0.12 } },
+      { PartTypeId::pump, tijmath::Vector3{ 0.11, 0.11, 0.11 } },
     };
     auto it = id_map.find(id);
     if (it == id_map.end())

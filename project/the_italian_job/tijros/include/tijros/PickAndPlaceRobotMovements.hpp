@@ -34,8 +34,8 @@ public:
 
   bool getGripperIn3DPoseJoinSpace(const tijmath::RelativePose3& target) const override;
 
-  bool contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target,
-                                    const double offset_to_top) const override;
+  bool contactPartFromAboveAndGrasp(
+      const tijmath::RelativePose3& target_end_effector_pose) const override;
 
   bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target) const override;
 
@@ -61,8 +61,11 @@ public:
 
   void setRobotGripperState(const bool state) const override;
 
-  tijmath::RelativePose3
-  calculateVerticalLandingPose(const tijmath::RelativePose3& target) const override;
+  tijmath::RelativePose3 calculateVerticalLandingPose(const tijmath::RelativePose3& target,
+                                                      const double offset_to_top) const override;
+
+  tijmath::RelativePose3 calculateVerticalGripEndEffectorPose(
+      const tijmath::RelativePose3& target, const double offset_to_top) const override;
 
   tijmath::RelativePose3 calculateVerticalDropPose(const tijmath::RelativePose3& target,
                                                    const double offset_to_top) const override;
