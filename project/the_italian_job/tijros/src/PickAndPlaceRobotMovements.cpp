@@ -21,8 +21,9 @@
 #include <ros/ros.h>
 
 // project
-#include <tijcore/utils/PayloadEnvelop.hpp>
+#include <tijcore/utils/PayloadEnvelope.hpp>
 #include <tijlogger/logger.hpp>
+#include <tijmath/Isometry.hpp>
 #include <tijmath/math_utilities.hpp>
 #include <tijros/PickAndPlaceRobotMovements.hpp>
 #include <tijros/utils/utils.hpp>
@@ -92,6 +93,80 @@ PickAndPlaceRobotMovements::PickAndPlaceRobotMovements(
 {
 }
 
+void PickAndPlaceRobotMovements::createPayloadEnvelopCollisionBox() const
+{
+  const auto link_name = robot_specific_interface_->getRobotEndEffectorLinkName();
+
+  moveit_msgs::AttachedCollisionObject attached_collision_object;
+  attached_collision_object.link_name = link_name;
+  auto& collision_object = attached_collision_object.object;
+
+  // TODO(glpuga) hyper hacky, but necessary to avoid collistions.
+  // Since this does not really care if some of the link names don't really exist, it seems to work
+  // fine.
+  attached_collision_object.touch_links.push_back("gantry_arm_wrist_3_link");
+  attached_collision_object.touch_links.push_back("wrist_3_link");
+  attached_collision_object.touch_links.push_back("gantry_arm_ee_link");
+  attached_collision_object.touch_links.push_back("ee_link");
+  attached_collision_object.touch_links.push_back("gantry_arm_vacuum_gripper_link");
+  attached_collision_object.touch_links.push_back("vacuum_gripper_link");
+
+  {
+    collision_object.header.frame_id = link_name;
+    collision_object.id = "payload_envelope";
+
+    shape_msgs::SolidPrimitive primitive;
+
+    {
+      // TODO(glpuga) this code assumes the payload envelop is CENTERED around the pose of the part
+      const auto pppc = payload_envelope_.posPosPosCorner();
+      const auto nnnc = payload_envelope_.negNegNegCorner();
+      const auto dimensions = pppc.vector() - nnnc.vector();
+      primitive.type = primitive.BOX;
+      primitive.dimensions.resize(3);
+      primitive.dimensions[0] = dimensions.x();
+      primitive.dimensions[1] = dimensions.y();
+      primitive.dimensions[2] = dimensions.z();
+    }
+
+    geometry_msgs::Pose box_pose;
+
+    {
+      const auto t = ee_to_payload_pose_.position().vector();
+      box_pose.position.x = t.x();
+      box_pose.position.y = t.y();
+      box_pose.position.z = t.z();
+      const auto q = ee_to_payload_pose_.rotation().quaternion();
+      box_pose.orientation.w = q.w();
+      box_pose.orientation.x = q.x();
+      box_pose.orientation.y = q.y();
+      box_pose.orientation.z = q.z();
+    }
+
+    collision_object.primitives.push_back(primitive);
+    collision_object.primitive_poses.push_back(box_pose);
+
+    collision_object.operation = enable_payload_envelope_ ? moveit_msgs::CollisionObject::ADD :
+                                                            moveit_msgs::CollisionObject::REMOVE;
+  }
+
+  std::vector<moveit_msgs::CollisionObject> collision_objects;
+  collision_objects.push_back(collision_object);
+
+  if (enable_payload_envelope_)
+  {
+    planning_scene_ptr_->applyCollisionObjects(collision_objects);
+  }
+
+  // synchronously update the planning scene
+  planning_scene_ptr_->applyAttachedCollisionObject(attached_collision_object);
+
+  if (!enable_payload_envelope_)
+  {
+    planning_scene_ptr_->applyCollisionObjects(collision_objects);
+  }
+}
+
 void PickAndPlaceRobotMovements::useNarrowTolerances(const bool tight_mode) const
 {
   if (tight_mode)
@@ -145,6 +220,8 @@ PickAndPlaceRobotMovements::buildMoveItGroupHandle() const
     buildObstacleSceneFromDescription();
   }
 
+  createPayloadEnvelopCollisionBox();
+
   return move_group_ptr_.get();
 }
 
@@ -162,7 +239,6 @@ bool PickAndPlaceRobotMovements::getRobotArmInRestingPose() const
     current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
     robot_specific_interface_->patchJointStateValuesForArmInRestingPose(joint_group_positions);
     move_group_ptr->setJointValueTarget(joint_group_positions);
-    move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
   }
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
@@ -209,7 +285,6 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseJoinSpace(
     INFO("{}: {} is generating the moveit plan", action_name, getRobotName());
     auto target_geo_pose = utils::convertCorePoseToGeoPose(target.pose());
     move_group_ptr->setPoseTarget(target_geo_pose);
-    move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
     bool success = (move_group_ptr->plan(movement_plan) ==
                     moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -258,7 +333,6 @@ bool PickAndPlaceRobotMovements::getRobotTo2DPose(const tijmath::RelativePose3& 
     robot_specific_interface_->patchJointStateValuesToGoTo2DPose(joint_group_positions, target);
 
     move_group_ptr->setJointValueTarget(joint_group_positions);
-    move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
   }
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
@@ -310,7 +384,6 @@ bool PickAndPlaceRobotMovements::getRobotInSafePoseNearTarget(
                                                                            target);
 
     move_group_ptr->setJointValueTarget(joint_group_positions);
-    move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
   }
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
@@ -380,7 +453,6 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
       auto target_geo_pose_in_world =
           utils::convertCorePoseToGeoPose(target_end_effector_pose_in_world.pose());
       move_group_ptr->setPoseTarget(target_geo_pose_in_world);
-      move_group_ptr->setStartState(*move_group_ptr->getCurrentState());
 
       bool success = (move_group_ptr->plan(movement_plan) ==
                       moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -690,6 +762,28 @@ tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalGripEndEffec
   return end_effector_pose;
 }
 
+tijmath::Pose3 PickAndPlaceRobotMovements::calculateEndEffectorToPayloadTransform(
+    const tijmath::RelativePose3& end_effector_pose,
+    const tijmath::RelativePose3& payload_pose) const
+{
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  auto end_effector_in_world =
+      frame_transformer->transformPoseToFrame(end_effector_pose, world_frame);
+  auto payload_pose_in_world = frame_transformer->transformPoseToFrame(payload_pose, world_frame);
+
+  auto isometry_from_relative_pose = [](const auto& pose) {
+    return tijmath::Isometry{ pose.rotation().rotationMatrix(), pose.position().vector() };
+  };
+
+  const auto end_effector_from_world_iso = isometry_from_relative_pose(end_effector_in_world);
+  const auto payload_from_world_iso = isometry_from_relative_pose(payload_pose_in_world);
+
+  const auto end_effector_to_payload_iso =
+      end_effector_from_world_iso.inv() * payload_from_world_iso;
+  return tijmath::Pose3{ tijmath::Position{ end_effector_to_payload_iso.translation() },
+                         tijmath::Rotation{ end_effector_to_payload_iso.rotation() } };
+}
+
 bool PickAndPlaceRobotMovements::getRobotGripperAttachementState() const
 {
   return robot_specific_interface_->getRobotGripperAttachementState();
@@ -713,6 +807,21 @@ bool PickAndPlaceRobotMovements::testIfRobotReachesPose(const tijmath::RelativeP
 void PickAndPlaceRobotMovements::setRobotGripperState(const bool state) const
 {
   robot_specific_interface_->setRobotGripperState(state);
+}
+
+bool PickAndPlaceRobotMovements::setRobotGripperPayloadEnvelope(
+    const tijcore::PayloadEnvelope& envelop, const tijmath::Pose3& relative_pose)
+{
+  enable_payload_envelope_ = true;
+  payload_envelope_ = envelop;
+  ee_to_payload_pose_ = relative_pose;
+  return true;
+}
+
+bool PickAndPlaceRobotMovements::removeRobotGripperPayloadEnvelope()
+{
+  enable_payload_envelope_ = false;
+  return true;
 }
 
 }  // namespace tijros

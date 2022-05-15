@@ -41,6 +41,11 @@ std::string PickAndPlaceKittingRobot::getRobotPlanningGroup() const
   return "kitting_arm";
 }
 
+std::string PickAndPlaceKittingRobot::getRobotEndEffectorLinkName() const
+{
+  return "ee_link";
+}
+
 bool PickAndPlaceKittingRobot::getRobotGripperAttachementState() const
 {
   auto gripper_state = robot_actuator_->getKittingGripperState();

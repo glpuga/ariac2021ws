@@ -7,7 +7,7 @@
 
 // tijcore
 #include <tijcore/tasking/RemoveBrokenPartTask.hpp>
-#include <tijcore/utils/PayloadEnvelop.hpp>
+#include <tijcore/utils/PayloadEnvelope.hpp>
 #include <tijlogger/logger.hpp>
 
 namespace tijcore

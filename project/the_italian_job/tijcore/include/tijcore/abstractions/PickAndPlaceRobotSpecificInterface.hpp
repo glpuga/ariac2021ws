@@ -27,6 +27,8 @@ public:
 
   virtual std::string getRobotPlanningGroup() const = 0;
 
+  virtual std::string getRobotEndEffectorLinkName() const = 0;
+
   virtual bool getRobotHealthState() const = 0;
 
   virtual bool testIfRobotReachesPose(const tijmath::RelativePose3& target) const = 0;

@@ -13,6 +13,8 @@
 // tijcore
 #include <tijcore/datatypes/GripperTypeId.hpp>
 #include <tijcore/datatypes/PartTypeId.hpp>
+#include <tijcore/utils/PayloadEnvelope.hpp>
+#include <tijmath/Pose3.hpp>
 #include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
@@ -58,6 +60,11 @@ public:
 
   virtual void setRobotGripperState(const bool state) const = 0;
 
+  virtual bool setRobotGripperPayloadEnvelope(const PayloadEnvelope& envelop,
+                                              const tijmath::Pose3& relative_pose) = 0;
+
+  virtual bool removeRobotGripperPayloadEnvelope() = 0;
+
   virtual tijmath::RelativePose3 calculateVerticalLandingPose(const tijmath::RelativePose3& target,
                                                               const double offset_to_top) const = 0;
 
@@ -66,6 +73,10 @@ public:
 
   virtual tijmath::RelativePose3 calculateVerticalDropPose(const tijmath::RelativePose3& target,
                                                            const double offset_to_top) const = 0;
+
+  virtual tijmath::Pose3
+  calculateEndEffectorToPayloadTransform(const tijmath::RelativePose3& end_effector_pose,
+                                         const tijmath::RelativePose3& payload_pose) const = 0;
 };
 
 }  // namespace tijcore

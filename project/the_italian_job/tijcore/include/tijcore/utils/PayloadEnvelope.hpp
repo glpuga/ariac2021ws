@@ -1,6 +1,7 @@
 /* Copyright [2022] <TheItalianJob>
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  * Author: Gerardo Puga */
+#pragma once
 
 // Standard library
 #include <stdexcept>
@@ -18,6 +19,8 @@ namespace tijcore
 class PayloadEnvelope
 {
 public:
+  PayloadEnvelope() = default;
+
   static PayloadEnvelope makeEnvelope(const PartTypeId& part_type_id)
   {
     const auto part_dimensions = dimensions(part_type_id);
