@@ -29,8 +29,7 @@ public:
 
   MOCK_CONST_METHOD1(getGripperIn3DPoseJoinSpace, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD2(contactPartFromAboveAndGrasp,
-                     bool(const tijmath::RelativePose3& target, const double offset_to_top));
+  MOCK_CONST_METHOD1(contactPartFromAboveAndGrasp, bool(const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD1(getGripperIn3DPoseCartesianSpace, bool(const tijmath::RelativePose3& target));
 
@@ -56,8 +55,13 @@ public:
 
   MOCK_CONST_METHOD1(testIfRobotReachesPose, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD1(calculateVerticalLandingPose,
-                     tijmath::RelativePose3(const tijmath::RelativePose3& target));
+  MOCK_CONST_METHOD2(calculateVerticalLandingPose,
+                     tijmath::RelativePose3(const tijmath::RelativePose3& target,
+                                            const double offset_to_top));
+
+  MOCK_CONST_METHOD2(calculateVerticalGripEndEffectorPose,
+                     tijmath::RelativePose3(const tijmath::RelativePose3& target,
+                                            const double offset_to_top));
 
   MOCK_CONST_METHOD2(calculateVerticalDropPose,
                      tijmath::RelativePose3(const tijmath::RelativePose3& target,

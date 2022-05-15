@@ -73,12 +73,13 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   //   ERROR("{} failed to get in resting pose", robot.getRobotName());
   // }
   else if (!robot.getGripperIn3DPoseJoinSpace(
-               robot.calculateVerticalLandingPose(target_pose_in_world_frame)))
+               robot.calculateVerticalLandingPose(target_pose_in_world_frame, offset_to_top)))
   {
     ERROR("{} failed to get into the approximation pose to remove a broken part",
           robot.getRobotName());
   }
-  else if (!robot.contactPartFromAboveAndGrasp(target_pose_in_world_frame, offset_to_top))
+  else if (!robot.contactPartFromAboveAndGrasp(robot.calculateVerticalGripEndEffectorPose(
+               target_pose_in_world_frame, offset_to_top)))
   {
     ERROR("{} failed to pick up the broken part while trying to remove it", robot.getRobotName());
   }
@@ -93,7 +94,7 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
     ERROR("{} failed to get closer to target", robot.getRobotName());
   }
   else if (!robot.getGripperIn3DPoseJoinSpace(
-               robot.calculateVerticalLandingPose(scene->getDropBucketPose())))
+               robot.calculateVerticalLandingPose(scene->getDropBucketPose(), offset_to_top)))
   {
     ERROR(
         "{} failed to get in the approximation pose to drop the broken "
