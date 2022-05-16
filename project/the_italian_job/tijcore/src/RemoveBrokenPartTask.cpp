@@ -48,6 +48,12 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
   const auto required_gripper_type = tijcore::GripperTypeId::gripper_part;
   const auto initial_tool_type = robot.getRobotGripperToolType();
 
+  const auto payload_envelope_info = tijcore::PayloadEnvelope::makeEnvelope(part_type_id);
+
+  const auto ee_to_payload_transform = robot.calculateEndEffectorToPayloadTransform(
+      robot.calculateVerticalGripEndEffectorPose(target_pose_in_world_frame, offset_to_top),
+      target_pose_in_world_frame);
+
   if ((initial_tool_type != required_gripper_type) &&
       !robot.getRobotInSafePoseNearTarget(scene->getGripperToolSwappingTablePose()))
   {
@@ -89,6 +95,10 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
     ERROR("{} failed to get the broken part ready for transport to the bucket",
           robot.getRobotName());
   }
+  else if (!robot.setRobotGripperPayloadEnvelope(payload_envelope_info, ee_to_payload_transform))
+  {
+    ERROR("{} failed to enable the payload obstacle envelope", robot.getRobotName());
+  }
   else if (!robot.getRobotInSafePoseNearTarget(scene->getDropBucketPose()))
   {
     ERROR("{} failed to get closer to target", robot.getRobotName());
@@ -100,6 +110,10 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
         "{} failed to get in the approximation pose to drop the broken "
         "part into the bucket",
         robot.getRobotName());
+  }
+  else if (!robot.removeRobotGripperPayloadEnvelope())
+  {
+    ERROR("{} failed to disable the payload obstacle envelope", robot.getRobotName());
   }
   else if (!robot.getRobotGripperOff())
   {
