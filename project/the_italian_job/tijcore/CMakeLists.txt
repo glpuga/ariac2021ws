@@ -6,6 +6,7 @@ add_compile_options(-std=c++17)
 add_compile_options(-Wall -Werror)
 
 find_package(catkin REQUIRED COMPONENTS
+  behaviortree_cpp_v3
   roscpp
   roslint
   rostest
@@ -20,6 +21,7 @@ catkin_package(
   LIBRARIES
     ${PROJECT_NAME}
   CATKIN_DEPENDS
+    behaviortree_cpp_v3
     roscpp
     tijlogger
     tijutils
@@ -70,6 +72,7 @@ add_library(${PROJECT_NAME}
   src/TableModelContainer.cpp
   src/TaskDispatcher.cpp
   src/TaskDriver.cpp
+  src/btnodes.cpp
 )
 
 
