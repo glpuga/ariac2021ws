@@ -15,11 +15,10 @@
 
 namespace tijcore
 {
-class RemoveRobotGripperPayloadEnvelopeNode : public BT::SyncActionNode
+class GetDropBucketPoseNode : public BT::SyncActionNode
 {
 public:
-  RemoveRobotGripperPayloadEnvelopeNode(const std::string& name,
-                                        const BT::NodeConfiguration& config)
+  GetDropBucketPoseNode(const std::string& name, const BT::NodeConfiguration& config)
     : SyncActionNode(name, config)
   {
   }
@@ -28,14 +27,17 @@ public:
   {
     return {
       BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
+      BT::OutputPort<tijmath::RelativePose3>("drop_bucket_pose"),
     };
   }
 
   BT::NodeStatus tick() override
   {
     auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
-    const auto adapter_ = task_parameters->primary_robot.value().resource();
-    adapter_->removeRobotGripperPayloadEnvelope();
+    const auto toolbox = task_parameters->toolbox;
+    const auto scene_reader = toolbox->getSceneConfigReader();
+    const auto drop_bucket_pose = scene_reader->getDropBucketPose();
+    setOutput("drop_bucket_pose", drop_bucket_pose);
     return BT::NodeStatus::SUCCESS;
   }
 };

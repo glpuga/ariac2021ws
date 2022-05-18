@@ -60,7 +60,7 @@ public:
 
   virtual void setRobotGripperState(const bool state) const = 0;
 
-  virtual bool setRobotGripperPayloadEnvelope(const PayloadEnvelope& envelop,
+  virtual bool setRobotGripperPayloadEnvelope(const PayloadEnvelope& payload_envelope,
                                               const tijmath::Pose3& relative_pose) = 0;
 
   virtual bool removeRobotGripperPayloadEnvelope() = 0;

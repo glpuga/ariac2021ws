@@ -12,7 +12,7 @@
 
 // tijcore
 #include <tijcore/datatypes/GripperTypeId.hpp>
-#include <tijcore/tasking/BTTaskData.hpp>
+#include <tijcore/tasking/BTTaskParameters.hpp>
 
 namespace tijcore
 {
@@ -27,7 +27,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return {
-      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
+      BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
       BT::InputPort<GripperTypeId>("gripper_tool_type"),
     };
   }
@@ -35,7 +35,7 @@ public:
   BT::NodeStatus tick() override
   {
     const auto gripper_tool_type = getInput<GripperTypeId>("gripper_tool_type").value();
-    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
     adapter_->setRobotGripperToolType(gripper_tool_type);
     return BT::NodeStatus::SUCCESS;

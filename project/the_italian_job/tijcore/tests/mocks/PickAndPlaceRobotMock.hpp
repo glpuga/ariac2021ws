@@ -56,7 +56,7 @@ public:
   MOCK_CONST_METHOD1(testIfRobotReachesPose, bool(const tijmath::RelativePose3& target));
 
   MOCK_METHOD2(setRobotGripperPayloadEnvelope,
-               bool(const PayloadEnvelope& envelop, const tijmath::Pose3& relative_pose));
+               bool(const PayloadEnvelope& payload_envelope, const tijmath::Pose3& relative_pose));
 
   MOCK_METHOD0(removeRobotGripperPayloadEnvelope, bool());
 

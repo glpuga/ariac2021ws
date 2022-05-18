@@ -21,7 +21,7 @@ class BTRobotTaskFactory : public RobotTaskFactoryInterface
 public:
   BTRobotTaskFactory(const std::string& behavior_file_path,
                      const ResourceManagerInterface::SharedPtr& resource_manager,
-                     const Toolbox::SharedPtr toolbox);
+                     const Toolbox::SharedPtr& toolbox);
 
   RobotTaskInterface::Ptr
   getRemoveBrokenPartTask(ResourceManagerInterface::ManagedLocusHandle&& src_locus,

@@ -11,7 +11,7 @@
 #include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include <tijcore/tasking/BTTaskData.hpp>
+#include <tijcore/tasking/BTTaskParameters.hpp>
 
 namespace tijcore
 {
@@ -26,7 +26,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return {
-      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
+      BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
       BT::InputPort<tijmath::RelativePose3>("target_pose"),
     };
   }
@@ -34,7 +34,7 @@ public:
   BT::NodeStatus tick() override
   {
     auto target_pose = getInput<tijmath::RelativePose3>("target_pose").value();
-    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
     const auto retval = adapter_->getRobotTo2DPose(target_pose);
     return retval ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
@@ -42,7 +42,7 @@ public:
 
   void halt() override
   {
-    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
     adapter_->abortCurrentAction();
   }

@@ -11,7 +11,7 @@
 #include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include <tijcore/tasking/BTTaskData.hpp>
+#include <tijcore/tasking/BTTaskParameters.hpp>
 #include <tijcore/utils/PayloadEnvelope.hpp>
 
 namespace tijcore
@@ -27,19 +27,20 @@ public:
   static BT::PortsList providedPorts()
   {
     return {
-      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
-      BT::InputPort<PayloadEnvelope>("envelop"),
-      BT::InputPort<tijmath::Pose3>("relative_pose"),
+      BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
+      BT::InputPort<PayloadEnvelope>("envelope"),
+      BT::InputPort<tijmath::Pose3>("end_effector_to_payload_transform"),
     };
   }
 
   BT::NodeStatus tick() override
   {
-    auto envelop = getInput<PayloadEnvelope>("envelop").value();
-    auto relative_pose = getInput<tijmath::Pose3>("relative_pose").value();
-    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    auto payload_envelope = getInput<PayloadEnvelope>("payload_envelope").value();
+    auto end_effector_to_payload_transform =
+        getInput<tijmath::Pose3>("end_effector_to_payload_transform").value();
+    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
-    adapter_->setRobotGripperPayloadEnvelope(envelop, relative_pose);
+    adapter_->setRobotGripperPayloadEnvelope(payload_envelope, end_effector_to_payload_transform);
     return BT::NodeStatus::SUCCESS;
   }
 };
