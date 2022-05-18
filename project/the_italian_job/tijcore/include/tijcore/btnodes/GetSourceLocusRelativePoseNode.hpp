@@ -15,10 +15,10 @@
 
 namespace tijcore
 {
-class GetRobotInSafePoseNearTargetNode : public BT::SyncActionNode
+class GetSourceLocusRelativePoseNode : public BT::SyncActionNode
 {
 public:
-  GetRobotInSafePoseNearTargetNode(const std::string& name, const BT::NodeConfiguration& config)
+  GetSourceLocusRelativePoseNode(const std::string& name, const BT::NodeConfiguration& config)
     : SyncActionNode(name, config)
   {
   }
@@ -27,17 +27,15 @@ public:
   {
     return {
       BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
-      BT::InputPort<tijmath::RelativePose3>("target_pose"),
+      BT::OutputPort<BTTaskData::SharedPtr>("source_locus_pose"),
     };
   }
 
   BT::NodeStatus tick() override
   {
-    auto target_pose = getInput<tijmath::RelativePose3>("target_pose").value();
     auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
-    const auto adapter_ = task_parameters->primary_robot.value().resource();
-    const auto retval = adapter_->getRobotInSafePoseNearTarget(target_pose);
-    return retval ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
+    setOutput("source_locus_pose", task_parameters->src_locus.value().resource()->pose());
+    return BT::NodeStatus::SUCCESS;
   }
 };
 

@@ -6,44 +6,42 @@
 
 // standard library
 #include <string>
-#include <utility>
 
 // external
-#include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
+#include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include "behaviortree_cpp_v3/action_node.h"
+#include <tijcore/tasking/BTTaskData.hpp>
+#include <tijcore/utils/PayloadEnvelope.hpp>
 
 namespace tijcore
 {
 class SetRobotGripperPayloadEnvelopeNode : public BT::SyncActionNode
 {
 public:
-  SetRobotGripperPayloadEnvelopeNode(const std::string& name, const BT::NodeConfiguration& config,
-                                     PickAndPlaceRobotMovementsInterface::Ptr adapter)
-    : SyncActionNode(name, config), adapter_{ std::move(adapter) }
+  SetRobotGripperPayloadEnvelopeNode(const std::string& name, const BT::NodeConfiguration& config)
+    : SyncActionNode(name, config)
   {
   }
 
-  // It is mandatory to define this static method.
   static BT::PortsList providedPorts()
   {
     return {
-      BT::InputPort<tijcore::PayloadEnvelope>("envelop"),
+      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
+      BT::InputPort<PayloadEnvelope>("envelop"),
       BT::InputPort<tijmath::Pose3>("relative_pose"),
     };
   }
 
   BT::NodeStatus tick() override
   {
-    auto envelop = getInput<tijcore::PayloadEnvelope>("envelop").value();
+    auto envelop = getInput<PayloadEnvelope>("envelop").value();
     auto relative_pose = getInput<tijmath::Pose3>("relative_pose").value();
+    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    const auto adapter_ = task_parameters->primary_robot.value().resource();
     adapter_->setRobotGripperPayloadEnvelope(envelop, relative_pose);
     return BT::NodeStatus::SUCCESS;
   }
-
-private:
-  PickAndPlaceRobotMovementsInterface::Ptr adapter_;
 };
 
 }  // namespace tijcore

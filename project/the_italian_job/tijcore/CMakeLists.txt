@@ -6,6 +6,7 @@ add_compile_options(-std=c++17)
 add_compile_options(-Wall -Werror)
 
 find_package(catkin REQUIRED COMPONENTS
+  behavior_tree_extras
   behaviortree_cpp_v3
   roscpp
   roslint
@@ -21,6 +22,7 @@ catkin_package(
   LIBRARIES
     ${PROJECT_NAME}
   CATKIN_DEPENDS
+    behavior_tree_extras
     behaviortree_cpp_v3
     roscpp
     tijlogger
@@ -41,6 +43,7 @@ add_library(${PROJECT_NAME}
   src/AgvId.cpp
   src/AgvModelContainer.cpp
   src/AssemblyStationModelContainer.cpp
+  src/BTRobotTaskFactory.cpp
   src/BinId.cpp
   src/BinModelContainer.cpp
   src/ConveyorBeltModelContainer.cpp
@@ -72,10 +75,7 @@ add_library(${PROJECT_NAME}
   src/TableModelContainer.cpp
   src/TaskDispatcher.cpp
   src/TaskDriver.cpp
-  src/btnodes.cpp
 )
-
-
 
 add_dependencies(
   ${PROJECT_NAME}

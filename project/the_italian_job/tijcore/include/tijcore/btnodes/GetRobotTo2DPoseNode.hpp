@@ -6,29 +6,27 @@
 
 // standard library
 #include <string>
-#include <utility>
 
 // external
-#include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
+#include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include "behaviortree_cpp_v3/action_node.h"
+#include <tijcore/tasking/BTTaskData.hpp>
 
 namespace tijcore
 {
 class GetRobotTo2DPoseNode : public BT::AsyncActionNode
 {
 public:
-  GetRobotTo2DPoseNode(const std::string& name, const BT::NodeConfiguration& config,
-                       PickAndPlaceRobotMovementsInterface::Ptr adapter)
-    : AsyncActionNode(name, config), adapter_{ std::move(adapter) }
+  GetRobotTo2DPoseNode(const std::string& name, const BT::NodeConfiguration& config)
+    : AsyncActionNode(name, config)
   {
   }
 
-  // It is mandatory to define this static method.
   static BT::PortsList providedPorts()
   {
     return {
+      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
       BT::InputPort<tijmath::RelativePose3>("target_pose"),
     };
   }
@@ -36,17 +34,18 @@ public:
   BT::NodeStatus tick() override
   {
     auto target_pose = getInput<tijmath::RelativePose3>("target_pose").value();
+    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    const auto adapter_ = task_parameters->primary_robot.value().resource();
     const auto retval = adapter_->getRobotTo2DPose(target_pose);
     return retval ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
   }
 
   void halt() override
   {
+    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    const auto adapter_ = task_parameters->primary_robot.value().resource();
     adapter_->abortCurrentAction();
   }
-
-private:
-  PickAndPlaceRobotMovementsInterface::Ptr adapter_;
 };
 
 }  // namespace tijcore

@@ -6,13 +6,12 @@
 
 // standard library
 #include <string>
-#include <utility>
 
 // external
-#include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
+#include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include "behaviortree_cpp_v3/action_node.h"
+#include <tijcore/tasking/BTTaskData.hpp>
 
 namespace tijcore
 {
@@ -20,16 +19,15 @@ class CalculateVerticalGripEndEffectorPoseNode : public BT::SyncActionNode
 {
 public:
   CalculateVerticalGripEndEffectorPoseNode(const std::string& name,
-                                           const BT::NodeConfiguration& config,
-                                           PickAndPlaceRobotMovementsInterface::Ptr adapter)
-    : SyncActionNode(name, config), adapter_{ std::move(adapter) }
+                                           const BT::NodeConfiguration& config)
+    : SyncActionNode(name, config)
   {
   }
 
-  // It is mandatory to define this static method.
   static BT::PortsList providedPorts()
   {
     return {
+      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
       BT::InputPort<tijmath::RelativePose3>("target_pose"),
       BT::InputPort<tijmath::RelativePose3>("offset_to_top"),
       BT::OutputPort<tijmath::RelativePose3>("end_effector_pose"),
@@ -40,14 +38,13 @@ public:
   {
     auto target_pose = getInput<tijmath::RelativePose3>("target_pose").value();
     auto offset_to_top = getInput<double>("offset_to_top").value();
+    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    const auto adapter_ = task_parameters->primary_robot.value().resource();
     const auto end_effector_pose =
         adapter_->calculateVerticalGripEndEffectorPose(target_pose, offset_to_top);
     setOutput("end_effector_pose", end_effector_pose);
     return BT::NodeStatus::SUCCESS;
   }
-
-private:
-  PickAndPlaceRobotMovementsInterface::Ptr adapter_;
 };
 
 }  // namespace tijcore

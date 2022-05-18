@@ -6,29 +6,27 @@
 
 // standard library
 #include <string>
-#include <utility>
 
 // external
-#include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
+#include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include "behaviortree_cpp_v3/action_node.h"
+#include <tijcore/tasking/BTTaskData.hpp>
 
 namespace tijcore
 {
 class SetRobotGripperStateNode : public BT::SyncActionNode
 {
 public:
-  SetRobotGripperStateNode(const std::string& name, const BT::NodeConfiguration& config,
-                           PickAndPlaceRobotMovementsInterface::Ptr adapter)
-    : SyncActionNode(name, config), adapter_{ std::move(adapter) }
+  SetRobotGripperStateNode(const std::string& name, const BT::NodeConfiguration& config)
+    : SyncActionNode(name, config)
   {
   }
 
-  // It is mandatory to define this static method.
   static BT::PortsList providedPorts()
   {
     return {
+      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
       BT::InputPort<bool>("gripper_state"),
     };
   }
@@ -36,12 +34,11 @@ public:
   BT::NodeStatus tick() override
   {
     const auto gripper_state = getInput<bool>("gripper_state").value();
+    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    const auto adapter_ = task_parameters->primary_robot.value().resource();
     adapter_->setRobotGripperState(gripper_state);
     return BT::NodeStatus::SUCCESS;
   }
-
-private:
-  PickAndPlaceRobotMovementsInterface::Ptr adapter_;
 };
 
 }  // namespace tijcore

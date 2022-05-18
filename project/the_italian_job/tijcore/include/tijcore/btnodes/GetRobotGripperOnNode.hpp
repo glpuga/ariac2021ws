@@ -6,38 +6,37 @@
 
 // standard library
 #include <string>
-#include <utility>
 
 // external
-#include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
+#include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include "behaviortree_cpp_v3/action_node.h"
+#include <tijcore/tasking/BTTaskData.hpp>
 
 namespace tijcore
 {
 class GetRobotGripperOnNode : public BT::SyncActionNode
 {
 public:
-  GetRobotGripperOnNode(const std::string& name, const BT::NodeConfiguration& config,
-                        PickAndPlaceRobotMovementsInterface::Ptr adapter)
-    : SyncActionNode(name, config), adapter_{ std::move(adapter) }
+  GetRobotGripperOnNode(const std::string& name, const BT::NodeConfiguration& config)
+    : SyncActionNode(name, config)
   {
   }
 
   static BT::PortsList providedPorts()
   {
-    return {};
+    return {
+      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
+    };
   }
 
   BT::NodeStatus tick() override
   {
+    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    const auto adapter_ = task_parameters->primary_robot.value().resource();
     adapter_->getRobotGripperOn();
     return BT::NodeStatus::SUCCESS;
   }
-
-private:
-  PickAndPlaceRobotMovementsInterface::Ptr adapter_;
 };
 
 }  // namespace tijcore
