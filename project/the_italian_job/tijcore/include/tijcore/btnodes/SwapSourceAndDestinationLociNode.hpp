@@ -15,10 +15,10 @@
 
 namespace tijcore
 {
-class GetRobotHealthStateNode : public BT::SyncActionNode
+class SwapSourceAndDestinationLociNode : public BT::SyncActionNode
 {
 public:
-  GetRobotHealthStateNode(const std::string& name, const BT::NodeConfiguration& config)
+  SwapSourceAndDestinationLociNode(const std::string& name, const BT::NodeConfiguration& config)
     : SyncActionNode(name, config)
   {
   }
@@ -32,10 +32,11 @@ public:
 
   BT::NodeStatus tick() override
   {
-    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
-    const auto adapter_ = task_parameters->primary_robot.value().resource();
-    const auto is_healthy = adapter_->getRobotHealthState();
-    return is_healthy ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
+    BTTaskData::SharedPtr task_parameters =
+        getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    ManagedLocus::TransferPartFromHereToThere(*task_parameters->src_locus.value().resource(),
+                                              *task_parameters->dst_locus.value().resource());
+    return BT::NodeStatus::SUCCESS;
   }
 };
 
