@@ -11,7 +11,7 @@
 #include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include <tijcore/tasking/BTTaskData.hpp>
+#include <tijcore/tasking/BTTaskParameters.hpp>
 
 namespace tijcore
 {
@@ -26,7 +26,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return {
-      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
+      BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
       BT::InputPort<bool>("gripper_state"),
     };
   }
@@ -34,7 +34,7 @@ public:
   BT::NodeStatus tick() override
   {
     const auto gripper_state = getInput<bool>("gripper_state").value();
-    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
     adapter_->setRobotGripperState(gripper_state);
     return BT::NodeStatus::SUCCESS;

@@ -15,11 +15,10 @@
 
 namespace tijcore
 {
-class RemoveRobotGripperPayloadEnvelopeNode : public BT::SyncActionNode
+class DestroyPartAtSourceNode : public BT::SyncActionNode
 {
 public:
-  RemoveRobotGripperPayloadEnvelopeNode(const std::string& name,
-                                        const BT::NodeConfiguration& config)
+  DestroyPartAtSourceNode(const std::string& name, const BT::NodeConfiguration& config)
     : SyncActionNode(name, config)
   {
   }
@@ -33,9 +32,11 @@ public:
 
   BT::NodeStatus tick() override
   {
-    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
-    const auto adapter_ = task_parameters->primary_robot.value().resource();
-    adapter_->removeRobotGripperPayloadEnvelope();
+    BTTaskParameters::SharedPtr task_parameters =
+        getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
+    auto transient_limbo = ManagedLocus::CreateEmptyLocus("drop_bucket", {});
+    ManagedLocus::TransferPartFromHereToThere(*task_parameters->src_locus.value().resource(),
+                                              transient_limbo);
     return BT::NodeStatus::SUCCESS;
   }
 };

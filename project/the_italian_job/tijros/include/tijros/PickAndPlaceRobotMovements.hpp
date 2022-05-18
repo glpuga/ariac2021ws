@@ -61,7 +61,7 @@ public:
 
   void setRobotGripperState(const bool state) const override;
 
-  bool setRobotGripperPayloadEnvelope(const tijcore::PayloadEnvelope& envelop,
+  bool setRobotGripperPayloadEnvelope(const tijcore::PayloadEnvelope& payload_envelope,
                                       const tijmath::Pose3& relative_pose) override;
 
   bool removeRobotGripperPayloadEnvelope() override;

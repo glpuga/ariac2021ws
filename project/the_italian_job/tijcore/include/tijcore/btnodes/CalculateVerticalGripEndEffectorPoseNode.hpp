@@ -11,7 +11,7 @@
 #include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include <tijcore/tasking/BTTaskData.hpp>
+#include <tijcore/tasking/BTTaskParameters.hpp>
 
 namespace tijcore
 {
@@ -27,7 +27,7 @@ public:
   static BT::PortsList providedPorts()
   {
     return {
-      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
+      BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
       BT::InputPort<tijmath::RelativePose3>("target_pose"),
       BT::InputPort<tijmath::RelativePose3>("offset_to_top"),
       BT::OutputPort<tijmath::RelativePose3>("end_effector_pose"),
@@ -38,7 +38,7 @@ public:
   {
     auto target_pose = getInput<tijmath::RelativePose3>("target_pose").value();
     auto offset_to_top = getInput<double>("offset_to_top").value();
-    auto task_parameters = getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
     const auto end_effector_pose =
         adapter_->calculateVerticalGripEndEffectorPose(target_pose, offset_to_top);

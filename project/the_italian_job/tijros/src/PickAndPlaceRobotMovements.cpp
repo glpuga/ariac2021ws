@@ -810,10 +810,10 @@ void PickAndPlaceRobotMovements::setRobotGripperState(const bool state) const
 }
 
 bool PickAndPlaceRobotMovements::setRobotGripperPayloadEnvelope(
-    const tijcore::PayloadEnvelope& envelop, const tijmath::Pose3& relative_pose)
+    const tijcore::PayloadEnvelope& payload_envelope, const tijmath::Pose3& relative_pose)
 {
   enable_payload_envelope_ = true;
-  payload_envelope_ = envelop;
+  payload_envelope_ = payload_envelope;
   ee_to_payload_pose_ = relative_pose;
   return true;
 }

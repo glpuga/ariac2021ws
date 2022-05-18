@@ -1,0 +1,224 @@
+<root main_tree_to_execute="root">
+
+    <BehaviorTree ID="root">
+        <Sequence>
+            <AlwaysSuccess />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Root of the branch that performs the RemoveBrokenpart task.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="RemoveBrokenPartTaskRoot">
+        <Sequence>
+            <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
+            <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+            <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
+            <DestroyPartAtSource task_parameters="{task_parameters}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Root of the branch that performs the PickAndPlacePart task.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="PickAndPlacePartRoot">
+        <Sequence>
+            <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
+            <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+            <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+            <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Root of the branch that performs the PickAndPlaceMovableTray task.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="PickAndPlaceMovableTrayRoot">
+        <Sequence>
+            <SubTree task_parameters="task_parameters" ID="SelectMovableTrayPartGripperTool" />
+            <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+            <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+            <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Check if the tool currently set in the robot is gripper_part. If it's not, goes to the tool table and switches the current tool type.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="SelectPartGripperTool">
+        <Sequence>
+            <GetRobotGripperToolType task_parameters="{task_parameters}" gripper_tool_type="{gripper_tool_type}" />
+            <SetBlackboard output_key="desired_tool_type" value="gripper_part" />
+            <Fallback>
+                <ToolTypesAreTheSame left_hand_side="{gripper_tool_type}" right_hand_side="{desired_tool_type}" />
+                <SubTree task_parameters="task_parameters" ID="GoToToolTableAndSetToolTo" tool_type="desired_tool_type" />
+            </Fallback>
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Check if the tool currently set in the robot is gripper_tray. If it's not, goes to the tool table and switches the current tool type.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="SelectMovableTrayPartGripperTool">
+        <Sequence>
+            <GetRobotGripperToolType task_parameters="{task_parameters}" gripper_tool_type="{gripper_tool_type}" />
+            <SetBlackboard output_key="desired_tool_type" value="gripper_tray" />
+            <Fallback>
+                <ToolTypesAreTheSame left_hand_side="{gripper_tool_type}" right_hand_side="{desired_tool_type}" />
+                <SubTree task_parameters="task_parameters" ID="GoToToolTableAndSetToolTo" tool_type="desired_tool_type" />
+            </Fallback>
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Goes to the tool table and switches the current tool type to the desired tool type.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            tool_type (GripperTypeId): The desired tool type.
+    -->
+    <BehaviorTree ID="GoToToolTableAndSetToolTo">
+        <Sequence>
+            <GetToolTablePose task_parameters="{task_parameters}" tool_table_pose="{tool_table_pose}" />
+            <GetRobotTo2DPose task_parameters="{task_parameters}" target_pose="{tool_table_pose}" />
+            <SetRobotGripperToolType task_parameters="{task_parameters}" gripper_tool_type="{tool_type}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Navigates to the proximities of the src_pose task parameter and picks the part at the pose indicated by the src_locus task parameter.
+        This also assumes that the robot is NOT currently holding a part and that the collistion envelope is not set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+    -->
+    <BehaviorTree ID="PickPartFromSourceLocus">
+        <Sequence>
+            <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+            <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="source_locus_pose" />
+            <SubTree task_parameters="task_parameters" ID="TryPickingItemUp" target_pose="source_locus_pose" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Navigates to the proximities of the dst_pose task parameter and places the part currently held by the robot in the gripper.
+        This also assumes that the robot is currently holding the part and that the collistion envelope is set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+    -->
+    <BehaviorTree ID="PlacePartAtDestinationLocus">
+        <Sequence>
+            <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+            <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="destination_locus_pose" />
+            <SubTree task_parameters="task_parameters" ID="TryPlacingItemDown" target_pose="destination_locus_pose" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Assuming that the robot is close ot the target, it tries to place the part at the target_pose.
+        This also assumes that the robot is currently holding the part and that the collistion envelope is set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): The target pose to which the robot should place the part.
+    -->
+    <BehaviorTree ID="TryPlacingItemDown">
+        <Sequence>
+            <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+            <SubTree task_parameters="task_parameters" ID="DropPartInTarget" target_pose="target_pose" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Assuming that the gripper is located at the vertical landing pose, it tries to place the part from above by getting within
+        drop height and then letting go of the part. This assumes that the robot is currently holding the part, the gripper is at
+        the landing pose, and that the collision envelope is set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): The target pose to which the robot should place the part.
+    -->
+    <BehaviorTree ID="DropPartInTargetPose">
+        <Sequence>
+            <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
+            <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
+            <CalculateVerticalDropPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
+            <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{end_effector_pose}" />
+            <GetRobotGripperOff task_parameters="{task_parameters}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Navigates to the proximities of the trash bucket and drops the part currently held by the robot in it.
+        This also assumes that the robot is currently holding the part and that the collistion envelope is set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+    -->
+    <BehaviorTree ID="DropPartInTrashBin">
+        <Sequence>
+            <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
+            <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="drop_bucket_pose" />
+            <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{drop_bucket_pose}" />
+            <GetRobotGripperOff task_parameters="{task_parameters}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Navigates the robot to some pose close to the target_pose. A random displacement will be added to this target pose,
+        the allow for resilient recovery if higher level behaviors fail.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): The target pose the robot should navigate to.
+    -->
+    <BehaviorTree ID="GoToRandomPoseNearPose">
+        <Sequence>
+            <getRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Assuming that the robot is close ot the target, it tries to pick up the part at the target_pose.
+        This also assumes that the robot is NOT currently holding a part and that the collistion envelope is NOT set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): The target pose from which the robot should pick up the part.
+    -->
+    <BehaviorTree ID="TryPickingItemUp">
+        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+        <ContactPartFromAboveAndGrasp task_parameters="{task_parameters}" target_pose="{target_pose}" />
+        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+        <SubTree task_parameters="task_parameters" ID="SetupCollistionEnvelope" />
+    </BehaviorTree>
+
+    <!--
+        Turns on the collision envelope for the robot, after calculating the envelope and relative transform.
+        TODO(glpuga): target_pose should not need to be a parameter here.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): The target pose from which the robot should pick up the part.
+    -->
+    <BehaviorTree ID="SetupCollisionEnvelope">
+        <Sequence>
+            <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
+            <calculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
+            <calculateEndEffectorToPayloadTransform task_parameters="{task_parameters}" end_effector_pose="{end_effector_pose}" payload_pose="{target_pose}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" />
+            <SetRobotGripperPayloadEnvelope task_parameters="{task_parameters}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" payload_envelope="{payload_envelope}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!--
+        Assuming the robot is close to the target pose, it places the gripper in the vertical landing pose calculated from the target pose.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): Target pose from which the robot calculates the vertical landing pose.
+    -->
+    <BehaviorTree ID="GetInVerticalLandingPoseInJointSpace">
+        <Sequence>
+            <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
+            <CalculateVerticalLandingPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="offset_to_top" vertical_landing_pose="{vertical_landing_pose}" />
+            <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{vertical_landing_pose}" />
+        </Sequence>
+    </BehaviorTree>
+
+</root>

@@ -11,7 +11,7 @@
 #include "behaviortree_cpp_v3/action_node.h"
 
 // tijcore
-#include <tijcore/tasking/BTTaskData.hpp>
+#include <tijcore/tasking/BTTaskParameters.hpp>
 
 namespace tijcore
 {
@@ -26,14 +26,14 @@ public:
   static BT::PortsList providedPorts()
   {
     return {
-      BT::InputPort<BTTaskData::SharedPtr>("task_parameters"),
+      BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
     };
   }
 
   BT::NodeStatus tick() override
   {
-    BTTaskData::SharedPtr task_parameters =
-        getInput<BTTaskData::SharedPtr>("task_parameters").value();
+    BTTaskParameters::SharedPtr task_parameters =
+        getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     ManagedLocus::TransferPartFromHereToThere(*task_parameters->src_locus.value().resource(),
                                               *task_parameters->dst_locus.value().resource());
     return BT::NodeStatus::SUCCESS;
