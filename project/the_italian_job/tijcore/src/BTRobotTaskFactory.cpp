@@ -45,6 +45,9 @@
 #include <tijcore/btnodes/GetRobotTo2DPoseNode.hpp>
 #include <tijcore/btnodes/GetSourceLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetToolTablePoseNode.hpp>
+#include <tijcore/btnodes/LogErrorNode.hpp>
+#include <tijcore/btnodes/LogInfoNode.hpp>
+#include <tijcore/btnodes/LogWarningNode.hpp>
 #include <tijcore/btnodes/RemoveRobotGripperPayloadEnvelopeNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperPayloadEnvelopeNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperStateNode.hpp>
@@ -52,6 +55,7 @@
 #include <tijcore/btnodes/SwapSourceAndDestinationLociNode.hpp>
 #include <tijcore/btnodes/TestIfRobotReachesPoseNode.hpp>
 #include <tijcore/btnodes/ToolTypesAreTheSameNode.hpp>
+#include <tijcore/btnodes/TraceLoggerDecoratorNode.hpp>
 
 namespace tijcore
 {
@@ -94,6 +98,10 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<GetToolTablePoseNode>("GetToolTablePose");
   factory.registerNodeType<CalculateEnvelopeAndOffsetForVerticalPickUpNode>(
       "CalculateEnvelopeAndOffsetForVerticalPickUp");
+  factory.registerNodeType<LogErrorNode>("LogError");
+  factory.registerNodeType<LogWarningNode>("LogWarning");
+  factory.registerNodeType<LogInfoNode>("LogInfo");
+  factory.registerNodeType<TraceLoggerDecoratorNode>("TraceLoggerDecorator");
 };
 
 }  // namespace
