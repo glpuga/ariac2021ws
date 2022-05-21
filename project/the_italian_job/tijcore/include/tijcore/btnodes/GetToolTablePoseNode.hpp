@@ -27,7 +27,7 @@ public:
   {
     return {
       BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
-      BT::OutputPort<tijmath::RelativePose3>("tool_bucket_pose"),
+      BT::OutputPort<tijmath::RelativePose3>("tool_table_pose"),
     };
   }
 
@@ -37,7 +37,7 @@ public:
     const auto toolbox = task_parameters->toolbox;
     const auto scene_reader = toolbox->getSceneConfigReader();
     const auto drop_bucket_pose = scene_reader->getGripperToolSwappingTablePose();
-    setOutput("tool_bucket_pose", drop_bucket_pose);
+    setOutput("tool_table_pose", drop_bucket_pose);
     return BT::NodeStatus::SUCCESS;
   }
 };

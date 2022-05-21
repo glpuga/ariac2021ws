@@ -6,7 +6,7 @@
 #include "gtest/gtest.h"
 
 // tijcore
-#include "mocks/PickAndPlaceRobotMock.hpp"
+#include "mocks/PickAndPlaceRobotMovementsMock.hpp"
 
 namespace tijcore
 {
@@ -24,7 +24,7 @@ public:
 TEST_F(PickAndPlaceRobotInterfaceTests, TheMockCanBeConstructed)
 {
   // just testing that the mock builds
-  PickAndPlaceRobotMock uut;
+  PickAndPlaceRobotMovementsMock uut;
 }
 
 }  // namespace

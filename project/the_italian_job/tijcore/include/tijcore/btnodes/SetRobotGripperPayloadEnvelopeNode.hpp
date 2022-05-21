@@ -28,7 +28,7 @@ public:
   {
     return {
       BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
-      BT::InputPort<PayloadEnvelope>("envelope"),
+      BT::InputPort<PayloadEnvelope>("payload_envelope"),
       BT::InputPort<tijmath::Pose3>("end_effector_to_payload_transform"),
     };
   }

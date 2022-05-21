@@ -1,11 +1,9 @@
 <root main_tree_to_execute="root">
 
     <BehaviorTree ID="root">
-        <TraceLoggerDecorator>
-            <Sequence>
-                <AlwaysSuccess />
-            </Sequence>
-        </TraceLoggerDecorator>
+        <Sequence>
+            <AlwaysSuccess />
+        </Sequence>
     </BehaviorTree>
 
     <!--
@@ -155,7 +153,7 @@
             <Sequence>
                 <SubTree ID="LogBranchName" mesage="TryPlacingItemDown" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="DropPartInTarget" target_pose="target_pose" />
+                <SubTree task_parameters="task_parameters" ID="DropPartInTargetPose" target_pose="target_pose" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -210,7 +208,7 @@
         <TraceLoggerDecorator>
             <Sequence>
                 <SubTree ID="LogBranchName" mesage="GoToRandomPoseNearPose" />
-                <getRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
+                <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -229,7 +227,7 @@
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
                 <ContactPartFromAboveAndGrasp task_parameters="{task_parameters}" target_pose="{target_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="SetupCollistionEnvelope" />
+                <SubTree task_parameters="task_parameters" ID="SetupCollisionEnvelope" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -246,8 +244,8 @@
             <Sequence>
                 <SubTree ID="LogBranchName" mesage="SetupCollisionEnvelope" />
                 <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
-                <calculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
-                <calculateEndEffectorToPayloadTransform task_parameters="{task_parameters}" end_effector_pose="{end_effector_pose}" payload_pose="{target_pose}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" />
+                <CalculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
+                <CalculateEndEffectorToPayloadTransform task_parameters="{task_parameters}" end_effector_pose="{end_effector_pose}" payload_pose="{target_pose}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" />
                 <SetRobotGripperPayloadEnvelope task_parameters="{task_parameters}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" payload_envelope="{payload_envelope}" />
             </Sequence>
         </TraceLoggerDecorator>

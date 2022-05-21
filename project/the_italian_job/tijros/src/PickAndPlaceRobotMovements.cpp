@@ -629,8 +629,8 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
   DEBUG(" - adding table representatives");
   for (const auto& item : scene_configuration->getListOfTables())
   {
-    collision_objects.push_back(createCollisionBox(item.name, "envelope", item.frame_id, 0.9, 1.5,
-                                                   1.0, 0.0, 0.0, 0.95, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "payload_envelope", item.frame_id,
+                                                   0.9, 1.5, 1.0, 0.0, 0.0, 0.95, operation));
   }
 
   DEBUG(" - adding conveyor belt representatives");

@@ -18,10 +18,10 @@
 
 namespace tijcore
 {
-class PickAndPlaceRobotMock : public PickAndPlaceRobotMovementsInterface
+class PickAndPlaceRobotMovementsMock : public PickAndPlaceRobotMovementsInterface
 {
 public:
-  using Ptr = std::unique_ptr<PickAndPlaceRobotMock>;
+  using Ptr = std::unique_ptr<PickAndPlaceRobotMovementsMock>;
 
   MOCK_CONST_METHOD0(getRobotArmInRestingPose, bool());
 
