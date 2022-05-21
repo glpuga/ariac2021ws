@@ -116,7 +116,7 @@ if(CATKIN_ENABLE_TESTING)
 
   file(GLOB fast_test_files_list tests/fast_tests_*.cpp)
   set(fast_test_target_name ${PROJECT_NAME}-fast-tests)
-  catkin_add_gmock(${fast_test_target_name} tests/runner.cpp ${fast_test_files_list})
+  catkin_add_gmock(${fast_test_target_name} tests/runner.cpp ${fast_test_files_list} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/tests)
   target_link_libraries(${fast_test_target_name} ${PROJECT_NAME} ${catkin_LIBRARIES})
 
   file(GLOB slow_test_files_list tests/slow_tests_*.cpp)

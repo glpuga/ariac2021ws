@@ -29,7 +29,7 @@ public:
     return {
       BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
       BT::InputPort<tijmath::RelativePose3>("target_pose"),
-      BT::InputPort<tijmath::RelativePose3>("offset_to_top"),
+      BT::InputPort<double>("offset_to_top"),
       BT::OutputPort<tijmath::RelativePose3>("end_effector_pose"),
     };
   }

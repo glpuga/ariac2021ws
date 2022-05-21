@@ -134,6 +134,7 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getRemoveBrokenPartTask(
   auto task_tree = behavior_tree_base_builder_->createTree()
                        .addFileDescription(behavior_file_path_)  //
                        .addBlackboard(blackboard)                //
+                       .addRootName("RemoveBrokenPartTaskRoot")  //
                        .build();
   return std::make_unique<BehaviorTreeWrappedTask>(std::move(task_tree));
 }
@@ -156,6 +157,7 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlacePartTask(
   auto task_tree = behavior_tree_base_builder_->createTree()
                        .addFileDescription(behavior_file_path_)  //
                        .addBlackboard(blackboard)                //
+                       .addRootName("PickAndPlacePartRoot")      //
                        .build();
   return std::make_unique<BehaviorTreeWrappedTask>(std::move(task_tree));
 }
@@ -177,8 +179,9 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlaceMovableTrayTask(
       "task_parameters", std::move(bt_task_parameters));
 
   auto task_tree = behavior_tree_base_builder_->createTree()
-                       .addFileDescription(behavior_file_path_)  //
-                       .addBlackboard(blackboard)                //
+                       .addFileDescription(behavior_file_path_)     //
+                       .addBlackboard(blackboard)                   //
+                       .addRootName("PickAndPlaceMovableTrayRoot")  //
                        .build();
   return std::make_unique<BehaviorTreeWrappedTask>(std::move(task_tree));
 }

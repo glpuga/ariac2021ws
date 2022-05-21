@@ -27,7 +27,7 @@ public:
   {
     return {
       BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
-      BT::OutputPort<BTTaskParameters::SharedPtr>("source_locus_pose"),
+      BT::OutputPort<tijmath::RelativePose3>("source_locus_pose"),
     };
   }
 

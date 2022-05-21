@@ -22,7 +22,7 @@
 #include <tijcore/utils/StaticFrameTransformer.hpp>
 
 #include "mocks/ModelContainerMock.hpp"
-#include "mocks/PickAndPlaceRobotMock.hpp"
+#include "mocks/PickAndPlaceRobotMovementsMock.hpp"
 #include "utils/ActionQueue.hpp"
 
 namespace tijcore
@@ -86,8 +86,8 @@ public:
   CuboidVolume table_3_container_volume_{ table_container_volume };
 
   // robots
-  PickAndPlaceRobotMock::Ptr kitting_robot_mock_;
-  PickAndPlaceRobotMock::Ptr assembly_robot_mock_;
+  PickAndPlaceRobotMovementsMock::Ptr kitting_robot_mock_;
+  PickAndPlaceRobotMovementsMock::Ptr assembly_robot_mock_;
 
   // toolbox stuff
   std::shared_ptr<StaticFrameTransformer> static_frame_transformer_;
@@ -118,8 +118,8 @@ public:
         std::make_unique<ModelContainerMock>(table_3_name_, table_3_frame_id_, table_3_frame_id_,
                                              table_3_pose_, table_3_container_volume_);
 
-    kitting_robot_mock_ = std::make_unique<PickAndPlaceRobotMock>();
-    assembly_robot_mock_ = std::make_unique<PickAndPlaceRobotMock>();
+    kitting_robot_mock_ = std::make_unique<PickAndPlaceRobotMovementsMock>();
+    assembly_robot_mock_ = std::make_unique<PickAndPlaceRobotMovementsMock>();
 
     Toolbox::Contents contents;
     contents.frame_transformer_instance = static_frame_transformer_;
