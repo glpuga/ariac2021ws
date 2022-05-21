@@ -30,19 +30,21 @@ public:
     using behavior_tree_extras::BTExecutionResult;
 
     BTExecutionResult btretval;
-    do
+
+    try
     {
       btretval = behavior_tree_->run();
+    }
+    catch (const std::exception& e)
+    {
+      ERROR("Exception thrown in the behavior tree tick method: {}", e.what());
+      btretval = BTExecutionResult::ERROR;
+    }
 
-      if (btretval != BTExecutionResult::SUCCESS)
-      {
-        std::this_thread::sleep_for(tick_interval_);
-      }
-      else
-      {
-        break;
-      }
-    } while (!halting_);
+    if (btretval == BTExecutionResult::ERROR)
+    {
+      ERROR("The behavior tree tick call terminated in ERROR");
+    }
 
     return btretval == BTExecutionResult::SUCCESS ? RobotTaskOutcome::TASK_SUCCESS :
                                                     RobotTaskOutcome::TASK_FAILURE;
@@ -50,14 +52,11 @@ public:
 
   void halt() override
   {
-    halting_ = true;
+    behavior_tree_->halt();
   }
 
 private:
-  std::chrono::milliseconds tick_interval_{ 100 };
   behavior_tree_extras::BehaviorTreeManagerInterface::Ptr behavior_tree_;
-
-  std::atomic_bool halting_{ false };
 };
 
 }  // namespace tijcore

@@ -26,7 +26,7 @@
 #include <tijcore/coremodels/ModelPerceptionSpatialFilter.hpp>
 #include <tijcore/resources/ResourceManager.hpp>
 #include <tijcore/resources/SpatialMutualExclusionManager.hpp>
-#include <tijcore/tasking/RobotTaskFactory.hpp>
+#include <tijcore/tasking/BTRobotTaskFactory.hpp>
 #include <tijcore/tasking/RobotTaskGroupRunner.hpp>
 #include <tijcore/tasking/TaskDispatcher.hpp>
 #include <tijcore/tasking/TaskDriver.hpp>
@@ -53,6 +53,10 @@ ros::Duration camera_retention_interval_{ 1.0 };
 
 TIJChallenger::TIJChallenger()
 {
+  std::string behavior_file_path;
+  ros::param::param<std::string>("/challenger_behavior_file", behavior_file_path, "behavior.xml");
+  INFO(" - Behavior file: {}", behavior_file_path);
+
   INFO("Setting up challenger");
 
   INFO(" - Instantiating scene configuration");
@@ -67,7 +71,8 @@ TIJChallenger::TIJChallenger()
 
   INFO(" - Creating RobotTaskFactory");
   auto task_master = std::make_unique<tijcore::TaskDispatcher>(
-      resource_manager, std::make_unique<tijcore::RobotTaskFactory>(resource_manager, toolbox_),
+      resource_manager,
+      std::make_unique<tijcore::BTRobotTaskFactory>(behavior_file_path, resource_manager, toolbox_),
       toolbox_);
 
   INFO(" - Creating TaskDriver");
@@ -120,11 +125,11 @@ tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createModelPerceptionMixer
 
   perception_spatial_filter->addBlindVolumeTracker(std::make_unique<tijcore::BlindVolumeTracker>(
       tijmath::RelativePose3{
-          "vacuum_gripper_link", tijmath::Position::fromVector(0.0, 0.0, -0.08), {} },
+          "vacuum_gripper_link", tijmath::Position::fromVector(0.0, 0.0, -0.05), {} },
       0.1));
   perception_spatial_filter->addBlindVolumeTracker(std::make_unique<tijcore::BlindVolumeTracker>(
       tijmath::RelativePose3{
-          "gantry_arm_vacuum_gripper_link", tijmath::Position::fromVector(0.0, 0.0, -0.08), {} },
+          "gantry_arm_vacuum_gripper_link", tijmath::Position::fromVector(0.0, 0.0, -0.05), {} },
       0.1));
 
   return std::move(perception_spatial_filter);
