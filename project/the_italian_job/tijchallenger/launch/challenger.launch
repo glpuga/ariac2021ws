@@ -6,10 +6,12 @@
 
   <node pkg="tf" type="static_transform_publisher" name="corrected_belt_frame_publisher" args="-0.57 0.0 0.91 0 0 0 1 world corrected_belt_frame 100" />
 
+  <param name="challenger_behavior_file" value="$(find tijcore)/behavior/behavior.xml" />
 
   <node name="the_italian_job_challenger" pkg="tijchallenger" type="tijchallenger_node" required="true" output="screen">
     <remap from="/ariac/custom/gantry/joint_states" to="/ariac/gantry/joint_states" />
     <remap from="/ariac/custom/kitting/joint_states" to="/ariac/kitting/joint_states" />
+
   </node>
 
   <group ns="/ariac/custom/gantry">
@@ -42,5 +44,3 @@
     </node>
   </group>
 </launch>
-
-

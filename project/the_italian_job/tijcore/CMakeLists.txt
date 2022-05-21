@@ -44,6 +44,7 @@ add_library(${PROJECT_NAME}
   src/AgvModelContainer.cpp
   src/AssemblyStationModelContainer.cpp
   src/BTRobotTaskFactory.cpp
+  src/BehaviorTreeTransitionLogger.cpp
   src/BinId.cpp
   src/BinModelContainer.cpp
   src/ConveyorBeltModelContainer.cpp

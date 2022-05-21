@@ -12,13 +12,17 @@
     -->
     <BehaviorTree ID="RemoveBrokenPartTaskRoot">
         <TraceLoggerDecorator>
-            <Sequence>
-                <SubTree ID="LogBranchName" mesage="RemoveBrokenPartTaskRoot" />
-                <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
-                <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
-                <DestroyPartAtSource task_parameters="{task_parameters}" />
-            </Sequence>
+            <Fallback>
+                <Sequence>
+                    <LogInfo message="RemoveBrokenPartTaskRoot" />
+                    <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
+                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                    <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
+                    <DestroyPartAtSource task_parameters="{task_parameters}" />
+                    <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
+                </Sequence>
+                <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
+            </Fallback>
         </TraceLoggerDecorator>
     </BehaviorTree>
 
@@ -28,13 +32,17 @@
     -->
     <BehaviorTree ID="PickAndPlacePartRoot">
         <TraceLoggerDecorator>
-            <Sequence>
-                <SubTree ID="LogBranchName" mesage="PickAndPlacePartRoot" />
-                <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
-                <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
-                <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
-            </Sequence>
+            <Fallback>
+                <Sequence>
+                    <LogInfo message="PickAndPlacePartRoot" />
+                    <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
+                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                    <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+                    <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
+                    <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
+                </Sequence>
+                <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
+            </Fallback>
         </TraceLoggerDecorator>
     </BehaviorTree>
 
@@ -44,12 +52,28 @@
     -->
     <BehaviorTree ID="PickAndPlaceMovableTrayRoot">
         <TraceLoggerDecorator>
+            <Fallback>
+                <Sequence>
+                    <LogInfo message="PickAndPlaceMovableTrayRoot" />
+                    <SubTree task_parameters="task_parameters" ID="SelectMovableTrayPartGripperTool" />
+                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                    <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+                    <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
+                    <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
+                </Sequence>
+                <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
+            </Fallback>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="PeformFailureExitRecovery">
+        <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="PickAndPlaceMovableTrayRoot" />
-                <SubTree task_parameters="task_parameters" ID="SelectMovableTrayPartGripperTool" />
-                <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
-                <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
+                <LogInfo message="PeformFailureExitRecovery" />
+                <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
+                <GetRobotGripperOff task_parameters="{task_parameters}" />
+                <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -61,7 +85,7 @@
     <BehaviorTree ID="SelectPartGripperTool">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="SelectPartGripperTool" />
+                <LogInfo message="SelectPartGripperTool" />
                 <GetRobotGripperToolType task_parameters="{task_parameters}" gripper_tool_type="{gripper_tool_type}" />
                 <SetBlackboard output_key="desired_tool_type" value="gripper_part" />
                 <Fallback>
@@ -79,7 +103,7 @@
     <BehaviorTree ID="SelectMovableTrayPartGripperTool">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="SelectMovableTrayPartGripperTool" />
+                <LogInfo message="SelectMovableTrayPartGripperTool" />
                 <GetRobotGripperToolType task_parameters="{task_parameters}" gripper_tool_type="{gripper_tool_type}" />
                 <SetBlackboard output_key="desired_tool_type" value="gripper_tray" />
                 <Fallback>
@@ -99,7 +123,7 @@
     <BehaviorTree ID="GoToToolTableAndSetToolTo">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="GoToToolTableAndSetToolTo" />
+                <LogInfo message="GoToToolTableAndSetToolTo" />
                 <GetToolTablePose task_parameters="{task_parameters}" tool_table_pose="{tool_table_pose}" />
                 <GetRobotTo2DPose task_parameters="{task_parameters}" target_pose="{tool_table_pose}" />
                 <SetRobotGripperToolType task_parameters="{task_parameters}" gripper_tool_type="{tool_type}" />
@@ -116,7 +140,7 @@
     <BehaviorTree ID="PickPartFromSourceLocus">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="PickPartFromSourceLocus" />
+                <LogInfo message="PickPartFromSourceLocus" />
                 <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="source_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPickingItemUp" target_pose="source_locus_pose" />
@@ -133,7 +157,7 @@
     <BehaviorTree ID="PlacePartAtDestinationLocus">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="PlacePartAtDestinationLocus" />
+                <LogInfo message="PlacePartAtDestinationLocus" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPlacingItemDown" target_pose="destination_locus_pose" />
@@ -151,7 +175,7 @@
     <BehaviorTree ID="TryPlacingItemDown">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="TryPlacingItemDown" />
+                <LogInfo message="TryPlacingItemDown" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
                 <SubTree task_parameters="task_parameters" ID="DropPartInTargetPose" target_pose="target_pose" />
             </Sequence>
@@ -169,7 +193,7 @@
     <BehaviorTree ID="DropPartInTargetPose">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="DropPartInTargetPose" />
+                <LogInfo message="DropPartInTargetPose" />
                 <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
                 <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
                 <CalculateVerticalDropPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
@@ -188,7 +212,7 @@
     <BehaviorTree ID="DropPartInTrashBin">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="DropPartInTrashBin" />
+                <LogInfo message="DropPartInTrashBin" />
                 <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="drop_bucket_pose" />
                 <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{drop_bucket_pose}" />
@@ -207,7 +231,7 @@
     <BehaviorTree ID="GoToRandomPoseNearPose">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="GoToRandomPoseNearPose" />
+                <LogInfo message="GoToRandomPoseNearPose" />
                 <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -223,11 +247,23 @@
     <BehaviorTree ID="TryPickingItemUp">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="TryPickingItemUp" />
+                <LogInfo message="TryPickingItemUp" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
-                <ContactPartFromAboveAndGrasp task_parameters="{task_parameters}" target_pose="{target_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GraspPartAtTargetPose" target_pose="target_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="SetupCollisionEnvelope" />
+                <SubTree task_parameters="task_parameters" ID="SetupCollisionEnvelope" target_pose="target_pose" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="GraspPartAtTargetPose">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="GraspPartAtTargetPose" />
+                <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
+                <CalculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
+                <ContactPartFromAboveAndGrasp task_parameters="{task_parameters}" target_pose="{end_effector_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -242,7 +278,7 @@
     <BehaviorTree ID="SetupCollisionEnvelope">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="SetupCollisionEnvelope" />
+                <LogInfo message="SetupCollisionEnvelope" />
                 <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
                 <CalculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
                 <CalculateEndEffectorToPayloadTransform task_parameters="{task_parameters}" end_effector_pose="{end_effector_pose}" payload_pose="{target_pose}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" />
@@ -260,19 +296,12 @@
     <BehaviorTree ID="GetInVerticalLandingPoseInJointSpace">
         <TraceLoggerDecorator>
             <Sequence>
-                <SubTree ID="LogBranchName" mesage="GetInVerticalLandingPoseInJointSpace" />
+                <LogInfo message="GetInVerticalLandingPoseInJointSpace" />
                 <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
-                <CalculateVerticalLandingPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="offset_to_top" vertical_landing_pose="{vertical_landing_pose}" />
+                <CalculateVerticalLandingPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" vertical_landing_pose="{vertical_landing_pose}" />
                 <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{vertical_landing_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
-
-    <BehaviorTree ID="LogBranchName">
-        <TraceLoggerDecorator>
-            <LogWarning message="{message}" />
-        </TraceLoggerDecorator>
-    </BehaviorTree>
-
 
 </root>

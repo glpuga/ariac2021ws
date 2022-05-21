@@ -41,9 +41,9 @@ public:
 
   void halt() override
   {
-    auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
-    const auto adapter_ = task_parameters->primary_robot.value().resource();
-    adapter_->abortCurrentAction();
+    // auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
+    // const auto adapter_ = task_parameters->primary_robot.value().resource();
+    // adapter_->abortCurrentAction();
   }
 };
 

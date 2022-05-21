@@ -19,6 +19,7 @@
 #include <tijcore/tasking/RemoveBrokenPartTask.hpp>
 #include <tijcore/tasking/SubmitAssemblyShipmentTask.hpp>
 #include <tijcore/tasking/SubmitKittingShipmentTask.hpp>
+#include <tijcore/utils/BehaviorTreeTransitionLogger.hpp>
 #include <tijlogger/logger.hpp>
 
 // tijcore nodes
@@ -132,22 +133,24 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getRemoveBrokenPartTask(
       "task_parameters", std::move(bt_task_parameters));
 
   auto task_tree = behavior_tree_base_builder_->createTree()
-                       .addFileDescription(behavior_file_path_)  //
-                       .addBlackboard(blackboard)                //
-                       .addRootName("RemoveBrokenPartTaskRoot")  //
+                       .addFileDescription(behavior_file_path_)                      //
+                       .addBlackboard(blackboard)                                    //
+                       .addRootName("RemoveBrokenPartTaskRoot")                      //
+                       .addLogger(std::make_unique<BehaviorTreeTransitionLogger>())  //
                        .build();
   return std::make_unique<BehaviorTreeWrappedTask>(std::move(task_tree));
 }
 
 RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlacePartTask(
-    ResourceManagerInterface::ManagedLocusHandle&& source_locus,
-    ResourceManagerInterface::ManagedLocusHandle&& destination,
+    ResourceManagerInterface::ManagedLocusHandle&& src_locus,
+    ResourceManagerInterface::ManagedLocusHandle&& dst_locus,
     ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
 {
   auto bt_task_parameters = std::make_shared<BTTaskParameters>();
   bt_task_parameters->resource_manager = resource_manager_;
   bt_task_parameters->toolbox = toolbox_;
-  bt_task_parameters->src_locus = std::move(source_locus);
+  bt_task_parameters->src_locus = std::move(src_locus);
+  bt_task_parameters->dst_locus = std::move(dst_locus);
   bt_task_parameters->primary_robot = std::move(robot);
 
   auto blackboard = BT::Blackboard::create();
@@ -155,9 +158,10 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlacePartTask(
       "task_parameters", std::move(bt_task_parameters));
 
   auto task_tree = behavior_tree_base_builder_->createTree()
-                       .addFileDescription(behavior_file_path_)  //
-                       .addBlackboard(blackboard)                //
-                       .addRootName("PickAndPlacePartRoot")      //
+                       .addFileDescription(behavior_file_path_)                      //
+                       .addBlackboard(blackboard)                                    //
+                       .addRootName("PickAndPlacePartRoot")                          //
+                       .addLogger(std::make_unique<BehaviorTreeTransitionLogger>())  //
                        .build();
   return std::make_unique<BehaviorTreeWrappedTask>(std::move(task_tree));
 }
@@ -179,9 +183,10 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlaceMovableTrayTask(
       "task_parameters", std::move(bt_task_parameters));
 
   auto task_tree = behavior_tree_base_builder_->createTree()
-                       .addFileDescription(behavior_file_path_)     //
-                       .addBlackboard(blackboard)                   //
-                       .addRootName("PickAndPlaceMovableTrayRoot")  //
+                       .addFileDescription(behavior_file_path_)                      //
+                       .addBlackboard(blackboard)                                    //
+                       .addRootName("PickAndPlaceMovableTrayRoot")                   //
+                       .addLogger(std::make_unique<BehaviorTreeTransitionLogger>())  //
                        .build();
   return std::make_unique<BehaviorTreeWrappedTask>(std::move(task_tree));
 }

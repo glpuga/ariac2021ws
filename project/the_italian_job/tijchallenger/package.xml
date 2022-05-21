@@ -18,6 +18,7 @@
   <depend>roscpp</depend>
   <depend>roslint</depend>
   <depend>rostest</depend>
+  <depend>tijcore</depend>
   <depend>tijmath</depend>
   <depend>tijros</depend>
   <depend>tf</depend>

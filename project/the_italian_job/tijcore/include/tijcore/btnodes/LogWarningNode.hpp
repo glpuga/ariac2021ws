@@ -30,8 +30,8 @@ public:
 
   BT::NodeStatus tick() override
   {
-    auto task_parameters = getInput<std::string>("message").value();
-    WARNING(task_parameters);
+    const auto message = getInput<std::string>("message").value();
+    WARNING(message);
     return BT::NodeStatus::SUCCESS;
   }
 };
