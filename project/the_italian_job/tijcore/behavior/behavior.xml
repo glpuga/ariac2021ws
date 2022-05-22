@@ -215,7 +215,7 @@
                 <LogInfo message="DropPartInTrashBin" />
                 <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="drop_bucket_pose" />
-                <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{drop_bucket_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="drop_bucket_pose" />
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -233,6 +233,7 @@
             <Sequence>
                 <LogInfo message="GoToRandomPoseNearPose" />
                 <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
+                <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>

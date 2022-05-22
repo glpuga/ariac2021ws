@@ -40,6 +40,8 @@ public:
 
   virtual bool getRobotTo2DPose(const tijmath::RelativePose3& target) const = 0;
 
+  virtual bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target) const = 0;
+
   virtual bool getRobotGripperOn() const = 0;
 
   virtual bool getRobotGripperOff() const = 0;

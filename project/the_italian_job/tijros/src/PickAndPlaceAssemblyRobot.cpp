@@ -104,6 +104,25 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
   joint_states[8] = degreesToRadians(0);
 }
 
+void PickAndPlaceAssemblyRobot::patchJointStateValuesToFaceTarget(
+    const tijmath::RelativePose3& target, std::vector<double>& joint_states) const
+{
+  if (joint_states.size() != 9)
+  {
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            getRobotName());
+  }
+  const auto target_relative_to_robot =
+      frame_transformer_->transformPoseToFrame(target, "torso_base");
+
+  // the definition of frames in the robot is such that x, and y need to be flipped
+  const auto necessary_orientation = std::atan2(-target_relative_to_robot.position().vector().y(),
+                                                -target_relative_to_robot.position().vector().x());
+
+  // set the desired rotation around the waist of the robot
+  joint_states[2] = necessary_orientation;
+}
+
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTargetPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {

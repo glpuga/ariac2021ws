@@ -41,6 +41,8 @@ public:
 
   bool getRobotTo2DPose(const tijmath::RelativePose3& target) const override;
 
+  bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target) const override;
+
   bool getRobotGripperOn() const override;
 
   bool getRobotGripperOff() const override;
