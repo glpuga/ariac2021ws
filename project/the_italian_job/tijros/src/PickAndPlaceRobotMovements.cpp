@@ -278,12 +278,15 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseJoinSpace(
   auto move_group_ptr = buildMoveItGroupHandle();
   move_group_ptr->setPoseReferenceFrame(world_frame);
 
-  INFO("{}: {} target gripper pose at {}", action_name, getRobotName(), target);
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  const auto target_in_world_pose = frame_transformer->transformPoseToFrame(target, world_frame);
+
+  INFO("{}: {} target gripper pose at {}", action_name, getRobotName(), target_in_world_pose);
 
   moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
   {
     INFO("{}: {} is generating the moveit plan", action_name, getRobotName());
-    auto target_geo_pose = utils::convertCorePoseToGeoPose(target.pose());
+    auto target_geo_pose = utils::convertCorePoseToGeoPose(target_in_world_pose.pose());
     move_group_ptr->setPoseTarget(target_geo_pose);
 
     bool success = (move_group_ptr->plan(movement_plan) ==
@@ -323,7 +326,7 @@ bool PickAndPlaceRobotMovements::getRobotTo2DPose(const tijmath::RelativePose3& 
       move_group_ptr->getCurrentState()->getJointModelGroup(
           robot_specific_interface_->getRobotPlanningGroup());
   {
-    INFO("{}: {} is calculating the target", action_name, getRobotName());
+    INFO("{}: {} is calculating planning target pose", action_name, getRobotName());
     moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
     std::vector<double> joint_group_positions;
     current_state->copyJointGroupPositions(joint_model_group,
@@ -331,6 +334,52 @@ bool PickAndPlaceRobotMovements::getRobotTo2DPose(const tijmath::RelativePose3& 
                                            joint_group_positions);
     robot_specific_interface_->patchJointStateValuesForArmInRestingPose(joint_group_positions);
     robot_specific_interface_->patchJointStateValuesToGoTo2DPose(joint_group_positions, target);
+
+    move_group_ptr->setJointValueTarget(joint_group_positions);
+  }
+  moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
+  {
+    INFO("{}: {} is planning", action_name, getRobotName());
+    auto success = (move_group_ptr->plan(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (!success)
+    {
+      ERROR("{}: {} failed to generate a plan", action_name, getRobotName());
+      return false;
+    }
+  }
+  {
+    INFO("{}: {} is executing", action_name, getRobotName());
+    auto success = (move_group_ptr->execute(movement_plan) ==
+                    moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (!success)
+    {
+      ERROR("{}: {} failed to execute", action_name, getRobotName());
+      return false;
+    }
+  }
+  INFO("{}: {} finished execution", action_name, getRobotName());
+  return true;
+}
+
+bool PickAndPlaceRobotMovements::rotateRobotToFaceTarget(const tijmath::RelativePose3& target) const
+{
+  const auto action_name = "rotateRobotToFaceTarget";
+  if (!getRobotHealthState())
+  {
+    INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
+    return false;
+  }
+  auto move_group_ptr = buildMoveItGroupHandle();
+  const robot_state::JointModelGroup* joint_model_group =
+      move_group_ptr->getCurrentState()->getJointModelGroup(
+          robot_specific_interface_->getRobotPlanningGroup());
+  {
+    INFO("{}: {} is calculating planning target pose", action_name, getRobotName());
+    moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
+    std::vector<double> joint_group_positions;
+    current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+    robot_specific_interface_->patchJointStateValuesToFaceTarget(target, joint_group_positions);
 
     move_group_ptr->setJointValueTarget(joint_group_positions);
   }
@@ -493,7 +542,6 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
   INFO("Place movement: {} is calculating the pickup trajectory", getRobotName());
 
   auto frame_transformer = toolbox_->getFrameTransformer();
-
   const auto target_in_world_pose = frame_transformer->transformPoseToFrame(target, world_frame);
 
   {

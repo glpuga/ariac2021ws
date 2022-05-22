@@ -46,6 +46,9 @@ public:
   void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
                                          const tijmath::RelativePose3& target) const override;
 
+  void patchJointStateValuesToFaceTarget(const tijmath::RelativePose3& target,
+                                         std::vector<double>& joint_states) const override;
+
 private:
   tijcore::FrameTransformerInterface::SharedPtr frame_transformer_;
   tijcore::RobotActuatorsInterface::SharedPtr robot_actuator_;

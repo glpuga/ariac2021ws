@@ -76,6 +76,24 @@ void PickAndPlaceKittingRobot::patchJointStateValuesForArmInRestingPose(
   joint_states[6] = 0;
 }
 
+void PickAndPlaceKittingRobot::patchJointStateValuesToFaceTarget(
+    const tijmath::RelativePose3& target, std::vector<double>& joint_states) const
+{
+  if (joint_states.size() != 9)
+  {
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            getRobotName());
+  }
+  const auto target_relative_to_robot =
+      frame_transformer_->transformPoseToFrame(target, "base_link");
+
+  const auto necessary_orientation = std::atan2(target_relative_to_robot.position().vector().y(),
+                                                target_relative_to_robot.position().vector().x());
+
+  // set the desired rotation around the waist of the robot
+  joint_states[1] = necessary_orientation;
+}
+
 void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTargetPose(
     std::vector<double>& joint_states, const tijmath::RelativePose3& target) const
 {

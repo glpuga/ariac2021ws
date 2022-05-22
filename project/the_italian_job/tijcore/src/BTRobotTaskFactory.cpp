@@ -50,6 +50,7 @@
 #include <tijcore/btnodes/LogInfoNode.hpp>
 #include <tijcore/btnodes/LogWarningNode.hpp>
 #include <tijcore/btnodes/RemoveRobotGripperPayloadEnvelopeNode.hpp>
+#include <tijcore/btnodes/RotateRobotToFaceTargetNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperPayloadEnvelopeNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperStateNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperToolTypeNode.hpp>
@@ -103,6 +104,7 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<LogWarningNode>("LogWarning");
   factory.registerNodeType<LogInfoNode>("LogInfo");
   factory.registerNodeType<TraceLoggerDecoratorNode>("TraceLoggerDecorator");
+  factory.registerNodeType<RotateRobotToFaceTargetNode>("RotateRobotToFaceTarget");
 };
 
 }  // namespace

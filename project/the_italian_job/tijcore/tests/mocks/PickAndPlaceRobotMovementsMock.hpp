@@ -75,6 +75,8 @@ public:
   MOCK_CONST_METHOD2(calculateEndEffectorToPayloadTransform,
                      tijmath::Pose3(const tijmath::RelativePose3& end_effector_pose,
                                     const tijmath::RelativePose3& payload_pose));
+
+  MOCK_CONST_METHOD1(rotateRobotToFaceTarget, bool(const tijmath::RelativePose3& target));
 };
 
 }  // namespace tijcore
