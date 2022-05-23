@@ -42,8 +42,8 @@ static const double part_drop_height_ = 0.04;
 
 static const double pickup_displacement_jump_threshold_ = 10.0;
 static const double pickup_displacement_step_ = 0.0025;
-static const double max_planning_time_ = 20.0;
-static const int max_planning_attempts_ = 5;
+static const double max_planning_time_ = 10.0;
+static const int max_planning_attempts_ = 20;
 
 static const double tight_goal_position_tolerance_ = 0.001;
 static const double tight_goal_orientation_tolerance_ =
