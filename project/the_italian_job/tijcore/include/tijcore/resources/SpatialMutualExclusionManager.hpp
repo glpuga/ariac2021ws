@@ -21,14 +21,18 @@ public:
   SpatialMutualExclusionManager(const std::string& preferred_frame_id,
                                 FrameTransformerInterface::SharedPtr frame_transformer_instance);
 
-  std::optional<VolumeHandle> lockVolume(const tijmath::RelativePose3& pose,
-                                         const double radius) override;
+  std::optional<VolumeHandle> lockSphereVolume(const tijmath::RelativePose3& pose,
+                                               const double radius) override;
+
+  std::optional<SpatialMutualExclusionManager::VolumeHandle>
+  lockSpheresPathVolume(const tijmath::RelativePose3& start_pose,
+                        const tijmath::RelativePose3& end_pose, const double radius) override;
 
 private:
   struct VolumeDataEntry
   {
     tijutils::UniqueId uid;
-    tijmath::RelativePose3 pose;
+    std::vector<tijmath::Pose3> centers;
     double radius;
     VolumeHandle handle;
   };
@@ -42,8 +46,10 @@ private:
 
   void pruneReleasedVolumes();
 
-  bool volumeIsTakenAlready(const tijmath::RelativePose3& preferred_frame_pose,
-                            const double radius);
+  bool volumeIsTakenAlready(const tijmath::Pose3& preferred_frame_pose, const double radius);
+
+  std::optional<SpatialMutualExclusionManager::VolumeHandle>
+  lockSphereVolumesPrivate(const std::vector<tijmath::Pose3>& centers, const double radius);
 };
 
 }  // namespace tijcore

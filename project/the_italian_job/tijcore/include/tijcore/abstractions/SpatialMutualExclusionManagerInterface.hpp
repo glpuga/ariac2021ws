@@ -31,8 +31,12 @@ public:
 
   virtual ~SpatialMutualExclusionManagerInterface() = default;
 
-  virtual std::optional<VolumeHandle> lockVolume(const tijmath::RelativePose3& pose,
-                                                 const double radius) = 0;
+  virtual std::optional<VolumeHandle> lockSphereVolume(const tijmath::RelativePose3& pose,
+                                                       const double radius) = 0;
+
+  virtual std::optional<VolumeHandle>
+  lockSpheresPathVolume(const tijmath::RelativePose3& start_pose,
+                        const tijmath::RelativePose3& end_pose, const double radius) = 0;
 };
 
 }  // namespace tijcore
