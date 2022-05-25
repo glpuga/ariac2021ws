@@ -483,6 +483,8 @@
 
     <!--
         Locks access to a spherical volume around the target pose.
+        If it cant get exclusive access right away, it tries to move the robot to a safe pose near the target pose.
+        TODO(glpuga) its arguable that this this subtree should only concern itself with acquiring access, and not with moving.
         Parameters:
             task_parameters (TaskParameters): The task parameters structure.
             target_pose (Pose): Center of the spherical volume to close access to.
@@ -494,6 +496,7 @@
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
                         <LockAccessToVolumeAtPose task_parameters="{task_parameters}" radius="0.5" target_pose="{target_pose}" />
+                        <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
                         <ForceFailure>
                             <SubTree ID="SleepAFewMilliseconds" />
                         </ForceFailure>
@@ -505,6 +508,8 @@
 
     <!--
         Locks access to a spherical volume around both poses and the cilinder that connects them.
+        If it cant get exclusive access right away, it tries to move the robot to a safe pose near the start_pose.
+        TODO(glpuga) its arguable that this this subtree should only concern itself with acquiring access, and not with moving.
         Parameters:
             task_parameters (TaskParameters): The task parameters structure.
             start_pose (Pose): Center of the spherical volume of the first end of the tunnel to close access to.
@@ -517,6 +522,7 @@
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
                         <LockAccessToVolumeBetweenPoses task_parameters="{task_parameters}" radius="0.5" start_pose="{start_pose}" end_pose="{end_pose}" />
+                        <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{start_pose}" />
                         <ForceFailure>
                             <SubTree ID="SleepAFewMilliseconds" />
                         </ForceFailure>
