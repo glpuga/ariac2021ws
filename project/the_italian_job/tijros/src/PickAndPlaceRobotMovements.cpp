@@ -41,9 +41,10 @@ static const double pick_search_length_ = 0.06;
 static const double part_drop_height_ = 0.04;
 
 static const double pickup_displacement_jump_threshold_ = 10.0;
-static const double pickup_displacement_step_ = 0.0025;
+static const double pickup_displacement_step_ = 0.00125;
 static const double max_planning_time_ = 10.0;
-static const int max_planning_attempts_ = 20;
+static const int max_planning_attempts_large = 20;
+static const int max_planning_attempts_small = 5;
 
 static const double tight_goal_position_tolerance_ = 0.001;
 static const double tight_goal_orientation_tolerance_ =
@@ -182,7 +183,7 @@ void PickAndPlaceRobotMovements::useNarrowTolerances(const bool tight_mode) cons
 }
 
 moveit::planning_interface::MoveGroupInterface*
-PickAndPlaceRobotMovements::buildMoveItGroupHandle() const
+PickAndPlaceRobotMovements::buildMoveItGroupHandle(const int max_planning_attempts) const
 {
   // if the setup had not been performed before, do it now
   // Ugly AF, need to find a better solution.
@@ -202,7 +203,7 @@ PickAndPlaceRobotMovements::buildMoveItGroupHandle() const
     };
     move_group_ptr_ = std::make_unique<moveit::planning_interface::MoveGroupInterface>(options);
     move_group_ptr_->setPlanningTime(max_planning_time_);
-    move_group_ptr_->setNumPlanningAttempts(max_planning_attempts_);
+    move_group_ptr_->setNumPlanningAttempts(max_planning_attempts);
 
     // default to coarse tolerances
     useNarrowTolerances(false);
@@ -228,7 +229,7 @@ PickAndPlaceRobotMovements::buildMoveItGroupHandle() const
 bool PickAndPlaceRobotMovements::getRobotArmInRestingPose() const
 {
   const auto action_name = "getRobotArmInRestingPose";
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   const robot_state::JointModelGroup* joint_model_group =
       move_group_ptr->getCurrentState()->getJointModelGroup(
           robot_specific_interface_->getRobotPlanningGroup());
@@ -275,7 +276,7 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseJoinSpace(
     return false;
   }
 
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   move_group_ptr->setPoseReferenceFrame(world_frame);
 
   auto frame_transformer = toolbox_->getFrameTransformer();
@@ -321,7 +322,7 @@ bool PickAndPlaceRobotMovements::getRobotTo2DPose(const tijmath::RelativePose3& 
     INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   const robot_state::JointModelGroup* joint_model_group =
       move_group_ptr->getCurrentState()->getJointModelGroup(
           robot_specific_interface_->getRobotPlanningGroup());
@@ -362,7 +363,8 @@ bool PickAndPlaceRobotMovements::getRobotTo2DPose(const tijmath::RelativePose3& 
   return true;
 }
 
-bool PickAndPlaceRobotMovements::rotateRobotToFaceTarget(const tijmath::RelativePose3& target) const
+bool PickAndPlaceRobotMovements::rotateRobotToFaceTarget(
+    const tijmath::RelativePose3& target, const tijmath::RelativePose3& aim_target) const
 {
   const auto action_name = "rotateRobotToFaceTarget";
   if (!getRobotHealthState())
@@ -370,7 +372,7 @@ bool PickAndPlaceRobotMovements::rotateRobotToFaceTarget(const tijmath::Relative
     INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   const robot_state::JointModelGroup* joint_model_group =
       move_group_ptr->getCurrentState()->getJointModelGroup(
           robot_specific_interface_->getRobotPlanningGroup());
@@ -379,7 +381,10 @@ bool PickAndPlaceRobotMovements::rotateRobotToFaceTarget(const tijmath::Relative
     moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
     std::vector<double> joint_group_positions;
     current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
-    robot_specific_interface_->patchJointStateValuesToFaceTarget(target, joint_group_positions);
+    robot_specific_interface_->patchJointStateValuesForArmInRestingPose(joint_group_positions);
+    robot_specific_interface_->patchJointStateValuesToGoTo2DPose(joint_group_positions, target);
+    robot_specific_interface_->patchJointStateValuesToFaceTarget(joint_group_positions, target,
+                                                                 aim_target);
 
     move_group_ptr->setJointValueTarget(joint_group_positions);
   }
@@ -417,7 +422,7 @@ bool PickAndPlaceRobotMovements::getRobotInSafePoseNearTarget(
     INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   const robot_state::JointModelGroup* joint_model_group =
       move_group_ptr->getCurrentState()->getJointModelGroup(
           robot_specific_interface_->getRobotPlanningGroup());
@@ -468,7 +473,7 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
     INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_small);
 
   INFO("{}: {} is calculating the approximation trajectory", action_name, getRobotName());
   // configure tighter tolerances for this
@@ -536,7 +541,7 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
     INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
     return false;
   }
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   move_group_ptr->setPoseReferenceFrame(world_frame);
 
   INFO("Place movement: {} is calculating the pickup trajectory", getRobotName());
@@ -564,8 +569,6 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
             "{} failed to generate a plan to the drop point "
             "(fraction: {})",
             getRobotName(), fraction);
-        WARNING("{} will release the part here");
-        setRobotGripperState(false);
         return false;
       }
     }
@@ -576,8 +579,6 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
     move_group_ptr->execute(trajectory);
   }
 
-  setRobotGripperState(false);
-  INFO("{} placed the part that the destination", getRobotName());
   return true;
 }
 
@@ -613,7 +614,7 @@ tijcore::GripperTypeId PickAndPlaceRobotMovements::getRobotGripperToolType() con
 void PickAndPlaceRobotMovements::abortCurrentAction() const
 {
   const auto action_name = "abortCurrentAction";
-  auto move_group_ptr = buildMoveItGroupHandle();
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   WARNING("{}: {} is aborting", action_name, getRobotName());
   move_group_ptr->stop();
 }
@@ -696,7 +697,7 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
 
   // Imaginary divider
   collision_objects.push_back(
-      createCollisionBox("static", "divider", "world", 0.05, 10.0, 0.1, -1.4, 0.0, 2.7, operation));
+      createCollisionBox("static", "divider", "world", 10.05, 20.0, 0.1, 3.4, 0.0, 2.7, operation));
 
   // tool-swapping table
   collision_objects.push_back(createCollisionBox("static", "toolswappingtable", "world", 1.0, 1.5,
@@ -870,6 +871,11 @@ bool PickAndPlaceRobotMovements::removeRobotGripperPayloadEnvelope()
 {
   enable_payload_envelope_ = false;
   return true;
+}
+
+tijmath::RelativePose3 PickAndPlaceRobotMovements::getCurrentRobotPose() const
+{
+  return robot_specific_interface_->getCurrentRobotPose();
 }
 
 }  // namespace tijros

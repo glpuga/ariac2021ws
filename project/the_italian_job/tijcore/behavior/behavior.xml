@@ -20,12 +20,14 @@
                     <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
                     <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
                 <Sequence>
                     <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="drop_bucket_pose" />
                     <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
             </Sequence>
@@ -48,6 +50,7 @@
                 <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" start_pose="source_locus_pose" end_pose="drop_bucket_pose" />
                 <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocusQuick" />
                 <SubTree task_parameters="task_parameters" ID="DropPartInTrashBinQuick" />
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                 <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -67,12 +70,14 @@
                     <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
                     <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
                 <Sequence>
                     <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="destination_locus_pose" />
                     <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
             </Sequence>
@@ -95,6 +100,7 @@
                 <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" start_pose="source_locus_pose" end_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocusQuick" />
                 <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocusQuick" />
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                 <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -156,12 +162,13 @@
                     <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
                     <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndDrop" />
                     <DestroyPartAtSource task_parameters="{task_parameters}" />
-                    <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                 </Sequence>
                 <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
             </Fallback>
         </TraceLoggerDecorator>
     </BehaviorTree>
+
 
     <!--
         Root of the branch that performs the PickAndPlacePart task.
@@ -175,7 +182,7 @@
                     <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
                     <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndPlace" />
                     <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
-                    <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                 </Sequence>
                 <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
             </Fallback>
@@ -194,7 +201,7 @@
                     <SubTree task_parameters="task_parameters" ID="SelectMovableTrayPartGripperTool" />
                     <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndPlace" />
                     <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
-                    <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                 </Sequence>
                 <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
             </Fallback>
@@ -267,7 +274,6 @@
                 <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="source_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPickingItemUp" target_pose="source_locus_pose" />
-                <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -321,7 +327,8 @@
                 <LogInfo message="PlacePartAtDestinationLocus" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="destination_locus_pose" />
-                <SubTree task_parameters="task_parameters" ID="TryPlacingItemDown" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TryPlacingItemDownWithRetry" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -337,7 +344,8 @@
             <Sequence>
                 <LogInfo message="PlacePartAtDestinationLocusQuick" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
-                <SubTree task_parameters="task_parameters" ID="TryPlacingItemDown" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TryPlacingItemDownWithRetry" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -376,7 +384,28 @@
                 <LogInfo message="TryPlacingItemDown" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
                 <SubTree task_parameters="task_parameters" ID="DropPartInTargetPose" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Same as TryPlacingItemDown, but with doing a retry from a slightly different pose if the operation fails.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): The target pose to which the robot should place the part.
+    -->
+    <BehaviorTree ID="TryPlacingItemDownWithRetry">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TryPlacingItemDownWithRetry" />
+                <RetryUntilSuccessful num_attempts="5">
+                    <Fallback>
+                        <SubTree task_parameters="task_parameters" ID="TryPlacingItemDown" target_pose="target_pose" />
+                        <ForceFailure>
+                            <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="target_pose" />
+                        </ForceFailure>
+                    </Fallback>
+                </RetryUntilSuccessful>
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -392,8 +421,9 @@
             <Sequence>
                 <LogInfo message="DropPartInTrashBin" />
                 <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
-                <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="drop_bucket_pose" />
+                <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{drop_bucket_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="drop_bucket_pose" />
+                <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -412,6 +442,7 @@
                 <LogInfo message="DropPartInTrashBinQuick" />
                 <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="drop_bucket_pose" />
+                <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -428,8 +459,12 @@
         <TraceLoggerDecorator>
             <Sequence>
                 <LogInfo message="GoToRandomPoseNearPose" />
-                <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
-                <!-- TODO(glpuga) need this? <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{target_pose}" /> -->
+                <RetryUntilSuccessful num_attempts="15">
+                    <Sequence>
+                        <RandomizeTargetPose task_parameters="{task_parameters}" max_radius="1.5" target_pose="{target_pose}" randomized_target_pose="{randomized_target_pose}" />
+                        <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{randomized_target_pose}" aim_target_pose="{target_pose}" />
+                    </Sequence>
+                </RetryUntilSuccessful>
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -564,13 +599,20 @@
                 <LogInfo message="PeformFailureExitRecovery" />
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
                 <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
-                <Sequence>
-                    <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
-                    <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="destination_locus_pose" />
-                </Sequence>
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
                 <!-- finally release access to the space if we are still holding it -->
                 <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 <SubTree ID="SleepAFewMilliseconds" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="GetRobotInClosestSafePose">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="GetRobotInClosestSafePose" />
+                <GetCurrentRobotPose task_parameters="{task_parameters}" robot_pose="{robot_pose}" />
+                <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{robot_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>

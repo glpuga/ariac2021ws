@@ -28,15 +28,17 @@ public:
     return {
       BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
       BT::InputPort<tijmath::RelativePose3>("target_pose"),
+      BT::InputPort<tijmath::RelativePose3>("aim_target_pose"),
     };
   }
 
   BT::NodeStatus tick() override
   {
     auto target_pose = getInput<tijmath::RelativePose3>("target_pose").value();
+    auto aim_target_pose = getInput<tijmath::RelativePose3>("aim_target_pose").value();
     auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
-    const auto retval = adapter_->rotateRobotToFaceTarget(target_pose);
+    const auto retval = adapter_->rotateRobotToFaceTarget(target_pose, aim_target_pose);
     return retval ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
   }
 

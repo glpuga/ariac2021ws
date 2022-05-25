@@ -31,6 +31,7 @@
 #include <tijcore/btnodes/CalculateVerticalLandingPoseNode.hpp>
 #include <tijcore/btnodes/ContactPartFromAboveAndGraspNode.hpp>
 #include <tijcore/btnodes/DestroyPartAtSourceNode.hpp>
+#include <tijcore/btnodes/GetCurrentRobotPoseNode.hpp>
 #include <tijcore/btnodes/GetDestinationLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetDropBucketPoseNode.hpp>
 #include <tijcore/btnodes/GetGripperIn3DPoseCartesianSpaceNode.hpp>
@@ -52,6 +53,7 @@
 #include <tijcore/btnodes/LogInfoNode.hpp>
 #include <tijcore/btnodes/LogWarningNode.hpp>
 #include <tijcore/btnodes/PosesAreWithinRangeNode.hpp>
+#include <tijcore/btnodes/RandomizeTargetPoseNode.hpp>
 #include <tijcore/btnodes/ReleaseAccessToLockedVolumeNode.hpp>
 #include <tijcore/btnodes/RemoveRobotGripperPayloadEnvelopeNode.hpp>
 #include <tijcore/btnodes/RotateRobotToFaceTargetNode.hpp>
@@ -113,6 +115,8 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<LockAccessToVolumeAtPoseNode>("LockAccessToVolumeAtPose");
   factory.registerNodeType<LockAccessToVolumeBetweenPosesNode>("LockAccessToVolumeBetweenPoses");
   factory.registerNodeType<ReleaseAccessToLockedVolumeNode>("ReleaseAccessToLockedVolume");
+  factory.registerNodeType<RandomizeTargetPoseNode>("RandomizeTargetPose");
+  factory.registerNodeType<GetCurrentRobotPoseNode>("GetCurrentRobotPose");
 };
 
 }  // namespace

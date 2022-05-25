@@ -40,7 +40,8 @@ public:
 
   virtual bool getRobotTo2DPose(const tijmath::RelativePose3& target) const = 0;
 
-  virtual bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target) const = 0;
+  virtual bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target,
+                                       const tijmath::RelativePose3& aim_target) const = 0;
 
   virtual bool getRobotGripperOn() const = 0;
 
@@ -79,6 +80,8 @@ public:
   virtual tijmath::Pose3
   calculateEndEffectorToPayloadTransform(const tijmath::RelativePose3& end_effector_pose,
                                          const tijmath::RelativePose3& payload_pose) const = 0;
+
+  virtual tijmath::RelativePose3 getCurrentRobotPose() const = 0;
 };
 
 }  // namespace tijcore
