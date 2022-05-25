@@ -202,30 +202,6 @@
     </BehaviorTree>
 
     <!--
-        Clears up the state of the robot arm when exiting form a failure situation, to leave the arm ready for a new tas.
-        Parameters:
-            task_parameters (TaskParameters): The task parameters structure.
-            tool_type (GripperTypeId): The desired tool type.
-    -->
-    <BehaviorTree ID="PeformFailureExitRecovery">
-        <TraceLoggerDecorator>
-            <Sequence>
-                <LogInfo message="PeformFailureExitRecovery" />
-                <GetRobotGripperOff task_parameters="{task_parameters}" />
-                <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
-                <Sequence>
-                    <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
-                    <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="destination_locus_pose" />
-                </Sequence>
-                <!-- we don't know if the part is still there after a failure, let the cameras resync -->
-                <DestroyPartAtSource task_parameters="{task_parameters}" />
-                <!-- finally release access to the space if we are still holding it -->
-                <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
-            </Sequence>
-        </TraceLoggerDecorator>
-    </BehaviorTree>
-
-    <!--
         Check if the tool currently set in the robot is gripper_part. If it's not, goes to the tool table and switches the current tool type.
         Parameters: task_parameters
     -->
@@ -519,7 +495,7 @@
                     <Fallback>
                         <LockAccessToVolumeAtPose task_parameters="{task_parameters}" radius="0.5" target_pose="{target_pose}" />
                         <ForceFailure>
-                            <SubTree ID="WaitForAccessToWorkspace" />
+                            <SubTree ID="SleepAFewMilliseconds" />
                         </ForceFailure>
                     </Fallback>
                 </RetryUntilSuccessful>
@@ -542,7 +518,7 @@
                     <Fallback>
                         <LockAccessToVolumeBetweenPoses task_parameters="{task_parameters}" radius="0.5" start_pose="{start_pose}" end_pose="{end_pose}" />
                         <ForceFailure>
-                            <SubTree ID="WaitForAccessToWorkspace" />
+                            <SubTree ID="SleepAFewMilliseconds" />
                         </ForceFailure>
                     </Fallback>
                 </RetryUntilSuccessful>
@@ -564,11 +540,32 @@
         </TraceLoggerDecorator>
     </BehaviorTree>
 
-    <BehaviorTree ID="WaitForAccessToWorkspace">
+    <BehaviorTree ID="SleepAFewMilliseconds">
+        <Delay delay_msec="100">
+            <AlwaysSuccess />
+        </Delay>
+    </BehaviorTree>
+
+    <!--
+        Clears up the state of the robot arm when exiting form a failure situation, to leave the arm ready for a new tas.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            tool_type (GripperTypeId): The desired tool type.
+    -->
+    <BehaviorTree ID="PeformFailureExitRecovery">
         <TraceLoggerDecorator>
-            <Delay delay_msec="500">
-                <LogError message="Waiting for access to workspace" />
-            </Delay>
+            <Sequence>
+                <LogInfo message="PeformFailureExitRecovery" />
+                <GetRobotGripperOff task_parameters="{task_parameters}" />
+                <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
+                <Sequence>
+                    <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                    <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="destination_locus_pose" />
+                </Sequence>
+                <!-- finally release access to the space if we are still holding it -->
+                <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                <SubTree ID="SleepAFewMilliseconds" />
+            </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
 
