@@ -77,21 +77,20 @@ void PickAndPlaceKittingRobot::patchJointStateValuesForArmInRestingPose(
 }
 
 void PickAndPlaceKittingRobot::patchJointStateValuesToFaceTarget(
-    const tijmath::RelativePose3& target, std::vector<double>& joint_states) const
+    std::vector<double>& joint_states, const tijmath::RelativePose3& pose,
+    const tijmath::RelativePose3& aim) const
 {
-  if (joint_states.size() != 9)
+  if (joint_states.size() != 7)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
             getRobotName());
   }
-  const auto target_relative_to_robot =
-      frame_transformer_->transformPoseToFrame(target, "base_link");
 
-  const auto necessary_orientation = std::atan2(target_relative_to_robot.position().vector().y(),
-                                                target_relative_to_robot.position().vector().x());
+  // TODO(glpuga) BROKEN!
+  // const auto necessary_orientation = std::atan2(target.y(), target.x());
 
-  // set the desired rotation around the waist of the robot
-  joint_states[1] = necessary_orientation;
+  // // set the desired rotation around the waist of the robot
+  // joint_states[1] = necessary_orientation;
 }
 
 void PickAndPlaceKittingRobot::patchJointStateValuesToGetCloseToTargetPose(
@@ -150,6 +149,11 @@ bool PickAndPlaceKittingRobot::testIfRobotReachesPose(const tijmath::RelativePos
   const auto target_in_world = frame_transformer_->transformPoseToFrame(target, "world");
   const auto target_in_world_x = target_in_world.position().vector().x();
   return (-2.65 < target_in_world_x) && (target_in_world_x < 0.0);
+}
+
+tijmath::RelativePose3 PickAndPlaceKittingRobot::getCurrentRobotPose() const
+{
+  return tijmath::RelativePose3{ "base_link", {}, {} };
 }
 
 }  // namespace tijros

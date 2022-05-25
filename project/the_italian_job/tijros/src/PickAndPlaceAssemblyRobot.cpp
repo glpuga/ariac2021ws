@@ -105,22 +105,22 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToFaceTarget(
-    const tijmath::RelativePose3& target, std::vector<double>& joint_states) const
+    std::vector<double>& joint_states, const tijmath::RelativePose3& pose,
+    const tijmath::RelativePose3& aim) const
 {
   if (joint_states.size() != 9)
   {
     WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
             getRobotName());
   }
-  const auto target_relative_to_robot =
-      frame_transformer_->transformPoseToFrame(target, "torso_base");
 
-  // the definition of frames in the robot is such that x, and y need to be flipped
-  const auto necessary_orientation = std::atan2(-target_relative_to_robot.position().vector().y(),
-                                                -target_relative_to_robot.position().vector().x());
+  const auto pose_in_rail = frame_transformer_->transformPoseToFrame(pose, long_rail_frame_id_);
+  const auto aim_in_rail = frame_transformer_->transformPoseToFrame(aim, long_rail_frame_id_);
 
-  // set the desired rotation around the waist of the robot
-  joint_states[2] = necessary_orientation;
+  const auto x_director_in_rail =
+      aim_in_rail.position().vector() - pose_in_rail.position().vector();
+
+  joint_states[2] = std::atan2(-x_director_in_rail.x(), x_director_in_rail.y()) - M_PI / 2.0;
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTargetPose(
@@ -186,6 +186,11 @@ tijmath::RelativePose3 PickAndPlaceAssemblyRobot::findPoseClosestToTarget(
       std::min_element(pose_hints.begin(), pose_hints.end(), shortest_distance_to_reference_sorter);
 
   return *closest_hint_it;
+}
+
+tijmath::RelativePose3 PickAndPlaceAssemblyRobot::getCurrentRobotPose() const
+{
+  return tijmath::RelativePose3{ "torso_base", {}, {} };
 }
 
 }  // namespace tijros

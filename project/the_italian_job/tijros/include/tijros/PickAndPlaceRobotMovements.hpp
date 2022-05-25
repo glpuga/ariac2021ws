@@ -41,7 +41,8 @@ public:
 
   bool getRobotTo2DPose(const tijmath::RelativePose3& target) const override;
 
-  bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target) const override;
+  bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target,
+                               const tijmath::RelativePose3& aim_target) const override;
 
   bool getRobotGripperOn() const override;
 
@@ -81,6 +82,8 @@ public:
   calculateEndEffectorToPayloadTransform(const tijmath::RelativePose3& end_effector_pose,
                                          const tijmath::RelativePose3& payload_pose) const override;
 
+  tijmath::RelativePose3 getCurrentRobotPose() const override;
+
 private:
   tijcore::PickAndPlaceRobotSpecificInterface::Ptr robot_specific_interface_;
   tijcore::Toolbox::SharedPtr toolbox_;
@@ -92,7 +95,8 @@ private:
   tijcore::PayloadEnvelope payload_envelope_;
   tijmath::Pose3 ee_to_payload_pose_;
 
-  moveit::planning_interface::MoveGroupInterface* buildMoveItGroupHandle() const;
+  moveit::planning_interface::MoveGroupInterface*
+  buildMoveItGroupHandle(const int max_planning_attempts) const;
 
   void buildObstacleSceneFromDescription() const;
 

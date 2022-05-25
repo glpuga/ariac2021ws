@@ -49,8 +49,11 @@ public:
 
   virtual bool setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const = 0;
 
-  virtual void patchJointStateValuesToFaceTarget(const tijmath::RelativePose3& target,
-                                                 std::vector<double>& joint_states) const = 0;
+  virtual void patchJointStateValuesToFaceTarget(std::vector<double>& joint_states,
+                                                 const tijmath::RelativePose3& pose,
+                                                 const tijmath::RelativePose3& aim) const = 0;
+
+  virtual tijmath::RelativePose3 getCurrentRobotPose() const = 0;
 };
 
 }  // namespace tijcore

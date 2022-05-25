@@ -76,7 +76,10 @@ public:
                      tijmath::Pose3(const tijmath::RelativePose3& end_effector_pose,
                                     const tijmath::RelativePose3& payload_pose));
 
-  MOCK_CONST_METHOD1(rotateRobotToFaceTarget, bool(const tijmath::RelativePose3& target));
+  MOCK_CONST_METHOD2(rotateRobotToFaceTarget, bool(const tijmath::RelativePose3& target,
+                                                   const tijmath::RelativePose3& aim_target));
+
+  MOCK_CONST_METHOD0(getCurrentRobotPose, tijmath::RelativePose3());
 };
 
 }  // namespace tijcore
