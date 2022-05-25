@@ -142,7 +142,7 @@ tijcore::Toolbox::SharedPtr TIJChallenger::createToolbox() const
   contents.robot_actuator_instance = std::make_shared<tijros::ROSRobotActuators>(nh_);
   contents.process_manager_instance = std::make_shared<tijros::ROSProcessManagement>(nh_);
   contents.scene_config_reader_instance = config_;
-  contents.volume_mutual_exclusion_manager =
+  contents.spatial_mutual_exclusion_manager =
       std::make_shared<tijcore::SpatialMutualExclusionManager>(config_->getWorldFrameId(),
                                                                contents.frame_transformer_instance);
   return std::make_shared<tijcore::Toolbox>(std::move(contents));

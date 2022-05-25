@@ -7,6 +7,183 @@
     </BehaviorTree>
 
     <!--
+        Does the pick and drop into the trash operation in two stages, locking and releasing access to the source and destination
+        poses at separate times. This is the slowest version of the operation, but works well when source and destination
+        are far away from eachother.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="PickAndDropInTrashInTwoStages">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PickAndDropInTrashInTwoStages" />
+                <Sequence>
+                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
+                    <Fallback>
+                        <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                        <ForceFailure>
+                            <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                        </ForceFailure>
+                    </Fallback>
+                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                </Sequence>
+                <Sequence>
+                    <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
+                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="drop_bucket_pose" />
+                    <Fallback>
+                        <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
+                        <ForceFailure>
+                            <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                        </ForceFailure>
+                    </Fallback>
+                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                </Sequence>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Does the pick and drop into the trash operation in a single stage, locking both start an end poses for the whole duration
+        of the operation. This allows not to have to move away and back in the arm from the work area, but prevents the other
+        arm from getting in for the duration of the task. This is faster than the two stage version, but only worth if both
+        poses are close to eachother.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="PickAndDropInTrashInOneStage">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PickAndDropInTrashInOneStage" />
+                <Sequence>
+                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                    <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
+                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" start_pose="source_locus_pose" end_pose="drop_bucket_pose" />
+                </Sequence>
+                <Fallback>
+                    <Sequence>
+                        <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocusQuick" />
+                        <SubTree task_parameters="task_parameters" ID="DropPartInTrashBinQuick" />
+                    </Sequence>
+                    <ForceFailure>
+                        <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                    </ForceFailure>
+                </Fallback>
+                <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+            </Sequence>
+
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Does the pick and place operation in two stages, locking and releasing access to the source and destination
+        poses at separate times. This is the slowest version of the operation, but works well when source and destination
+        are far away from eachother.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="PickAndPlacePartInTwoStages">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PickAndPlacePartInTwoStages" />
+                <Sequence>
+                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
+                    <Fallback>
+                        <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                        <ForceFailure>
+                            <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                        </ForceFailure>
+                    </Fallback>
+                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                </Sequence>
+                <Sequence>
+                    <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="destination_locus_pose" />
+                    <Fallback>
+                        <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+                        <ForceFailure>
+                            <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                        </ForceFailure>
+                    </Fallback>
+                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                </Sequence>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Does the pick and place operation in a single stage, locking both start an end poses for the whole duration
+        of the operation. This allows not to have to move away and back in the arm from the work area, but prevents the other
+        arm from getting in for the duration of the task. This is faster than the two stage version, but only worth if both
+        poses are close to eachother.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="PickAndPlacePartInOneStage">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PickAndPlacePartInOneStage" />
+                <Sequence>
+                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                    <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" start_pose="source_locus_pose" end_pose="destination_locus_pose" />
+                </Sequence>
+                <Fallback>
+                    <Sequence>
+                        <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocusQuick" />
+                        <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocusQuick" />
+                    </Sequence>
+                    <ForceFailure>
+                        <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                    </ForceFailure>
+                </Fallback>
+                <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Depending on the distance between the source and destination poses, this branch will select the appropriate
+        pick and place operation between the fast and the slow version.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="SelectQuickOrSlowPickAndPlace">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="SelectQuickOrSlowPickAndPlace" />
+                <Fallback>
+                    <Sequence>
+                        <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                        <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                        <PosesAreWithinRange task_parameters="{task_parameters}" max_range="3" start_pose="{source_locus_pose}" end_pose="{destination_locus_pose}" />
+                        <SubTree task_parameters="task_parameters" ID="PickAndPlacePartInOneStage" />
+                    </Sequence>
+                    <SubTree task_parameters="task_parameters" ID="PickAndPlacePartInTwoStages" />
+                </Fallback>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Depending on the distance between the source and tash bucket poses, this branch will select the appropriate
+        pick and place operation between the fast and the slow version.
+        Parameters: task_parameters
+    -->
+    <BehaviorTree ID="SelectQuickOrSlowPickAndDrop">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="SelectQuickOrSlowPickAndDrop" />
+                <Fallback>
+                    <Sequence>
+                        <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                        <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
+                        <PosesAreWithinRange task_parameters="{task_parameters}" max_range="3" start_pose="{source_locus_pose}" end_pose="{drop_bucket_pose}" />
+                        <SubTree task_parameters="task_parameters" ID="PickAndDropInTrashInOneStage" />
+                    </Sequence>
+                    <SubTree task_parameters="task_parameters" ID="PickAndDropInTrashInTwoStages" />
+                </Fallback>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
         Root of the branch that performs the RemoveBrokenpart task.
         Parameters: task_parameters
     -->
@@ -16,8 +193,7 @@
                 <Sequence>
                     <LogInfo message="RemoveBrokenPartTaskRoot" />
                     <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
-                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                    <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
+                    <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndDrop" />
                     <DestroyPartAtSource task_parameters="{task_parameters}" />
                     <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
                 </Sequence>
@@ -36,8 +212,7 @@
                 <Sequence>
                     <LogInfo message="PickAndPlacePartRoot" />
                     <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
-                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                    <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+                    <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndPlace" />
                     <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
                     <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
                 </Sequence>
@@ -56,8 +231,7 @@
                 <Sequence>
                     <LogInfo message="PickAndPlaceMovableTrayRoot" />
                     <SubTree task_parameters="task_parameters" ID="SelectMovableTrayPartGripperTool" />
-                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                    <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
+                    <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndPlace" />
                     <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
                     <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
                 </Sequence>
@@ -66,7 +240,12 @@
         </TraceLoggerDecorator>
     </BehaviorTree>
 
-
+    <!--
+        Clears up the state of the robot arm when exiting form a failure situation, to leave the arm ready for a new tas.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            tool_type (GripperTypeId): The desired tool type.
+    -->
     <BehaviorTree ID="PeformFailureExitRecovery">
         <TraceLoggerDecorator>
             <Sequence>
@@ -144,6 +323,44 @@
                 <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="source_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPickingItemUp" target_pose="source_locus_pose" />
+                <GetRobotArmInRestingPose task_parameters="{task_parameters}" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Picks the part at the pose indicated by the src_locus task parameter without removing the arm afterward to
+        avoid extra time. This also assumes that the robot is NOT currently holding a part and that the collistion
+        envelope is not set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+    -->
+    <BehaviorTree ID="PickPartFromSourceLocusQuick">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PickPartFromSourceLocusQuick" />
+                <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="source_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TryPickingItemUp" target_pose="source_locus_pose" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Assuming that the robot is close ot the target, it tries to pick up the part at the target_pose.
+        This also assumes that the robot is NOT currently holding a part and that the collistion envelope is NOT set.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): The target pose from which the robot should pick up the part.
+    -->
+    <BehaviorTree ID="TryPickingItemUp">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TryPickingItemUp" />
+                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+                <SubTree task_parameters="task_parameters" ID="GraspPartAtTargetPose" target_pose="target_pose" />
+                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+                <SubTree task_parameters="task_parameters" ID="SetupCollisionEnvelope" target_pose="target_pose" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -166,18 +383,17 @@
     </BehaviorTree>
 
     <!--
-        Assuming that the robot is close ot the target, it tries to place the part at the target_pose.
+        Places the part currently held by the robot in the gripper, without doing any navigation to avoid extra time.
         This also assumes that the robot is currently holding the part and that the collistion envelope is set.
         Parameters:
             task_parameters (TaskParameters): The task parameters structure.
-            target_pose (Pose): The target pose to which the robot should place the part.
     -->
-    <BehaviorTree ID="TryPlacingItemDown">
+    <BehaviorTree ID="PlacePartAtDestinationLocusQuick">
         <TraceLoggerDecorator>
             <Sequence>
-                <LogInfo message="TryPlacingItemDown" />
-                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="DropPartInTargetPose" target_pose="target_pose" />
+                <LogInfo message="PlacePartAtDestinationLocusQuick" />
+                <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                <SubTree task_parameters="task_parameters" ID="TryPlacingItemDown" target_pose="destination_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -204,6 +420,23 @@
     </BehaviorTree>
 
     <!--
+        Assuming that the robot is close ot the target, it tries to place the part at the target_pose.
+        This also assumes that the robot is currently holding the part and that the collistion envelope is set.
+        Parameters:
+        task_parameters (TaskParameters): The task parameters structure.
+        target_pose (Pose): The target pose to which the robot should place the part.
+    -->
+    <BehaviorTree ID="TryPlacingItemDown">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TryPlacingItemDown" />
+                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+                <SubTree task_parameters="task_parameters" ID="DropPartInTargetPose" target_pose="target_pose" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
         Navigates to the proximities of the trash bucket and drops the part currently held by the robot in it.
         This also assumes that the robot is currently holding the part and that the collistion envelope is set.
         Parameters:
@@ -215,6 +448,24 @@
                 <LogInfo message="DropPartInTrashBin" />
                 <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="drop_bucket_pose" />
+                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="drop_bucket_pose" />
+                <GetRobotGripperOff task_parameters="{task_parameters}" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Drops the part currently held by the robot in the bucket, without navigating towards it first to avoid extra time.
+        This also assumes that the robot is currently holding the part and that the collistion envelope is set, and that we
+        are close enough to the bucket in the first place.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+    -->
+    <BehaviorTree ID="DropPartInTrashBinQuick">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="DropPartInTrashBinQuick" />
+                <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="drop_bucket_pose" />
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
             </Sequence>
@@ -237,26 +488,6 @@
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
-
-    <!--
-        Assuming that the robot is close ot the target, it tries to pick up the part at the target_pose.
-        This also assumes that the robot is NOT currently holding a part and that the collistion envelope is NOT set.
-        Parameters:
-            task_parameters (TaskParameters): The task parameters structure.
-            target_pose (Pose): The target pose from which the robot should pick up the part.
-    -->
-    <BehaviorTree ID="TryPickingItemUp">
-        <TraceLoggerDecorator>
-            <Sequence>
-                <LogInfo message="TryPickingItemUp" />
-                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="GraspPartAtTargetPose" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
-                <SubTree task_parameters="task_parameters" ID="SetupCollisionEnvelope" target_pose="target_pose" />
-            </Sequence>
-        </TraceLoggerDecorator>
-    </BehaviorTree>
-
 
     <BehaviorTree ID="GraspPartAtTargetPose">
         <TraceLoggerDecorator>
@@ -302,6 +533,73 @@
                 <CalculateVerticalLandingPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" vertical_landing_pose="{vertical_landing_pose}" />
                 <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{vertical_landing_pose}" />
             </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Locks access to a spherical volume around the target pose.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            target_pose (Pose): Center of the spherical volume to close access to.
+    -->
+    <BehaviorTree ID="GetExclusiveAccessToVolumeAroundTarget">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="GetExclusiveAccessToVolumeAroundTarget" />
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Fallback>
+                        <LockAccessToVolumeAtPose task_parameters="{task_parameters}" radius="0.5" target_pose="{target_pose}" />
+                        <ForceFailure>
+                            <SubTree ID="WaitForAccessToWorkspace" />
+                        </ForceFailure>
+                    </Fallback>
+                </RetryUntilSuccessful>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Locks access to a spherical volume around both poses and the cilinder that connects them.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+            start_pose (Pose): Center of the spherical volume of the first end of the tunnel to close access to.
+            end_pose (Pose): Center of the spherical volume of the second end of the tunnel to close access to.
+    -->
+    <BehaviorTree ID="GetExclusiveAccessToVolumeBetweenStartAndEndPoses">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" />
+                <RetryUntilSuccessful num_attempts="-1">
+                    <Fallback>
+                        <LockAccessToVolumeBetweenPoses task_parameters="{task_parameters}" radius="0.5" start_pose="{start_pose}" end_pose="{end_pose}" />
+                        <ForceFailure>
+                            <SubTree ID="WaitForAccessToWorkspace" />
+                        </ForceFailure>
+                    </Fallback>
+                </RetryUntilSuccessful>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <!--
+        Release access to a space volume whose handle is stored in the task_parameters structure.
+        Parameters:
+            task_parameters (TaskParameters): The task parameters structure.
+    -->
+    <BehaviorTree ID="ReleaseExclusiveAccessToVolume">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="ReleaseExclusiveAccessToVolume" />
+                <ReleaseAccessToLockedVolume task_parameters="{task_parameters}" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="WaitForAccessToWorkspace">
+        <TraceLoggerDecorator>
+            <Delay delay_msec="500">
+                <LogError message="Waiting for access to workspace" />
+            </Delay>
         </TraceLoggerDecorator>
     </BehaviorTree>
 

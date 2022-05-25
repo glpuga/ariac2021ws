@@ -29,7 +29,7 @@ public:
     RobotActuatorsInterface::SharedPtr robot_actuator_instance;
     ProcessManagementInterface::SharedPtr process_manager_instance;
     SceneConfigReaderInterface::SharedPtr scene_config_reader_instance;
-    SpatialMutualExclusionManagerInterface::SharedPtr volume_mutual_exclusion_manager;
+    SpatialMutualExclusionManagerInterface::SharedPtr spatial_mutual_exclusion_manager;
   };
 
   explicit Toolbox(Contents&& contents) : contents_{ std::move(contents) }
@@ -54,6 +54,12 @@ public:
   SceneConfigReaderInterface::SharedPtr getSceneConfigReader() const
   {
     return returnPtrIfInstanceNotNull(__PRETTY_FUNCTION__, contents_.scene_config_reader_instance);
+  }
+
+  SpatialMutualExclusionManagerInterface::SharedPtr getSpatialMutualExclusionManager() const
+  {
+    return returnPtrIfInstanceNotNull(__PRETTY_FUNCTION__,
+                                      contents_.spatial_mutual_exclusion_manager);
   }
 
 private:

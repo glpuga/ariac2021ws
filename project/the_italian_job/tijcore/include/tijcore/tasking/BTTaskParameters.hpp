@@ -10,8 +10,9 @@
 #include <string>
 
 // tijcore
+#include <tijcore/abstractions/ResourceManagerInterface.hpp>
+#include <tijcore/abstractions/SpatialMutualExclusionManagerInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
-#include <tijcore/resources/ResourceManager.hpp>
 
 namespace tijcore
 {
@@ -31,6 +32,10 @@ struct BTTaskParameters
   std::optional<ResourceManagerInterface::ManagedLocusHandle> src_locus;
   std::optional<ResourceManagerInterface::ManagedLocusHandle> dst_locus;
   std::optional<ResourceManagerInterface::PickAndPlaceRobotHandle> primary_robot;
+
+  //
+  // Temporary state
+  std::optional<SpatialMutualExclusionManagerInterface::VolumeHandle> spatial_lock_handle;
 };
 
 }  // namespace tijcore

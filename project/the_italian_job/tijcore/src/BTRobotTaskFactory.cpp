@@ -46,9 +46,13 @@
 #include <tijcore/btnodes/GetRobotTo2DPoseNode.hpp>
 #include <tijcore/btnodes/GetSourceLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetToolTablePoseNode.hpp>
+#include <tijcore/btnodes/LockAccessToVolumeAtPoseNode.hpp>
+#include <tijcore/btnodes/LockAccessToVolumeBetweenPosesNode.hpp>
 #include <tijcore/btnodes/LogErrorNode.hpp>
 #include <tijcore/btnodes/LogInfoNode.hpp>
 #include <tijcore/btnodes/LogWarningNode.hpp>
+#include <tijcore/btnodes/PosesAreWithinRangeNode.hpp>
+#include <tijcore/btnodes/ReleaseAccessToLockedVolumeNode.hpp>
 #include <tijcore/btnodes/RemoveRobotGripperPayloadEnvelopeNode.hpp>
 #include <tijcore/btnodes/RotateRobotToFaceTargetNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperPayloadEnvelopeNode.hpp>
@@ -105,6 +109,10 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<LogInfoNode>("LogInfo");
   factory.registerNodeType<TraceLoggerDecoratorNode>("TraceLoggerDecorator");
   factory.registerNodeType<RotateRobotToFaceTargetNode>("RotateRobotToFaceTarget");
+  factory.registerNodeType<PosesAreWithinRangeNode>("PosesAreWithinRange");
+  factory.registerNodeType<LockAccessToVolumeAtPoseNode>("LockAccessToVolumeAtPose");
+  factory.registerNodeType<LockAccessToVolumeBetweenPosesNode>("LockAccessToVolumeBetweenPoses");
+  factory.registerNodeType<ReleaseAccessToLockedVolumeNode>("ReleaseAccessToLockedVolume");
 };
 
 }  // namespace
