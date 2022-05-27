@@ -531,9 +531,11 @@
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
                         <LockAccessToVolumeAtPose task_parameters="{task_parameters}" radius="0.5" target_pose="{target_pose}" />
-                        <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
                         <ForceFailure>
-                            <SubTree ID="SleepAFewMilliseconds" />
+                            <Sequence>
+                                <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
+                                <SubTree ID="SleepAFewMilliseconds" />
+                            </Sequence>
                         </ForceFailure>
                     </Fallback>
                 </RetryUntilSuccessful>
@@ -557,9 +559,11 @@
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
                         <LockAccessToVolumeBetweenPoses task_parameters="{task_parameters}" radius="0.5" start_pose="{start_pose}" end_pose="{end_pose}" />
-                        <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{start_pose}" />
                         <ForceFailure>
-                            <SubTree ID="SleepAFewMilliseconds" />
+                            <Sequence>
+                                <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{start_pose}" />
+                                <SubTree ID="SleepAFewMilliseconds" />
+                            </Sequence>
                         </ForceFailure>
                     </Fallback>
                 </RetryUntilSuccessful>
