@@ -156,4 +156,9 @@ tijmath::RelativePose3 PickAndPlaceKittingRobot::getCurrentRobotPose() const
   return tijmath::RelativePose3{ "base_link", {}, {} };
 }
 
+tijmath::RelativePose3 PickAndPlaceKittingRobot::getCurrentEndEffectorPose() const
+{
+  return tijmath::RelativePose3{ getRobotEndEffectorLinkName(), {}, {} };
+}
+
 }  // namespace tijros

@@ -43,7 +43,7 @@ static const double part_drop_height_ = 0.04;
 static const double pickup_displacement_jump_threshold_ = 10.0;
 static const double pickup_displacement_step_ = 0.00125;
 static const double max_planning_time_ = 10.0;
-static const int max_planning_attempts_large = 20;
+static const int max_planning_attempts_large = 100;
 static const int max_planning_attempts_small = 5;
 
 static const double tight_goal_position_tolerance_ = 0.001;
@@ -222,6 +222,8 @@ PickAndPlaceRobotMovements::buildMoveItGroupHandle(const int max_planning_attemp
   }
 
   createPayloadEnvelopCollisionBox();
+
+  debounceRobotMovement();
 
   return move_group_ptr_.get();
 }
@@ -876,6 +878,50 @@ bool PickAndPlaceRobotMovements::removeRobotGripperPayloadEnvelope()
 tijmath::RelativePose3 PickAndPlaceRobotMovements::getCurrentRobotPose() const
 {
   return robot_specific_interface_->getCurrentRobotPose();
+}
+
+void PickAndPlaceRobotMovements::debounceRobotMovement() const
+{
+  const double debouncing_threshold_ = 1e-4;
+  const auto debouncing_max_wait_time_ = std::chrono::milliseconds(5000);
+
+  const auto start = std::chrono::steady_clock::now();
+
+  auto frame_transformer = toolbox_->getFrameTransformer();
+
+  auto get_robot_pose_in_world = [this, &frame_transformer]() -> tijmath::RelativePose3 {
+    const auto pose_in_world_frame = frame_transformer->transformPoseToFrame(
+        robot_specific_interface_->getCurrentRobotPose(), world_frame);
+    return pose_in_world_frame;
+  };
+
+  auto latest_pose = get_robot_pose_in_world();
+
+  do
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    const auto current_pose = get_robot_pose_in_world();
+    const auto displacement = (current_pose.position().vector() - latest_pose.position().vector());
+    const auto distance = displacement.norm();
+
+    latest_pose = current_pose;
+
+    const auto time_spent = std::chrono::steady_clock::now() - start;
+
+    if (time_spent > debouncing_max_wait_time_)
+    {
+      ERROR("Robot pose debouncing timed out, your robot is ringing like a bell");
+      return;
+    }
+
+    if (distance < debouncing_threshold_)
+    {
+      return;
+    }
+
+    INFO("Robot is stll moving, waiting for the robot to stop ringing (displacement norm: {})",
+         distance);
+  } while (true);
 }
 
 }  // namespace tijros
