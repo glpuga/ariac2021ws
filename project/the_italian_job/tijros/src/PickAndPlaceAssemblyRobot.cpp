@@ -95,7 +95,9 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
             getRobotName());
   }
   // Note that rail coordinates are relative to the rail, not to world
-  joint_states[2] = 0.0;
+
+  // joint_states[2] = 0.0;
+
   joint_states[3] = degreesToRadians(180);
   joint_states[4] = degreesToRadians(-90);
   joint_states[5] = degreesToRadians(-90);
@@ -114,13 +116,26 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesToFaceTarget(
             getRobotName());
   }
 
+  const auto prev_orientation = joint_states[2];
+  // hacky, last week of competition code reuse. This changes orientation, that's why I
+  // saved the orientation above first.
+  patchJointStateValuesToGoTo2DPose(joint_states, pose);
+
   const auto pose_in_rail = frame_transformer_->transformPoseToFrame(pose, long_rail_frame_id_);
   const auto aim_in_rail = frame_transformer_->transformPoseToFrame(aim, long_rail_frame_id_);
 
   const auto x_director_in_rail =
       aim_in_rail.position().vector() - pose_in_rail.position().vector();
 
-  joint_states[2] = std::atan2(-x_director_in_rail.x(), x_director_in_rail.y()) - M_PI / 2.0;
+  auto closest_angular_alias = [](const double next, const double prev) {
+    const auto diff = std::fmod(next - prev + 2 * M_PI, 4 * M_PI) - 2 * M_PI;
+    return prev + diff;
+  };
+
+  const auto necessary_orientation =
+      std::atan2(-x_director_in_rail.x(), x_director_in_rail.y()) - M_PI / 2.0;
+
+  joint_states[2] = closest_angular_alias(necessary_orientation, prev_orientation);
 }
 
 void PickAndPlaceAssemblyRobot::patchJointStateValuesToGetCloseToTargetPose(
