@@ -697,8 +697,13 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
                                                  -1.3, 0.0, 0.93, operation));
 
   // Imaginary divider
-  collision_objects.push_back(
-      createCollisionBox("static", "divider", "world", 10.05, 20.0, 0.1, 3.4, 0.0, 2.7, operation));
+
+  // TODO(glpuga) hacky solution to avoid having gantry hit the kitting robot when rotating in place
+  if (robot_specific_interface_->getRobotName() == "gantry")
+  {
+    collision_objects.push_back(createCollisionBox("static", "divider", "world", 10.05, 20.0, 2.6,
+                                                   3.5, 0.0, 1.3, operation));
+  }
 
   // tool-swapping table
   collision_objects.push_back(createCollisionBox("static", "toolswappingtable", "world", 1.0, 1.5,
