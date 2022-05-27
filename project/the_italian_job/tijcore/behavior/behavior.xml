@@ -344,6 +344,7 @@
             <Sequence>
                 <LogInfo message="PlacePartAtDestinationLocusQuick" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                <SubTree task_parameters="task_parameters" ID="RotateTowardsGoalInPlace" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPlacingItemDownWithRetry" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
             </Sequence>
@@ -441,6 +442,7 @@
             <Sequence>
                 <LogInfo message="DropPartInTrashBinQuick" />
                 <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
+                <SubTree task_parameters="task_parameters" ID="RotateTowardsGoalInPlace" target_pose="drop_bucket_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="drop_bucket_pose" />
                 <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
@@ -617,6 +619,17 @@
                 <LogInfo message="GetRobotInClosestSafePose" />
                 <GetCurrentRobotPose task_parameters="{task_parameters}" robot_pose="{robot_pose}" />
                 <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{robot_pose}" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="RotateTowardsGoalInPlace">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="RotateTowardsGoalInPlace" />
+                <GetCurrentRobotPose task_parameters="{task_parameters}" robot_pose="{robot_pose}" />
+                <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{robot_pose}" aim_target_pose="{target_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>

@@ -384,7 +384,6 @@ bool PickAndPlaceRobotMovements::rotateRobotToFaceTarget(
     std::vector<double> joint_group_positions;
     current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
     robot_specific_interface_->patchJointStateValuesForArmInRestingPose(joint_group_positions);
-    robot_specific_interface_->patchJointStateValuesToGoTo2DPose(joint_group_positions, target);
     robot_specific_interface_->patchJointStateValuesToFaceTarget(joint_group_positions, target,
                                                                  aim_target);
 
