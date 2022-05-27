@@ -105,6 +105,8 @@ private:
   void useNarrowTolerances(const bool tight_mode) const;
 
   void createPayloadEnvelopCollisionBox() const;
+
+  void debounceRobotMovement() const;
 };
 
 }  // namespace tijros

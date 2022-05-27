@@ -52,6 +52,8 @@ public:
 
   tijmath::RelativePose3 getCurrentRobotPose() const override;
 
+  tijmath::RelativePose3 getCurrentEndEffectorPose() const override;
+
 private:
   tijcore::FrameTransformerInterface::SharedPtr frame_transformer_;
   tijcore::SceneConfigReaderInterface::SharedPtr scene_config_;

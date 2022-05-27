@@ -54,6 +54,8 @@ public:
                                                  const tijmath::RelativePose3& aim) const = 0;
 
   virtual tijmath::RelativePose3 getCurrentRobotPose() const = 0;
+
+  virtual tijmath::RelativePose3 getCurrentEndEffectorPose() const = 0;
 };
 
 }  // namespace tijcore

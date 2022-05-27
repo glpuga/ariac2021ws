@@ -193,4 +193,9 @@ tijmath::RelativePose3 PickAndPlaceAssemblyRobot::getCurrentRobotPose() const
   return tijmath::RelativePose3{ "torso_base", {}, {} };
 }
 
+tijmath::RelativePose3 PickAndPlaceAssemblyRobot::getCurrentEndEffectorPose() const
+{
+  return tijmath::RelativePose3{ getRobotEndEffectorLinkName(), {}, {} };
+}
+
 }  // namespace tijros
