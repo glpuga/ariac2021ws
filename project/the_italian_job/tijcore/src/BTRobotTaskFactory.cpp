@@ -31,6 +31,7 @@
 #include <tijcore/btnodes/CalculateVerticalLandingPoseNode.hpp>
 #include <tijcore/btnodes/ContactPartFromAboveAndGraspNode.hpp>
 #include <tijcore/btnodes/DestroyPartAtSourceNode.hpp>
+#include <tijcore/btnodes/FindClosesHintPoseForTargetNode.hpp>
 #include <tijcore/btnodes/GetCurrentRobotPoseNode.hpp>
 #include <tijcore/btnodes/GetDestinationLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetDropBucketPoseNode.hpp>
@@ -117,6 +118,7 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<ReleaseAccessToLockedVolumeNode>("ReleaseAccessToLockedVolume");
   factory.registerNodeType<RandomizeTargetPoseNode>("RandomizeTargetPose");
   factory.registerNodeType<GetCurrentRobotPoseNode>("GetCurrentRobotPose");
+  factory.registerNodeType<FindClosesHintPoseForTargetNode>("FindClosesHintPoseForTarget");
 };
 
 }  // namespace

@@ -140,7 +140,6 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGoTo2DPose(
   else
   {
     const auto sign = (joint_states[0] < 0) ? -1.0 : 1.0;
-    joint_states[0] -= 1.0 * sign;
     joint_states[1] = degreesToRadians(90) * sign;
   }
 }

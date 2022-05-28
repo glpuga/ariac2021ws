@@ -37,6 +37,9 @@ public:
   const std::vector<ConveyorBeltData>& getListOfConveyorBelts() const override;
 
   const std::vector<tijmath::RelativePose3>& getListOfSafeWaitingSpotHints() const override;
+
+  const std::vector<PickAndPlacePoseHintsData>&
+  getListOfApproachHints(const std::string& robot_name) const override;
 };
 
 };  // namespace tijchallenger

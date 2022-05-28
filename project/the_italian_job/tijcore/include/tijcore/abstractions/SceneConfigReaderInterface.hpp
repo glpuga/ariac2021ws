@@ -48,6 +48,12 @@ public:
     std::string frame_id;
   };
 
+  struct PickAndPlacePoseHintsData
+  {
+    tijmath::RelativePose3 target_pose;
+    tijmath::RelativePose3 approach_pose;
+  };
+
   virtual const std::string& getWorldFrameId() const = 0;
 
   virtual const tijmath::RelativePose3& getDropBucketPose() const = 0;
@@ -69,6 +75,9 @@ public:
   virtual const std::vector<ConveyorBeltData>& getListOfConveyorBelts() const = 0;
 
   virtual const std::vector<tijmath::RelativePose3>& getListOfSafeWaitingSpotHints() const = 0;
+
+  virtual const std::vector<PickAndPlacePoseHintsData>&
+  getListOfApproachHints(const std::string& robot_name) const = 0;
 };
 
 }  // namespace tijcore
