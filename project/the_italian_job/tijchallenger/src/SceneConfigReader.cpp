@@ -193,4 +193,103 @@ const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfSafeWaiti
   return data;
 }
 
+const std::vector<SceneConfigReader::PickAndPlacePoseHintsData>&
+SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
+{
+  auto build_hint = [](const double x, const double y, const double deg) -> tijmath::RelativePose3 {
+    return { world_frame_id_, tijmath::Position::fromVector(x, y, 0),
+             tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(deg)) };
+  };
+
+  static std::vector<PickAndPlacePoseHintsData> kitting_poses{
+    { build_hint(-1.00, +4.50, degreesToRadians(0)),
+      build_hint(-1.00, +4.00, degreesToRadians(0)) },
+  };
+
+  for (double y = -4.0; y < 4.0; y += 0.10)
+  {
+    SceneConfigReader::PickAndPlacePoseHintsData new_item;
+    new_item.target_pose = build_hint(-1.00, y - 1.0, degreesToRadians(0));
+    new_item.approach_pose = build_hint(-1.00, y, degreesToRadians(0));
+    kitting_poses.push_back(new_item);
+  }
+
+  static const std::vector<PickAndPlacePoseHintsData> gantry_poses{
+    //
+    // left
+    //
+    // bins left
+    { build_hint(-2.00, +3.00, degreesToRadians(0)),
+      build_hint(-3.50, +3.00, degreesToRadians(0)) },
+    // agvs left
+    { build_hint(-2.26, +4.67, degreesToRadians(0)),
+      build_hint(-2.20, +3.50, degreesToRadians(0)) },
+    { build_hint(-2.26, +1.36, degreesToRadians(0)),
+      build_hint(-2.20, +2.50, degreesToRadians(0)) },
+    // first station left
+    { build_hint(-5.50, +4.50, degreesToRadians(0)),
+      build_hint(-5.00, +4.00, degreesToRadians(0)) },
+    { build_hint(-5.50, +1.40, degreesToRadians(0)),
+      build_hint(-5.00, +1.90, degreesToRadians(0)) },
+    { build_hint(-7.50, +3.00, degreesToRadians(0)),
+      build_hint(-5.50, +3.00, degreesToRadians(0)) },
+    // second station left
+    { build_hint(-10.50, +4.50, degreesToRadians(0)),
+      build_hint(-10.00, +4.00, degreesToRadians(0)) },
+    { build_hint(-10.50, +1.40, degreesToRadians(0)),
+      build_hint(-10.00, +1.90, degreesToRadians(0)) },
+    { build_hint(-12.50, +3.00, degreesToRadians(0)),
+      build_hint(-10.50, +3.00, degreesToRadians(0)) },
+    //
+    // right
+    //
+    // bins right
+    { build_hint(-2.00, -3.00, degreesToRadians(0)),
+      build_hint(-3.50, -3.00, degreesToRadians(0)) },
+    // agvs right
+    { build_hint(-2.26, -4.67, degreesToRadians(0)),
+      build_hint(-2.20, -3.50, degreesToRadians(0)) },
+    { build_hint(-2.26, -1.36, degreesToRadians(0)),
+      build_hint(-2.20, -2.50, degreesToRadians(0)) },
+    // first station right
+    { build_hint(-5.50, -4.50, degreesToRadians(0)),
+      build_hint(-5.00, -4.00, degreesToRadians(0)) },
+    { build_hint(-5.50, -1.40, degreesToRadians(0)),
+      build_hint(-5.00, -1.90, degreesToRadians(0)) },
+    { build_hint(-7.50, -3.00, degreesToRadians(0)),
+      build_hint(-5.50, -3.00, degreesToRadians(0)) },
+    // second station right
+    { build_hint(-10.50, -4.50, degreesToRadians(0)),
+      build_hint(-10.00, -4.00, degreesToRadians(0)) },
+    { build_hint(-10.50, -1.40, degreesToRadians(0)),
+      build_hint(-10.00, -1.90, degreesToRadians(0)) },
+    { build_hint(-12.50, -3.00, degreesToRadians(0)),
+      build_hint(-10.50, -3.00, degreesToRadians(0)) },
+    //
+    // drop bucket
+    //
+    { build_hint(-2.20, 0.00, degreesToRadians(0)), build_hint(-3.50, 0.00, degreesToRadians(0)) },
+    //
+    // trays tables
+    //
+    { build_hint(-6.56, +6.26, degreesToRadians(0)),
+      build_hint(-5.61, +6.26, degreesToRadians(0)) },
+    { build_hint(-5.61, +6.26, degreesToRadians(0)),
+      build_hint(-6.56, +6.26, degreesToRadians(0)) },
+  };
+
+  if (robot_name == "kitting")
+  {
+    return kitting_poses;
+  }
+  else if (robot_name == "gantry")
+  {
+    return gantry_poses;
+  }
+  else
+  {
+    throw std::runtime_error("Unknown robot name: " + robot_name);
+  }
+}
+
 }  // namespace tijchallenger

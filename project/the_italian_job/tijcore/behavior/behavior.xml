@@ -272,7 +272,7 @@
             <Sequence>
                 <LogInfo message="PickPartFromSourceLocus" />
                 <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
-                <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="source_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="source_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPickingItemUp" target_pose="source_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -290,7 +290,7 @@
             <Sequence>
                 <LogInfo message="PickPartFromSourceLocusQuick" />
                 <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
-                <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="source_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="source_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPickingItemUp" target_pose="source_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -326,7 +326,7 @@
             <Sequence>
                 <LogInfo message="PlacePartAtDestinationLocus" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
-                <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPlacingItemDownWithRetry" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
             </Sequence>
@@ -344,7 +344,7 @@
             <Sequence>
                 <LogInfo message="PlacePartAtDestinationLocusQuick" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
-                <SubTree task_parameters="task_parameters" ID="RotateTowardsGoalInPlace" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="TryPlacingItemDownWithRetry" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
             </Sequence>
@@ -630,6 +630,17 @@
                 <LogInfo message="RotateTowardsGoalInPlace" />
                 <GetCurrentRobotPose task_parameters="{task_parameters}" robot_pose="{robot_pose}" />
                 <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{robot_pose}" aim_target_pose="{target_pose}" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="GoToTargetsHintPose">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="GoToTargetsHintPose" />
+                <FindClosesHintPoseForTarget task_parameters="{task_parameters}" target_pose="{target_pose}" hint_pose="{hint_pose}" />
+                <RandomizeTargetPose task_parameters="{task_parameters}" max_radius="0.05" target_pose="{hint_pose}" randomized_target_pose="{randomized_target_pose}" />
+                <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{randomized_target_pose}" aim_target_pose="{target_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
