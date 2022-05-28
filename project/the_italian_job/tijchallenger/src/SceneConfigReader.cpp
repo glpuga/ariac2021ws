@@ -214,57 +214,31 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
     kitting_poses.push_back(new_item);
   }
 
-  static const std::vector<PickAndPlacePoseHintsData> gantry_poses{
+  static std::vector<PickAndPlacePoseHintsData> gantry_poses{
     //
     // left
     //
     // bins left
     { build_hint(-2.00, +3.00, degreesToRadians(0)),
       build_hint(-3.50, +3.00, degreesToRadians(0)) },
-    // agvs left
-    { build_hint(-2.26, +4.67, degreesToRadians(0)),
-      build_hint(-2.20, +3.50, degreesToRadians(0)) },
-    { build_hint(-2.26, +1.36, degreesToRadians(0)),
-      build_hint(-2.20, +2.50, degreesToRadians(0)) },
     // first station left
-    { build_hint(-5.50, +4.50, degreesToRadians(0)),
-      build_hint(-5.00, +4.00, degreesToRadians(0)) },
-    { build_hint(-5.50, +1.40, degreesToRadians(0)),
-      build_hint(-5.00, +1.90, degreesToRadians(0)) },
     { build_hint(-7.50, +3.00, degreesToRadians(0)),
-      build_hint(-5.50, +3.00, degreesToRadians(0)) },
+      build_hint(-5.20, +3.00, degreesToRadians(0)) },
     // second station left
-    { build_hint(-10.50, +4.50, degreesToRadians(0)),
-      build_hint(-10.00, +4.00, degreesToRadians(0)) },
-    { build_hint(-10.50, +1.40, degreesToRadians(0)),
-      build_hint(-10.00, +1.90, degreesToRadians(0)) },
     { build_hint(-12.50, +3.00, degreesToRadians(0)),
-      build_hint(-10.50, +3.00, degreesToRadians(0)) },
+      build_hint(-10.20, +3.00, degreesToRadians(0)) },
     //
     // right
     //
     // bins right
     { build_hint(-2.00, -3.00, degreesToRadians(0)),
       build_hint(-3.50, -3.00, degreesToRadians(0)) },
-    // agvs right
-    { build_hint(-2.26, -4.67, degreesToRadians(0)),
-      build_hint(-2.20, -3.50, degreesToRadians(0)) },
-    { build_hint(-2.26, -1.36, degreesToRadians(0)),
-      build_hint(-2.20, -2.50, degreesToRadians(0)) },
-    // first station right
-    { build_hint(-5.50, -4.50, degreesToRadians(0)),
-      build_hint(-5.00, -4.00, degreesToRadians(0)) },
-    { build_hint(-5.50, -1.40, degreesToRadians(0)),
-      build_hint(-5.00, -1.90, degreesToRadians(0)) },
+    // first station left
     { build_hint(-7.50, -3.00, degreesToRadians(0)),
-      build_hint(-5.50, -3.00, degreesToRadians(0)) },
+      build_hint(-5.20, -3.00, degreesToRadians(0)) },
     // second station right
-    { build_hint(-10.50, -4.50, degreesToRadians(0)),
-      build_hint(-10.00, -4.00, degreesToRadians(0)) },
-    { build_hint(-10.50, -1.40, degreesToRadians(0)),
-      build_hint(-10.00, -1.90, degreesToRadians(0)) },
-    { build_hint(-12.50, -3.00, degreesToRadians(0)),
-      build_hint(-10.50, -3.00, degreesToRadians(0)) },
+    { build_hint(-12.20, -3.00, degreesToRadians(0)),
+      build_hint(-10.20, -3.00, degreesToRadians(0)) },
     //
     // drop bucket
     //
@@ -277,6 +251,33 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
     { build_hint(-5.61, +6.26, degreesToRadians(0)),
       build_hint(-6.56, +6.26, degreesToRadians(0)) },
   };
+
+  // helper function to create hints for agvs, which are not so simple as one would like
+  auto add_tricky_agvs_hints = [&](const double x, const double y) {
+    gantry_poses.emplace_back(
+        PickAndPlacePoseHintsData{ build_hint(x, y + 0.1, degreesToRadians(0)),
+                                   build_hint(x + 0.2, y - 1.0, degreesToRadians(0)) });
+    gantry_poses.emplace_back(
+        PickAndPlacePoseHintsData{ build_hint(x, y - 0.1, degreesToRadians(0)),
+                                   build_hint(x + 0.2, y + 1.0, degreesToRadians(0)) });
+  };
+
+  // agv col 1
+  add_tricky_agvs_hints(-2.26, 4.67);
+  add_tricky_agvs_hints(-5.59, 4.67);
+  add_tricky_agvs_hints(-10.59, 4.67);
+  // agv col 2
+  add_tricky_agvs_hints(-2.26, 1.36);
+  add_tricky_agvs_hints(-5.59, 1.36);
+  add_tricky_agvs_hints(-10.59, 1.36);
+  // agv col 3
+  add_tricky_agvs_hints(-2.26, -1.36);
+  add_tricky_agvs_hints(-5.59, -1.36);
+  add_tricky_agvs_hints(-10.59, -1.36);
+  // agv col 4
+  add_tricky_agvs_hints(-2.26, -4.67);
+  add_tricky_agvs_hints(-5.59, -4.67);
+  add_tricky_agvs_hints(-10.59, -4.67);
 
   if (robot_name == "kitting")
   {
