@@ -4,6 +4,7 @@
 
 // standard library
 #include <mutex>
+#include <string>
 
 // roscpp
 #include <ros/ros.h>
@@ -190,8 +191,11 @@ void ROSRobotActuators::kittingArmGripperStateCallback(nist_gear::VacuumGripperS
 void ROSRobotActuators::robotHealthCallback(nist_gear::RobotHealth::ConstPtr msg)
 {
   std::lock_guard<std::mutex> lock{ mutex_ };
-  latest_robot_health_data_.kitting_robot_enabled = msg->kitting_robot_health;
-  latest_robot_health_data_.assembly_robot_enabled = msg->assembly_robot_health;
+
+  auto str_to_bool = [](const std::string& str_value) { return str_value == "enabled"; };
+
+  latest_robot_health_data_.kitting_robot_enabled = str_to_bool(msg->kitting_robot_health);
+  latest_robot_health_data_.assembly_robot_enabled = str_to_bool(msg->assembly_robot_health);
 }
 
 void ROSRobotActuators::gripperTypeCallback(std_msgs::String::ConstPtr msg)
