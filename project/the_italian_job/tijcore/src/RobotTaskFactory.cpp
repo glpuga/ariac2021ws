@@ -43,7 +43,7 @@ RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlacePartTask(
 RobotTaskInterface::Ptr RobotTaskFactory::getPickAndPlaceMovableTrayTask(
     ResourceManagerInterface::ManagedLocusHandle&& source,
     ResourceManagerInterface::ManagedLocusHandle&& destination,
-    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
+    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot, const tijcore::AgvId&) const
 {
   return std::make_unique<PickAndPlaceTask>(resource_manager_, toolbox_, std::move(source),
                                             std::move(destination), std::move(robot));

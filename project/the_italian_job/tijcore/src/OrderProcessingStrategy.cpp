@@ -488,7 +488,7 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageBringAMovable
     tijmath::RelativePose3 movable_tray_pose,                                          //
     const std::set<AgvId>& agvs_in_use,                                                //
     const std::set<StationId>& assemblies_in_use,                                      //
-    const std::string& target_container_name) const
+    const AgvId& target_agv_id) const
 {
   INFO("Executing BringAMovableTrayTask for {}", movable_tray_id);
 
@@ -541,7 +541,7 @@ std::vector<RobotTaskInterface::Ptr> OrderProcessingStrategy::stageBringAMovable
           selected_source_movable_tray.resource()->pose(), movable_tray_pose);
       output_actions.emplace_back(robot_task_factory_->getPickAndPlaceMovableTrayTask(
           std::move(selected_source_movable_tray), std::move(target_locus_handle),
-          std::move(*robot_handle_opt)));
+          std::move(*robot_handle_opt), target_agv_id));
     }
   }
 
@@ -593,7 +593,7 @@ OrderProcessingStrategy::processKittingShipment(const OrderId& order,
   {
     return std::make_pair(stageBringAMovableTray(shipment.movable_tray_id,
                                                  shipment.movable_tray_pose, agvs_in_use,
-                                                 stations_in_use, target_container_name),
+                                                 stations_in_use, shipment.agv_id),
                           false);
   }
 

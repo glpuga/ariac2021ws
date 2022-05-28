@@ -202,6 +202,7 @@
                     <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndPlace" />
                     <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
                     <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <LockMovableTrayInAGV task_parameters="{task_parameters}" />
                 </Sequence>
                 <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
             </Fallback>

@@ -41,6 +41,11 @@ constexpr char agv2_submit_shipment_service[] = "/ariac/agv2/submit_kitting_ship
 constexpr char agv3_submit_shipment_service[] = "/ariac/agv3/submit_kitting_shipment";
 constexpr char agv4_submit_shipment_service[] = "/ariac/agv4/submit_kitting_shipment";
 
+constexpr char agv1_lock_tray_shipment_service[] = "/ariac/kit_tray_1/lock";
+constexpr char agv2_lock_tray_shipment_service[] = "/ariac/kit_tray_2/lock";
+constexpr char agv3_lock_tray_shipment_service[] = "/ariac/kit_tray_3/lock";
+constexpr char agv4_lock_tray_shipment_service[] = "/ariac/kit_tray_4/lock";
+
 constexpr char agv1_state_topic[] = "/ariac/agv1/state";
 constexpr char agv2_state_topic[] = "/ariac/agv2/state";
 constexpr char agv3_state_topic[] = "/ariac/agv3/state";
@@ -399,6 +404,47 @@ void ROSProcessManagement::agv4StationCallback(std_msgs::String::ConstPtr msg)
   if (validateStationId(msg->data))
   {
     agv_station_data_[AgvId::agv4] = tijcore::station_id::fromString(msg->data);
+  }
+}
+
+void ROSProcessManagement::lockTrayInAgv(const tijcore::AgvId& agv_id) const
+{
+  std::lock_guard<std::mutex> lock{ mutex_ };
+
+  std_srvs::Trigger msg;
+
+  {
+    std::string service_id;
+    switch (agv_id)
+    {
+      case AgvId::agv1:
+        service_id = agv1_lock_tray_shipment_service;
+        break;
+      case AgvId::agv2:
+        service_id = agv2_lock_tray_shipment_service;
+        break;
+      case AgvId::agv3:
+        service_id = agv3_lock_tray_shipment_service;
+        break;
+      case AgvId::agv4:
+        service_id = agv4_lock_tray_shipment_service;
+        break;
+      case AgvId::any:
+        throw std::invalid_argument{ "Can't lock a tray for agv id \"any\"" };
+        break;
+    }
+
+    ros::service::waitForService(service_id, connection_timeout_);
+    ros::service::call(service_id, msg);
+  }
+
+  if (!msg.response.success)
+  {
+    ERROR("Failed to lock tray in AGV shipment {}: {}", agv_id, msg.response.message);
+  }
+  else
+  {
+    INFO("Locked tray in AGV {} (msg: {})", agv_id, msg.response.message);
   }
 }
 

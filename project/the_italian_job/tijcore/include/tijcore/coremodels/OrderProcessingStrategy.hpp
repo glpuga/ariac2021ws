@@ -101,7 +101,7 @@ private:
       tijmath::RelativePose3 movable_tray_pose,                 //
       const std::set<AgvId>& agvs_in_use,                       //
       const std::set<StationId>& assemblies_in_use,             //
-      const std::string& target_container_name) const;
+      const AgvId& target_agv_id) const;
 
   void stableSortByDistanceToReferencePose(                                                  //
       const tijmath::RelativePose3& reference_pose,                                          //

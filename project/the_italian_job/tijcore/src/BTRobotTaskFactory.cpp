@@ -50,6 +50,7 @@
 #include <tijcore/btnodes/GetToolTablePoseNode.hpp>
 #include <tijcore/btnodes/LockAccessToVolumeAtPoseNode.hpp>
 #include <tijcore/btnodes/LockAccessToVolumeBetweenPosesNode.hpp>
+#include <tijcore/btnodes/LockMovableTrayInAGVNode.hpp>
 #include <tijcore/btnodes/LogErrorNode.hpp>
 #include <tijcore/btnodes/LogInfoNode.hpp>
 #include <tijcore/btnodes/LogWarningNode.hpp>
@@ -119,6 +120,7 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<RandomizeTargetPoseNode>("RandomizeTargetPose");
   factory.registerNodeType<GetCurrentRobotPoseNode>("GetCurrentRobotPose");
   factory.registerNodeType<FindClosesHintPoseForTargetNode>("FindClosesHintPoseForTarget");
+  factory.registerNodeType<LockMovableTrayInAGVNode>("LockMovableTrayInAGV");
 };
 
 }  // namespace
@@ -185,7 +187,7 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlacePartTask(
 RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlaceMovableTrayTask(
     ResourceManagerInterface::ManagedLocusHandle&& src_locus,
     ResourceManagerInterface::ManagedLocusHandle&& dst_locus,
-    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const
+    ResourceManagerInterface::PickAndPlaceRobotHandle&& robot, const tijcore::AgvId& agv_id) const
 {
   auto bt_task_parameters = std::make_shared<BTTaskParameters>();
   bt_task_parameters->resource_manager = resource_manager_;
@@ -193,6 +195,7 @@ RobotTaskInterface::Ptr BTRobotTaskFactory::getPickAndPlaceMovableTrayTask(
   bt_task_parameters->src_locus = std::move(src_locus);
   bt_task_parameters->dst_locus = std::move(dst_locus);
   bt_task_parameters->primary_robot = std::move(robot);
+  bt_task_parameters->agv_id = agv_id;
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set<BTTaskParameters::SharedPtr>(  // NOLINT(build/include_what_you_use)

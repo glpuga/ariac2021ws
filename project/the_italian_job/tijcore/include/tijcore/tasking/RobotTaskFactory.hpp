@@ -28,10 +28,11 @@ public:
                           ResourceManagerInterface::ManagedLocusHandle&& destination,
                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
 
-  RobotTaskInterface::Ptr getPickAndPlaceMovableTrayTask(
-      ResourceManagerInterface::ManagedLocusHandle&& source,
-      ResourceManagerInterface::ManagedLocusHandle&& destination,
-      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const override;
+  RobotTaskInterface::Ptr
+  getPickAndPlaceMovableTrayTask(ResourceManagerInterface::ManagedLocusHandle&& source,
+                                 ResourceManagerInterface::ManagedLocusHandle&& destination,
+                                 ResourceManagerInterface::PickAndPlaceRobotHandle&& robot,
+                                 const tijcore::AgvId& agv_id) const override;
 
   RobotTaskInterface::Ptr getSubmitKittingShipmentTask(
       const std::string& kitting_tray_name, const StationId& destination_station,

@@ -97,8 +97,8 @@ TEST_F(BTTestFixtureLoaded, BuildGetPickAndPlaceMovableTrayTask)
       ManagedLocus::CreateEmptyLocus("parent", {})) };
   ResourceManagerInterface::PickAndPlaceRobotHandle robot{ std::move(robot_mock_) };
 
-  auto uut = task_factory_->getPickAndPlaceMovableTrayTask(std::move(src_locus),
-                                                           std::move(dst_locus), std::move(robot));
+  auto uut = task_factory_->getPickAndPlaceMovableTrayTask(
+      std::move(src_locus), std::move(dst_locus), std::move(robot), tijcore::AgvId::agv1);
 }
 
 }  // namespace
