@@ -37,7 +37,8 @@ public:
   bool contactPartFromAboveAndGrasp(
       const tijmath::RelativePose3& target_end_effector_pose) const override;
 
-  bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target) const override;
+  bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target,
+                                        const double dynamic_factor) const override;
 
   bool getRobotTo2DPose(const tijmath::RelativePose3& target) const override;
 
@@ -64,8 +65,9 @@ public:
 
   void setRobotGripperState(const bool state) const override;
 
-  bool setRobotGripperPayloadEnvelope(const tijcore::PayloadEnvelope& payload_envelope,
-                                      const tijmath::Pose3& relative_pose) override;
+  bool setRobotGripperPayloadEnvelope(
+      const tijcore::PayloadEnvelope& payload_envelope,
+      const tijmath::Isometry& payload_into_end_effector_transform) override;
 
   bool removeRobotGripperPayloadEnvelope() override;
 
@@ -78,9 +80,9 @@ public:
   tijmath::RelativePose3 calculateVerticalDropPose(const tijmath::RelativePose3& target,
                                                    const double offset_to_top) const override;
 
-  tijmath::Pose3
-  calculateEndEffectorToPayloadTransform(const tijmath::RelativePose3& end_effector_pose,
-                                         const tijmath::RelativePose3& payload_pose) const override;
+  tijmath::Isometry calculatePayloadIntoEndEffectorTransform(
+      const tijmath::RelativePose3& end_effector_pose,
+      const tijmath::RelativePose3& payload_pose) const override;
 
   tijmath::RelativePose3 getCurrentRobotPose() const override;
 
@@ -93,7 +95,7 @@ private:
 
   bool enable_payload_envelope_{ false };
   tijcore::PayloadEnvelope payload_envelope_;
-  tijmath::Pose3 ee_to_payload_pose_;
+  tijmath::Isometry payload_into_end_effector_transform_;
 
   moveit::planning_interface::MoveGroupInterface*
   buildMoveItGroupHandle(const int max_planning_attempts) const;

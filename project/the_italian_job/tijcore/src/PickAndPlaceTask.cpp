@@ -67,7 +67,7 @@ RobotTaskOutcome PickAndPlaceTask::run()
 
   const auto initial_tool_type = robot.getRobotGripperToolType();
 
-  const auto ee_to_payload_transform = robot.calculateEndEffectorToPayloadTransform(
+  const auto ee_to_payload_transform = robot.calculatePayloadIntoEndEffectorTransform(
       robot.calculateVerticalGripEndEffectorPose(source_pose_in_world_frame, offset_to_top),
       source_pose_in_world_frame);
 
@@ -139,7 +139,8 @@ RobotTaskOutcome PickAndPlaceTask::run()
     ERROR("{} failed to disable the payload obstacle envelope", robot.getRobotName());
   }
   else if (!robot.getGripperIn3DPoseCartesianSpace(
-               robot.calculateVerticalDropPose(destination_.resource()->pose(), offset_to_top)))
+               robot.calculateVerticalDropPose(destination_.resource()->pose(), offset_to_top),
+               1.0))
   {
     ERROR("{} failed to place the part in the destination pose", robot.getRobotName());
   }

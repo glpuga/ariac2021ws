@@ -70,14 +70,14 @@
                     <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
                     <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
                 <Sequence>
                     <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="destination_locus_pose" />
-                    <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocus" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <SubTree task_parameters="task_parameters" ID="ManeuvePartIntoDestiantionPose" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
             </Sequence>
@@ -99,8 +99,8 @@
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" start_pose="source_locus_pose" end_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocusQuick" />
-                <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocusQuick" />
-                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                <SubTree task_parameters="task_parameters" ID="ManeuvePartIntoDestiantionPose" />
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                 <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -162,7 +162,7 @@
                     <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
                     <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndDrop" />
                     <DestroyPartAtSource task_parameters="{task_parameters}" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                 </Sequence>
                 <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
             </Fallback>
@@ -182,7 +182,7 @@
                     <SubTree task_parameters="task_parameters" ID="SelectPartGripperTool" />
                     <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndPlace" />
                     <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                 </Sequence>
                 <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
             </Fallback>
@@ -201,7 +201,7 @@
                     <SubTree task_parameters="task_parameters" ID="SelectMovableTrayPartGripperTool" />
                     <SubTree task_parameters="task_parameters" ID="SelectQuickOrSlowPickAndPlace" />
                     <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                     <LockMovableTrayInAGV task_parameters="{task_parameters}" />
                 </Sequence>
                 <SubTree task_parameters="task_parameters" ID="PeformFailureExitRecovery" />
@@ -322,31 +322,13 @@
         Parameters:
             task_parameters (TaskParameters): The task parameters structure.
     -->
-    <BehaviorTree ID="PlacePartAtDestinationLocus">
+    <BehaviorTree ID="PlacePartAtDestinationLocusFromAbove">
         <TraceLoggerDecorator>
             <Sequence>
-                <LogInfo message="PlacePartAtDestinationLocus" />
+                <LogInfo message="PlacePartAtDestinationLocusFromAbove" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
-                <SubTree task_parameters="task_parameters" ID="TryPlacingItemDownWithRetry" target_pose="destination_locus_pose" />
-                <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
-            </Sequence>
-        </TraceLoggerDecorator>
-    </BehaviorTree>
-
-    <!--
-        Places the part currently held by the robot in the gripper, without doing any navigation to avoid extra time.
-        This also assumes that the robot is currently holding the part and that the collistion envelope is set.
-        Parameters:
-            task_parameters (TaskParameters): The task parameters structure.
-    -->
-    <BehaviorTree ID="PlacePartAtDestinationLocusQuick">
-        <TraceLoggerDecorator>
-            <Sequence>
-                <LogInfo message="PlacePartAtDestinationLocusQuick" />
-                <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
-                <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
-                <SubTree task_parameters="task_parameters" ID="TryPlacingItemDownWithRetry" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TryPlacingPartFromAboveWithRetry" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -380,10 +362,10 @@
         task_parameters (TaskParameters): The task parameters structure.
         target_pose (Pose): The target pose to which the robot should place the part.
     -->
-    <BehaviorTree ID="TryPlacingItemDown">
+    <BehaviorTree ID="TryPlacingPartFromAbove">
         <TraceLoggerDecorator>
             <Sequence>
-                <LogInfo message="TryPlacingItemDown" />
+                <LogInfo message="TryPlacingPartFromAbove" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
                 <SubTree task_parameters="task_parameters" ID="DropPartInTargetPose" target_pose="target_pose" />
             </Sequence>
@@ -391,18 +373,18 @@
     </BehaviorTree>
 
     <!--
-        Same as TryPlacingItemDown, but with doing a retry from a slightly different pose if the operation fails.
+        Same as TryPlacingPartFromAbove, but with doing a retry from a slightly different pose if the operation fails.
         Parameters:
             task_parameters (TaskParameters): The task parameters structure.
             target_pose (Pose): The target pose to which the robot should place the part.
     -->
-    <BehaviorTree ID="TryPlacingItemDownWithRetry">
+    <BehaviorTree ID="TryPlacingPartFromAboveWithRetry">
         <TraceLoggerDecorator>
             <Sequence>
-                <LogInfo message="TryPlacingItemDownWithRetry" />
+                <LogInfo message="TryPlacingPartFromAboveWithRetry" />
                 <RetryUntilSuccessful num_attempts="5">
                     <Fallback>
-                        <SubTree task_parameters="task_parameters" ID="TryPlacingItemDown" target_pose="target_pose" />
+                        <SubTree task_parameters="task_parameters" ID="TryPlacingPartFromAbove" target_pose="target_pose" />
                         <ForceFailure>
                             <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="target_pose" />
                         </ForceFailure>
@@ -496,8 +478,8 @@
                 <LogInfo message="SetupCollisionEnvelope" />
                 <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
                 <CalculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{target_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{end_effector_pose}" />
-                <CalculateEndEffectorToPayloadTransform task_parameters="{task_parameters}" end_effector_pose="{end_effector_pose}" payload_pose="{target_pose}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" />
-                <SetRobotGripperPayloadEnvelope task_parameters="{task_parameters}" end_effector_to_payload_transform="{end_effector_to_payload_transform}" payload_envelope="{payload_envelope}" />
+                <CalculatePayloadIntoEndEffectorTransform task_parameters="{task_parameters}" end_effector_pose="{end_effector_pose}" payload_pose="{target_pose}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" />
+                <SetRobotGripperPayloadEnvelope task_parameters="{task_parameters}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" payload_envelope="{payload_envelope}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -642,6 +624,147 @@
                 <FindClosesHintPoseForTarget task_parameters="{task_parameters}" target_pose="{target_pose}" hint_pose="{hint_pose}" />
                 <RandomizeTargetPose task_parameters="{task_parameters}" max_radius="0.05" target_pose="{hint_pose}" randomized_target_pose="{randomized_target_pose}" />
                 <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{randomized_target_pose}" aim_target_pose="{target_pose}" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="GetRobotInClosestSafePoseIfNeccessary">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="GetRobotInClosestSafePoseIfNeccessary" />
+                <Fallback>
+                    <DestinationSurfaceIsAnAssemblyStation task_parameters="{task_parameters}" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                </Fallback>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="ManeuvePartIntoDestiantionPose">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="ManeuvePartIntoDestiantionPose" />
+                <IfThenElse>
+                    <ManeouverTypeIs task_parameters="{task_parameters}" type="SensorAssembly" />
+                    <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocusAsSensorAssembly" />
+                    <Sequence>
+                        <IfThenElse>
+                            <ManeouverTypeIs task_parameters="{task_parameters}" type="RegulatorAssembly" />
+                            <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocusAsRegulatorAssembly" />
+                            <Sequence>
+                                <IfThenElse>
+                                    <ManeouverTypeIs task_parameters="{task_parameters}" type="PlaceFromAbove" />
+                                    <SubTree task_parameters="task_parameters" ID="PlacePartAtDestinationLocusFromAbove" />
+                                    <AlwaysFailure /> <!-- indicate an error -->
+                                </IfThenElse>
+                            </Sequence>
+                        </IfThenElse>
+                    </Sequence>
+                </IfThenElse>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="PlacePartAtDestinationLocusAsRegulatorAssembly">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PlacePartAtDestinationLocusAsRegulatorAssembly" />
+                <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TryPlacingRegulatorAssemblyWithRetry" target_pose="destination_locus_pose" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="TryPlacingRegulatorAssemblyWithRetry">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TryPlacingRegulatorAssemblyWithRetry" />
+                <RetryUntilSuccessful num_attempts="5">
+                    <Fallback>
+                        <SubTree task_parameters="task_parameters" ID="TryPlacingRegulatorAssembly" target_pose="target_pose" />
+                        <ForceFailure>
+                            <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="target_pose" />
+                        </ForceFailure>
+                    </Fallback>
+                </RetryUntilSuccessful>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="TryPlacingRegulatorAssembly">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TryPlacingRegulatorAssembly" />
+                <Sequence>
+                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                    <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
+                    <CalculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{source_locus_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{source_end_effector_pose}" />
+                    <CalculatePayloadIntoEndEffectorTransform task_parameters="{task_parameters}" end_effector_pose="{source_end_effector_pose}" payload_pose="{source_locus_pose}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" />
+                    <CalculateEndEffectorPoseFromPayloadPose payload_pose="{target_pose}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" end_effector_pose="{dst_end_effector_pose}" />
+                </Sequence>
+                <CalculateRegulatorPreInsertAndInsertPoses task_parameters="{task_parameters}" target_pose="{dst_end_effector_pose}" pre_insert_pose="{pre_insert_pose}" insert_pose="{insert_pose}" />
+                <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
+                <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
+                <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{insert_pose}" />
+                <GetRobotGripperOff task_parameters="{task_parameters}" />
+                <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="PlacePartAtDestinationLocusAsSensorAssembly">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PlacePartAtDestinationLocusAsSensorAssembly" />
+                <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TryInsertingSensorFromFrontWithRetry" target_pose="destination_locus_pose" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="TryInsertingSensorFromFrontWithRetry">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TryInsertingSensorFromFrontWithRetry" />
+                <RetryUntilSuccessful num_attempts="5">
+                    <Fallback>
+                        <SubTree task_parameters="task_parameters" ID="TryInsertingSensorFromFront" target_pose="target_pose" />
+                        <ForceFailure>
+                            <SubTree task_parameters="task_parameters" ID="GoToRandomPoseNearPose" target_pose="target_pose" />
+                        </ForceFailure>
+                    </Fallback>
+                </RetryUntilSuccessful>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="TryInsertingSensorFromFront">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TryInsertingSensorFromFront" />
+                <Sequence>
+                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                    <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
+                    <CalculateVerticalGripEndEffectorPose task_parameters="{task_parameters}" target_pose="{source_locus_pose}" offset_to_top="{offset_to_top}" end_effector_pose="{source_end_effector_pose}" />
+                    <CalculatePayloadIntoEndEffectorTransform task_parameters="{task_parameters}" end_effector_pose="{source_end_effector_pose}" payload_pose="{source_locus_pose}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" />
+                    <CalculateEndEffectorPoseFromPayloadPose payload_pose="{target_pose}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" end_effector_pose="{dst_end_effector_pose}" />
+                </Sequence>
+                <CalculateSensorPreInsertAndInsertPoses task_parameters="{task_parameters}" target_pose="{dst_end_effector_pose}" pre_insert_pose="{pre_insert_pose}" insert_pose="{insert_pose}" gripper_exit_pose="{gripper_exit_pose}" />
+                <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
+                <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
+                <ForceSuccess>
+                    <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{insert_pose}" />
+                </ForceSuccess>
+                <Delay delay_msec="1000">
+                    <AlwaysSuccess />
+                </Delay>
+                <GetRobotGripperOff task_parameters="{task_parameters}" />
+                <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{gripper_exit_pose}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>

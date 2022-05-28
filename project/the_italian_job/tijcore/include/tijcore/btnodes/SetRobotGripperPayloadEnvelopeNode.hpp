@@ -29,18 +29,18 @@ public:
     return {
       BT::InputPort<BTTaskParameters::SharedPtr>("task_parameters"),
       BT::InputPort<PayloadEnvelope>("payload_envelope"),
-      BT::InputPort<tijmath::Pose3>("end_effector_to_payload_transform"),
+      BT::InputPort<tijmath::Isometry>("payload_into_end_effector_transform"),
     };
   }
 
   BT::NodeStatus tick() override
   {
     auto payload_envelope = getInput<PayloadEnvelope>("payload_envelope").value();
-    auto end_effector_to_payload_transform =
-        getInput<tijmath::Pose3>("end_effector_to_payload_transform").value();
+    auto payload_into_end_effector_transform =
+        getInput<tijmath::Isometry>("payload_into_end_effector_transform").value();
     auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
-    adapter_->setRobotGripperPayloadEnvelope(payload_envelope, end_effector_to_payload_transform);
+    adapter_->setRobotGripperPayloadEnvelope(payload_envelope, payload_into_end_effector_transform);
     return BT::NodeStatus::SUCCESS;
   }
 };

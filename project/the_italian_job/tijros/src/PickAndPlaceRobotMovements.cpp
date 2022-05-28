@@ -48,11 +48,11 @@ static const int max_planning_attempts_small = 5;
 
 static const double tight_goal_position_tolerance_ = 0.001;
 static const double tight_goal_orientation_tolerance_ =
-    tijmath::utils::angles::degreesToRadians(0.2);
+    tijmath::utils::angles::degreesToRadians(0.02);
 
-static const double coarse_goal_position_tolerance_ = 0.015;
+static const double coarse_goal_position_tolerance_ = 0.001;
 static const double coarse_goal_orientation_tolerance_ =
-    tijmath::utils::angles::degreesToRadians(2.5);
+    tijmath::utils::angles::degreesToRadians(0.1);
 
 moveit_msgs::CollisionObject
 createCollisionBox(const std::string& id, const std::string& sub_id, const std::string& frame_id,
@@ -133,11 +133,12 @@ void PickAndPlaceRobotMovements::createPayloadEnvelopCollisionBox() const
     geometry_msgs::Pose box_pose;
 
     {
-      const auto t = ee_to_payload_pose_.position().vector();
+      const auto t = payload_into_end_effector_transform_.translation();
       box_pose.position.x = t.x();
       box_pose.position.y = t.y();
       box_pose.position.z = t.z();
-      const auto q = ee_to_payload_pose_.rotation().quaternion();
+      const auto q =
+          tijmath::Rotation{ payload_into_end_effector_transform_.rotation() }.quaternion();
       box_pose.orientation.w = q.w();
       box_pose.orientation.x = q.x();
       box_pose.orientation.y = q.y();
@@ -534,7 +535,7 @@ bool PickAndPlaceRobotMovements::contactPartFromAboveAndGrasp(
 }
 
 bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
-    const tijmath::RelativePose3& target) const
+    const tijmath::RelativePose3& target, const double dynamic_factor) const
 {
   const auto action_name = "getGripperIn3DPoseCartesianSpace";
   if (!getRobotHealthState())
@@ -545,7 +546,19 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
   auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   move_group_ptr->setPoseReferenceFrame(world_frame);
 
-  INFO("Place movement: {} is calculating the pickup trajectory", getRobotName());
+  if (dynamic_factor < 0.98)
+  {
+    WARNING(
+        "Cartesian space planning: {} has been configured with a dynamic factor smaller than 1.0. "
+        "Using {} as the vel/acc factor",
+        getRobotName(), dynamic_factor);
+  }
+
+  // TODO(glpuga) Remove. Apparently, scaling is not implemented for cartesian planning.
+  move_group_ptr_->setMaxAccelerationScalingFactor(dynamic_factor);
+  move_group_ptr_->setMaxVelocityScalingFactor(dynamic_factor);
+
+  INFO("Cartesian space planning: {} is calculating the pickup trajectory", getRobotName());
 
   auto frame_transformer = toolbox_->getFrameTransformer();
   const auto target_in_world_pose = frame_transformer->transformPoseToFrame(target, world_frame);
@@ -557,12 +570,13 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
     INFO("Place will drop the part once we are at {} in {} frame",
          utils::convertGeoPoseToCorePose(waypoints.at(0)), world_frame);
 
-    INFO("Place movement: {} is generating the moveit plan", getRobotName());
+    INFO("Cartesian space planning: {} is generating the moveit plan", getRobotName());
     moveit_msgs::RobotTrajectory trajectory;
     {
       const double fraction = move_group_ptr->computeCartesianPath(
           waypoints, pickup_displacement_step_, pickup_displacement_jump_threshold_, trajectory);
-      DEBUG("Place movement: cartesian planner plan fraction for {}: {}", getRobotName(), fraction);
+      DEBUG("Cartesian space planning: cartesian planner plan fraction for {}: {}", getRobotName(),
+            fraction);
       bool success = (fraction > 0.95);
       if (!success)
       {
@@ -576,7 +590,7 @@ bool PickAndPlaceRobotMovements::getGripperIn3DPoseCartesianSpace(
 
     // we don't check the return value because it's going to return failure once
     // we hit the table
-    INFO("Place movement: {} is executing the movement", getRobotName());
+    INFO("Cartesian space planning: {} is executing the movement", getRobotName());
     move_group_ptr->execute(trajectory);
   }
 
@@ -817,26 +831,32 @@ tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalGripEndEffec
   return end_effector_pose;
 }
 
-tijmath::Pose3 PickAndPlaceRobotMovements::calculateEndEffectorToPayloadTransform(
+tijmath::Isometry PickAndPlaceRobotMovements::calculatePayloadIntoEndEffectorTransform(
     const tijmath::RelativePose3& end_effector_pose,
     const tijmath::RelativePose3& payload_pose) const
 {
   auto frame_transformer = toolbox_->getFrameTransformer();
-  auto end_effector_in_world =
+
+  auto end_effector_in_world_pose =
       frame_transformer->transformPoseToFrame(end_effector_pose, world_frame);
-  auto payload_pose_in_world = frame_transformer->transformPoseToFrame(payload_pose, world_frame);
+  auto payload_pose_in_world_pose =
+      frame_transformer->transformPoseToFrame(payload_pose, world_frame);
 
   auto isometry_from_relative_pose = [](const auto& pose) {
     return tijmath::Isometry{ pose.rotation().rotationMatrix(), pose.position().vector() };
   };
 
-  const auto end_effector_from_world_iso = isometry_from_relative_pose(end_effector_in_world);
-  const auto payload_from_world_iso = isometry_from_relative_pose(payload_pose_in_world);
+  // w_T_ee
+  const auto end_effector_into_world_transform =
+      isometry_from_relative_pose(end_effector_in_world_pose);
+  // w_T_p
+  const auto payload_in_world_transform = isometry_from_relative_pose(payload_pose_in_world_pose);
 
-  const auto end_effector_to_payload_iso =
-      end_effector_from_world_iso.inv() * payload_from_world_iso;
-  return tijmath::Pose3{ tijmath::Position{ end_effector_to_payload_iso.translation() },
-                         tijmath::Rotation{ end_effector_to_payload_iso.rotation() } };
+  // (w_T_ee)^-1 * (w_T_p) = ee_T_p , transfrom from payload froma th end effector frame
+  const auto payload_in_end_effector_transform =
+      end_effector_into_world_transform.inv() * payload_in_world_transform;
+
+  return payload_in_end_effector_transform;
 }
 
 bool PickAndPlaceRobotMovements::getRobotGripperAttachementState() const
@@ -865,11 +885,12 @@ void PickAndPlaceRobotMovements::setRobotGripperState(const bool state) const
 }
 
 bool PickAndPlaceRobotMovements::setRobotGripperPayloadEnvelope(
-    const tijcore::PayloadEnvelope& payload_envelope, const tijmath::Pose3& relative_pose)
+    const tijcore::PayloadEnvelope& payload_envelope,
+    const tijmath::Isometry& payload_into_end_effector_transform)
 {
   enable_payload_envelope_ = true;
   payload_envelope_ = payload_envelope;
-  ee_to_payload_pose_ = relative_pose;
+  payload_into_end_effector_transform_ = payload_into_end_effector_transform;
   return true;
 }
 
