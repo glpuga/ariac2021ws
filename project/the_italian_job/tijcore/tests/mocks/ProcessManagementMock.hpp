@@ -42,6 +42,8 @@ public:
                      ErrorWithReason(const StationId& station, const std::string& shipment_type));
 
   MOCK_CONST_METHOD1(getAgvStation, StationId(const AgvId& agv_id));
+
+  MOCK_CONST_METHOD1(lockTrayInAgv, void(const AgvId& agv_id));
 };
 
 }  // namespace tijcore

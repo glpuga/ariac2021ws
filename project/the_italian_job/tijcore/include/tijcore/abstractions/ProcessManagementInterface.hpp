@@ -43,6 +43,8 @@ public:
                                                 const std::string& shipment_type) const = 0;
 
   virtual StationId getAgvStation(const AgvId& station) const = 0;
+
+  virtual void lockTrayInAgv(const tijcore::AgvId& agv_id) const = 0;
 };
 
 }  // namespace tijcore

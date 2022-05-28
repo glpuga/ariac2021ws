@@ -11,6 +11,7 @@
 // tijcore
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/abstractions/RobotTaskInterface.hpp>
+#include <tijcore/datatypes/AgvId.hpp>
 #include <tijcore/datatypes/ShipmentType.hpp>
 #include <tijcore/datatypes/StationId.hpp>
 
@@ -33,10 +34,11 @@ public:
                           ResourceManagerInterface::ManagedLocusHandle&& destination,
                           ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
 
-  virtual RobotTaskInterface::Ptr getPickAndPlaceMovableTrayTask(
-      ResourceManagerInterface::ManagedLocusHandle&& source,
-      ResourceManagerInterface::ManagedLocusHandle&& destination,
-      ResourceManagerInterface::PickAndPlaceRobotHandle&& robot) const = 0;
+  virtual RobotTaskInterface::Ptr
+  getPickAndPlaceMovableTrayTask(ResourceManagerInterface::ManagedLocusHandle&& source,
+                                 ResourceManagerInterface::ManagedLocusHandle&& destination,
+                                 ResourceManagerInterface::PickAndPlaceRobotHandle&& robot,
+                                 const tijcore::AgvId& agv_id) const = 0;
 
   virtual RobotTaskInterface::Ptr
   getSubmitKittingShipmentTask(const std::string& kitting_tray_name, const StationId& station_id,

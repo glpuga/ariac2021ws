@@ -45,6 +45,8 @@ public:
 
   tijcore::StationId getAgvStation(const tijcore::AgvId& agv_id) const override;
 
+  void lockTrayInAgv(const tijcore::AgvId& agv_id) const override;
+
 private:
   mutable std::mutex mutex_;
 
