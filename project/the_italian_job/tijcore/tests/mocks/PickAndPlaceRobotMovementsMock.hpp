@@ -31,7 +31,8 @@ public:
 
   MOCK_CONST_METHOD1(contactPartFromAboveAndGrasp, bool(const tijmath::RelativePose3& target));
 
-  MOCK_CONST_METHOD1(getGripperIn3DPoseCartesianSpace, bool(const tijmath::RelativePose3& target));
+  MOCK_CONST_METHOD2(getGripperIn3DPoseCartesianSpace,
+                     bool(const tijmath::RelativePose3& target, const double dynamic_factor));
 
   MOCK_CONST_METHOD1(getRobotTo2DPose, bool(const tijmath::RelativePose3& target));
 
@@ -55,8 +56,8 @@ public:
 
   MOCK_CONST_METHOD1(testIfRobotReachesPose, bool(const tijmath::RelativePose3& target));
 
-  MOCK_METHOD2(setRobotGripperPayloadEnvelope,
-               bool(const PayloadEnvelope& payload_envelope, const tijmath::Pose3& relative_pose));
+  MOCK_METHOD2(setRobotGripperPayloadEnvelope, bool(const PayloadEnvelope& payload_envelope,
+                                                    const tijmath::Isometry& relative_pose));
 
   MOCK_METHOD0(removeRobotGripperPayloadEnvelope, bool());
 
@@ -72,9 +73,9 @@ public:
                      tijmath::RelativePose3(const tijmath::RelativePose3& target,
                                             const double offset_to_top));
 
-  MOCK_CONST_METHOD2(calculateEndEffectorToPayloadTransform,
-                     tijmath::Pose3(const tijmath::RelativePose3& end_effector_pose,
-                                    const tijmath::RelativePose3& payload_pose));
+  MOCK_CONST_METHOD2(calculatePayloadIntoEndEffectorTransform,
+                     tijmath::Isometry(const tijmath::RelativePose3& end_effector_pose,
+                                       const tijmath::RelativePose3& payload_pose));
 
   MOCK_CONST_METHOD2(rotateRobotToFaceTarget, bool(const tijmath::RelativePose3& target,
                                                    const tijmath::RelativePose3& aim_target));

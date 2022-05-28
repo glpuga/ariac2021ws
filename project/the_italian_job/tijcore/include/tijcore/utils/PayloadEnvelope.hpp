@@ -76,8 +76,8 @@ private:
   {
     static const std::unordered_map<PartTypeId, tijmath::Vector3> id_map = {
       { PartTypeId::battery, tijmath::Vector3{ 0.136, 0.06, 0.05 } },
-      { PartTypeId::sensor, tijmath::Vector3{ 0.125, 0.105, 0.06 } * 1.1 },
-      { PartTypeId::regulator, tijmath::Vector3{ 0.093, 0.126, 0.066 } },
+      { PartTypeId::sensor, tijmath::Vector3{ 0.1375, 0.1155, 0.076 } },
+      { PartTypeId::regulator, tijmath::Vector3{ 0.093, 0.126, 0.076 } },
       { PartTypeId::pump, tijmath::Vector3{ 0.11, 0.11, 0.11 } },
     };
     auto it = id_map.find(id);

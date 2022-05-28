@@ -50,7 +50,7 @@ RobotTaskOutcome RemoveBrokenPartTask::run()
 
   const auto payload_envelope_info = tijcore::PayloadEnvelope::makeEnvelope(part_type_id);
 
-  const auto ee_to_payload_transform = robot.calculateEndEffectorToPayloadTransform(
+  const auto ee_to_payload_transform = robot.calculatePayloadIntoEndEffectorTransform(
       robot.calculateVerticalGripEndEffectorPose(target_pose_in_world_frame, offset_to_top),
       target_pose_in_world_frame);
 

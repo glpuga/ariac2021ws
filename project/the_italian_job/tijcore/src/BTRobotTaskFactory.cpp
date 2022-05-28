@@ -24,12 +24,16 @@
 
 // tijcore nodes
 #include <tijcore/btnodes/AbortCurrentActionNode.hpp>
-#include <tijcore/btnodes/CalculateEndEffectorToPayloadTransformNode.hpp>
+#include <tijcore/btnodes/CalculateEndEffectorPoseFromPayloadPoseNode.hpp>
 #include <tijcore/btnodes/CalculateEnvelopeAndOffsetForVerticalPickUpNode.hpp>
+#include <tijcore/btnodes/CalculatePayloadIntoEndEffectorTransformNode.hpp>
+#include <tijcore/btnodes/CalculateRegulatorPreInsertAndInsertPosesNode.hpp>
+#include <tijcore/btnodes/CalculateSensorPreInsertAndInsertPosesNode.hpp>
 #include <tijcore/btnodes/CalculateVerticalDropPoseNode.hpp>
 #include <tijcore/btnodes/CalculateVerticalGripEndEffectorPoseNode.hpp>
 #include <tijcore/btnodes/CalculateVerticalLandingPoseNode.hpp>
 #include <tijcore/btnodes/ContactPartFromAboveAndGraspNode.hpp>
+#include <tijcore/btnodes/DestinationSurfaceIsAnAssemblyStationNode.hpp>
 #include <tijcore/btnodes/DestroyPartAtSourceNode.hpp>
 #include <tijcore/btnodes/FindClosesHintPoseForTargetNode.hpp>
 #include <tijcore/btnodes/GetCurrentRobotPoseNode.hpp>
@@ -54,6 +58,7 @@
 #include <tijcore/btnodes/LogErrorNode.hpp>
 #include <tijcore/btnodes/LogInfoNode.hpp>
 #include <tijcore/btnodes/LogWarningNode.hpp>
+#include <tijcore/btnodes/ManeouverTypeIsNode.hpp>
 #include <tijcore/btnodes/PosesAreWithinRangeNode.hpp>
 #include <tijcore/btnodes/RandomizeTargetPoseNode.hpp>
 #include <tijcore/btnodes/ReleaseAccessToLockedVolumeNode.hpp>
@@ -74,8 +79,8 @@ namespace
 void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
 {
   factory.registerNodeType<AbortCurrentActionNode>("AbortCurrentAction");
-  factory.registerNodeType<CalculateEndEffectorToPayloadTransformNode>(
-      "CalculateEndEffectorToPayloadTransform");
+  factory.registerNodeType<CalculatePayloadIntoEndEffectorTransformNode>(
+      "CalculatePayloadIntoEndEffectorTransform");
   factory.registerNodeType<CalculateVerticalDropPoseNode>("CalculateVerticalDropPose");
   factory.registerNodeType<CalculateVerticalGripEndEffectorPoseNode>(
       "CalculateVerticalGripEndEffectorPose");
@@ -121,6 +126,15 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<GetCurrentRobotPoseNode>("GetCurrentRobotPose");
   factory.registerNodeType<FindClosesHintPoseForTargetNode>("FindClosesHintPoseForTarget");
   factory.registerNodeType<LockMovableTrayInAGVNode>("LockMovableTrayInAGV");
+  factory.registerNodeType<CalculateEndEffectorPoseFromPayloadPoseNode>(
+      "CalculateEndEffectorPoseFromPayloadPose");
+  factory.registerNodeType<ManeouverTypeIsNode>("ManeouverTypeIs");
+  factory.registerNodeType<DestinationSurfaceIsAnAssemblyStationNode>(
+      "DestinationSurfaceIsAnAssemblyStation");
+  factory.registerNodeType<CalculateRegulatorPreInsertAndInsertPosesNode>(
+      "CalculateRegulatorPreInsertAndInsertPoses");
+  factory.registerNodeType<CalculateSensorPreInsertAndInsertPosesNode>(
+      "CalculateSensorPreInsertAndInsertPoses");
 };
 
 }  // namespace

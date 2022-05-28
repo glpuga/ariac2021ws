@@ -14,7 +14,7 @@
 #include <tijcore/datatypes/GripperTypeId.hpp>
 #include <tijcore/datatypes/PartTypeId.hpp>
 #include <tijcore/utils/PayloadEnvelope.hpp>
-#include <tijmath/Pose3.hpp>
+#include <tijmath/Isometry.hpp>
 #include <tijmath/RelativePose3.hpp>
 
 namespace tijcore
@@ -36,7 +36,8 @@ public:
   virtual bool
   contactPartFromAboveAndGrasp(const tijmath::RelativePose3& target_end_effector_pose) const = 0;
 
-  virtual bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target) const = 0;
+  virtual bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target,
+                                                const double dynamic_factor) const = 0;
 
   virtual bool getRobotTo2DPose(const tijmath::RelativePose3& target) const = 0;
 
@@ -63,8 +64,9 @@ public:
 
   virtual void setRobotGripperState(const bool state) const = 0;
 
-  virtual bool setRobotGripperPayloadEnvelope(const PayloadEnvelope& payload_envelope,
-                                              const tijmath::Pose3& relative_pose) = 0;
+  virtual bool
+  setRobotGripperPayloadEnvelope(const PayloadEnvelope& payload_envelope,
+                                 const tijmath::Isometry& payload_into_end_effector_transform) = 0;
 
   virtual bool removeRobotGripperPayloadEnvelope() = 0;
 
@@ -77,9 +79,9 @@ public:
   virtual tijmath::RelativePose3 calculateVerticalDropPose(const tijmath::RelativePose3& target,
                                                            const double offset_to_top) const = 0;
 
-  virtual tijmath::Pose3
-  calculateEndEffectorToPayloadTransform(const tijmath::RelativePose3& end_effector_pose,
-                                         const tijmath::RelativePose3& payload_pose) const = 0;
+  virtual tijmath::Isometry
+  calculatePayloadIntoEndEffectorTransform(const tijmath::RelativePose3& end_effector_pose,
+                                           const tijmath::RelativePose3& payload_pose) const = 0;
 
   virtual tijmath::RelativePose3 getCurrentRobotPose() const = 0;
 };

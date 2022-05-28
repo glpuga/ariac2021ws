@@ -11,7 +11,6 @@
 
 // tijmath
 #include <tijmath/Matrix3.hpp>
-#include <tijmath/Quaternion.hpp>
 #include <tijmath/Vector3.hpp>
 
 namespace tijmath
