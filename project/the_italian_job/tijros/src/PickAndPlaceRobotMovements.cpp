@@ -656,22 +656,43 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
   DEBUG(" - adding assembly station representatives");
   for (const auto& item : scene_configuration->getListOfAssemblyStations())
   {
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_table", item.frame_id, 1.6,
-                                                   1.2, z_offset, -0.3, -0.1, 0.0, operation));
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_front", item.frame_id,
-                                                   0.05, 0.6, 0.16, 0.3, 0.0, 0.08, operation));
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_side", item.frame_id, 0.6,
-                                                   0.05, 0.16, 0.0, -0.3, 0.08, operation));
-    collision_objects.push_back(createCollisionBox(item.name, "table_right", item.frame_id, 1.0,
-                                                   0.10, 1.0, -0.70, -0.75, 0.5, operation));
-    collision_objects.push_back(createCollisionBox(item.name, "table_back", item.frame_id, 0.8, 1.2,
-                                                   1.0, -0.7, -0.1, 0.5, operation));
-    collision_objects.push_back(createCollisionBox(item.name, "table_left", item.frame_id, 1.6, 0.1,
-                                                   1.0, -0.45, 0.54, 0.5, operation));
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_1", item.frame_id,
-                                                   0.04, 0.1, 0.80, 0.33, 0.35, 0.40, operation));
-    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_2", item.frame_id, 0.7,
-                                                   0.1, 0.1, 0.0, 0.35, 0.75, operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_table", item.frame_id,  //
+                                                   1.3, 1.2, z_offset,  // wx, wy, wz
+                                                   -0.3, -0.1, 0.0,     // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_front", item.frame_id,  //
+                                                   0.05, 0.6, 0.16,  // wx, wy, wz
+                                                   0.3, 0.0, 0.08,   // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_side", item.frame_id,  //
+                                                   0.6, 0.05, 0.16,  // wx, wy, wz
+                                                   0.0, -0.3, 0.08,  // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "table_right", item.frame_id,  //
+                                                   1.0, 0.10, 1.0,     // wx, wy, wz
+                                                   -0.70, -0.75, 0.5,  // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "table_back",
+                                                   item.frame_id,    //
+                                                   0.6, 1.2, 1.0,    // wx, wy, wz
+                                                   -0.9, -0.1, 0.5,  // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "table_left", item.frame_id,  //
+                                                   1.6, 0.1, 1.0,     // wx, wy, wz
+                                                   -0.45, 0.54, 0.5,  // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_1", item.frame_id,  //
+                                                   0.04, 0.1, 0.80,   // wx, wy, wz
+                                                   0.33, 0.35, 0.40,  // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "briefcase_top_2", item.frame_id,  //
+                                                   0.7, 0.1, 0.1,    // wx, wy, wz
+                                                   0.0, 0.35, 0.75,  // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "human_pen", item.frame_id,  //
+                                                   1.0, 1.0, 2.0,   // wx, wy, wz
+                                                   -1.3, 0.0, 0.0,  // cx, cy, cz
+                                                   operation));
   }
 
   DEBUG(" - adding bin representatives");
@@ -711,7 +732,6 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
                                                  -1.3, 0.0, 0.93, operation));
 
   // Imaginary divider
-
   // TODO(glpuga) hacky solution to avoid having gantry hit the kitting robot when rotating in place
   if (robot_specific_interface_->getRobotName() == "gantry")
   {
