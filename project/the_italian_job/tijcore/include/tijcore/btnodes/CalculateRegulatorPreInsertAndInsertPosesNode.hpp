@@ -33,6 +33,7 @@ public:
       BT::InputPort<tijmath::RelativePose3>("target_pose"),
       BT::OutputPort<tijmath::RelativePose3>("pre_insert_pose"),
       BT::OutputPort<tijmath::RelativePose3>("insert_pose"),
+      BT::OutputPort<tijmath::RelativePose3>("gripper_exit_pose"),
     };
   }
 
@@ -50,14 +51,19 @@ public:
         frame_transformer->transformPoseToFrame(target_pose, world_frame_name);
 
     auto pre_insert_pose = target_in_world;
-    pre_insert_pose.position().vector().z() += 0.20;
+    pre_insert_pose.position().vector().z() += 0.06;
     pre_insert_pose.position().vector().x() += 0.011;  // TODO(glpuga) fine tuning
     setOutput("pre_insert_pose", pre_insert_pose);
 
     auto insert_pose = target_in_world;
-    insert_pose.position().vector().z() += 0.11;
+    insert_pose.position().vector().z() += 0.04;
     insert_pose.position().vector().x() += 0.011;  // TODO(glpuga) fine tuning
     setOutput("insert_pose", insert_pose);
+
+    auto gripper_exit_pose = target_in_world;
+    gripper_exit_pose.position().vector().z() += 0.20;
+    gripper_exit_pose.position().vector().x() += 0.05;
+    setOutput("gripper_exit_pose", insert_pose);
 
     return BT::NodeStatus::SUCCESS;
   }

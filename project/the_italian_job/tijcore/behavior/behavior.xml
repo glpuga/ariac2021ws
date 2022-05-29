@@ -706,15 +706,19 @@
                     <CalculatePayloadIntoEndEffectorTransform task_parameters="{task_parameters}" end_effector_pose="{source_end_effector_pose}" payload_pose="{source_locus_pose}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" />
                     <CalculateEndEffectorPoseFromPayloadPose payload_pose="{target_pose}" payload_into_end_effector_transform="{payload_into_end_effector_transform}" end_effector_pose="{dst_end_effector_pose}" />
                 </Sequence>
-                <CalculateRegulatorPreInsertAndInsertPoses task_parameters="{task_parameters}" target_pose="{dst_end_effector_pose}" pre_insert_pose="{pre_insert_pose}" insert_pose="{insert_pose}" />
+                <CalculateRegulatorPreInsertAndInsertPoses task_parameters="{task_parameters}" target_pose="{dst_end_effector_pose}" pre_insert_pose="{pre_insert_pose}" insert_pose="{insert_pose}" gripper_exit_pose="gripper_exit_pose" />
                 <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
                 <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
-                <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{insert_pose}" />
+                <ForceSuccess>
+                    <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{insert_pose}" />
+                </ForceSuccess>
                 <Delay delay_msec="1000">
                     <AlwaysSuccess />
                 </Delay>
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
-                <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
+                <ForceSuccess>
+                    <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{gripper_exit_pose}" />
+                </ForceSuccess>
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -768,7 +772,9 @@
                     <AlwaysSuccess />
                 </Delay>
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
-                <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{gripper_exit_pose}" />
+                <ForceSuccess>
+                    <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{gripper_exit_pose}" />
+                </ForceSuccess>
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>

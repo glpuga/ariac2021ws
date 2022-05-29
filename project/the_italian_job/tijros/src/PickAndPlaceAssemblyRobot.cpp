@@ -96,11 +96,20 @@ void PickAndPlaceAssemblyRobot::patchJointStateValuesForArmInRestingPose(
   }
   // Note that rail coordinates are relative to the rail, not to world
 
-  // joint_states[2] = 0.0;
+  joint_states[2] = 0.0;
 
+  // resting "classic 2021"
+  // joint_states[3] = degreesToRadians(180);
+  // joint_states[4] = degreesToRadians(-60);
+  // joint_states[5] = degreesToRadians(-90);
+  // joint_states[6] = degreesToRadians(-30);
+  // joint_states[7] = degreesToRadians(90);
+  // joint_states[8] = degreesToRadians(0);
+
+  // resting new
   joint_states[3] = degreesToRadians(180);
-  joint_states[4] = degreesToRadians(-90);
-  joint_states[5] = degreesToRadians(-90);
+  joint_states[4] = degreesToRadians(-60);
+  joint_states[5] = degreesToRadians(-120);
   joint_states[6] = degreesToRadians(0);
   joint_states[7] = degreesToRadians(90);
   joint_states[8] = degreesToRadians(0);
