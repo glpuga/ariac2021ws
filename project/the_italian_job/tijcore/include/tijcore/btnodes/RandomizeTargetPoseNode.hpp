@@ -51,10 +51,10 @@ public:
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> unif_dist(-1, 2);
+    std::uniform_int_distribution<int> unif_dist(-4, 3);
 
     const auto distance = max_radius;
-    const auto angle = static_cast<double>(unif_dist(gen)) * 2 * M_PI / 4.0;
+    const auto angle = static_cast<double>(unif_dist(gen)) * 2 * M_PI / 8.0;
 
     const auto x_diff = distance * std::cos(angle);
     const auto y_diff = distance * std::sin(angle);

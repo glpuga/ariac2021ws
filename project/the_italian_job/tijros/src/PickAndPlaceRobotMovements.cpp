@@ -36,7 +36,7 @@ namespace
 // can be get through the scene configuration in  the toolbox
 static char world_frame[] = "world";
 
-static const double landing_pose_height_ = 0.30;
+static const double landing_pose_height_ = 0.15;
 static const double pick_search_length_ = 0.06;
 static const double part_drop_height_ = 0.04;
 
@@ -665,17 +665,22 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
                                                    0.3, 0.0, 0.08,   // cx, cy, cz
                                                    operation));
     collision_objects.push_back(createCollisionBox(item.name, "briefcase_side", item.frame_id,  //
-                                                   0.6, 0.05, 0.16,  // wx, wy, wz
-                                                   0.0, -0.3, 0.08,  // cx, cy, cz
+                                                   0.6, 0.05, 0.14,  // wx, wy, wz
+                                                   0.0, -0.3, 0.07,  // cx, cy, cz
                                                    operation));
     collision_objects.push_back(createCollisionBox(item.name, "table_right", item.frame_id,  //
-                                                   1.0, 0.10, 1.0,     // wx, wy, wz
-                                                   -0.70, -0.75, 0.5,  // cx, cy, cz
+                                                   1.0, 0.10, 0.7,      // wx, wy, wz
+                                                   -0.70, -0.75, 0.35,  // cx, cy, cz
                                                    operation));
     collision_objects.push_back(createCollisionBox(item.name, "table_back",
                                                    item.frame_id,    //
                                                    0.6, 1.2, 1.0,    // wx, wy, wz
                                                    -0.9, -0.1, 0.5,  // cx, cy, cz
+                                                   operation));
+    collision_objects.push_back(createCollisionBox(item.name, "regulator_support",
+                                                   item.frame_id,         //
+                                                   0.15, 0.15, 0.16,      // wx, wy, wz
+                                                   -0.222, -0.164, 0.08,  // cx, cy, cz
                                                    operation));
     collision_objects.push_back(createCollisionBox(item.name, "table_left", item.frame_id,  //
                                                    1.6, 0.1, 1.0,     // wx, wy, wz
