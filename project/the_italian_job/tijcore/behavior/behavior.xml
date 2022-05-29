@@ -709,6 +709,9 @@
                 <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
                 <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
                 <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{insert_pose}" />
+                <Delay delay_msec="1000">
+                    <AlwaysSuccess />
+                </Delay>
                 <GetRobotGripperOff task_parameters="{task_parameters}" />
                 <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
             </Sequence>
