@@ -48,6 +48,15 @@ public:
     std::string frame_id;
   };
 
+  struct HumanProximitySensorData
+  {
+    std::string human_proximity_sensor_id;
+    std::string topic_table;
+    std::string topic_pen;
+    tijmath::RelativePose3 pose_table;
+    tijmath::RelativePose3 pose_pen;
+  };
+
   struct PickAndPlacePoseHintsData
   {
     tijmath::RelativePose3 target_pose;
@@ -75,6 +84,8 @@ public:
   virtual const std::vector<ConveyorBeltData>& getListOfConveyorBelts() const = 0;
 
   virtual const std::vector<tijmath::RelativePose3>& getListOfSafeWaitingSpotHints() const = 0;
+
+  virtual const std::vector<HumanProximitySensorData>& getListOfHumanProximitySensors() const = 0;
 
   virtual const std::vector<PickAndPlacePoseHintsData>&
   getListOfApproachHints(const std::string& robot_name) const = 0;
