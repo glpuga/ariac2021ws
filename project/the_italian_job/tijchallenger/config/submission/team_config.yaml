@@ -123,6 +123,38 @@ sensors:
       xyz: [-6.092189, 6.166299, 2.051140]
       rpy: [3.141593, 1.570792, 0.000000]
 
+  #
+  # Breakbeam for detecting humans
+  #
+
+  # assembly station 2
+
+  breakbeam_as2_table:
+    type: break_beam
+    pose:
+      xyz: [-11.45, 3.55, 0.20]
+      rpy: [0, 0, -1.57]
+
+  breakbeam_as2_pen:
+    type: break_beam
+    pose:
+      xyz: [-8.77, 3.55, 0.20]
+      rpy: [0, 0, -1.57]
+
+  # assembly station 3
+
+  breakbeam_as4_table:
+    type: break_beam
+    pose:
+      xyz: [-11.45, -3.55, 0.20]
+      rpy: [0, 0, 1.57]
+
+  breakbeam_as4_pen:
+    type: break_beam
+    pose:
+      xyz: [-8.77, -3.55, 0.20]
+      rpy: [0, 0, 1.57]
+
 #
 # Robot-mounted cameras
 #
