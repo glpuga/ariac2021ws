@@ -184,8 +184,9 @@ const std::vector<tijmath::RelativePose3>& SceneConfigReader::getListOfSafeWaiti
       tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
     { world_frame_id_, tijmath::Position::fromVector(-10, -3.0, 0),
       tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+    // ---
     { world_frame_id_, tijmath::Position::fromVector(-6.06, 6.16, 0),
-      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(90)) },
+      tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(180)) },
     // ---
     { world_frame_id_, tijmath::Position::fromVector(-3.2, 0.0, 1.0),
       tijmath::Rotation::fromRollPitchYaw(0.0, 0.0, degreesToRadians(-90)) },

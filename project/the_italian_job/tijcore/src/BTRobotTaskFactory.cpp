@@ -33,7 +33,6 @@
 #include <tijcore/btnodes/CalculateVerticalGripEndEffectorPoseNode.hpp>
 #include <tijcore/btnodes/CalculateVerticalLandingPoseNode.hpp>
 #include <tijcore/btnodes/ContactPartFromAboveAndGraspNode.hpp>
-#include <tijcore/btnodes/DestinationSurfaceIsAnAssemblyStationNode.hpp>
 #include <tijcore/btnodes/DestroyPartAtSourceNode.hpp>
 #include <tijcore/btnodes/FindClosesHintPoseForTargetNode.hpp>
 #include <tijcore/btnodes/GetCurrentRobotPoseNode.hpp>
@@ -71,6 +70,7 @@
 #include <tijcore/btnodes/TestIfRobotReachesPoseNode.hpp>
 #include <tijcore/btnodes/ToolTypesAreTheSameNode.hpp>
 #include <tijcore/btnodes/TraceLoggerDecoratorNode.hpp>
+#include <tijcore/btnodes/WeAreInASharedWorkspaceNode.hpp>
 
 namespace tijcore
 {
@@ -129,8 +129,7 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<CalculateEndEffectorPoseFromPayloadPoseNode>(
       "CalculateEndEffectorPoseFromPayloadPose");
   factory.registerNodeType<ManeouverTypeIsNode>("ManeouverTypeIs");
-  factory.registerNodeType<DestinationSurfaceIsAnAssemblyStationNode>(
-      "DestinationSurfaceIsAnAssemblyStation");
+  factory.registerNodeType<WeAreInASharedWorkspaceNode>("WeAreInASharedWorkspace");
   factory.registerNodeType<CalculateRegulatorPreInsertAndInsertPosesNode>(
       "CalculateRegulatorPreInsertAndInsertPoses");
   factory.registerNodeType<CalculateSensorPreInsertAndInsertPosesNode>(
