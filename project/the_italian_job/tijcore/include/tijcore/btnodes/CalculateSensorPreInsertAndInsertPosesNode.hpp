@@ -55,7 +55,7 @@ public:
     setOutput("pre_insert_pose", pre_insert_pose);
 
     auto insert_pose = target_in_world;
-    insert_pose.position().vector().x() -= 0.01;
+    insert_pose.position().vector().x() -= 0.001;
     insert_pose.position().vector().z() += 0.002;
     setOutput("insert_pose", insert_pose);
 
