@@ -444,7 +444,7 @@
         <TraceLoggerDecorator>
             <Sequence>
                 <LogInfo message="GoToRandomPoseNearPose" />
-                <RetryUntilSuccessful num_attempts="15">
+                <RetryUntilSuccessful num_attempts="5">
                     <Sequence>
                         <RandomizeTargetPose task_parameters="{task_parameters}" max_radius="1.5" target_pose="{target_pose}" randomized_target_pose="{randomized_target_pose}" />
                         <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{randomized_target_pose}" aim_target_pose="{target_pose}" />
@@ -622,7 +622,7 @@
             <Sequence>
                 <LogInfo message="GoToTargetsHintPose" />
                 <FindClosesHintPoseForTarget task_parameters="{task_parameters}" target_pose="{target_pose}" hint_pose="{hint_pose}" />
-                <RandomizeTargetPose task_parameters="{task_parameters}" max_radius="0.05" target_pose="{hint_pose}" randomized_target_pose="{randomized_target_pose}" />
+                <RandomizeTargetPose task_parameters="{task_parameters}" max_radius="0.03" target_pose="{hint_pose}" randomized_target_pose="{randomized_target_pose}" />
                 <RotateRobotToFaceTarget task_parameters="{task_parameters}" target_pose="{randomized_target_pose}" aim_target_pose="{target_pose}" />
             </Sequence>
         </TraceLoggerDecorator>

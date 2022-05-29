@@ -720,8 +720,10 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
   }
 
   // tool-swapping table
-  collision_objects.push_back(createCollisionBox("static", "toolswappingtable", "world", 1.0, 1.5,
-                                                 1.0, -3.7, 6.26, 0.5, operation));
+  collision_objects.push_back(createCollisionBox("static", "toolswappingtable", "world",  //
+                                                 1.0, 1.5, 1.16,    // wx, wy, wz
+                                                 -3.7, 6.26, 0.58,  // cx, cy, cq
+                                                 operation));
 
   planning_scene_ptr_->applyCollisionObjects(collision_objects);
 }
