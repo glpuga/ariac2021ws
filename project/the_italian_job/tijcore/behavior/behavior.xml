@@ -20,14 +20,14 @@
                     <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
                     <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
                 <Sequence>
                     <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
                     <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="drop_bucket_pose" />
                     <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                     <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
                 </Sequence>
             </Sequence>
@@ -50,7 +50,7 @@
                 <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" start_pose="source_locus_pose" end_pose="drop_bucket_pose" />
                 <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocusQuick" />
                 <SubTree task_parameters="task_parameters" ID="DropPartInTrashBinQuick" />
-                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
                 <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -633,10 +633,11 @@
         <TraceLoggerDecorator>
             <Sequence>
                 <LogInfo message="GetRobotInClosestSafePoseIfNeccessary" />
-                <Fallback>
-                    <DestinationSurfaceIsAnAssemblyStation task_parameters="{task_parameters}" />
+                <IfThenElse>
+                    <WeAreInASharedWorkspace task_parameters="{task_parameters}" />
                     <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePose" />
-                </Fallback>
+                    <AlwaysSuccess />
+                </IfThenElse>
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
