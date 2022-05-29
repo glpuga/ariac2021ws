@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 
 // project
+#include <tijcore/abstractions/HumanMonitorServiceInterface.hpp>
 #include <tijcore/abstractions/ModelContainerInterface.hpp>
 #include <tijcore/abstractions/ModelPerceptionInterface.hpp>
 #include <tijcore/abstractions/PickAndPlaceRobotMovementsInterface.hpp>
@@ -37,9 +38,14 @@ private:
   tijcore::Toolbox::SharedPtr toolbox_;
   tijcore::TaskDriver::Ptr task_driver_;
 
+  std::vector<tijcore::HumanMonitorServiceInterface::Ptr> human_monitor_services_;
+
   tijcore::ModelPerceptionInterface::Ptr createModelPerceptionMixer() const;
 
   tijcore::Toolbox::SharedPtr createToolbox() const;
+  std::vector<tijcore::HumanMonitorServiceInterface::Ptr> human_proximity_services_;
+
+  std::vector<tijcore::HumanMonitorServiceInterface::Ptr> createHumanProximityServices() const;
 
   std::vector<tijcore::ModelContainerInterface::Ptr>
   createModelContainers(const tijcore::Toolbox::SharedPtr& toolbox) const;

@@ -155,6 +155,22 @@ SceneConfigReader::getListOfAssemblyStations() const
   return data;
 }
 
+const std::vector<SceneConfigReader::HumanProximitySensorData>&
+SceneConfigReader::getListOfHumanProximitySensors() const
+{
+  auto build_hps_pose = [](const double x, const double y) -> tijmath::RelativePose3 {
+    return { world_frame_id_, tijmath::Position::fromVector(x, y, 1.0), {} };
+  };
+
+  static const std::vector<HumanProximitySensorData> data{
+    { "human_at_as2", "/ariac/breakbeam_as2_table", "/ariac/breakbeam_as2_pen",
+      build_hps_pose(-11.45, 3.55), build_hps_pose(-8.77, 3.55) },
+    { "human_at_as4", "/ariac/breakbeam_as4_table", "/ariac/breakbeam_as4_pen",
+      build_hps_pose(-11.45, -3.55), build_hps_pose(-8.77, -3.55) },
+  };
+  return data;
+}
+
 const std::vector<SceneConfigReader::ConveyorBeltData>&
 SceneConfigReader::getListOfConveyorBelts() const
 {

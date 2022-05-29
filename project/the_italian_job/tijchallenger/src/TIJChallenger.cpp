@@ -33,6 +33,7 @@
 #include <tijcore/utils/BlindVolumeTracker.hpp>
 #include <tijlogger/logger.hpp>
 #include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
+#include <tijros/HumanMonitorService.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
 #include <tijros/PickAndPlaceAssemblyRobot.hpp>
 #include <tijros/PickAndPlaceKittingRobot.hpp>
@@ -65,6 +66,9 @@ TIJChallenger::TIJChallenger()
   INFO(" - Creating Toolbox");
   toolbox_ = createToolbox();
 
+  INFO(" - Creating human monitor services");
+  human_proximity_services_ = createHumanProximityServices();
+
   INFO(" - Creating ResourceManager");
   auto resource_manager = std::make_shared<tijcore::ResourceManager>(
       toolbox_, createModelContainers(toolbox_), createPickAndPlaceRobots(toolbox_));
@@ -96,6 +100,23 @@ void TIJChallenger::run()
   ros::spin();
 
   async_future.wait();
+}
+
+std::vector<tijcore::HumanMonitorServiceInterface::Ptr>
+TIJChallenger::createHumanProximityServices() const
+{
+  std::vector<tijcore::HumanMonitorServiceInterface::Ptr> services;
+
+  INFO(" - Loading human proximity monitors information");
+  for (const auto& item : config_->getListOfHumanProximitySensors())
+  {
+    INFO("   - {} @ [{} - {}]", item.human_proximity_sensor_id, item.pose_table, item.pose_pen);
+    services.emplace_back(std::make_unique<tijros::HumanMonitorService>(
+        nh_, item.human_proximity_sensor_id, item.topic_table, item.topic_pen, item.pose_table,
+        item.pose_pen, toolbox_));
+  }
+
+  return services;
 }
 
 tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createModelPerceptionMixer() const
