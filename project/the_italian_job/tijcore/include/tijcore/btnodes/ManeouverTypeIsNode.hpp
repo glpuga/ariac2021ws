@@ -37,30 +37,42 @@ public:
     auto type = getInput<std::string>("type").value();
 
     const auto dst_parent_name = task_parameters->dst_locus->resource()->parentName();
-    const auto src_part_type =
-        task_parameters->src_locus->resource()->qualifiedPartInfo().part_type.type();
 
     auto is_a_valid_assembly_station =
         station_id::isValid(dst_parent_name) &&
         station_id::isAssemblyStation(station_id::fromString(dst_parent_name));
 
+    auto is_a_movable_tray = task_parameters->src_locus->resource()->isLocusWithMovableTray();
+
     if (type == "SensorAssembly")
     {
-      if (is_a_valid_assembly_station && (src_part_type == PartTypeId::sensor))
+      if (!is_a_movable_tray)
       {
-        return BT::NodeStatus::SUCCESS;
+        const auto src_part_type =
+            task_parameters->src_locus->resource()->qualifiedPartInfo().part_type.type();
+
+        if (is_a_valid_assembly_station && (src_part_type == PartTypeId::sensor))
+        {
+          return BT::NodeStatus::SUCCESS;
+        }
       }
     }
     else if (type == "RegulatorAssembly")
     {
-      if (is_a_valid_assembly_station && (src_part_type == PartTypeId::regulator))
+      if (!is_a_movable_tray)
       {
-        return BT::NodeStatus::SUCCESS;
+        const auto src_part_type =
+            task_parameters->src_locus->resource()->qualifiedPartInfo().part_type.type();
+
+        if (is_a_valid_assembly_station && (src_part_type == PartTypeId::regulator))
+        {
+          return BT::NodeStatus::SUCCESS;
+        }
       }
     }
     else if (type == "PlaceFromAbove")
     {
-      // anything that's not a sensor or regulator in an assembly station can be placedfrom above
+      // anything that's not a sensor or regulator in an assembly station can be placed from above
       return BT::NodeStatus::SUCCESS;
     }
     else
