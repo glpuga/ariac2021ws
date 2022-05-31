@@ -45,6 +45,8 @@ public:
 
   const tijmath::RelativePose3& pose() const;
 
+  tijmath::RelativePose3& pose();
+
   bool isEmptyLocus() const;
 
   bool isLocusWithPart() const;

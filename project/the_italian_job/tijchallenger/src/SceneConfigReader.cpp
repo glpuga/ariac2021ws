@@ -220,10 +220,10 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
 
   static std::vector<PickAndPlacePoseHintsData> kitting_poses{
     { build_hint(-1.00, +4.50, degreesToRadians(0)),
-      build_hint(-1.00, +4.00, degreesToRadians(0)) },
+      build_hint(-1.00, +3.50, degreesToRadians(0)) },
   };
 
-  for (double y = -4.0; y < 4.0; y += 0.10)
+  for (double y = -4.0; y < 5.0; y += 0.05)
   {
     SceneConfigReader::PickAndPlacePoseHintsData new_item;
     new_item.target_pose = build_hint(-1.00, y - 1.0, degreesToRadians(0));

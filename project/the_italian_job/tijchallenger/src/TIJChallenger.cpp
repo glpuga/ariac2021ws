@@ -82,7 +82,7 @@ TIJChallenger::TIJChallenger()
   INFO(" - Creating TaskDriver");
   task_driver_ = std::make_unique<tijcore::TaskDriver>(
       std::move(task_master), std::make_unique<tijcore::RobotTaskGroupRunner>(), resource_manager,
-      createModelPerceptionMixer(), toolbox_);
+      createFilteredModelPerceptionMixer(), toolbox_);
 
   INFO("Setup complete.");
 }
@@ -119,28 +119,35 @@ TIJChallenger::createHumanProximityServices() const
   return services;
 }
 
-tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createModelPerceptionMixer() const
+tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createUnfilteredInputPerceptionChain() const
 {
   std::vector<tijcore::ModelPerceptionInterface::Ptr> cameras;
 
-  INFO(" - Loading logical cameras information");
+  INFO(" - Creating unfiltered input perception chain");
+  INFO("   + Loading logical cameras information");
   for (const auto& item : config_->getListOfLogicalCameras())
   {
-    INFO("   - {} @ {}", item.name, item.frame_id);
+    INFO("     - {} @ {}", item.name, item.frame_id);
     cameras.emplace_back(std::make_unique<tijros::LogicalCameraModelPerception>(
         nh_, item.name, camera_retention_interval_));
   }
 
-  INFO(" - Loading quality control sensors information");
+  INFO("   - Loading quality control sensors information");
   for (const auto& item : config_->getListOfQualityControlSensors())
   {
-    INFO("   - {} @ {}", item.name, item.frame_id);
+    INFO("     - {} @ {}", item.name, item.frame_id);
     cameras.emplace_back(std::make_unique<tijros::QualityControlSensorModelPerception>(
         nh_, item.name, camera_retention_interval_));
   }
 
-  auto perception_mixer = std::make_unique<tijcore::ModelPerceptionMixer>(std::move(cameras));
+  return std::make_unique<tijcore::ModelPerceptionMixer>(std::move(cameras));
+}
 
+tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createFilteredModelPerceptionMixer() const
+{
+  auto perception_mixer = createUnfilteredInputPerceptionChain();
+
+  INFO(" - Creating filtered input perception chain");
   auto perception_spatial_filter = std::make_unique<tijcore::ModelPerceptionSpatialFilter>(
       toolbox_, std::move(perception_mixer));
 
@@ -153,7 +160,7 @@ tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createModelPerceptionMixer
           "gantry_arm_vacuum_gripper_link", tijmath::Position::fromVector(0.0, 0.0, -0.05), {} },
       0.1));
 
-  return std::move(perception_spatial_filter);
+  return perception_spatial_filter;
 }
 
 tijcore::Toolbox::SharedPtr TIJChallenger::createToolbox() const
@@ -166,6 +173,7 @@ tijcore::Toolbox::SharedPtr TIJChallenger::createToolbox() const
   contents.spatial_mutual_exclusion_manager =
       std::make_shared<tijcore::SpatialMutualExclusionManager>(config_->getWorldFrameId(),
                                                                contents.frame_transformer_instance);
+  contents.unfiltered_model_perception_chain = createUnfilteredInputPerceptionChain();
   return std::make_shared<tijcore::Toolbox>(std::move(contents));
 }
 

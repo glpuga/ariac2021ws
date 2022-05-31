@@ -1,4 +1,4 @@
-/* Copyright [2021] <TheItalianJob>
+/* Copyright [2022] <TheItalianJob>
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  * Author: Gerardo Puga */
 
@@ -32,9 +32,12 @@
 #include <tijcore/btnodes/CalculateVerticalDropPoseNode.hpp>
 #include <tijcore/btnodes/CalculateVerticalGripEndEffectorPoseNode.hpp>
 #include <tijcore/btnodes/CalculateVerticalLandingPoseNode.hpp>
+#include <tijcore/btnodes/CalibrateSourcePartFromPerceptionIfPossibleNode.hpp>
 #include <tijcore/btnodes/ContactPartFromAboveAndGraspNode.hpp>
+#include <tijcore/btnodes/CreateEmptyLocusForFlippingPartsNode.hpp>
 #include <tijcore/btnodes/DestroyPartAtSourceNode.hpp>
 #include <tijcore/btnodes/FindClosesHintPoseForTargetNode.hpp>
+#include <tijcore/btnodes/GetAuxiliarLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetCurrentRobotPoseNode.hpp>
 #include <tijcore/btnodes/GetDestinationLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetDropBucketPoseNode.hpp>
@@ -49,8 +52,11 @@
 #include <tijcore/btnodes/GetRobotInSafePoseNearTargetNode.hpp>
 #include <tijcore/btnodes/GetRobotNameNode.hpp>
 #include <tijcore/btnodes/GetRobotTo2DPoseNode.hpp>
+#include <tijcore/btnodes/GetRobotToFlipPartAroundNode.hpp>
 #include <tijcore/btnodes/GetSourceLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetToolTablePoseNode.hpp>
+#include <tijcore/btnodes/HackyDestinationPoseUpdateNode.hpp>
+#include <tijcore/btnodes/HackyPartHeightCompensationNode.hpp>
 #include <tijcore/btnodes/LockAccessToVolumeAtPoseNode.hpp>
 #include <tijcore/btnodes/LockAccessToVolumeBetweenPosesNode.hpp>
 #include <tijcore/btnodes/LockMovableTrayInAGVNode.hpp>
@@ -58,6 +64,7 @@
 #include <tijcore/btnodes/LogInfoNode.hpp>
 #include <tijcore/btnodes/LogWarningNode.hpp>
 #include <tijcore/btnodes/ManeouverTypeIsNode.hpp>
+#include <tijcore/btnodes/PartIsPumpThatRequiresFlippingNode.hpp>
 #include <tijcore/btnodes/PosesAreWithinRangeNode.hpp>
 #include <tijcore/btnodes/RandomizeTargetPoseNode.hpp>
 #include <tijcore/btnodes/ReleaseAccessToLockedVolumeNode.hpp>
@@ -66,7 +73,9 @@
 #include <tijcore/btnodes/SetRobotGripperPayloadEnvelopeNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperStateNode.hpp>
 #include <tijcore/btnodes/SetRobotGripperToolTypeNode.hpp>
+#include <tijcore/btnodes/SwapDstAndAuxiliarLociNode.hpp>
 #include <tijcore/btnodes/SwapSourceAndDestinationLociNode.hpp>
+#include <tijcore/btnodes/SwapSrcAndAuxiliarLociNode.hpp>
 #include <tijcore/btnodes/TestIfRobotReachesPoseNode.hpp>
 #include <tijcore/btnodes/ToolTypesAreTheSameNode.hpp>
 #include <tijcore/btnodes/TraceLoggerDecoratorNode.hpp>
@@ -134,6 +143,17 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
       "CalculateRegulatorPreInsertAndInsertPoses");
   factory.registerNodeType<CalculateSensorPreInsertAndInsertPosesNode>(
       "CalculateSensorPreInsertAndInsertPoses");
+  factory.registerNodeType<PartIsPumpThatRequiresFlippingNode>("PartIsPumpThatRequiresFlipping");
+  factory.registerNodeType<GetRobotToFlipPartAroundNode>("GetRobotToFlipPartAround");
+  factory.registerNodeType<SwapSrcAndAuxiliarLociNode>("SwapSrcAndAuxiliarLoci");
+  factory.registerNodeType<SwapDstAndAuxiliarLociNode>("SwapDstAndAuxiliarLoci");
+  factory.registerNodeType<SwapDstAndAuxiliarLociNode>("GetAuxiliarLocusRelativePose");
+  factory.registerNodeType<CreateEmptyLocusForFlippingPartsNode>(
+      "CreateEmptyLocusForFlippingParts");
+  factory.registerNodeType<HackyPartHeightCompensationNode>("HackyPartHeightCompensation");
+  factory.registerNodeType<HackyDestinationPoseUpdateNode>("HackyDestinationPoseUpdate");
+  factory.registerNodeType<CalibrateSourcePartFromPerceptionIfPossibleNode>(
+      "CalibrateSourcePartFromPerceptionIfPossible");
 };
 
 }  // namespace
