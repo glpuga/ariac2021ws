@@ -16,20 +16,8 @@
         <TraceLoggerDecorator>
             <Sequence>
                 <LogInfo message="PickAndDropInTrashInTwoStages" />
-                <Sequence>
-                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
-                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
-                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
-                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
-                </Sequence>
-                <Sequence>
-                    <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
-                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="drop_bucket_pose" />
-                    <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
-                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
-                </Sequence>
+                <SubTree task_parameters="task_parameters" ID="PickPartStage" />
+                <SubTree task_parameters="task_parameters" ID="DropInTrashStage" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -56,6 +44,7 @@
         </TraceLoggerDecorator>
     </BehaviorTree>
 
+
     <!--
         Does the pick and place operation in two stages, locking and releasing access to the source and destination
         poses at separate times. This is the slowest version of the operation, but works well when source and destination
@@ -66,20 +55,51 @@
         <TraceLoggerDecorator>
             <Sequence>
                 <LogInfo message="PickAndPlacePartInTwoStages" />
-                <Sequence>
-                    <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
-                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
-                    <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
-                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
-                </Sequence>
-                <Sequence>
-                    <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
-                    <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="destination_locus_pose" />
-                    <SubTree task_parameters="task_parameters" ID="ManeuvePartIntoDestiantionPose" />
-                    <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
-                    <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
-                </Sequence>
+                <SubTree task_parameters="task_parameters" ID="PickPartStage" />
+                <SubTree task_parameters="task_parameters" ID="FlipPartIfNecessary" />
+                <SubTree task_parameters="task_parameters" ID="PlacePartStage" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="PickPartStage">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PickPartStage" />
+                <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="source_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="PickPartFromSourceLocus" />
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
+                <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="PlacePartStage">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="PlacePartStage" />
+                <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="ManeuvePartIntoDestiantionPose" />
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
+                <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="DropInTrashStage">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="DropInTrashStage" />
+                <GetDropBucketPose task_parameters="{task_parameters}" drop_bucket_pose="{drop_bucket_pose}" />
+                <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="drop_bucket_pose" />
+                <SubTree task_parameters="task_parameters" ID="DropPartInTrashBin" />
+                <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
+                <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>
@@ -120,6 +140,9 @@
                         <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
                         <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                         <PosesAreWithinRange task_parameters="{task_parameters}" max_range="3" start_pose="{source_locus_pose}" end_pose="{destination_locus_pose}" />
+                        <Inverter>
+                            <PartIsPumpThatRequiresFlipping task_parameters="{task_parameters}" />
+                        </Inverter>
                     </Sequence>
                     <SubTree task_parameters="task_parameters" ID="PickAndPlacePartInOneStage" />
                     <SubTree task_parameters="task_parameters" ID="PickAndPlacePartInTwoStages" />
@@ -775,6 +798,60 @@
                 <ForceSuccess>
                     <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{gripper_exit_pose}" />
                 </ForceSuccess>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+
+    <BehaviorTree ID="FlipPartIfNecessary">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="FlipPartIfNecessary" />
+                <IfThenElse>
+                    <PartIsPumpThatRequiresFlipping task_parameters="{task_parameters}" />
+                    <Sequence>
+                        <CalculateEnvelopeAndOffsetForVerticalPickUp task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" payload_envelope="{payload_envelope}" />
+                        <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{original_source_locus_pose}" />
+                        <CreateEmptyLocusForFlippingParts task_parameters="{task_parameters}" reference_pose="{original_source_locus_pose}" />
+                        <SwapDstAndAuxiliarLoci task_parameters="{task_parameters}" />
+                        <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{auxiliar_locus_pose}" />
+                        <SubTree task_parameters="task_parameters" ID="GetExclusiveAccessToVolumeAroundTarget" target_pose="auxiliar_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="auxiliar_locus_pose" />
+                        <SwapSourceAndDestinationLoci task_parameters="{task_parameters}" />
+                        <HackyPartHeightCompensation task_parameters="{task_parameters}" offset_to_top="{offset_to_top}" />
+                        <SwapDstAndAuxiliarLoci task_parameters="{task_parameters}" />
+                        <SwapSrcAndAuxiliarLoci task_parameters="{task_parameters}" />
+                        <!-- from now on we proceed as if the auxiliar locus had always been the source locus -->
+                        <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                        <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
+                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
+                        <GetRobotToFlipPartAround task_parameters="{task_parameters}" target_pose="{source_locus_pose}" offset_to_top="{offset_to_top}" />
+                        <HackyDestinationPoseUpdate task_parameters="{task_parameters}" new_destination_pose="{source_locus_pose}" />
+                        <CalibrateSourcePartFromPerceptionIfPossible task_parameters="{task_parameters}" />
+                        <GetRobotGripperOff task_parameters="{task_parameters}" />
+                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="source_locus_pose" />
+                        <CalibrateSourcePartFromPerceptionIfPossible task_parameters="{task_parameters}" />
+                        <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GraspPartAtTargetPose" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
+                        <GetRobotToFlipPartAround task_parameters="{task_parameters}" target_pose="{source_locus_pose}" offset_to_top="{offset_to_top}" />
+                        <HackyDestinationPoseUpdate task_parameters="{task_parameters}" new_destination_pose="{source_locus_pose}" />
+                        <GetRobotGripperOff task_parameters="{task_parameters}" />
+                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="source_locus_pose" />
+                        <CalibrateSourcePartFromPerceptionIfPossible task_parameters="{task_parameters}" />
+                        <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
+                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GraspPartAtTargetPose" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="SetupCollisionEnvelope" target_pose="source_locus_pose" />
+                        <SubTree task_parameters="task_parameters" ID="GetRobotInClosestSafePoseIfNeccessary" />
+                        <SubTree task_parameters="task_parameters" ID="ReleaseExclusiveAccessToVolume" />
+                    </Sequence>
+                    <AlwaysSuccess />
+                </IfThenElse>
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>

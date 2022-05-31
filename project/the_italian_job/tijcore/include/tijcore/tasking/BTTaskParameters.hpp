@@ -38,6 +38,7 @@ struct BTTaskParameters
   //
   // Temporary state
   std::optional<SpatialMutualExclusionManagerInterface::VolumeHandle> spatial_lock_handle;
+  std::optional<ResourceManagerInterface::ManagedLocusHandle> aux_locus;
 };
 
 }  // namespace tijcore

@@ -98,6 +98,11 @@ const tijmath::RelativePose3& ManagedLocus::pose() const
   return pose_;
 }
 
+tijmath::RelativePose3& ManagedLocus::pose()
+{
+  return pose_;
+}
+
 std::string ManagedLocus::parentName() const
 {
   return parent_container_;

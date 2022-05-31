@@ -34,6 +34,9 @@ public:
   MOCK_CONST_METHOD2(getGripperIn3DPoseCartesianSpace,
                      bool(const tijmath::RelativePose3& target, const double dynamic_factor));
 
+  MOCK_CONST_METHOD2(twistPartInPlace,
+                     bool(tijmath::RelativePose3& target, const double offset_to_top));
+
   MOCK_CONST_METHOD1(getRobotTo2DPose, bool(const tijmath::RelativePose3& target));
 
   MOCK_CONST_METHOD0(getRobotHealthState, bool());

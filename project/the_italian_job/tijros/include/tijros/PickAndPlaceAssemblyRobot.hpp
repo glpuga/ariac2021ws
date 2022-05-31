@@ -50,6 +50,8 @@ public:
                                          const tijmath::RelativePose3& pose,
                                          const tijmath::RelativePose3& aim) const override;
 
+  void patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const override;
+
   tijmath::RelativePose3 getCurrentRobotPose() const override;
 
   tijmath::RelativePose3 getCurrentEndEffectorPose() const override;

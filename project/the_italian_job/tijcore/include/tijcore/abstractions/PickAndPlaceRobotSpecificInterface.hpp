@@ -45,6 +45,9 @@ public:
   virtual void patchJointStateValuesToGoTo2DPose(std::vector<double>& joint_states,
                                                  const tijmath::RelativePose3& target) const = 0;
 
+  virtual void
+  patchJointStateValuesForAlignedZeroWrist(std::vector<double>& joint_states) const = 0;
+
   virtual bool getRobotGripperAttachementState() const = 0;
 
   virtual bool setGripperToolTypeImpl(const tijcore::GripperTypeId new_type) const = 0;

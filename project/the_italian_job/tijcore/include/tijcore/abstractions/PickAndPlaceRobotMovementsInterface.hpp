@@ -39,6 +39,9 @@ public:
   virtual bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target,
                                                 const double dynamic_factor) const = 0;
 
+  virtual bool twistPartInPlace(tijmath::RelativePose3& target,
+                                const double offset_to_top) const = 0;
+
   virtual bool getRobotTo2DPose(const tijmath::RelativePose3& target) const = 0;
 
   virtual bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target,

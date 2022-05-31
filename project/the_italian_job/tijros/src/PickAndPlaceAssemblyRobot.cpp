@@ -222,4 +222,15 @@ tijmath::RelativePose3 PickAndPlaceAssemblyRobot::getCurrentEndEffectorPose() co
   return tijmath::RelativePose3{ getRobotEndEffectorLinkName(), {}, {} };
 }
 
+void PickAndPlaceAssemblyRobot::patchJointStateValuesForAlignedZeroWrist(
+    std::vector<double>& joint_states) const
+{
+  if (joint_states.size() != 9)
+  {
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            getRobotName());
+  }
+  joint_states[8] = degreesToRadians(0);
+}
+
 }  // namespace tijros

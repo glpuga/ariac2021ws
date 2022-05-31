@@ -139,8 +139,8 @@ void PickAndPlaceKittingRobot::patchJointStateValuesToGoTo2DPose(
   }
   else
   {
-    const auto sign = (joint_states[0] < 0) ? -1.0 : 1.0;
-    joint_states[1] = degreesToRadians(90) * sign;
+    // const auto sign = (joint_states[0] < 0) ? -1.0 : 1.0;
+    joint_states[1] = degreesToRadians(-90);
   }
 }
 
@@ -176,6 +176,17 @@ tijmath::RelativePose3 PickAndPlaceKittingRobot::getCurrentRobotPose() const
 tijmath::RelativePose3 PickAndPlaceKittingRobot::getCurrentEndEffectorPose() const
 {
   return tijmath::RelativePose3{ getRobotEndEffectorLinkName(), {}, {} };
+}
+
+void PickAndPlaceKittingRobot::patchJointStateValuesForAlignedZeroWrist(
+    std::vector<double>& joint_states) const
+{
+  if (joint_states.size() != 7)
+  {
+    WARNING("The size ({}) of the joint vector for {} is unexpected...", joint_states.size(),
+            getRobotName());
+  }
+  joint_states[6] = degreesToRadians(0);
 }
 
 }  // namespace tijros

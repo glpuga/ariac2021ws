@@ -40,6 +40,8 @@ public:
   bool getGripperIn3DPoseCartesianSpace(const tijmath::RelativePose3& target,
                                         const double dynamic_factor) const override;
 
+  bool twistPartInPlace(tijmath::RelativePose3& target, const double offset_to_top) const override;
+
   bool getRobotTo2DPose(const tijmath::RelativePose3& target) const override;
 
   bool rotateRobotToFaceTarget(const tijmath::RelativePose3& target,

@@ -39,6 +39,7 @@ static char world_frame[] = "world";
 static const double landing_pose_height_ = 0.15;
 static const double pick_search_length_ = 0.06;
 static const double part_drop_height_ = 0.04;
+static const double twist_height_correction = 0.12;
 
 static const double pickup_displacement_jump_threshold_ = 10.0;
 static const double pickup_displacement_step_ = 0.00125;
@@ -738,7 +739,7 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
 
   // Imaginary divider
   // TODO(glpuga) hacky solution to avoid having gantry hit the kitting robot when rotating in place
-  if (robot_specific_interface_->getRobotName() == "gantry")
+  if (getRobotName() == "gantry")
   {
     collision_objects.push_back(createCollisionBox("static", "divider", "world", 10.05, 20.0, 2.6,
                                                    3.5, 0.0, 1.3, operation));
@@ -850,7 +851,7 @@ tijmath::RelativePose3 PickAndPlaceRobotMovements::calculateVerticalGripEndEffec
   // TODO(glpuga) Issue https://github.com/glpuga/ariac2021ws/issues/258
   // The following is a hack to compensate for the fact that the end effector of
   // kitting seems to be different from the one of gantry.
-  if (robot_specific_interface_->getRobotName() == "kitting")
+  if (getRobotName() == "kitting")
   {
     end_effector_pose.position().vector().z() += 0.02;
   }
@@ -974,6 +975,169 @@ void PickAndPlaceRobotMovements::debounceRobotMovement() const
     INFO("Robot is stll moving, waiting for the robot to stop ringing (displacement norm: {})",
          distance);
   } while (true);
+}
+
+bool PickAndPlaceRobotMovements::twistPartInPlace(tijmath::RelativePose3& target,
+                                                  const double offset_to_top) const
+{
+  using tijmath::utils::angles::degreesToRadians;
+  const auto action_name = "getRobotTo2DPose";
+  if (!getRobotHealthState())
+  {
+    INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
+    return false;
+  }
+
+  auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
+  move_group_ptr->setPoseReferenceFrame(world_frame);
+
+  const robot_state::JointModelGroup* joint_model_group =
+      move_group_ptr->getCurrentState()->getJointModelGroup(
+          robot_specific_interface_->getRobotPlanningGroup());
+
+  auto frame_transformer = toolbox_->getFrameTransformer();
+
+  const auto target_in_world_frame = frame_transformer->transformPoseToFrame(target, world_frame);
+
+  const double estimated_part_height = offset_to_top * 2.0;
+
+  // we determine the rotation that goes from the end effector frame rotation to
+  // the target rotation, to update the rotation of the part once we have
+  // changed the orientation of the gripper
+  tijmath::Matrix3 target_in_end_effector_rotation;
+  {
+    const auto rotated_target_rotation_matrix = target.rotation().rotationMatrix();
+
+    const auto end_effector_pose_in_world =
+        utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
+    const auto end_effector_pose_in_target_frame = frame_transformer->transformPoseToFrame(
+        tijmath::RelativePose3{ world_frame, end_effector_pose_in_world }, target.frameId());
+    const auto end_effector_rotation_matrix_in_target_frame =
+        end_effector_pose_in_target_frame.rotation().rotationMatrix();
+
+    target_in_end_effector_rotation =
+        end_effector_rotation_matrix_in_target_frame.inv() * rotated_target_rotation_matrix;
+  }
+
+  INFO(
+      "Twist-part-in-place movement: {} is planning to align the end efector "
+      "with the arm articulations",
+      getRobotName());
+  {
+    {
+      moveit::core::RobotStatePtr current_state = move_group_ptr->getCurrentState();
+      std::vector<double> joint_group_positions;
+      current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+      robot_specific_interface_->patchJointStateValuesForAlignedZeroWrist(joint_group_positions);
+      move_group_ptr->setJointValueTarget(joint_group_positions);
+    }
+
+    moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
+    {
+      auto success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      if (!success)
+      {
+        ERROR("{} failed to execute the plan", getRobotName());
+        return false;
+      }
+    }
+
+    INFO(
+        "Twist-part-in-place movement: {} is executing the movement to align "
+        "the end efector with the arm articulations",
+        getRobotName());
+    {
+      auto success = (move_group_ptr->execute(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      if (!success)
+      {
+        ERROR("{} failed to execute end effector twist", getRobotName());
+        return false;
+      }
+    }
+  }
+
+  {
+    INFO(
+        "Twist-part-in-place movement:: {} is planning to twist the end "
+        "effector",
+        getRobotName());
+
+    auto rotated_end_effector_in_world =
+        utils::convertGeoPoseToCorePose(move_group_ptr->getCurrentPose().pose);
+
+    moveit::planning_interface::MoveGroupInterface::Plan movement_plan;
+    {
+      {
+        auto rotated_target_rotation_matrix =
+            rotated_end_effector_in_world.rotation().rotationMatrix();
+
+        rotated_target_rotation_matrix *=
+            tijmath::Rotation::fromRollPitchYaw(0, 0, degreesToRadians(-90)).rotationMatrix();
+
+        rotated_end_effector_in_world.rotation() =
+            tijmath::Rotation(rotated_target_rotation_matrix);
+        rotated_end_effector_in_world.position().vector() +=
+            rotated_target_rotation_matrix.col(1) * twist_height_correction +
+            rotated_target_rotation_matrix.col(0) * (-estimated_part_height / 2.0);
+      }
+
+      ERROR("{}", rotated_end_effector_in_world);
+
+      move_group_ptr->setPoseTarget(utils::convertCorePoseToGeoPose(rotated_end_effector_in_world));
+
+      bool success = (move_group_ptr->plan(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+      if (!success)
+      {
+        ERROR("{} failed to generate a plan to twist the end effector", getRobotName());
+        return false;
+      }
+    }
+
+    INFO("Twist-part-in-place movement: {} is executing the twist movement", getRobotName());
+    {
+      auto success = (move_group_ptr->execute(movement_plan) ==
+                      moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+      // TODO(glpuga) with the competition controller parameters, loading the
+      // gripper from the side causes the goal tolerances to be exceeded.
+      success = true;
+
+      if (!success)
+      {
+        ERROR("{} failed to execute end effecto twist", getRobotName());
+        return false;
+      }
+    }
+
+    // update the target locus orientation based on the orientation of the
+    // gripper
+    {
+      INFO("Twist-part-in-place movement: {} is updating the locus orientation", getRobotName());
+
+      // get the current pose of the end effector in the frame of the target
+      // pose
+      auto end_effector_pose_in_target_frame = frame_transformer->transformPoseToFrame(
+          tijmath::RelativePose3{ world_frame, rotated_end_effector_in_world }, target.frameId());
+
+      // get the rotation matrix
+      auto end_effector_rotation_matrix_in_target_frame =
+          end_effector_pose_in_target_frame.rotation().rotationMatrix();
+
+      // given that we know the rotation between the end effector and the part,
+      // use that to infer the rotation part now.
+      auto new_target_orientation =
+          end_effector_rotation_matrix_in_target_frame * target_in_end_effector_rotation;
+
+      target.rotation() = tijmath::Rotation{ new_target_orientation };
+    }
+  }
+
+  INFO("{} completed the twist movement at the approximation pose for ", getRobotName());
+  return true;
 }
 
 }  // namespace tijros

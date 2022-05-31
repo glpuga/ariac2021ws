@@ -70,7 +70,7 @@ public:
     };
     auto mock = std::make_unique<RobotTaskMock>();
     EXPECT_CALL(*mock, run()).WillOnce(Invoke(executor));
-    return std::move(mock);
+    return mock;
   }
 
   RobotTaskInterface::Ptr
@@ -92,7 +92,7 @@ public:
     };
     auto mock = std::make_unique<RobotTaskMock>();
     EXPECT_CALL(*mock, run()).WillOnce(Invoke(executor));
-    return std::move(mock);
+    return mock;
   }
 
   RobotTaskInterface::Ptr
@@ -113,7 +113,7 @@ public:
     };
     auto mock = std::make_unique<RobotTaskMock>();
     EXPECT_CALL(*mock, run()).WillOnce(Invoke(executor));
-    return std::move(mock);
+    return mock;
   }
 
   RobotTaskInterface::Ptr getSubmitKittingShipmentTask(
@@ -133,7 +133,7 @@ public:
     };
     auto mock = std::make_unique<RobotTaskMock>();
     EXPECT_CALL(*mock, run()).WillOnce(Invoke(executor));
-    return std::move(mock);
+    return mock;
   }
 
   RobotTaskInterface::Ptr
@@ -152,7 +152,7 @@ public:
     };
     auto mock = std::make_unique<RobotTaskMock>();
     EXPECT_CALL(*mock, run()).WillOnce(Invoke(executor));
-    return std::move(mock);
+    return mock;
   }
 
 private:
