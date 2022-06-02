@@ -11,7 +11,7 @@
 
 namespace tijutils
 {
-UniqueId::UType UniqueId::instance_counter_ = 0;
+std::atomic<UniqueId::UType> UniqueId::instance_counter_;
 
 UniqueId UniqueId::CreateNewId()
 {
