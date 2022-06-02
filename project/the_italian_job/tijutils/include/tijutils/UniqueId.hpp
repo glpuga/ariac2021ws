@@ -4,6 +4,7 @@
 #pragma once
 
 // standard library
+#include <atomic>
 #include <cstdint>
 #include <functional>
 #include <ostream>
@@ -38,7 +39,7 @@ public:
 
 private:
   UType id_;
-  static UType instance_counter_;
+  static std::atomic<UType> instance_counter_;
 
   explicit UniqueId(const UType new_id);
 };
