@@ -39,7 +39,7 @@ static char world_frame[] = "world";
 static const double landing_pose_height_ = 0.15;
 static const double pick_search_length_ = 0.06;
 static const double part_drop_height_ = 0.04;
-static const double twist_height_correction = 0.12;
+static const double twist_height_correction = 0.10;
 
 static const double pickup_displacement_jump_threshold_ = 10.0;
 static const double pickup_displacement_step_ = 0.00125;

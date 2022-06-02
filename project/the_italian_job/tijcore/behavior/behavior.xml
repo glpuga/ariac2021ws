@@ -827,9 +827,7 @@
                         <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
                         <GetRobotToFlipPartAround task_parameters="{task_parameters}" target_pose="{source_locus_pose}" offset_to_top="{offset_to_top}" />
                         <HackyDestinationPoseUpdate task_parameters="{task_parameters}" new_destination_pose="{source_locus_pose}" />
-                        <CalibrateSourcePartFromPerceptionIfPossible task_parameters="{task_parameters}" />
                         <GetRobotGripperOff task_parameters="{task_parameters}" />
-                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
                         <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="source_locus_pose" />
                         <CalibrateSourcePartFromPerceptionIfPossible task_parameters="{task_parameters}" />
                         <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
@@ -839,7 +837,6 @@
                         <GetRobotToFlipPartAround task_parameters="{task_parameters}" target_pose="{source_locus_pose}" offset_to_top="{offset_to_top}" />
                         <HackyDestinationPoseUpdate task_parameters="{task_parameters}" new_destination_pose="{source_locus_pose}" />
                         <GetRobotGripperOff task_parameters="{task_parameters}" />
-                        <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="source_locus_pose" />
                         <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="source_locus_pose" />
                         <CalibrateSourcePartFromPerceptionIfPossible task_parameters="{task_parameters}" />
                         <GetSourceLocusRelativePose task_parameters="{task_parameters}" source_locus_pose="{source_locus_pose}" />
