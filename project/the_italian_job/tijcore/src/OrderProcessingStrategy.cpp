@@ -661,6 +661,9 @@ OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
 
   auto world_state = getInitialWorldState(target_container_name, shipment.products);
 
+  world_state.broken_parts.clear();
+  world_state.unwanted_parts.clear();
+
   //
   // with highest priority of all, we need to remove broken pieces
   if (world_state.broken_parts.size())

@@ -52,12 +52,10 @@ public:
 
     auto pre_insert_pose = target_in_world;
     pre_insert_pose.position().vector().z() += 0.06;
-    pre_insert_pose.position().vector().x() += 0.011;  // TODO(glpuga) fine tuning
     setOutput("pre_insert_pose", pre_insert_pose);
 
     auto insert_pose = target_in_world;
     insert_pose.position().vector().z() += 0.04;
-    insert_pose.position().vector().x() += 0.011;  // TODO(glpuga) fine tuning
     setOutput("insert_pose", insert_pose);
 
     auto gripper_exit_pose = target_in_world;

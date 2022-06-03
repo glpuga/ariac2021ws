@@ -88,6 +88,8 @@ public:
 
   tijmath::RelativePose3 getCurrentRobotPose() const override;
 
+  tijmath::RelativePose3 getCurrentEndEffectorPose() const override;
+
 private:
   tijcore::PickAndPlaceRobotSpecificInterface::Ptr robot_specific_interface_;
   tijcore::Toolbox::SharedPtr toolbox_;

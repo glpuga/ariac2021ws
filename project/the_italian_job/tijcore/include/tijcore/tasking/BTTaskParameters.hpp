@@ -13,6 +13,7 @@
 #include <tijcore/abstractions/ResourceManagerInterface.hpp>
 #include <tijcore/abstractions/SpatialMutualExclusionManagerInterface.hpp>
 #include <tijcore/coremodels/Toolbox.hpp>
+#include <tijmath/Isometry.hpp>
 
 namespace tijcore
 {
@@ -39,6 +40,8 @@ struct BTTaskParameters
   // Temporary state
   std::optional<SpatialMutualExclusionManagerInterface::VolumeHandle> spatial_lock_handle;
   std::optional<ResourceManagerInterface::ManagedLocusHandle> aux_locus;
+
+  std::optional<tijmath::Isometry> ee_to_payload_iso;
 };
 
 }  // namespace tijcore

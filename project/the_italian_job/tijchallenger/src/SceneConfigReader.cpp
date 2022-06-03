@@ -240,10 +240,10 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
       build_hint(-3.50, +3.00, degreesToRadians(0)) },
     // first station left
     { build_hint(-7.50, +3.00, degreesToRadians(0)),
-      build_hint(-5.20, +3.00, degreesToRadians(0)) },
+      build_hint(-5.00, +3.00, degreesToRadians(0)) },
     // second station left
     { build_hint(-12.50, +3.00, degreesToRadians(0)),
-      build_hint(-10.20, +3.00, degreesToRadians(0)) },
+      build_hint(-10.00, +3.00, degreesToRadians(0)) },
     //
     // right
     //
@@ -252,10 +252,10 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
       build_hint(-3.50, -3.00, degreesToRadians(0)) },
     // first station left
     { build_hint(-7.50, -3.00, degreesToRadians(0)),
-      build_hint(-5.20, -3.00, degreesToRadians(0)) },
+      build_hint(-5.00, -3.00, degreesToRadians(0)) },
     // second station right
     { build_hint(-12.20, -3.00, degreesToRadians(0)),
-      build_hint(-10.20, -3.00, degreesToRadians(0)) },
+      build_hint(-10.00, -3.00, degreesToRadians(0)) },
     //
     // drop bucket
     //
@@ -273,10 +273,10 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
   auto add_tricky_agvs_hints = [&](const double x, const double y) {
     gantry_poses.emplace_back(
         PickAndPlacePoseHintsData{ build_hint(x, y + 0.1, degreesToRadians(0)),
-                                   build_hint(x + 0.2, y - 1.0, degreesToRadians(0)) });
+                                   build_hint(x + 0.2, y - 1.7, degreesToRadians(0)) });
     gantry_poses.emplace_back(
         PickAndPlacePoseHintsData{ build_hint(x, y - 0.1, degreesToRadians(0)),
-                                   build_hint(x + 0.2, y + 1.0, degreesToRadians(0)) });
+                                   build_hint(x + 0.2, y + 1.7, degreesToRadians(0)) });
   };
 
   // agv col 1
