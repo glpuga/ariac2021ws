@@ -39,9 +39,22 @@ public:
     auto end_effector_pose = getInput<tijmath::RelativePose3>("end_effector_pose").value();
     auto payload_pose = getInput<tijmath::RelativePose3>("payload_pose").value();
     auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
-    const auto adapter_ = task_parameters->primary_robot.value().resource();
-    const auto payload_into_end_effector_transform =
-        adapter_->calculatePayloadIntoEndEffectorTransform(end_effector_pose, payload_pose);
+
+    tijmath::Isometry payload_into_end_effector_transform;
+
+    if (task_parameters->ee_to_payload_iso)
+    {
+      // we have actual data obtained from cameras
+      payload_into_end_effector_transform = task_parameters->ee_to_payload_iso.value();
+    }
+    else
+    {
+      // estimate from other data
+      const auto adapter_ = task_parameters->primary_robot.value().resource();
+      payload_into_end_effector_transform =
+          adapter_->calculatePayloadIntoEndEffectorTransform(end_effector_pose, payload_pose);
+    }
+
     setOutput("payload_into_end_effector_transform", payload_into_end_effector_transform);
     return BT::NodeStatus::SUCCESS;
   }

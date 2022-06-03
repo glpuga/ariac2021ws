@@ -26,6 +26,7 @@
 #include <tijcore/btnodes/AbortCurrentActionNode.hpp>
 #include <tijcore/btnodes/CalculateEndEffectorPoseFromPayloadPoseNode.hpp>
 #include <tijcore/btnodes/CalculateEnvelopeAndOffsetForVerticalPickUpNode.hpp>
+#include <tijcore/btnodes/CalculatePayloadIntoEndEffectorTransformFromCamerasIfPossibleNode.hpp>
 #include <tijcore/btnodes/CalculatePayloadIntoEndEffectorTransformNode.hpp>
 #include <tijcore/btnodes/CalculateRegulatorPreInsertAndInsertPosesNode.hpp>
 #include <tijcore/btnodes/CalculateSensorPreInsertAndInsertPosesNode.hpp>
@@ -154,6 +155,8 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
   factory.registerNodeType<HackyDestinationPoseUpdateNode>("HackyDestinationPoseUpdate");
   factory.registerNodeType<CalibrateSourcePartFromPerceptionIfPossibleNode>(
       "CalibrateSourcePartFromPerceptionIfPossible");
+  factory.registerNodeType<CalculatePayloadIntoEndEffectorTransformFromCamerasIfPossibleNode>(
+      "CalculatePayloadIntoEndEffectorTransformFromCamerasIfPossible");
 };
 
 }  // namespace

@@ -334,6 +334,7 @@
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
                 <SubTree task_parameters="task_parameters" ID="GraspPartAtTargetPose" target_pose="target_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="target_pose" />
+                <CalculatePayloadIntoEndEffectorTransformFromCamerasIfPossible task_parameters="{task_parameters}" />
                 <SubTree task_parameters="task_parameters" ID="SetupCollisionEnvelope" target_pose="target_pose" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -733,7 +734,7 @@
                 <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{pre_insert_pose}" />
                 <RemoveRobotGripperPayloadEnvelope task_parameters="{task_parameters}" />
                 <ForceSuccess>
-                    <GetGripperIn3DPoseJoinSpace task_parameters="{task_parameters}" target_pose="{insert_pose}" />
+                    <GetGripperIn3DPoseCartesianSpace task_parameters="{task_parameters}" target_pose="{insert_pose}" />
                 </ForceSuccess>
                 <Delay delay_msec="1000">
                     <AlwaysSuccess />

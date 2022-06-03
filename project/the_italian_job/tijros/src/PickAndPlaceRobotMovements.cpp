@@ -43,7 +43,7 @@ static const double twist_height_correction = 0.10;
 
 static const double pickup_displacement_jump_threshold_ = 10.0;
 static const double pickup_displacement_step_ = 0.00125;
-static const double max_planning_time_ = 10.0;
+static const double max_planning_time_ = 5.0;
 static const int max_planning_attempts_large = 100;
 static const int max_planning_attempts_small = 5;
 
@@ -680,8 +680,8 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
                                                    operation));
     collision_objects.push_back(createCollisionBox(item.name, "regulator_support",
                                                    item.frame_id,         //
-                                                   0.15, 0.15, 0.16,      // wx, wy, wz
-                                                   -0.222, -0.164, 0.08,  // cx, cy, cz
+                                                   0.15, 0.15, 0.14,      // wx, wy, wz
+                                                   -0.222, -0.164, 0.07,  // cx, cy, cz
                                                    operation));
     collision_objects.push_back(createCollisionBox(item.name, "table_left", item.frame_id,  //
                                                    1.6, 0.1, 1.0,     // wx, wy, wz
@@ -931,6 +931,11 @@ bool PickAndPlaceRobotMovements::removeRobotGripperPayloadEnvelope()
 tijmath::RelativePose3 PickAndPlaceRobotMovements::getCurrentRobotPose() const
 {
   return robot_specific_interface_->getCurrentRobotPose();
+}
+
+tijmath::RelativePose3 PickAndPlaceRobotMovements::getCurrentEndEffectorPose() const
+{
+  return robot_specific_interface_->getCurrentEndEffectorPose();
 }
 
 void PickAndPlaceRobotMovements::debounceRobotMovement() const

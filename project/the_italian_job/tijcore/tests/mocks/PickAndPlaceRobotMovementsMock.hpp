@@ -84,6 +84,8 @@ public:
                                                    const tijmath::RelativePose3& aim_target));
 
   MOCK_CONST_METHOD0(getCurrentRobotPose, tijmath::RelativePose3());
+
+  MOCK_CONST_METHOD0(getCurrentEndEffectorPose, tijmath::RelativePose3());
 };
 
 }  // namespace tijcore
