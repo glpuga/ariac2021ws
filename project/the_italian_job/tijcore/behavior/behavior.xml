@@ -17,6 +17,7 @@
             <Sequence>
                 <LogInfo message="PickAndDropInTrashInTwoStages" />
                 <SubTree task_parameters="task_parameters" ID="PickPartStage" />
+                <SubTree task_parameters="task_parameters" ID="TestIfItemIsInGripper" />
                 <SubTree task_parameters="task_parameters" ID="DropInTrashStage" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -56,7 +57,9 @@
             <Sequence>
                 <LogInfo message="PickAndPlacePartInTwoStages" />
                 <SubTree task_parameters="task_parameters" ID="PickPartStage" />
+                <SubTree task_parameters="task_parameters" ID="TestIfItemIsInGripper" />
                 <SubTree task_parameters="task_parameters" ID="FlipPartIfNecessary" />
+                <SubTree task_parameters="task_parameters" ID="TestIfItemIsInGripper" />
                 <SubTree task_parameters="task_parameters" ID="PlacePartStage" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -352,6 +355,7 @@
                 <LogInfo message="PlacePartAtDestinationLocusFromAbove" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TestIfItemIsInGripper" />
                 <SubTree task_parameters="task_parameters" ID="TryPlacingPartFromAboveWithRetry" target_pose="destination_locus_pose" />
                 <SubTree task_parameters="task_parameters" ID="GetInVerticalLandingPoseInJointSpace" target_pose="destination_locus_pose" />
             </Sequence>
@@ -698,6 +702,7 @@
                 <LogInfo message="PlacePartAtDestinationLocusAsRegulatorAssembly" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TestIfItemIsInGripper" />
                 <SubTree task_parameters="task_parameters" ID="TryPlacingRegulatorAssemblyWithRetry" target_pose="destination_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -754,6 +759,7 @@
                 <LogInfo message="PlacePartAtDestinationLocusAsSensorAssembly" />
                 <GetDestinationLocusRelativePose task_parameters="{task_parameters}" destination_locus_pose="{destination_locus_pose}" />
                 <SubTree task_parameters="task_parameters" ID="GoToTargetsHintPose" target_pose="destination_locus_pose" />
+                <SubTree task_parameters="task_parameters" ID="TestIfItemIsInGripper" />
                 <SubTree task_parameters="task_parameters" ID="TryInsertingSensorFromFrontWithRetry" target_pose="destination_locus_pose" />
             </Sequence>
         </TraceLoggerDecorator>
@@ -850,6 +856,17 @@
                     </Sequence>
                     <AlwaysSuccess />
                 </IfThenElse>
+            </Sequence>
+        </TraceLoggerDecorator>
+    </BehaviorTree>
+
+    <BehaviorTree ID="TestIfItemIsInGripper">
+        <TraceLoggerDecorator>
+            <Sequence>
+                <LogInfo message="TestIfItemIsInGripper" />
+                <SubTree ID="SleepAFewMilliseconds" />
+                <SubTree ID="SleepAFewMilliseconds" />
+                <GripperHasPartAttached task_parameters="{task_parameters}" />
             </Sequence>
         </TraceLoggerDecorator>
     </BehaviorTree>

@@ -15,11 +15,11 @@
 
 namespace tijcore
 {
-class GetRobotGripperAttachementStateNode : public BT::AsyncActionNode
+class GripperHasPartAttachedNode : public BT::SyncActionNode
 {
 public:
-  GetRobotGripperAttachementStateNode(const std::string& name, const BT::NodeConfiguration& config)
-    : AsyncActionNode(name, config)
+  GripperHasPartAttachedNode(const std::string& name, const BT::NodeConfiguration& config)
+    : SyncActionNode(name, config)
   {
   }
 
@@ -36,13 +36,6 @@ public:
     const auto adapter_ = task_parameters->primary_robot.value().resource();
     const auto has_object_attached = adapter_->getRobotGripperAttachementState();
     return has_object_attached ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
-  }
-
-  void halt() override
-  {
-    // auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
-    // const auto adapter_ = task_parameters->primary_robot.value().resource();
-    // adapter_->abortCurrentAction();
   }
 };
 

@@ -210,6 +210,26 @@ ResourceManager::findSiblingLociByCommonParent(const std::string& parent_name)
   return output;
 }
 
+std::size_t
+ResourceManager::returnActiveHandleCountForParentContainer(const std::string& parent_name)
+{
+  std::lock_guard<std::mutex> lock{ mutex_ };
+  clearNonAllocatedEmptyLoci();
+
+  // TODO(glpuga) add test for these cases
+
+  auto filter = [this, &parent_name](const ManagedLocusHandle& handle) {
+    if (!handle.allocated())
+    {
+      return false;
+    }
+    return parent_name == handle.resource()->parentName();
+  };
+
+  return std::count_if(known_loci_resource_state_.begin(), known_loci_resource_state_.end(),
+                       filter);
+}
+
 std::optional<ResourceManagerInterface::PickAndPlaceRobotHandle>
 ResourceManager::getPickAndPlaceRobotHandle(const std::vector<tijmath::RelativePose3>& waypoints)
 {

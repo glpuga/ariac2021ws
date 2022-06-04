@@ -49,6 +49,8 @@ private:
 
     std::vector<ResourceManagerInterface::ManagedLocusHandle> broken_parts;
     std::vector<ResourceManagerInterface::ManagedLocusHandle> unwanted_parts;
+
+    std::size_t active_parts{ 0 };
   };
 
   ResourceManagerInterface::SharedPtr resource_manager_;

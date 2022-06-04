@@ -45,7 +45,6 @@
 #include <tijcore/btnodes/GetGripperIn3DPoseCartesianSpaceNode.hpp>
 #include <tijcore/btnodes/GetGripperIn3DPoseJoinSpaceNode.hpp>
 #include <tijcore/btnodes/GetRobotArmInRestingPoseNode.hpp>
-#include <tijcore/btnodes/GetRobotGripperAttachementStateNode.hpp>
 #include <tijcore/btnodes/GetRobotGripperOffNode.hpp>
 #include <tijcore/btnodes/GetRobotGripperOnNode.hpp>
 #include <tijcore/btnodes/GetRobotGripperToolTypeNode.hpp>
@@ -56,6 +55,7 @@
 #include <tijcore/btnodes/GetRobotToFlipPartAroundNode.hpp>
 #include <tijcore/btnodes/GetSourceLocusRelativePoseNode.hpp>
 #include <tijcore/btnodes/GetToolTablePoseNode.hpp>
+#include <tijcore/btnodes/GripperHasPartAttachedNode.hpp>
 #include <tijcore/btnodes/HackyDestinationPoseUpdateNode.hpp>
 #include <tijcore/btnodes/HackyPartHeightCompensationNode.hpp>
 #include <tijcore/btnodes/LockAccessToVolumeAtPoseNode.hpp>
@@ -100,7 +100,7 @@ void factoryLoaderMethod(BT::BehaviorTreeFactory& factory)
       "GetGripperIn3DPoseCartesianSpace");
   factory.registerNodeType<GetGripperIn3DPoseJoinSpaceNode>("GetGripperIn3DPoseJoinSpace");
   factory.registerNodeType<GetRobotArmInRestingPoseNode>("GetRobotArmInRestingPose");
-  factory.registerNodeType<GetRobotGripperAttachementStateNode>("GetRobotGripperAttachementState");
+  factory.registerNodeType<GripperHasPartAttachedNode>("GripperHasPartAttached");
   factory.registerNodeType<GetRobotGripperOffNode>("GetRobotGripperOff");
   factory.registerNodeType<GetRobotGripperOnNode>("GetRobotGripperOn");
   factory.registerNodeType<GetRobotGripperToolTypeNode>("GetRobotGripperToolType");

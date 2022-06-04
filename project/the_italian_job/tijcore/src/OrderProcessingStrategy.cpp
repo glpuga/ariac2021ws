@@ -185,6 +185,20 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
 {
   InitialWorldState initial_world_state;
 
+  // this needs to get called before the rest of the function, because the algorithm will create new
+  // temporarily allocated handles
+  initial_world_state.active_parts =
+      resource_manager_->returnActiveHandleCountForParentContainer(target_container_name);
+
+  // Notice that since I own a handle now, asking whether the handle is
+  // allocated or not does not tell me if it was allocated before.
+  // There will be either two copies (if the handle was allocated before)
+  // if the resources was not allocate before (my copy and the one in the resource manager)
+  // or three copies if there's some task holding an additional copy
+  auto part_is_part_of_active_task = [](const auto& handle) {
+    return (handle.activeCopiesCount() >= 3);
+  };
+
   for (const auto& product : products)
   {
     const auto desired_part_id = product.type;
@@ -201,17 +215,10 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
     auto& handle = *handle_opt;
     auto& locus = *handle.resource();
 
-    // Notice that since I own a handle now, asking whether the handle is
-    // allocated or not does not tell me if it was allocated before.
-    // There will be either two copies (if the handle was allocated before)
-    // if the resources was not allocate before (my copy and the one in the resource manager)
-    // or three copies if there's some task holding an additional copy
-    const bool part_is_part_of_active_task = (handle.activeCopiesCount() >= 3);
-
     // if the place is empty, store in missing parts
     if (locus.isEmptyLocus())
     {
-      if (!part_is_part_of_active_task)
+      if (!part_is_part_of_active_task(handle))
       {
         // the handle we have here is the only one besides the one internally
         // stored by the resource manager.
@@ -240,7 +247,7 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
 
     // If we got here, the part is correctly located, so we keep the handle to
     // mark the piece as in use
-    if (part_is_part_of_active_task)
+    if (part_is_part_of_active_task(handle))
     {
       INFO("In-pose part at {} ({}) ignored because is part of an active task", desired_pose,
            part_id.codedString());
@@ -252,7 +259,7 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
     }
   }
 
-  // Get the rest of the pieces in the same containers. This will include pieces
+  // Get the rest of the pieces in the same container. This will include pieces
   // that don't belong in the shipment, as well as those that do, but are broken
   {
     // notice that this list won't contain the parts that we already have a copy of in the initial
@@ -260,26 +267,27 @@ OrderProcessingStrategy::InitialWorldState OrderProcessingStrategy::getInitialWo
     auto parts_to_remove = resource_manager_->findSiblingLociByCommonParent(target_container_name);
 
     // from the parts to remove, separate broken and unwanted
-    for (const auto& part : parts_to_remove)
+    for (const auto& handle : parts_to_remove)
     {
-      const auto broken = part.resource()->qualifiedPartInfo().part_is_broken;
+      const auto broken = handle.resource()->qualifiedPartInfo().part_is_broken;
       if (broken)
       {
-        initial_world_state.broken_parts.push_back(part);
+        initial_world_state.broken_parts.push_back(handle);
       }
       else
       {
-        initial_world_state.unwanted_parts.push_back(part);
+        initial_world_state.unwanted_parts.push_back(handle);
       }
     }
   }
 
-  INFO("Analysis - in_pose:{} broken:{} missing:{} unwanted:{}",
+  INFO("Analysis - in_pose:{} broken:{} missing:{} unwanted:{} active:{}",
        initial_world_state.parts_in_place.size(), initial_world_state.broken_parts.size(),
-       initial_world_state.missing_parts.size(), initial_world_state.unwanted_parts.size());
+       initial_world_state.missing_parts.size(), initial_world_state.unwanted_parts.size(),
+       initial_world_state.active_parts);
 
   return initial_world_state;
-}
+}  // namespace tijcore
 
 void OrderProcessingStrategy::removeLociInTargetSurfaces(                            //
     const std::set<AgvId>& agvs_in_use,                                              //
@@ -639,7 +647,8 @@ OrderProcessingStrategy::processKittingShipment(const OrderId& order,
   bool shipping_done{ false };
 
   // if there's nothing missing, then submit the shipping
-  if ((world_state.broken_parts.size() == 0) && (world_state.unwanted_parts.size() == 0) &&
+  if ((world_state.active_parts == 0) && (world_state.broken_parts.size() == 0) &&
+      (world_state.unwanted_parts.size() == 0) &&
       (shipment.products.size() == world_state.parts_in_place.size() + unavailable_part_count))
   {
     return std::make_pair(stageSubmitShipping(target_container_name, ShipmentClass::Kitting,
@@ -706,7 +715,8 @@ OrderProcessingStrategy::processAssemblyShipment(const OrderId& order,
   bool shipping_done{ false };
 
   // if there's nothing missing, then submit the shipping
-  if ((world_state.broken_parts.size() == 0) && (world_state.unwanted_parts.size() == 0) &&
+  if ((world_state.active_parts == 0) && (world_state.broken_parts.size() == 0) &&
+      (world_state.unwanted_parts.size() == 0) &&
       (shipment.products.size() == world_state.parts_in_place.size() + unavailable_part_count))
   {
     return std::make_pair(stageSubmitShipping(target_container_name, ShipmentClass::Assembly,
