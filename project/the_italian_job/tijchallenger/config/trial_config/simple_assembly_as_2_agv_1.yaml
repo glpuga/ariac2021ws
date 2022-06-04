@@ -51,7 +51,7 @@ agv_infos:
           xyz: [0.1, 0.15, 0]
           rpy: [0, 0, 0]
   agv2:
-    location: ks1
+    location: as2
   agv3:
     location: ks3
   agv4:
