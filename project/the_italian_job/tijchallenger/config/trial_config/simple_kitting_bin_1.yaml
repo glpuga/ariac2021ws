@@ -1,8 +1,8 @@
 # ARIAC 2022
-# Trial for the insufficient parts  challenge.
-# order_0 requires 1 red pump and 1 blue sensor.
-# The workcell does not have any sensor part. 
-# In this case, the incomplete AGV must still be submitted.
+# Trial where a simple kit is required.
+# The kit must be built on a tray of type movable_tray_metal_shiny
+# The pose of the parts are in the movable tray frame.
+# Once the kit is built, it must be shipped to as1
 
 options:
   insert_models_over_bins: true
@@ -10,7 +10,7 @@ options:
   insert_models_over_stations: false
   gazebo_state_logging: true
   # mandatory: gripper_tray or gripper_part
-  current_gripper_type: gripper_part
+  current_gripper_type: gripper_tray
 time_limit: -1
 
 
@@ -22,8 +22,11 @@ time_limit: -1
 #  -movable_tray_light_wood
 # quantity can be: 1, 2, or 3
 table_tray_infos:
+  table_1: 
+    tray_model: movable_tray_metal_shiny
+    quantity: 1
   table_2: 
-    tray_model: movable_tray_light_wood
+    tray_model: movable_tray_dark_wood
     quantity: 1
 
 # mandatory: location of agvs and products at start
@@ -37,7 +40,7 @@ agv_infos:
   agv4:
     location: ks4
 
-
+# Only one order 
 orders:
   order_0:
     priority: 1
@@ -48,7 +51,7 @@ orders:
     announcement_condition_value: 0.0
     kitting:
       shipment_count: 1
-      trays: [movable_tray_light_wood]
+      trays: [movable_tray_metal_shiny]
       agvs: [agv1]
       destinations: [as1]
       products:
@@ -57,14 +60,9 @@ orders:
           pose:
             xyz: [-0.1, -0.1, 0.0]
             rpy: [0.0, 0.0, 0.0]
-        part_1:
-          type: assembly_sensor_blue
-          pose:
-            xyz: [0.1, -0.1, 0.0]
-            rpy: [0.0, 0.0, 'pi/2']
 
 models_over_bins:
-  bin2:
+   bin1:
      models:
        assembly_pump_red:
          xyz_start: [0.2, 0.2, 0.0]
@@ -72,6 +70,7 @@ models_over_bins:
          rpy: [0, 0, 0]
          num_models_x: 2
          num_models_y: 2
+
 
 
 # don't forget to include at least 1 empty line here
