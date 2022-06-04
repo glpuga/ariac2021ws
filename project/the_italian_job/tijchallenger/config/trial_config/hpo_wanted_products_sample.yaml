@@ -23,7 +23,7 @@ time_limit: -1
 # quantity can be: 1, 2, or 3
 table_tray_infos:
   table_1: 
-    tray_model: movable_tray_metal_rusty
+    tray_model: movable_tray_metal_shiny
     quantity: 2
   table_2: 
     tray_model: movable_tray_light_wood
@@ -73,7 +73,7 @@ orders:
     announcement_condition_value: 1
     kitting:
       shipment_count: 1
-      trays: [movable_tray_metal_rusty]
+      trays: [movable_tray_metal_shiny]
       agvs: [agv2]
       destinations: [as2]
       products:

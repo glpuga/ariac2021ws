@@ -1,6 +1,8 @@
 # ARIAC 2022
-# Trial for the flipped part challenge.
-# 1 red pump is required to be flipped before being placed on AGV1
+# Trial where a simple kit is required.
+# The kit must be built on a tray of type movable_tray_metal_shiny
+# The pose of the parts are in the movable tray frame.
+# Once the kit is built, it must be shipped to as1
 
 options:
   insert_models_over_bins: true
@@ -22,6 +24,9 @@ time_limit: -1
 table_tray_infos:
   table_1: 
     tray_model: movable_tray_metal_shiny
+    quantity: 1
+  table_2: 
+    tray_model: movable_tray_dark_wood
     quantity: 1
 
 # mandatory: location of agvs and products at start
@@ -47,17 +52,17 @@ orders:
     kitting:
       shipment_count: 1
       trays: [movable_tray_metal_shiny]
-      agvs: [agv1]
+      agvs: [agv3]
       destinations: [as1]
       products:
         part_0:
           type: assembly_pump_red
           pose:
             xyz: [-0.1, -0.1, 0.0]
-            rpy: ['pi', 0.0, 0.0]
+            rpy: [0.0, 0.0, 0.0]
 
 models_over_bins:
-   bin2:
+   bin6:
      models:
        assembly_pump_red:
          xyz_start: [0.2, 0.2, 0.0]
@@ -65,6 +70,7 @@ models_over_bins:
          rpy: [0, 0, 0]
          num_models_x: 2
          num_models_y: 2
+
 
 
 # don't forget to include at least 1 empty line here

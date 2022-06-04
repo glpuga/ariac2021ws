@@ -1,8 +1,6 @@
 # ARIAC 2022
-# Trial for the faulty sensors challenge.
-# Sensors will stop reporting whenever a part is placed either on
-# a movable tray or in a briefcase
-# Sensors will resume after 20 simulation seconds
+# Trial for the faulty part challenge.
+# 2 parts are faulty in bin2
 
 options:
   insert_models_over_bins: true
@@ -49,17 +47,17 @@ orders:
     kitting:
       shipment_count: 1
       trays: [movable_tray_metal_shiny]
-      agvs: [agv1]
-      destinations: [as1]
+      agvs: [agv4]
+      destinations: [as2]
       products:
         part_0:
           type: assembly_pump_red
           pose:
-            xyz: [-0.1, -0.1, 0.0]
+            xyz: [0.1, 0.1, 0.0]
             rpy: [0.0, 0.0, 0.0]
 
 models_over_bins:
-   bin2:
+   bin6:
      models:
        assembly_pump_red:
          xyz_start: [0.2, 0.2, 0.0]
@@ -68,8 +66,10 @@ models_over_bins:
          num_models_x: 2
          num_models_y: 2
 
-sensor_blackout:
-  product_count: 1 #sensor blackout triggered after 1 product is placed
-  duration: 20
+faulty_products:
+  - assembly_pump_red_1
+  - assembly_pump_red_2
+
 
 # don't forget to include at least 1 empty line here
+
