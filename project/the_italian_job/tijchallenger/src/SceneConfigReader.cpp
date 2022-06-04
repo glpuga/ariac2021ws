@@ -240,10 +240,10 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
       build_hint(-3.50, +3.00, degreesToRadians(0)) },
     // first station left
     { build_hint(-7.50, +3.00, degreesToRadians(0)),
-      build_hint(-5.00, +3.00, degreesToRadians(0)) },
+      build_hint(-5.00, +2.50, degreesToRadians(0)) },
     // second station left
     { build_hint(-12.50, +3.00, degreesToRadians(0)),
-      build_hint(-10.00, +3.00, degreesToRadians(0)) },
+      build_hint(-10.00, +2.50, degreesToRadians(0)) },
     //
     // right
     //
@@ -252,10 +252,10 @@ SceneConfigReader::getListOfApproachHints(const std::string& robot_name) const
       build_hint(-3.50, -3.00, degreesToRadians(0)) },
     // first station left
     { build_hint(-7.50, -3.00, degreesToRadians(0)),
-      build_hint(-5.00, -3.00, degreesToRadians(0)) },
+      build_hint(-5.00, -3.50, degreesToRadians(0)) },
     // second station right
     { build_hint(-12.20, -3.00, degreesToRadians(0)),
-      build_hint(-10.00, -3.00, degreesToRadians(0)) },
+      build_hint(-10.00, -3.50, degreesToRadians(0)) },
     //
     // drop bucket
     //
