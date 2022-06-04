@@ -736,8 +736,8 @@ void PickAndPlaceRobotMovements::buildObstacleSceneFromDescription() const
   // TODO(glpuga) hacky solution to avoid having gantry hit the kitting robot when rotating in place
   if (getRobotName() == "gantry")
   {
-    collision_objects.push_back(createCollisionBox("static", "divider", "world", 10.05, 20.0, 2.6,
-                                                   3.5, 0.0, 1.3, operation));
+    collision_objects.push_back(createCollisionBox("static", "divider", "world", 10.0, 20.0, 2.6,
+                                                   3.52, 0.0, 1.3, operation));
   }
 
   // tool-swapping table
