@@ -108,7 +108,6 @@ public:
 
     return BT::NodeStatus::SUCCESS;
   }
-
 };  // namespace tijcore
 
 }  // namespace tijcore
