@@ -29,7 +29,7 @@ using tijcore::RobotActuatorsInterface;
 
 namespace
 {
-constexpr int default_queue_len = 10;
+constexpr int short_latency_queue_subscriber_len = 1;
 
 constexpr char converyor_state_topic[] = "/ariac/conveyor/state";
 
@@ -52,21 +52,21 @@ constexpr char gripper_type_topic[] = "/ariac/gantry/arm/gripper/type";
 
 ROSRobotActuators::ROSRobotActuators(const ros::NodeHandle nh) : nh_{ nh }
 {
-  conveyor_state_sub_ = nh_.subscribe(converyor_state_topic, default_queue_len,
+  conveyor_state_sub_ = nh_.subscribe(converyor_state_topic, short_latency_queue_subscriber_len,
                                       &ROSRobotActuators::conveyorStateCallback, this);
 
   gantry_arm_gripper_state_sub_ =
-      nh_.subscribe(gantry_arm_gripper_state_topic, default_queue_len,
+      nh_.subscribe(gantry_arm_gripper_state_topic, short_latency_queue_subscriber_len,
                     &ROSRobotActuators::gantryArmGripperStateCallback, this);
 
   kitting_arm_gripper_state_sub_ =
-      nh_.subscribe(kitting_arm_gripper_state_topic, default_queue_len,
+      nh_.subscribe(kitting_arm_gripper_state_topic, short_latency_queue_subscriber_len,
                     &ROSRobotActuators::kittingArmGripperStateCallback, this);
 
-  robot_health_sub_ = nh_.subscribe(robot_health_topic, default_queue_len,
+  robot_health_sub_ = nh_.subscribe(robot_health_topic, short_latency_queue_subscriber_len,
                                     &ROSRobotActuators::robotHealthCallback, this);
 
-  gripper_type_sub_ = nh_.subscribe(gripper_type_topic, default_queue_len,
+  gripper_type_sub_ = nh_.subscribe(gripper_type_topic, short_latency_queue_subscriber_len,
                                     &ROSRobotActuators::gripperTypeCallback, this);
 }
 

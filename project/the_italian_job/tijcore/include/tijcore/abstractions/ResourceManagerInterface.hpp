@@ -44,6 +44,8 @@ public:
   virtual std::vector<ManagedLocusHandle>
   findSiblingLociByCommonParent(const std::string& parent_name) = 0;
 
+  virtual std::size_t returnActiveHandleCountForParentContainer(const std::string& parent_name) = 0;
+
   virtual std::optional<PickAndPlaceRobotHandle>
   getPickAndPlaceRobotHandle(const std::vector<tijmath::RelativePose3>& waypoints) = 0;
 
