@@ -549,7 +549,7 @@
                 <LogInfo message="GetExclusiveAccessToVolumeAroundTarget" />
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
-                        <LockAccessToVolumeAtPose task_parameters="{task_parameters}" radius="0.5" target_pose="{target_pose}" />
+                        <LockAccessToVolumeAtPose task_parameters="{task_parameters}" radius="1.0" target_pose="{target_pose}" />
                         <ForceFailure>
                             <Sequence>
                                 <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{target_pose}" />
@@ -577,7 +577,7 @@
                 <LogInfo message="GetExclusiveAccessToVolumeBetweenStartAndEndPoses" />
                 <RetryUntilSuccessful num_attempts="-1">
                     <Fallback>
-                        <LockAccessToVolumeBetweenPoses task_parameters="{task_parameters}" radius="0.5" start_pose="{start_pose}" end_pose="{end_pose}" />
+                        <LockAccessToVolumeBetweenPoses task_parameters="{task_parameters}" radius="1.0" start_pose="{start_pose}" end_pose="{end_pose}" />
                         <ForceFailure>
                             <Sequence>
                                 <GetRobotInSafePoseNearTarget task_parameters="{task_parameters}" target_pose="{start_pose}" />
