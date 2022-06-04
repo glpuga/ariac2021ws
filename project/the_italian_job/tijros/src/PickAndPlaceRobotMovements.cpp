@@ -420,11 +420,6 @@ bool PickAndPlaceRobotMovements::getRobotInSafePoseNearTarget(
     const tijmath::RelativePose3& target) const
 {
   const auto action_name = "getRobotInSafePoseNearTarget";
-  if (!getRobotHealthState())
-  {
-    INFO("{}: {} failed to execute because the robot is disabled", action_name, getRobotName());
-    return false;
-  }
   auto move_group_ptr = buildMoveItGroupHandle(max_planning_attempts_large);
   const robot_state::JointModelGroup* joint_model_group =
       move_group_ptr->getCurrentState()->getJointModelGroup(

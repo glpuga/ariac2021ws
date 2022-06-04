@@ -50,7 +50,7 @@ public:
     const auto current_pose_in_world_x = current_pose_in_world.position().vector().x();
 
     const auto we_are_within_a_shared_workspace =
-        (-3.0 < current_pose_in_world_x) && (current_pose_in_world_x < 1.0);
+        (-3.5 < current_pose_in_world_x) && (current_pose_in_world_x < 1.0);
 
     return we_are_within_a_shared_workspace ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
   }
