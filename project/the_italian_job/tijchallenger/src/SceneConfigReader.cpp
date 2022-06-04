@@ -37,7 +37,7 @@ const tijmath::RelativePose3& SceneConfigReader::getDropBucketPose() const
 const tijmath::RelativePose3& SceneConfigReader::getGripperToolSwappingTablePose() const
 {
   static const tijmath::RelativePose3 data{
-    world_frame_id_, tijmath::Pose3{ tijmath::Position::fromVector(-3.71, 6.46, 1.5), {} }
+    world_frame_id_, tijmath::Pose3{ tijmath::Position::fromVector(-3.925, 6.20, 1.5), {} }
   };
   return data;
 }

@@ -37,8 +37,8 @@ public:
     const auto gripper_tool_type = getInput<GripperTypeId>("gripper_tool_type").value();
     auto task_parameters = getInput<BTTaskParameters::SharedPtr>("task_parameters").value();
     const auto adapter_ = task_parameters->primary_robot.value().resource();
-    adapter_->setRobotGripperToolType(gripper_tool_type);
-    return BT::NodeStatus::SUCCESS;
+    const auto success = adapter_->setRobotGripperToolType(gripper_tool_type);
+    return success ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
   }
 };
 
