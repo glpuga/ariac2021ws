@@ -21,6 +21,7 @@
   <depend>roscpp</depend>
   <depend>roslint</depend>
   <depend>rostest</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>std_srvs</depend>
   <depend>tf2</depend>
@@ -30,6 +31,7 @@
   <depend>tijlogger</depend>
   <depend>tijmath</depend>
   <depend>tijutils</depend>
+  <depend>trajectory_msgs</depend>
 
   <depend>python-catkin-lint</depend>
 
