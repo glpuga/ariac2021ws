@@ -6,6 +6,7 @@
 
 // standard library
 #include <map>
+#include <memory>
 #include <string>
 
 namespace tijcore
@@ -13,6 +14,8 @@ namespace tijcore
 class RobotJointDirectControlInterface
 {
 public:
+  using Ptr = std::unique_ptr<RobotJointDirectControlInterface>;
+
   virtual ~RobotJointDirectControlInterface() = default;
 
   virtual bool setJointPosition(const std::map<std::string, double>& updated_values,

@@ -12,6 +12,7 @@
 
 // roscpp
 #include <ros/ros.h>
+#include <sensor_msgs/JointState.h>
 
 // tijcore
 #include <tijcore/abstractions/RobotJointDirectControlInterface.hpp>

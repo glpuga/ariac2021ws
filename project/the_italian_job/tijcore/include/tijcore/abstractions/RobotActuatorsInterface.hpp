@@ -8,8 +8,8 @@
 #include <memory>
 
 // project
+#include <tijcore/abstractions/RobotJointDirectControlInterface.hpp>
 #include <tijcore/datatypes/GripperTypeId.hpp>
-
 namespace tijcore
 {
 class RobotActuatorsInterface
@@ -55,6 +55,10 @@ public:
   virtual RobotHealthStatus getRobotHealthStatus() const = 0;
 
   virtual tijcore::GripperTypeId getGantryGripperToolType() const = 0;
+
+  virtual tijcore::RobotJointDirectControlInterface& getKittingJointDirectControlManager() = 0;
+
+  virtual tijcore::RobotJointDirectControlInterface& getGantryJointDirectControlManager() = 0;
 };
 
 }  // namespace tijcore
