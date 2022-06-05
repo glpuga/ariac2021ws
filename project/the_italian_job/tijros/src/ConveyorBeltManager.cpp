@@ -90,4 +90,9 @@ ConveyorBeltManager::currentPositionInTheBelt(const DetectionData& detection_dat
   return pose;
 }
 
+double ConveyorBeltManager::getBeltSpeed() const
+{
+  return belt_speed_;
+}
+
 }  // namespace tijros

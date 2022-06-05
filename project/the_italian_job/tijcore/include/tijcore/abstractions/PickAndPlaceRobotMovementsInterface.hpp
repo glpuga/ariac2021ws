@@ -11,6 +11,7 @@
 #include <vector>
 
 // tijcore
+#include <tijcore/abstractions/ConveyorBeltManagerInterface.hpp>
 #include <tijcore/datatypes/GripperTypeId.hpp>
 #include <tijcore/datatypes/PartTypeId.hpp>
 #include <tijcore/utils/PayloadEnvelope.hpp>
@@ -89,6 +90,9 @@ public:
   virtual tijmath::RelativePose3 getCurrentRobotPose() const = 0;
 
   virtual tijmath::RelativePose3 getCurrentEndEffectorPose() const = 0;
+
+  virtual bool trackAndPickBeltTarget(
+      const ConveyorBeltManagerInterface::DetectionData& detection_data) const = 0;
 };
 
 }  // namespace tijcore

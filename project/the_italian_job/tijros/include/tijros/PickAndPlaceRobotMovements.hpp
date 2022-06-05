@@ -90,6 +90,9 @@ public:
 
   tijmath::RelativePose3 getCurrentEndEffectorPose() const override;
 
+  bool trackAndPickBeltTarget(
+      const tijcore::ConveyorBeltManagerInterface::DetectionData& detection_data) const override;
+
 private:
   tijcore::PickAndPlaceRobotSpecificInterface::Ptr robot_specific_interface_;
   tijcore::Toolbox::SharedPtr toolbox_;

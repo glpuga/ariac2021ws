@@ -1140,4 +1140,78 @@ bool PickAndPlaceRobotMovements::twistPartInPlace(tijmath::RelativePose3& target
   return true;
 }
 
+bool PickAndPlaceRobotMovements::trackAndPickBeltTarget(
+    const tijcore::ConveyorBeltManagerInterface::DetectionData& detection_data) const
+{
+  // calculate the current pose of the target
+  auto frame_transformer = toolbox_->getFrameTransformer();
+  auto conv_belt_manager = toolbox_->getConveyorBeltManager();
+
+  const double tracking_timeout_seconds = 20.0;
+  const double sampling_inteval_seconds = 0.1;
+
+  const double vertical_movement_speed = 0.1;
+
+  double current_vertical_fraction = 0.0;  // 0.0 is at the top, 1.0 at the bottom
+
+  const ros::Time start_time = ros::Time::now();
+
+  do
+  {
+    ros::Duration(sampling_inteval_seconds).sleep();
+
+    const auto current_part_pose = conv_belt_manager->currentPositionInTheBelt(detection_data);
+    auto current_part_pose_in_world =
+        frame_transformer->transformPoseToFrame(current_part_pose, world_frame);
+
+    // update the pose so that it points to the pose at the next sampling interval
+    current_part_pose_in_world.position().vector().y() -=
+        conv_belt_manager->getBeltSpeed() * sampling_inteval_seconds;
+
+    // command the arm to move in position during this sampling interval
+    if (!robot_specific_interface_->beltSupportSetState(
+            current_part_pose_in_world, current_vertical_fraction, sampling_inteval_seconds))
+    {
+      ERROR(
+          "{} terminated belt tracking because the arm failed to move to the next sampling "
+          "interval",
+          getRobotName());
+      return false;
+    }
+
+    // check if we are tracking the part on the belt
+    const auto in_sync = robot_specific_interface_->beltSupportGetSyncState();
+    if (!in_sync)
+    {
+      WARNING("{} is not yet in sync with the tracked part on the belt", getRobotName());
+    }
+    else
+    {
+      current_vertical_fraction += sampling_inteval_seconds * vertical_movement_speed;
+      INFO("{} is tracking the part on the belt at {}, vert fraction {}", getRobotName(),
+           current_part_pose_in_world, current_vertical_fraction);
+    }
+
+    // did we came in contact with a part?
+    const auto in_contact_with_part = getRobotGripperAttachementState();
+    if (in_contact_with_part)
+    {
+      WARNING("{} made contact with part at {}, vert fraction {}", getRobotName(),
+              current_part_pose_in_world, current_vertical_fraction);
+      // lift the arm
+      robot_specific_interface_->beltSupportSetState(current_part_pose_in_world, 0.0, 1.0);
+      return true;
+    }
+
+    // did we reach the end of movement without finding anything?
+    if (current_vertical_fraction > 1.0)
+    {
+      ERROR("{} failed to find the part on the belt, aborting", getRobotName());
+      return false;
+    }
+  } while ((ros::Time::now() - start_time) < ros::Duration(tracking_timeout_seconds));
+
+  return false;
+}
+
 }  // namespace tijros

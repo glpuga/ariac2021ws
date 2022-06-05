@@ -31,6 +31,8 @@ public:
 
   virtual tijmath::RelativePose3
   currentPositionInTheBelt(const DetectionData& detection_data) const = 0;
+
+  virtual double getBeltSpeed() const = 0;
 };
 
 }  // namespace tijcore

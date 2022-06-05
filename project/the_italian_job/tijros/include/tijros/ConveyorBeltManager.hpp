@@ -33,6 +33,8 @@ public:
   tijmath::RelativePose3
   currentPositionInTheBelt(const DetectionData& detection_data) const override;
 
+  double getBeltSpeed() const override;
+
 private:
   ros::NodeHandle nh_;
   mutable std::mutex mutex_;
