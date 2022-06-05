@@ -68,6 +68,7 @@ include_directories(
 add_compile_options(-Wall -Werror)
 
 add_library(${PROJECT_NAME}
+  src/ConveyorBeltManager.cpp
   src/HumanMonitorService.cpp
   src/LogicalCameraModelPerception.cpp
   src/PickAndPlaceAssemblyRobot.cpp

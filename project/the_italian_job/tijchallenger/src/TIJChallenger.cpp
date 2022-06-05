@@ -32,6 +32,7 @@
 #include <tijcore/tasking/TaskDriver.hpp>
 #include <tijcore/utils/BlindVolumeTracker.hpp>
 #include <tijlogger/logger.hpp>
+#include <tijros/ConveyorBeltManager.hpp>
 #include <tijros/ConveyorBeltSurfaceFrameBroadcaster.hpp>
 #include <tijros/HumanMonitorService.hpp>
 #include <tijros/LogicalCameraModelPerception.hpp>
@@ -166,14 +167,25 @@ tijcore::ModelPerceptionInterface::Ptr TIJChallenger::createFilteredModelPercept
 tijcore::Toolbox::SharedPtr TIJChallenger::createToolbox() const
 {
   tijcore::Toolbox::Contents contents;
+
   contents.frame_transformer_instance = std::make_shared<tijros::ROSFrameTransformer>();
+
   contents.robot_actuator_instance = std::make_shared<tijros::ROSRobotActuators>(nh_);
+
   contents.process_manager_instance = std::make_shared<tijros::ROSProcessManagement>(nh_);
+
   contents.scene_config_reader_instance = config_;
+
   contents.spatial_mutual_exclusion_manager =
       std::make_shared<tijcore::SpatialMutualExclusionManager>(config_->getWorldFrameId(),
                                                                contents.frame_transformer_instance);
+
   contents.unfiltered_model_perception_chain = createUnfilteredInputPerceptionChain();
+
+  contents.conveyor_belt_manager = std::make_shared<tijros::ConveyorBeltManager>(
+      nh_, "/ariac/breakbeam_belt",
+      tijmath::RelativePose3{ "world", tijmath::Position::fromVector(-0.73, 4.0, 0.90), {} });
+
   return std::make_shared<tijcore::Toolbox>(std::move(contents));
 }
 

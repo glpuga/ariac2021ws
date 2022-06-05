@@ -10,12 +10,14 @@
 #include <utility>
 
 // tijcore
+#include <tijcore/abstractions/ConveyorBeltManagerInterface.hpp>
 #include <tijcore/abstractions/FrameTransformerInterface.hpp>
 #include <tijcore/abstractions/ModelPerceptionInterface.hpp>
 #include <tijcore/abstractions/ProcessManagementInterface.hpp>
 #include <tijcore/abstractions/RobotActuatorsInterface.hpp>
 #include <tijcore/abstractions/SceneConfigReaderInterface.hpp>
 #include <tijcore/abstractions/SpatialMutualExclusionManagerInterface.hpp>
+
 namespace tijcore
 {
 class Toolbox
@@ -31,6 +33,7 @@ public:
     SceneConfigReaderInterface::SharedPtr scene_config_reader_instance;
     SpatialMutualExclusionManagerInterface::SharedPtr spatial_mutual_exclusion_manager;
     ModelPerceptionInterface::SharedPtr unfiltered_model_perception_chain;
+    ConveyorBeltManagerInterface::SharedPtr conveyor_belt_manager;
   };
 
   explicit Toolbox(Contents&& contents) : contents_{ std::move(contents) }
@@ -67,6 +70,11 @@ public:
   {
     return returnPtrIfInstanceNotNull(__PRETTY_FUNCTION__,
                                       contents_.unfiltered_model_perception_chain);
+  }
+
+  ConveyorBeltManagerInterface::SharedPtr getConveyorBeltManager() const
+  {
+    return returnPtrIfInstanceNotNull(__PRETTY_FUNCTION__, contents_.conveyor_belt_manager);
   }
 
 private:
