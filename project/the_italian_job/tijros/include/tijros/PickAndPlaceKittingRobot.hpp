@@ -56,6 +56,11 @@ public:
 
   tijmath::RelativePose3 getCurrentEndEffectorPose() const override;
 
+  bool beltSupportSetState(tijmath::RelativePose3& part_pose, const double vertical_fraction,
+                           const double time_interval) override;
+
+  bool beltSupportGetSyncState() const override;
+
 private:
   tijcore::FrameTransformerInterface::SharedPtr frame_transformer_;
   tijcore::RobotActuatorsInterface::SharedPtr robot_actuator_;

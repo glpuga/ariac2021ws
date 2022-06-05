@@ -3,6 +3,7 @@
  * Author: Gerardo Puga */
 
 // standard library
+#include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
