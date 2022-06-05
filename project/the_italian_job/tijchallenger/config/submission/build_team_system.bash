@@ -3,7 +3,7 @@
 source /opt/ros/${ROS_DISTRO}/setup.bash
 
 export DIST="${ROS_DISTRO}"
-export RELEASE_TAG="qualifiers_round_release"
+export RELEASE_TAG="ariac2022_final_release"
 
 # #############################################################################
 #
@@ -12,24 +12,24 @@ export RELEASE_TAG="qualifiers_round_release"
 
 # Base system tools
 sudo apt update &&
-   sudo apt install -y \
-      build-essential \
-      ccache \
-      clang-format \
-      cmake \
-      cppcheck \
-      curl \
-      git \
-      locate \
-      lsb-release \
-      mc \
-      pkg-config \
-      python3-pip \
-      software-properties-common \
-      sudo \
-      tmux \
-      wget &&
-   sudo apt clean
+ sudo apt install -y \
+     build-essential \
+     ccache \
+     clang-format \
+     cmake \
+     cppcheck \
+     curl \
+     git \
+     locate \
+     lsb-release \
+     mc \
+     pkg-config \
+     python3-pip \
+     software-properties-common \
+     sudo \
+     tmux \
+     wget &&
+ sudo apt clean
 
 export DEBIAN_FRONTEND=noninteractive &&
    sudo apt update &&
@@ -54,7 +54,7 @@ sudo apt update &&
 # rosdep install -si --reinstall --from-path src/ | cut -f7- -d" " | sort
 
 sudo apt update &&
-   sudo apt install -y \
+ sudo apt install -y \
       libboost-all-dev \
       libeigen3-dev \
       libncurses5-dev \
@@ -71,7 +71,7 @@ sudo apt update &&
       ros-melodic-moveit-ros-visualization \
       ros-melodic-moveit-setup-assistant \
       ros-melodic-moveit-visual-tools &&
-   sudo apt clean
+ sudo apt clean
 
 # Additional ros-control dependencies not installed by the previous stages
 sudo apt update &&
@@ -107,7 +107,7 @@ git clone https://github.com/glpuga/ARIAC.git -b $RELEASE_TAG
 mkdir -p ~/tij_team_ws/src/ariac2021ws/external
 cd ~/tij_team_ws/src/ariac2021ws/external
 git clone https://github.com/glpuga/BehaviorTree.CPP.git && cd BehaviorTree.CPP && git checkout 40baf90 && cd ..
-git clone https://github.com/glpuga/BehaviorTreeExtras.git && cd BehaviorTreeExtras && git checkout b94884a && cd ..
+git clone https://github.com/glpuga/BehaviorTreeExtras.git && cd BehaviorTreeExtras && git checkout bbeb6c5 && cd ..
 git clone https://github.com/ros-planning/moveit_task_constructor.git && cd moveit_task_constructor && git checkout 8beb0f4 && cd ..
 git clone https://github.com/ros/roslint.git && cd roslint && git checkout be2160f && cd ..
 
