@@ -59,6 +59,17 @@ public:
   virtual tijmath::RelativePose3 getCurrentRobotPose() const = 0;
 
   virtual tijmath::RelativePose3 getCurrentEndEffectorPose() const = 0;
+
+  virtual bool beltSupportSetState(tijmath::RelativePose3& part_pose,
+                                   const double vertical_fraction, const double time_interval)
+  {
+    return false;
+  }
+
+  virtual bool beltSupportGetSyncState() const
+  {
+    return false;
+  }
 };
 
 }  // namespace tijcore

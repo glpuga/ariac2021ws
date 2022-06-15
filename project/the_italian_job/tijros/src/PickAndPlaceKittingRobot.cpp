@@ -4,6 +4,7 @@
 
 // Standard library
 #include <chrono>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -187,6 +188,70 @@ void PickAndPlaceKittingRobot::patchJointStateValuesForAlignedZeroWrist(
             getRobotName());
   }
   joint_states[6] = degreesToRadians(0);
+}
+
+bool PickAndPlaceKittingRobot::beltSupportSetState(tijmath::RelativePose3& part_pose,
+                                                   const double vertical_fraction,
+                                                   const double time_interval)
+{
+  const std::vector<std::string> joint_names = {
+    "linear_arm_actuator_joint",
+    "shoulder_pan_joint",
+    "shoulder_lift_joint",
+    "elbow_joint",
+    "wrist_1_joint",
+    "wrist_2_joint",
+    "wrist_3_joint",
+  };
+
+  const std::vector<double> value_up = {
+    0.0,                     // linear_arm_actuator_joint
+    degreesToRadians(-182),  // shoulder_pan_joint
+    degreesToRadians(-124),  // shoulder_lift_joint
+    degreesToRadians(-117),  // elbow_joint
+    degreesToRadians(-29),   // wrist_1_joint
+    degreesToRadians(+91),   // wrist_2_joint
+    degreesToRadians(0),     // wrist_3_joint
+  };
+
+  const std::vector<double> value_down = {
+    0.0,                     // linear_arm_actuator_joint
+    degreesToRadians(-182),  // shoulder_pan_joint
+    degreesToRadians(-138),  // shoulder_lift_joint
+    degreesToRadians(-115),  // elbow_joint
+    degreesToRadians(-17),   // wrist_1_joint
+    degreesToRadians(+91),   // wrist_2_joint
+    degreesToRadians(0),     // wrist_3_joint
+  };
+
+  const auto part_pose_in_world = frame_transformer_->transformPoseToFrame(part_pose, "world");
+
+  const double x_world = part_pose_in_world.position().vector().x();
+
+  if (std::abs(x_world) > 4.5)
+  {
+    ERROR("The part pose is outside of the boundaries of the conveyor belt: {}",
+          part_pose_in_world);
+    return false;
+  }
+
+  std::map<std::string, double> joint_states;
+
+  for (size_t i = 0; i < joint_names.size(); ++i)
+  {
+    joint_states[joint_names[i]] = (value_down[i] - value_up[i]) * vertical_fraction + value_up[i];
+  }
+
+  joint_states["linear_arm_actuator_joint"] = x_world;
+
+  auto& direct_control_manager = robot_actuator_->getKittingJointDirectControlManager();
+  return direct_control_manager.setJointPosition(joint_states, time_interval);
+}
+
+bool PickAndPlaceKittingRobot::beltSupportGetSyncState() const
+{
+  auto& direct_control_manager = robot_actuator_->getKittingJointDirectControlManager();
+  return direct_control_manager.inTrackingMode();
 }
 
 }  // namespace tijros

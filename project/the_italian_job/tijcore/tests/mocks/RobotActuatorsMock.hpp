@@ -38,6 +38,10 @@ public:
   MOCK_CONST_METHOD0(getRobotHealthStatus, RobotHealthStatus());
 
   MOCK_CONST_METHOD0(getGantryGripperToolType, tijcore::GripperTypeId());
+
+  MOCK_METHOD0(getKittingJointDirectControlManager, tijcore::RobotJointDirectControlInterface&());
+
+  MOCK_METHOD0(getGantryJointDirectControlManager, tijcore::RobotJointDirectControlInterface&());
 };
 
 }  // namespace tijcore

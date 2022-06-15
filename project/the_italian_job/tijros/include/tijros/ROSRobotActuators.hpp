@@ -17,6 +17,7 @@
 
 // tijcore
 #include <tijcore/abstractions/RobotActuatorsInterface.hpp>
+#include <tijcore/abstractions/RobotJointDirectControlInterface.hpp>
 
 namespace tijros
 {
@@ -43,6 +44,10 @@ public:
 
   tijcore::GripperTypeId getGantryGripperToolType() const override;
 
+  tijcore::RobotJointDirectControlInterface& getKittingJointDirectControlManager() override;
+
+  tijcore::RobotJointDirectControlInterface& getGantryJointDirectControlManager() override;
+
 private:
   mutable std::mutex mutex_;
 
@@ -53,6 +58,9 @@ private:
   ros::Subscriber kitting_arm_gripper_state_sub_;
   ros::Subscriber robot_health_sub_;
   ros::Subscriber gripper_type_sub_;
+
+  tijcore::RobotJointDirectControlInterface::Ptr kitting_joint_control_;
+  tijcore::RobotJointDirectControlInterface::Ptr gantry_joint_control_;
 
   ConveyorState latest_conveyor_state_data_;
   VacuumGripperState latest_gantry_arm_gripper_state_data_;

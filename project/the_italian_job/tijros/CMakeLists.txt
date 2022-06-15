@@ -18,6 +18,7 @@ find_package(
     roscpp
     roslint
     rostest
+    sensor_msgs
     std_msgs
     std_srvs
     tf2
@@ -27,6 +28,7 @@ find_package(
     tijlogger
     tijmath
     tijutils
+    trajectory_msgs
 )
 
 # ##############################################################################
@@ -46,6 +48,7 @@ catkin_package(
     moveit_visual_tools
     nist_gear
     roscpp
+    sensor_msgs
     std_msgs
     std_srvs
     tf2
@@ -54,6 +57,7 @@ catkin_package(
     tijcore
     tijlogger
     tijutils
+    trajectory_msgs
 )
 
 # ##############################################################################
@@ -68,6 +72,7 @@ include_directories(
 add_compile_options(-Wall -Werror)
 
 add_library(${PROJECT_NAME}
+  src/ConveyorBeltManager.cpp
   src/HumanMonitorService.cpp
   src/LogicalCameraModelPerception.cpp
   src/PickAndPlaceAssemblyRobot.cpp
@@ -77,6 +82,7 @@ add_library(${PROJECT_NAME}
   src/ROSFrameTransformer.cpp
   src/ROSProcessManagement.cpp
   src/ROSRobotActuators.cpp
+  src/ROSRobotJointDirectControl.cpp
   src/utils/utils.cpp
 )
 add_dependencies(${PROJECT_NAME}

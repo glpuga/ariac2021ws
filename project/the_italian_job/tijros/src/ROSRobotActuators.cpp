@@ -3,8 +3,10 @@
  * Author: Gerardo Puga */
 
 // standard library
+#include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 // roscpp
 #include <ros/ros.h>
@@ -22,7 +24,7 @@
 #include <tijcore/datatypes/GripperTypeId.hpp>
 #include <tijlogger/logger.hpp>
 #include <tijros/ROSRobotActuators.hpp>
-
+#include <tijros/ROSRobotJointDirectControl.hpp>
 namespace tijros
 {
 using tijcore::RobotActuatorsInterface;
@@ -68,6 +70,13 @@ ROSRobotActuators::ROSRobotActuators(const ros::NodeHandle nh) : nh_{ nh }
 
   gripper_type_sub_ = nh_.subscribe(gripper_type_topic, short_latency_queue_subscriber_len,
                                     &ROSRobotActuators::gripperTypeCallback, this);
+
+  kitting_joint_control_ = std::make_unique<ROSRobotJointDirectControl>(
+      nh_, "/ariac/kitting/joint_states", "/ariac/kitting/kitting_arm_controller/command",
+      std::vector<std::string>{ "linear_arm_actuator_joint", "shoulder_pan_joint",
+                                "shoulder_lift_joint", "elbow_joint", "wrist_1_joint",
+                                "wrist_2_joint", "wrist_3_joint" },
+      std::vector<double>{ 1.0, 2.16, 2.16, 3.15, 3.2, 3.2, 3.2 });
 }
 
 RobotActuatorsInterface::ConveyorState ROSRobotActuators::getConveyorState() const
@@ -214,6 +223,17 @@ void ROSRobotActuators::gripperTypeCallback(std_msgs::String::ConstPtr msg)
   {
     ERROR("Received invalid gripper type: {}", msg->data);
   }
+}
+
+tijcore::RobotJointDirectControlInterface& ROSRobotActuators::getKittingJointDirectControlManager()
+{
+  return *kitting_joint_control_;
+}
+
+tijcore::RobotJointDirectControlInterface& ROSRobotActuators::getGantryJointDirectControlManager()
+{
+  throw std::runtime_error{ "Not implemented" };
+  return *gantry_joint_control_;
 }
 
 }  // namespace tijros

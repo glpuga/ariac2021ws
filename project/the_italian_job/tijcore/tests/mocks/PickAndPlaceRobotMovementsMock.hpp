@@ -86,6 +86,10 @@ public:
   MOCK_CONST_METHOD0(getCurrentRobotPose, tijmath::RelativePose3());
 
   MOCK_CONST_METHOD0(getCurrentEndEffectorPose, tijmath::RelativePose3());
+
+  MOCK_CONST_METHOD1(
+      trackAndPickBeltTarget,
+      bool(const tijcore::ConveyorBeltManagerInterface::DetectionData& detection_data));
 };
 
 }  // namespace tijcore
